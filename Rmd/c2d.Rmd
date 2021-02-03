@@ -1,0 +1,173 @@
+---
+editor_options:
+  chunk_output_type: console
+---
+
+# NOTES
+
+The C2D Database offers a [privately documented](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md) API available under `services.c2d.ch` with
+
+-   the following "endpoints":
+
+    -   `referendums`: get referendum data
+    -   `states`: get sub-national states (currently useless/incomplete)
+    -   `health`: check API status
+
+-   supporting the following URL parameters:
+
+    -   `mode`: can be `stream`, `count` or `search`
+    -   `format`: can be `json` or `csv`
+    -   `filter`: can be any valid hash like
+        `JTdCJTIyY291bnRyeV9jb2RlJTIyOiUyMkNIJTIyLCUyMmRyYWZ0JTIyOmZhbHNlLCUyMmxldmVsJTIyOiU3QiUyMiRpbiUyMjolNUIlMjJTdWItbmF0aW9uYWwlMjIlNUQlN0QlN0Q` (Swiss
+        sub-national votes)
+    -   `term` the search term used for `mode=search`; note that only the `title$en` field will be searched
+
+# INTERNAL
+
+## Avoid `R CMD check` notes about undefined global objects used in magrittr pipes
+
+Cf. <https://github.com/tidyverse/magrittr/issues/29#issuecomment-74313262>
+
+```{r}
+utils::globalVariables(names = c(".",
+                                 "items"))
+```
+
+## Constants
+
+```{r}
+pkg <- utils::packageName()
+```
+
+## Functions
+
+### Get httr config
+
+Since the C2D API server doesn't provide the [intermediate *R3*
+certificate](https://crt.sh/?q=+730c1bdcd85f57ce5dc0bba733e5f1ba5a925b2a771d640a26f7a454224dad3b) (issued by Let's Encrypt) and [curl doesn't support *Authority
+Information Access* yet](https://github.com/curl/curl/issues/2793) to automatically discover it, we have to manually specify it. Thus, the certificate is
+shipped with this package (found under `certs/3479778542.crt`).
+
+The issue has been [reported](https://github.com/ccmdesign/c2d-app/issues/10) to the server operator.
+
+```{r}
+httr_config <- function() {
+  
+  httr::config(cainfo = system.file("certs", "3479778542.crt",
+                                    package = pkg,
+                                    mustWork = TRUE))
+}
+```
+
+# Check API health
+
+```{r}
+#' Test C2D API availability
+#'
+#' Checks if the C2D API server is online and operational.
+#'
+#' @param quiet Whether to suppress printing a warning in case the API is unavailable.
+#'
+#' @return A logical scalar.
+#' @export
+is_online <- function(quiet = FALSE) {
+  
+  result <- FALSE
+  response <- rlang::with_handlers(.expr = httr::RETRY(verb = "GET",
+                                                       url = "https://services.c2d.ch/health",
+                                                       config = httr_config(),
+                                                       times = 5L),
+                                   error = ~ paste0("Error: ", .x$message))
+  
+  if (class(response) == "response") {
+    
+    response %<>% httr::content(as = "parsed",
+                                encoding = "UTF-8")
+    
+    if (response == "OK") {
+      result <- TRUE
+      
+    } else if (checkmate::assert_flag(quiet)) {
+      warning(glue::glue("C2D API server responded with '{response}'"),
+              call. = FALSE,
+              immediate. = TRUE)
+    }
+  }
+  
+  result
+}
+```
+
+# Get data
+
+## Referendums
+
+TODO: Convert result to tibble, preserving as much information as possible (list columns?).
+
+```{r}
+#' Get referendum data
+#'
+#' Downloads the complete data about all referendums covered by the C2D Database.
+#'
+#' Currently, this function only allows to download the C2D referendums database in its entirety.
+#'
+#' @param use_cache `r pkgsnip::param_label("use_cache")`
+#' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @export
+referendums <- function(use_cache = TRUE,
+                        cache_lifespan = "1 week") {
+  
+  pkgpins::with_cache(.fn = ~
+                        httr::RETRY(verb = "GET",
+                                    url = "https://services.c2d.ch/referendums",
+                                    query = list(mode = "stream",
+                                                 format = "json"),
+                                    config = httr_config(),
+                                    times = 5L) %>%
+                        httr::content(as = "parsed") %$%
+                        items,
+                      .use_cache = use_cache,
+                      .cache_lifespan = cache_lifespan,
+                      .pkg = pkg
+  )
+}
+```
+
+# Search
+
+Currently, the C2D API [only supports searching in the English referendum
+title](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
+
+## In referendum title
+
+```{r}
+#' Search in English referendum titles
+#'
+#' Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no [fuzzy
+#' search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are returned).
+#'
+#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
+#' titles.
+#'
+#' @param term The Search term. A character scalar.
+#'
+#' @return A character vector of English referendum titles matching the search `term`.
+#' @export
+#'
+#' @examples
+#' search_referendums("freedom")
+search_referendums <- function(term) {
+  
+  httr::RETRY(verb = "GET",
+              url = "https://services.c2d.ch/referendums",
+              query = list(mode = "search",
+                           term = checkmate::assert_string(term)),
+              config = httr_config(),
+              times = 5L) %>%
+    httr::content(as = "parsed") %$%
+    items %>%
+    purrr::flatten_chr() 
+}
+```

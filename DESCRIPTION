@@ -1,0 +1,34 @@
+Package: c2d
+Title: Download Data from the C2D Database, Which Covers Direct
+    Democratic Votes Worldwide
+Version: 0.0.9000
+Authors@R: 
+    person(given = "Salim",
+           family = "Brüggemann",
+           role = c("aut", "cre"),
+           email = "salim-b@pm.me",
+           comment = c(ORCID = "0000-0002-5329-5987"))
+Description: c2d provides functions to access the C2D
+    Database (https://c2d.ch) from R. This database aims to record all
+    direct democratic votes worldwide and is operated by the Swiss Centre
+    for Democracy Studies Aarau (ZDA).
+License: AGPL (>= 3)
+URL: https://gitlab.com/zdaarau/c2d
+BugReports: https://gitlab.com/zdaarau/c2d/issues
+Imports: 
+    checkmate (>= 2.0.0),
+    glue (>= 1.4.2),
+    httr (>= 1.4.2),
+    magrittr (>= 2.0.1),
+    pkgpins (>= 0.4.2),
+    purrr (>= 0.3.4),
+    rlang (>= 0.4.10),
+    utils
+Suggests: 
+    pkgsnip (>= 0.0.9018)
+Remotes:
+    gitlab::salim_b/r/pkgs/pkgpins
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
