@@ -102,7 +102,11 @@ is_online <- function(quiet = FALSE) {
 
 ## Referendums
 
-TODO: Convert result to tibble, preserving as much information as possible (list columns?).
+TODO:
+
+-   [ ] Convert result to tibble, preserving as much information as possible (list columns?).
+
+-   [ ] Implement getting partial results as soon as [internal issue \#11](https://github.com/ccmdesign/c2d-app/issues/11) is resolved.
 
 ```{r}
 #' Get referendum data
