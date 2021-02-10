@@ -4,6 +4,16 @@
 utils::globalVariables(names = c(".",
                                  "items"))
 
+.onLoad <- function(libname, pkgname) {
+  pkgpins::clear(pkg = pkgname,
+                 max_age = getOption("c2d.max_cache_lifespan",
+                                     default = "30 days"))
+}
+
+.onUnload <- function(libpath) {
+  pkgpins::deregister(pkg = pkg)
+}
+
 pkg <- utils::packageName()
 
 httr_config <- function() {

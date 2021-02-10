@@ -33,6 +33,20 @@ utils::globalVariables(names = c(".",
                                  "items"))
 ```
 
+## Package load/unload
+
+```{r}
+.onLoad <- function(libname, pkgname) {
+  pkgpins::clear(pkg = pkgname,
+                 max_age = getOption("c2d.max_cache_lifespan",
+                                     default = "30 days"))
+}
+
+.onUnload <- function(libpath) {
+  pkgpins::deregister(pkg = pkg)
+}
+```
+
 ## Constants
 
 ```{r}
