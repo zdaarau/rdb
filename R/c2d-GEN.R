@@ -72,19 +72,133 @@ is_online <- function(quiet = FALSE) {
 referendums <- function(use_cache = TRUE,
                         cache_lifespan = "1 week") {
   
-  pkgpins::with_cache(.fn = ~
-                        httr::RETRY(verb = "GET",
-                                    url = "https://services.c2d.ch/referendums",
-                                    query = list(mode = "stream",
-                                                 format = "json"),
-                                    config = httr_config(),
-                                    times = 5L) %>%
-                        httr::content(as = "parsed") %$%
-                        items,
-                      .use_cache = use_cache,
-                      .cache_lifespan = cache_lifespan,
-                      .pkg = pkg
-  )
+  pkgpins::with_cache(.fn = ~ {
+    
+    # retrieve data
+    data <-
+      httr::RETRY(verb = "GET",
+                  url = "https://services.c2d.ch/referendums",
+                  query = list(mode = "stream",
+                               format = "json"),
+                  config = httr_config(),
+                  times = 5L) %>%
+      httr::content(as = "parsed") %$%
+      items %>%
+      # wrap all array fields in another list level for subsequent conversion to tibble
+      purrr::map(.f = ~ .x %>% purrr::modify_if(.p = ~ length(.x) != 1L,
+                                                .f = ~ list(.x))) %>%
+      # convert to tibble
+      dplyr::bind_rows()
+    
+    # check integrity
+    ## ensure there's always exactly *one* `oid` per row
+    ids <- data$`_id` %>% purrr::map(length)
+    
+    if (length(unique(names(ids))) != 1L ||
+        !"$oid" %in% unique(names(ids)) ||
+        any(purrr::flatten_int(unique(ids))) != 1L) {
+      
+      rlang::abort("Unexpected ID fields detected. Please debug.")
+    }
+    
+    ## ensure `oid`s are unique
+    if (data$`_id` %>%
+        purrr::flatten_chr() %>%
+        unique() %>%
+        length() %>%
+        magrittr::equals(nrow(data)) %>%
+        magrittr::not()) {
+      
+      rlang::abort("Duplicated `oid`s detected. Please debug.")
+    }
+    
+    # tidy data
+    data %<>%
+      dplyr::rename(id = `_id`) %>%
+      # unnest `categories` (don't need to be nested)
+      tidyr::unnest_wider(col = context) %>%
+      tidyr::unnest_wider(col = categories) %>%
+      tidyr::unnest_wider(col = title,
+                          names_sep = "_") %>%
+      dplyr::mutate(id = purrr::flatten_chr(id),
+                    created_on = purrr::flatten_dbl(created_on),
+                    # flatten unnecessarily convoluted list columns
+                    dplyr::across(c(action,
+                                    excluded_topics,
+                                    special_topics,
+                                    tags),
+                                  ~ .x %>% purrr::map(unlist)),
+                    # replace empty lists with `NULL` in list columns
+                    dplyr::across(where(is.list),
+                                  ~ dplyr::case_when(.x %>% purrr::map_lgl(~ length(.x) == 0L) ~ list(NULL),
+                                                     TRUE ~ .x)),
+                    # use explicit NA values
+                    dplyr::across(where(is.integer),
+                                  ~ dplyr::if_else(.x == -1L, NA_integer_, .x)),
+                    dplyr::across(where(is.character),
+                                  ~ dplyr::if_else(.x == "", NA_character_, .x))) %>%
+      # reorder columns
+      dplyr::relocate(id,
+                      draft, # TODO: Find out what exactly `TRUE` means here! Maybe we should filter them out?
+                      country_code,
+                      country_name,
+                      canton,
+                      municipality,
+                      level,
+                      institution,
+                      date,
+                      created_on,
+                      starts_with("title_"),
+                      total_electorate,
+                      citizens_abroad,
+                      votes_yes,
+                      votes_no,
+                      votes_empty,
+                      votes_invalid,
+                      votes_per_canton,
+                      result,
+                      committee_name,
+                      number, # TODO: Find out what this is!
+                      vote_object,
+                      author_of_the_vote_object,
+                      official_status,
+                      legal_act_type,
+                      hierarchy_of_the_legal_norm,
+                      degree_of_revision,
+                      vote_result_status,
+                      vote_venue,
+                      vote_trigger,
+                      vote_trigger_actor,
+                      vote_trigger_state_level,
+                      vote_trigger_number,
+                      vote_trigger_time,
+                      turnout_quorum,
+                      decision_quorum,
+                      referendum_text_options,
+                      counter_proposal,
+                      institutional_precondition,
+                      institutional_precondition_decision,
+                      institutional_precondition_decision_actor,
+                      action,
+                      special_topics,
+                      excluded_topics,
+                      national_council_yes,
+                      national_council_no,
+                      national_council_abstentions,
+                      states_council_yes,
+                      states_council_no,
+                      states_council_abstentions,
+                      recommendation,
+                      states_yes,
+                      states_no,
+                      remarks,
+                      tags,
+                      files,
+                      archive)
+  },
+  .use_cache = use_cache,
+  .cache_lifespan = cache_lifespan,
+  .pkg = pkg)
 }
 
 #' Search in English referendum titles
