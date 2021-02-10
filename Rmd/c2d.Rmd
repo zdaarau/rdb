@@ -10,7 +10,12 @@ The C2D Database offers a [privately documented](https://github.com/ccmdesign/c2
 -   the following "endpoints":
 
     -   `referendums`: get referendum data
+
+        Data on individual referendums can be retrieved under `referendums/ID` where `ID` stands for the referendum's unique identifier `oid` (which corresponds
+        to the column `id` in the data returned by the `referendums()` function of this package).
+
     -   `states`: get sub-national states (currently useless/incomplete)
+
     -   `health`: check API status
 
 -   supporting the following URL parameters:
@@ -119,6 +124,8 @@ is_online <- function(quiet = FALSE) {
 TODO:
 
 -   [ ] Properly convert column `created_on` to type date.
+
+-   [ ] Find out what `-2L` (and possibly other special values) means in integer columns and recode properly.
 
 -   [ ] Implement getting partial results as soon as [internal issue \#11](https://github.com/ccmdesign/c2d-app/issues/11) is resolved.
 
