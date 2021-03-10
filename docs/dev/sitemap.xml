@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://rpkg.dev/c2d/index.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/c2d-package.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/is_online.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/referendums.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/search_referendums.html</loc>
+  </url>
+</urlset>
