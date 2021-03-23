@@ -1,8 +1,8 @@
 # c2d: Download Data from the C2D Database, Which Covers Direct Democratic Votes Worldwide
 
-c2d provides functions to access the C2D Database (https://c2d.ch) from
-R. This database aims to record all direct democratic votes worldwide
-and is operated by the Swiss Centre for Democracy Studies Aarau (ZDA).
+c2d provides access to the C2D Database (https://c2d.ch) from R. This
+database aims to record all direct democratic votes worldwide and is
+operated by the Swiss Centre for Democracy Studies Aarau (ZDA).
 
 ## Installation
 
