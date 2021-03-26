@@ -2,6 +2,10 @@
 
 c2d provides access to the C2D Database (https://c2d.ch) from R. This database aims to record all direct democratic votes worldwide and is operated by the Swiss Centre for Democracy Studies Aarau (ZDA).
 
+## Documentation
+
+The documentation of this package is found [here](https://rpkg.dev/c2d).
+
 ## Installation
 
 To install the latest development version of c2d, run the following in R:
