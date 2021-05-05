@@ -6,26 +6,30 @@ editor_options:
 # NOTES
 
 The C2D Database offers a [privately documented](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md) API available under `services.c2d.ch` with
-
--   the following "endpoints":
+the following "endpoints":
 
     -   `referendums`: get referendum data
 
         Data on individual referendums can be retrieved under `referendums/ID` where `ID` stands for the referendum's unique identifier `oid` (which corresponds
         to the column `id` in the data returned by the `referendums()` function of this package).
 
-    -   `states`: get sub-national states (currently useless/incomplete)
+        It supports the following URL parameters:
+
+        -   `mode`: the operation mode; one of `stream`, `count` or `search`
+        -   `term` the search term used for `mode=search`; note that only the `title$en` field will be searched
+        -   `format`: the data format to be returned when `mode=stream`; one of `json` or `csv`
+        -   `filter`: a valid [JSON query filter
+            document](https://docs.mongodb.com/v4.2/core/document/#query-filter-documents) to customize queries in the underlying mongoDB collection; needs to
+            be Base64-encoded; there are various [query operators](https://docs.mongodb.com/v4.2/reference/operator/query/) available to build complex queries
+
+    -   `states`: get the first 10 sub-national states that match the query
+
+        It accepts the following URL parameters to customize the query:
+
+        -   `country`: limits the results to a specific country code
+        -   `term`: limits the result to states matching this search term
 
     -   `health`: check API status
-
--   supporting the following URL parameters:
-
-    -   `mode`: can be `stream`, `count` or `search`
-    -   `format`: can be `json` or `csv`
-    -   `filter`: can be any valid hash like
-        `JTdCJTIyY291bnRyeV9jb2RlJTIyOiUyMkNIJTIyLCUyMmRyYWZ0JTIyOmZhbHNlLCUyMmxldmVsJTIyOiU3QiUyMiRpbiUyMjolNUIlMjJTdWItbmF0aW9uYWwlMjIlNUQlN0QlN0Q` (Swiss
-        sub-national votes)
-    -   `term` the search term used for `mode=search`; note that only the `title$en` field will be searched
 
 # INTERNAL
 
@@ -117,23 +121,20 @@ is_online <- function(quiet = FALSE) {
 }
 ```
 
-# Get data
+# Referendums
 
-## Referendums
+## Get data
 
 TODO:
-
--   [ ] Properly convert column `created_on` to type date.
-
--   [ ] Find out what `-2L` (and possibly other special values) means in integer columns and recode properly.
 
 -   [ ] Implement getting partial results as soon as [internal issue \#11](https://github.com/ccmdesign/c2d-app/issues/11) is resolved.
 
 NOTES:
 
--   The following values seem to be used for empty values:
+-   The following values are used to denote empty values:
 
-    -   `-1L` in integer fields
+    -   `-1L` in integer fields (means "information not available or nonexistent")
+    -   `-2L` in integer fields ([means "information not given"](https://github.com/ccmdesign/c2d-app/issues/13#issuecomment-802466615))
     -   `""` in character fields
     -   (Named) `list()` in array fields
 
@@ -143,6 +144,12 @@ NOTES:
     -   `canton`
     -   `municipality`
     -   `number`
+
+-   The files listed in the `files` field can be retrieved by feeding `files.object_key` to the C2D API's `s3_objects/` endpoint, e.g.:
+
+    ``` {.http}
+    GET https://services.c2d.ch/s3_objects/referendum_5f859fafd1291cc3961f1bc2_0002.pdf
+    ```
 
 ```{r}
 #' Get referendum data
