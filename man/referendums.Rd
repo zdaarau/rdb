@@ -4,12 +4,14 @@
 \alias{referendums}
 \title{Get referendum data}
 \usage{
-referendums(use_cache = TRUE, cache_lifespan = "1 week")
+referendums(use_cache = TRUE, cache_lifespan = "1 week", incl_drafts = FALSE)
 }
 \arguments{
 \item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{cache_lifespan}.}
 
 \item{cache_lifespan}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Only relevant if \code{use_cache = TRUE}.}
+
+\item{incl_drafts}{Whether or not to include referendum entries with \emph{draft} status in the returned data.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.

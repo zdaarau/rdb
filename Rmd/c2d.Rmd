@@ -160,11 +160,13 @@ NOTES:
 #'
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
+#' @param incl_drafts Whether or not to include referendum entries with _draft_ status in the returned data.
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @export
 referendums <- function(use_cache = TRUE,
-                        cache_lifespan = "1 week") {
+                        cache_lifespan = "1 week",
+                        incl_drafts = FALSE) {
   
   pkgpins::with_cache(.fn = ~ {
     
@@ -208,40 +210,97 @@ referendums <- function(use_cache = TRUE,
     
     # tidy data
     data %<>%
-      dplyr::rename(id = `_id`) %>%
-      # unnest `categories` (don't need to be nested)
+      # unnest `context`, `categories` and `title` (no technical need to be nested)
       tidyr::unnest_wider(col = context) %>%
       tidyr::unnest_wider(col = categories) %>%
       tidyr::unnest_wider(col = title,
                           names_sep = "_") %>%
-      dplyr::mutate(id = purrr::flatten_chr(id),
-                    created_on = purrr::flatten_dbl(created_on),
-                    # flatten unnecessarily convoluted list columns
-                    dplyr::across(c(action,
-                                    excluded_topics,
-                                    special_topics,
-                                    tags),
-                                  ~ .x %>% purrr::map(unlist)),
-                    # replace empty lists with `NULL` in list columns
-                    dplyr::across(where(is.list),
-                                  ~ dplyr::case_when(.x %>% purrr::map_lgl(~ length(.x) == 0L) ~ list(NULL),
-                                                     TRUE ~ .x)),
-                    # use explicit NA values
-                    dplyr::across(where(is.integer),
-                                  ~ dplyr::if_else(.x == -1L, NA_integer_, .x)),
-                    dplyr::across(where(is.character),
-                                  ~ dplyr::if_else(.x == "", NA_character_, .x))) %>%
+      # rename variables
+      dplyr::rename(created_datetime = created_on,
+                    has_urgent_legal_basis = legal_act_type,
+                    id = `_id`,
+                    is_binding = vote_result_status,
+                    is_counter_proposal = counter_proposal,
+                    is_draft = draft,
+                    legal_basis_type = official_status,
+                    object_author = author_of_the_vote_object,
+                    object_legal_level = hierarchy_of_the_legal_norm,
+                    object_type = vote_object,
+                    subnational_entity = canton,
+                    trigger_actor = vote_trigger_actor,
+                    trigger_state_level = vote_trigger_state_level,
+                    trigger_threshold = vote_trigger_number,
+                    trigger_time_limit = vote_trigger_time,
+                    trigger_type = vote_trigger,
+                    type = institution) %>%
+      # recode variables
+      dplyr::mutate(
+        # flatten unnecessarily convoluted list columns
+        dplyr::across(c(id,
+                        action,
+                        excluded_topics,
+                        special_topics,
+                        tags),
+                      ~ .x %>% purrr::map(unlist)),
+        # replace empty lists with `NULL` in list columns
+        dplyr::across(where(is.list),
+                      ~ dplyr::case_when(.x %>% purrr::map_lgl(~ length(.x) == 0L) ~ list(NULL),
+                                         TRUE ~ .x)),
+        # use explicit NA values
+        dplyr::across(where(is.integer),
+                      ~ dplyr::if_else(.x %in% c(-1L, -2L), NA_integer_, .x)),
+        dplyr::across(where(is.character),
+                      ~ dplyr::if_else(.x == "", NA_character_, .x)),
+        # convert values to all-lowercase
+        dplyr::across(c(legal_basis_type,
+                        level,
+                        object_author,
+                        object_legal_level,
+                        object_type,
+                        result,
+                        trigger_actor,
+                        trigger_state_level,
+                        trigger_type,
+                        type),
+                      stringr::str_to_lower),
+        
+        # specific recodings
+        ## binary (dummies)
+        is_binding = dplyr::case_when(is_binding == "Binding" ~ TRUE,
+                                      is_binding == "Non-binding" ~ FALSE,
+                                      TRUE ~ NA),
+        is_counter_proposal = dplyr::case_when(is_counter_proposal == "Yes" ~ TRUE,
+                                               is_counter_proposal == "No" ~ FALSE,
+                                               TRUE ~ NA),
+        has_urgent_legal_basis = dplyr::case_when(has_urgent_legal_basis == "Urgent" ~ TRUE,
+                                                  has_urgent_legal_basis == "Normal" ~ FALSE,
+                                                  TRUE ~ NA),
+        ## nominal
+        id = purrr::flatten_chr(id),
+        level = stringr::str_replace(string = level,
+                                     pattern = "sub-national",
+                                     replacement = "subnational"),
+        type = type %>% dplyr::recode("citizen assembly" = "citizens' assembly",
+                                      "not provided" = NA_character_),
+        trigger_actor = trigger_actor %>% dplyr::recode(institution = "other institution"),
+        object_type = stringr::str_replace_all(string = object_type,
+                                               pattern = c("ausformulierter vorschlag" = "formulated proposal",
+                                                           "allg. anregung" = "general proposal")),
+        ## ordinal
+        ## interval
+        created_datetime = purrr::flatten_dbl(created_datetime) %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime()
+      ) %>%
       # reorder columns
       dplyr::relocate(id,
-                      draft, # TODO: Find out what exactly `TRUE` means here! Maybe we should filter them out?
+                      is_draft,
                       country_code,
                       country_name,
-                      canton,
+                      subnational_entity,
                       municipality,
                       level,
-                      institution,
+                      type,
                       date,
-                      created_on,
+                      created_datetime,
                       starts_with("title_"),
                       total_electorate,
                       citizens_abroad,
@@ -253,23 +312,19 @@ referendums <- function(use_cache = TRUE,
                       result,
                       committee_name,
                       number, # TODO: Find out what this is!
-                      vote_object,
-                      author_of_the_vote_object,
-                      official_status,
-                      legal_act_type,
-                      hierarchy_of_the_legal_norm,
+                      object_type,
+                      object_author,
+                      object_legal_level,
+                      legal_basis_type,
+                      has_urgent_legal_basis,
                       degree_of_revision,
-                      vote_result_status,
+                      is_binding,
+                      is_counter_proposal,
                       vote_venue,
-                      vote_trigger,
-                      vote_trigger_actor,
-                      vote_trigger_state_level,
-                      vote_trigger_number,
-                      vote_trigger_time,
+                      starts_with("trigger_"),
                       turnout_quorum,
                       decision_quorum,
                       referendum_text_options,
-                      counter_proposal,
                       institutional_precondition,
                       institutional_precondition_decision,
                       institutional_precondition_decision_actor,
@@ -288,7 +343,9 @@ referendums <- function(use_cache = TRUE,
                       remarks,
                       tags,
                       files,
-                      archive)
+                      archive) %>%
+      purrr::when(incl_drafts ~ .,
+                  ~ dplyr::filter(.data = ., !is_draft))
   },
   .use_cache = use_cache,
   .cache_lifespan = cache_lifespan,
@@ -296,12 +353,10 @@ referendums <- function(use_cache = TRUE,
 }
 ```
 
-# Search
+## Search
 
 Currently, the C2D API [only supports searching in the English referendum
 title](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
-
-## In referendum title
 
 ```{r}
 #' Search in English referendum titles
