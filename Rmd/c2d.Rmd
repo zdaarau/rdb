@@ -8,28 +8,36 @@ editor_options:
 The C2D Database offers a [privately documented](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md) API available under `services.c2d.ch` with
 the following "endpoints":
 
-    -   `referendums`: get referendum data
+-   `referendums`: get referendum data
 
-        Data on individual referendums can be retrieved under `referendums/ID` where `ID` stands for the referendum's unique identifier `oid` (which corresponds
-        to the column `id` in the data returned by the `referendums()` function of this package).
+    Data on individual referendums can be retrieved under `referendums/ID` where `ID` stands for the referendum's unique identifier `oid` (which corresponds to
+    the column `id` in the data returned by the `referendums()` function of this package).
 
-        It supports the following URL parameters:
+    It supports the following URL parameters:
 
-        -   `mode`: the operation mode; one of `stream`, `count` or `search`
-        -   `term` the search term used for `mode=search`; note that only the `title$en` field will be searched
-        -   `format`: the data format to be returned when `mode=stream`; one of `json` or `csv`
-        -   `filter`: a valid [JSON query filter
-            document](https://docs.mongodb.com/v4.2/core/document/#query-filter-documents) to customize queries in the underlying mongoDB collection; needs to
-            be Base64-encoded; there are various [query operators](https://docs.mongodb.com/v4.2/reference/operator/query/) available to build complex queries
+    -   `mode`: the operation mode; one of `stream`, `count` or `search`
+    -   `term` the search term used for `mode=search`; note that only the `title$en` field will be searched
+    -   `format`: the data format to be returned when `mode=stream`; one of `json` or `csv`
+    -   `filter`: a valid [JSON query filter document](https://docs.mongodb.com/v4.2/core/document/#query-filter-documents) to customize queries in the
+        underlying mongoDB collection; needs to be Base64-encoded; there are various [query operators](https://docs.mongodb.com/v4.2/reference/operator/query/)
+        available to build complex queries
 
-    -   `states`: get the first 10 sub-national states that match the query
+-   `referendums/stats`: get the number of referendums
 
-        It accepts the following URL parameters to customize the query:
+    It accepts the following URL parameter:
 
-        -   `country`: limits the results to a specific country code
-        -   `term`: limits the result to states matching this search term
+    -   `filter`: a valid [JSON query filter document](https://docs.mongodb.com/v4.2/core/document/#query-filter-documents) to customize queries in the
+        underlying mongoDB collection; needs to be Base64-encoded; there are various [query operators](https://docs.mongodb.com/v4.2/reference/operator/query/)
+        available to build complex queries
 
-    -   `health`: check API status
+-   `states`: get the first 10 sub-national states that match the query
+
+    It accepts the following URL parameters to customize the query:
+
+    -   `country`: limits the results to a specific country code
+    -   `term`: limits the result to states matching this search term
+
+-   `health`: check API status
 
 # INTERNAL
 
