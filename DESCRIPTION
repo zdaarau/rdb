@@ -16,6 +16,7 @@ URL: https://gitlab.com/zdaarau/c2d
 BugReports: https://gitlab.com/zdaarau/c2d/issues
 Imports: 
     checkmate (>= 2.0.0),
+    cli (>= 2.5.0),
     dplyr (>= 1.0.4),
     glue (>= 1.4.2),
     httr (>= 1.4.2),

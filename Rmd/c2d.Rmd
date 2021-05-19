@@ -202,7 +202,7 @@ referendums <- function(use_cache = TRUE,
         !"$oid" %in% unique(names(ids)) ||
         any(purrr::flatten_int(unique(ids))) != 1L) {
       
-      rlang::abort("Unexpected ID fields detected. Please debug.")
+      rlang::abort(cli::format_error("Unexpected ID fields detected. Please debug."))
     }
     
     ## ensure `oid`s are unique
@@ -213,7 +213,14 @@ referendums <- function(use_cache = TRUE,
         magrittr::equals(nrow(data)) %>%
         magrittr::not()) {
       
-      rlang::abort("Duplicated `oid`s detected. Please debug.")
+      rlang::abort(cli::format_error("Duplicated {.var oid}s detected. Please debug."))
+    }
+    
+    ## ensure `country_codes`s are valid
+    invalid_country_codes <- data$country_code[!(data$country_code %in% countrycode::codelist$iso2c)]
+    
+    if (length(invalid_country_codes)) {
+      rlang::abort(cli::format_error("Unknown {.var country_code}s detected. Please debug."))
     }
     
     # tidy data
