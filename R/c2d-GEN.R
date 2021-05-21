@@ -285,3 +285,104 @@ search_referendums <- function(term) {
     items %>%
     purrr::flatten_chr() 
 }
+
+#' Download file attachment
+#'
+#' @param s3_object_key The key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design). A character scalar.
+#' @param path The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.
+#'
+#' @return A [response object][httr::response], invisibly.
+#' @export
+#'
+#' @examples
+#' library(magrittr)
+#'
+#' \dontrun{
+#' # get all file object keys...
+#' c2d::referendums() %$%
+#'   files %>%
+#'   purrr::map_depth(2L, purrr::pluck, "object_key") %>%
+#'   purrr::flatten() %>%
+#'   purrr::flatten_chr() %>%
+#'   # ...select first one...
+#'   dplyr::first() %>%
+#'   # ...and download the corresponding file to the current working dir
+#'   c2d::download_file_attachment()}
+download_file_attachment <- function(s3_object_key,
+                                     path = ".") {
+  if (fs::dir_exists(path)) {
+    checkmate::assert_directory(path,
+                                access = "rw")
+    use_original_filename <- TRUE
+  } else {
+    checkmate::assert_path_for_output(path,
+                                      overwrite = TRUE)
+    use_original_filename <- FALSE
+  }
+  
+  temp_path <- fs::file_temp()
+  
+  response <- httr::RETRY(verb = "GET",
+                          url = paste0("https://services.c2d.ch/s3_objects/", s3_object_key),
+                          config = httr_config(),
+                          httr::write_disk(path = temp_path),
+                          times = 5L)
+  
+  if (use_original_filename) {
+    
+    final_path <-
+      response %>%
+      httr::headers() %$%
+      `content-disposition` %>%
+      stringr::str_extract(pattern = "(?<=filename=\").+?(?=\")") %>%
+      fs::path(path, .)
+    
+  } else {
+    final_path <- path
+  }
+  
+  fs::file_move(path = temp_path,
+                new_path = final_path)
+  
+  invisible(response)
+}
+
+validate_referendums <- function(data,
+                                 check_sudd_prefix = TRUE) {
+  
+  if (checkmate::assert_flag(check_sudd_prefix)) {
+    
+    # define allowed exceptions
+    allowed_exceptions <- tibble::tribble(
+      ~country_code, ~sudd_prefix,
+      # Curaçao
+      "CW", "an",
+      # Szeklerland, cf. https://sudd.ch/event.php?id=hu042008
+      "RO", "hu"
+    )
+    
+    # assemble target country codes
+    country_codes <- data$country_code %>% as.list()
+    
+    for (country_code in allowed_exceptions$country_code) {
+      
+      additional_country_codes <- allowed_exceptions %>% dplyr::filter(country_code == !!country_code) %$% sudd_prefix %>% stringr::str_to_upper()
+      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code == .x) %>% which()
+      
+      for (i in i_country_codes) {
+        country_codes[[i]] <- unique(c(country_codes[[i]], additional_country_codes))
+      }
+    }
+    
+    # add dummy indicating if target country codes match
+    data$matches_sudd_prefix <-
+      data$id_sudd %>%
+      stringr::str_extract(pattern = "^..") %>%
+      stringr::str_to_upper() %>%
+      purrr::map2_lgl(.y = country_codes,
+                      .f = ~ .x %in% .y)
+    
+    data$matches_sudd_prefix[is.na(data$id_sudd)] <- NA
+  }
+  
+  data
