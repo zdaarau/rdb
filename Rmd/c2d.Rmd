@@ -22,6 +22,32 @@ the following "endpoints":
         underlying mongoDB collection; needs to be Base64-encoded; there are various [query operators](https://docs.mongodb.com/v4.2/reference/operator/query/)
         available to build complex queries
 
+    The following values are used to denote empty values in the returned data:
+
+    -   In integer fields:
+
+        -   `-1L` (means "information not available or nonexistent")
+        -   `-2L` ([means "information not given"](https://github.com/ccmdesign/c2d-app/issues/13#issuecomment-802466615))
+
+    -   In character fields:
+
+        -   `""`
+        -   `"-1"`
+        -   `"unknown"` (only for certain fields)
+        -   `"-2"`
+        -   `"not provided"` (only for certain fields)
+
+    -   In array fields:
+
+        -   (Named) `list()` in array fields
+
+-   The returned JSON data has between 22 and 26 fields. Fields that are not always present include:
+
+    -   `archive`
+    -   `canton`
+    -   `municipality`
+    -   `number`
+
 -   `referendums/stats`: get the number of referendums
 
     It accepts the following URL parameter:
@@ -29,6 +55,14 @@ the following "endpoints":
     -   `filter`: a valid [JSON query filter document](https://docs.mongodb.com/v4.2/core/document/#query-filter-documents) to customize queries in the
         underlying mongoDB collection; needs to be Base64-encoded; there are various [query operators](https://docs.mongodb.com/v4.2/reference/operator/query/)
         available to build complex queries
+
+-   `s3_objects`: retrieve a file stored on the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design)
+
+    It's not a real REST API endpoint but rather a URL redirection (I guess). It expects an object key to be appended like this:
+
+    ``` {.http}
+    GET https://services.c2d.ch/s3_objects/referendum_5f859fafd1291cc3961f1bc2_0002.pdf
+    ```
 
 -   `states`: get the first 10 sub-national states that match the query
 
@@ -136,28 +170,7 @@ is_online <- function(quiet = FALSE) {
 TODO:
 
 -   [ ] Implement getting partial results as soon as [internal issue \#11](https://github.com/ccmdesign/c2d-app/issues/11) is resolved.
-
-NOTES:
-
--   The following values are used to denote empty values:
-
-    -   `-1L` in integer fields (means "information not available or nonexistent")
-    -   `-2L` in integer fields ([means "information not given"](https://github.com/ccmdesign/c2d-app/issues/13#issuecomment-802466615))
-    -   `""` in character fields
-    -   (Named) `list()` in array fields
-
--   The returned JSON data has between 22 and 26 fields. Fields that are not always present include:
-
-    -   `archive`
-    -   `canton`
-    -   `municipality`
-    -   `number`
-
--   The files listed in the `files` field can be retrieved by feeding `files.object_key` to the C2D API's `s3_objects/` endpoint, e.g.:
-
-    ``` {.http}
-    GET https://services.c2d.ch/s3_objects/referendum_5f859fafd1291cc3961f1bc2_0002.pdf
-    ```
+-   [ ] Upstream recodings etc. as far as possible and subsequently remove them from `referendums()` and `assemble_query_filter()`.
 
 ```{r}
 #' Get referendum data
@@ -515,3 +528,4 @@ validate_referendums <- function(data,
   
   data
 }
+```
