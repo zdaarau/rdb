@@ -2,7 +2,10 @@
 # See `README.md#r-markdown-format` for more information on the literature programming approach used applying the R Markdown format.
 
 utils::globalVariables(names = c(".",
-                                 "items"))
+                                 "content-disposition",
+                                 "items",
+                                 "sudd_prefix",
+                                 "votes"))
 
 .onLoad <- function(libname, pkgname) {
   pkgpins::clear(pkg = pkgname,
@@ -16,11 +19,103 @@ utils::globalVariables(names = c(".",
 
 pkg <- utils::packageName()
 
+required_fields <- c("_id",
+                     "country_name",
+                     "created_on",
+                     "level",
+                     "title",
+                     "total_electorate",
+                     "votes_no",
+                     "votes_yes")
+
 httr_config <- function() {
   
-  httr::config(cainfo = system.file("certs", "3479778542.crt",
-                                    package = pkg,
-                                    mustWork = TRUE))
+  httr::config(cainfo = fs::path_package(package = pkg,
+                                         "certs", "3479778542.crt"))
+}
+
+#' Assemble MongoDB query filter document
+#'
+#' @param country_code The `country_code`(s) to be included. A character vector.
+#' @param subnational_entity_name The `subnational_entity_name`(s) to be included. A character vector.
+#' @param municipality The `municipality`(s) to be included. A character vector.
+#' @param level The `level`(s) to be included. A character vector.
+#' @param type The `type`(s) to be included. A character vector.
+#' @param date The `date`(s) to be included. A character vector.
+#' @param is_draft `TRUE` means to include only referendum entries with _draft_ status, `FALSE` to include only normal entries. Set to `NULL` in order to
+#'   include both draft and normal entries.
+#' @param date_time_created_min The minimum `date_time_created` to be included. A [date][base::Date], a [datetime][base::DateTimeClasses], or something
+#'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`).
+#' @param date_time_created_max The maximum `date_time_created` to be included. A [date][base::Date], a [datetime][base::DateTimeClasses], or something
+#'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`).
+#' @param query_filter A valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents) which allows for
+#'   maximum control over what data is included. This takes precedence over all the other parameters, i.e. if `query_filter` is provided, all the other
+#'   parameters are ignored.
+#' @param base64_encode Whether or not to [Base64](https://en.wikipedia.org/wiki/Base64)-encode the resulting query filter document. Note that the
+#'   `query_filter` argument provided to other functions of this package must be Base64-encoded.
+#'
+#' @return A character scalar containing a valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents),
+#'   [Base64](https://en.wikipedia.org/wiki/Base64)-encoded if `base64_encode = TRUE`.
+assemble_query_filter <- function(country_code = NULL,
+                                  subnational_entity_name = NULL,
+                                  municipality = NULL,
+                                  level = NULL,
+                                  type = NULL,
+                                  date = NULL,
+                                  is_draft = NULL,
+                                  date_time_created_min = NULL,
+                                  date_time_created_max = NULL,
+                                  query_filter = NULL,
+                                  base64_encode = TRUE) {
+  
+  # assemble JSON query filter document if `query_filter` is not provided
+  if (is.null(query_filter)) {
+    
+    query_filter <-
+      list(country_code = query_filter_in(country_code),
+           canton = query_filter_in(subnational_entity_name),
+           municipality = query_filter_in(municipality),
+           level =
+             level %>%
+             purrr::when(is.null(.) ~ .,
+                         ~ dplyr::recode(., "subnational" = "sub-national") %>% stringr::str_to_sentence()) %>%
+             query_filter_in(),
+           institution =
+             type %>%
+             purrr::when(is.null(.) ~ .,
+                         ~ dplyr::recode("citizens' assembly" = "citizen assembly") %>% stringr::str_to_sentence()) %>%
+             query_filter_in(),
+           date = query_filter_in(date),
+           draft = checkmate::assert_flag(is_draft,
+                                          null.ok = TRUE),
+           created_on = query_filter_date(min = date_time_created_min,
+                                          max = date_time_created_max)) %>%
+      # remove `NULL` elements
+      purrr::compact() %>%
+      # convert to base64-encoded JSON
+      jsonlite::toJSON(POSIXt = "ISO8601",
+                       auto_unbox = TRUE,
+                       digits = NA,
+                       pretty = FALSE)
+  }
+  
+  query_filter %>% purrr::when(base64_encode ~ jsonlite::base64_enc(.),
+                               ~ .)
+}
+
+query_filter_date <- function(min,
+                              max) {
+  
+  list(`$gte` = list(`$date` = lubridate::as_datetime(min)) %>% purrr::compact(),
+       `$lte` = list(`$date` = lubridate::as_datetime(max)) %>% purrr::compact()) %>%
+    purrr::compact()
+}
+
+query_filter_in <- function(x) {
+  
+  x %>% purrr::when(is.null(.) || length(.) == 0L ~ NULL,
+                    length(.) == 1 ~ .,
+                    ~ list(`$in` = .))
 }
 
 #' Test C2D API availability
@@ -60,19 +155,41 @@ is_online <- function(quiet = FALSE) {
 
 #' Get referendum data
 #'
-#' Downloads the complete data about all referendums covered by the C2D Database.
-#'
-#' Currently, this function only allows to download the C2D referendums database in its entirety.
+#' Downloads the referendum data from the C2D Database.
 #'
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
-#' @param incl_drafts Whether or not to include referendum entries with _draft_ status in the returned data.
+#' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the C2D database.
+#' @inheritParams assemble_query_filter
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' # get all referendums (excl. drafts)
+#' c2d::referendums()}
+#' 
+#' # get only referendums in Austria on subnational level
+#' c2d::referendums(country_code = "AT",
+#'                  level = "subnational")
+#' 
+#' # provide custom `query_filter` for more complex queries like regex matches
+#' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
+#' c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')
 referendums <- function(use_cache = TRUE,
                         cache_lifespan = "1 week",
-                        incl_drafts = FALSE) {
+                        incl_archive = FALSE,
+                        is_draft = FALSE,
+                        country_code = NULL,
+                        subnational_entity_name = NULL,
+                        municipality = NULL,
+                        level = NULL,
+                        type = NULL,
+                        date = NULL,
+                        date_time_created_min = NULL,
+                        date_time_created_max = NULL,
+                        query_filter = NULL) {
   
   pkgpins::with_cache(.fn = ~ {
     
@@ -81,7 +198,17 @@ referendums <- function(use_cache = TRUE,
       httr::RETRY(verb = "GET",
                   url = "https://services.c2d.ch/referendums",
                   query = list(mode = "stream",
-                               format = "json"),
+                               format = "json",
+                               filter = assemble_query_filter(country_code = country_code,
+                                                              subnational_entity_name = subnational_entity_name,
+                                                              municipality = municipality,
+                                                              level = level,
+                                                              type = type,
+                                                              date = date,
+                                                              is_draft = is_draft,
+                                                              date_time_created_min = date_time_created_min,
+                                                              date_time_created_max = date_time_created_max,
+                                                              query_filter = query_filter)),
                   config = httr_config(),
                   times = 5L) %>%
       httr::content(as = "parsed") %$%
@@ -92,7 +219,16 @@ referendums <- function(use_cache = TRUE,
       # convert to tibble
       dplyr::bind_rows()
     
-    # check integrity
+    # check data integrity
+    ## ensure mandatory fields are never `NA`
+    if (data %>%
+        dplyr::select(all_of(required_fields)) %>%
+        dplyr::filter(dplyr::if_any(.fns = is.na)) %>%
+        nrow()) {
+      
+      rlang::abort(cli::format_error("Mandatory fields detected that contain {.val NA} values. Please debug."))
+    }
+    
     ## ensure there's always exactly *one* `oid` per row
     ids <- data$`_id` %>% purrr::map(length)
     
@@ -100,7 +236,7 @@ referendums <- function(use_cache = TRUE,
         !"$oid" %in% unique(names(ids)) ||
         any(purrr::flatten_int(unique(ids))) != 1L) {
       
-      rlang::abort("Unexpected ID fields detected. Please debug.")
+      rlang::abort(cli::format_error("Unexpected ID fields detected. Please debug."))
     }
     
     ## ensure `oid`s are unique
@@ -111,7 +247,14 @@ referendums <- function(use_cache = TRUE,
         magrittr::equals(nrow(data)) %>%
         magrittr::not()) {
       
-      rlang::abort("Duplicated `oid`s detected. Please debug.")
+      rlang::abort(cli::format_error("Duplicated {.var oid}s detected. Please debug."))
+    }
+    
+    ## ensure `country_codes`s are valid
+    invalid_country_codes <- data$country_code[!(data$country_code %in% countrycode::codelist$iso2c)]
+    
+    if (length(invalid_country_codes)) {
+      rlang::abort(cli::format_error("Unknown {.var country_code}s detected. Please debug."))
     }
     
     # tidy data
@@ -121,66 +264,125 @@ referendums <- function(use_cache = TRUE,
       tidyr::unnest_wider(col = categories) %>%
       tidyr::unnest_wider(col = title,
                           names_sep = "_") %>%
-      # rename variables
-      dplyr::rename(created_datetime = created_on,
-                    has_urgent_legal_basis = legal_act_type,
-                    id = `_id`,
-                    is_binding = vote_result_status,
-                    is_counter_proposal = counter_proposal,
-                    is_draft = draft,
-                    legal_basis_type = official_status,
-                    object_author = author_of_the_vote_object,
-                    object_legal_level = hierarchy_of_the_legal_norm,
-                    object_type = vote_object,
-                    subnational_entity = canton,
-                    trigger_actor = vote_trigger_actor,
-                    trigger_state_level = vote_trigger_state_level,
-                    trigger_threshold = vote_trigger_number,
-                    trigger_time_limit = vote_trigger_time,
-                    trigger_type = vote_trigger,
-                    type = institution) %>%
-      # recode variables
+      # rename variables (since the MongoDB-based API doesn't demand a schema, we can't use `dplyr::rename()`)
+      magrittr::set_names(names(.) %>% dplyr::recode("created_on" = "date_time_created",
+                                                     "legal_act_type" = "has_urgent_legal_basis",
+                                                     "_id" = "id",
+                                                     "number" = "id_official",
+                                                     "draft" = "is_draft",
+                                                     "canton" = "subnational_entity_name",
+                                                     "total_electorate" = "electorate_total",
+                                                     "citizens_abroad" = "electorate_abroad",
+                                                     "votes_per_canton" = "votes_per_subterritory",
+                                                     "national_council_yes" = "lower_house_yes",
+                                                     "national_council_no" = "lower_house_no",
+                                                     "national_council_abstentions" = "lower_house_abstentions",
+                                                     "states_council_yes" = "upper_house_yes",
+                                                     "states_council_no" = "upper_house_no",
+                                                     "states_council_abstentions" = "upper_house_abstentions",
+                                                     "recommendation" = "position_government",
+                                                     "institution" = "type",
+                                                     "vote_result_status" = "is_binding",
+                                                     "counter_proposal" = "is_counter_proposal",
+                                                     "official_status" = "legal_basis_type",
+                                                     "author_of_the_vote_object" = "object_author",
+                                                     "hierarchy_of_the_legal_norm" = "object_legal_level",
+                                                     "vote_object" = "object_type",
+                                                     "vote_trigger_actor" = "trigger_actor",
+                                                     "vote_trigger_state_level" = "trigger_state_level",
+                                                     "vote_trigger_number" = "trigger_threshold",
+                                                     "vote_trigger_time" = "trigger_time_limit",
+                                                     "vote_trigger" = "trigger_type")) %>%
+      # create/recode variables
       dplyr::mutate(
         # flatten unnecessarily convoluted list columns
         dplyr::across(c(id,
                         action,
-                        excluded_topics,
-                        special_topics,
-                        tags),
+                        tags,
+                        any_of(c("excluded_topics",
+                                 "special_topics"))),
                       ~ .x %>% purrr::map(unlist)),
+        
         # replace empty lists with `NULL` in list columns
         dplyr::across(where(is.list),
                       ~ dplyr::case_when(.x %>% purrr::map_lgl(~ length(.x) == 0L) ~ list(NULL),
                                          TRUE ~ .x)),
+        
         # use explicit NA values
         dplyr::across(where(is.integer),
-                      ~ dplyr::if_else(.x %in% c(-1L, -2L), NA_integer_, .x)),
+                      ~ dplyr::if_else(.x %in% c(-1L, -2L),
+                                       NA_integer_,
+                                       .x)),
         dplyr::across(where(is.character),
-                      ~ dplyr::if_else(.x == "", NA_character_, .x)),
-        # convert values to all-lowercase
-        dplyr::across(c(legal_basis_type,
-                        level,
-                        object_author,
-                        object_legal_level,
-                        object_type,
+                      ~ dplyr::if_else(.x %in% c("", "-1", "-2"),
+                                       NA_character_,
+                                       .x)),
+        dplyr::across(any_of(c("states_yes", "states_no")),
+                      ~ dplyr::if_else(.x %in% c(-1.0, -2.0),
+                                       NA_real_,
+                                       .x)),
+        result = result %>% dplyr::if_else(. %in% c("unknown", "not provided"),
+                                           NA_character_,
+                                           .),
+        
+        # convert values to lowercase where appropriate
+        dplyr::across(c(level,
                         result,
-                        trigger_actor,
-                        trigger_state_level,
-                        trigger_type,
-                        type),
+                        type,
+                        any_of(c("legal_basis_type",
+                                 "object_author",
+                                 "object_legal_level",
+                                 "object_type",
+                                 "trigger_actor",
+                                 "trigger_state_level",
+                                 "trigger_type"))),
                       stringr::str_to_lower),
+        # only convert non-abbreviations to lowercase for the following vars
+        dplyr::across(.cols = tags,
+                      .fns = purrr::map,
+                      .f = ~
+                        .x %>%
+                        stringr::str_split(pattern = "\\s") %>%
+                        purrr::map_chr(~ .x %>%
+                                         dplyr::if_else(stringr::str_detect(string = .,
+                                                                            pattern = "^[^[:lower:]]+$"),
+                                                        .,
+                                                        stringr::str_to_lower(.)) %>%
+                                         paste(collapse = " "))),
         
         # specific recodings
+        ## split `id_official` into `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
+        id_sudd =
+          id_official %>%
+          dplyr::if_else(stringr::str_detect(string = .,
+                                             pattern = "^\\D"),
+                         .,
+                         NA_character_) %>%
+          # everything beyond the 8th char seems to be manually added -> strip!
+          stringr::str_sub(end = 8L),
+        id_official =
+          id_official %>%
+          dplyr::if_else(stringr::str_detect(string = .,
+                                             pattern = "^\\D"),
+                         NA_character_,
+                         .),
         ## binary (dummies)
-        is_binding = dplyr::case_when(is_binding == "Binding" ~ TRUE,
-                                      is_binding == "Non-binding" ~ FALSE,
-                                      TRUE ~ NA),
-        is_counter_proposal = dplyr::case_when(is_counter_proposal == "Yes" ~ TRUE,
-                                               is_counter_proposal == "No" ~ FALSE,
-                                               TRUE ~ NA),
-        has_urgent_legal_basis = dplyr::case_when(has_urgent_legal_basis == "Urgent" ~ TRUE,
-                                                  has_urgent_legal_basis == "Normal" ~ FALSE,
-                                                  TRUE ~ NA),
+        dplyr::across(any_of("position_government"),
+                      ~ dplyr::case_when(.x == "Acceptance" ~ "yes",
+                                         .x == "Rejection" ~ "no",
+                                         TRUE ~ NA_character_)),
+        dplyr::across(any_of("is_binding"),
+                      ~ dplyr::case_when(.x == "Binding" ~ TRUE,
+                                         .x == "Non-binding" ~ FALSE,
+                                         TRUE ~ NA)),
+        dplyr::across(any_of("is_counter_proposal"),
+                      ~ dplyr::case_when(.x == "Yes" ~ TRUE,
+                                         .x == "No" ~ FALSE,
+                                         TRUE ~ NA)),
+        dplyr::across(any_of("has_urgent_legal_basis"),
+                      ~ dplyr::case_when(.x == "Urgent" ~ TRUE,
+                                         .x == "Normal" ~ FALSE,
+                                         TRUE ~ NA)),
         ## nominal
         id = purrr::flatten_chr(id),
         level = stringr::str_replace(string = level,
@@ -188,74 +390,196 @@ referendums <- function(use_cache = TRUE,
                                      replacement = "subnational"),
         type = type %>% dplyr::recode("citizen assembly" = "citizens' assembly",
                                       "not provided" = NA_character_),
-        trigger_actor = trigger_actor %>% dplyr::recode(institution = "other institution"),
-        object_type = stringr::str_replace_all(string = object_type,
-                                               pattern = c("ausformulierter vorschlag" = "formulated proposal",
-                                                           "allg. anregung" = "general proposal")),
+        dplyr::across(any_of("trigger_actor"),
+                      ~ .x %>% dplyr::recode(institution = "other institution")),
+        dplyr::across(any_of("object_type"),
+                      ~ .x %>% dplyr::recode("legal text (ausformulierter vorschlag)" = "legal text (formulated proposal)",
+                                             "legal text (allg. anregung)" = "legal text (general proposal)")),
         ## ordinal
         ## interval
-        created_datetime = purrr::flatten_dbl(created_datetime) %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime()
+        date_time_created = purrr::flatten_dbl(date_time_created) %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime(),
+        files = files %>% purrr::map(~ .x %>%
+                                       # harmonize depth (i.e. add list level if necessary)
+                                       purrr::when(length(.) == 0L || purrr::vec_depth(.) > 3L ~ .,
+                                                   ~ list(.)) %>%
+                                       purrr::map(~ .x %>%
+                                                    # unnest and restore `date`
+                                                    purrr::assign_in(where = "date",
+                                                                     value =
+                                                                       .$date %>%
+                                                                       purrr::flatten_dbl() %>%
+                                                                       magrittr::divide_by(1000L) %>%
+                                                                       lubridate::as_datetime()) %>%
+                                                    # change subvariable names
+                                                    magrittr::set_names(names(.) %>% dplyr::recode("date" = "date_time_attached",
+                                                                                                   "object_key" = "s3_object_key",
+                                                                                                   "size" = "file_size",
+                                                                                                   "deleted" = "is_deleted")))),
+        
+        # variable creations
+        url_sudd = dplyr::if_else(!is.na(id_sudd),
+                                  paste0("https://sudd.ch/event.php?id=", id_sudd),
+                                  NA_character_),
+        url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national",
+                                        paste0("https://swissvotes.ch/vote/", id_official),
+                                        NA_character_)
       ) %>%
+      
       # reorder columns
       dplyr::relocate(id,
-                      is_draft,
+                      id_official,
+                      id_sudd,
                       country_code,
                       country_name,
-                      subnational_entity,
+                      subnational_entity_name,
                       municipality,
                       level,
-                      type,
                       date,
-                      created_datetime,
-                      starts_with("title_"),
-                      total_electorate,
-                      citizens_abroad,
-                      votes_yes,
-                      votes_no,
-                      votes_empty,
-                      votes_invalid,
-                      votes_per_canton,
-                      result,
+                      title_de,
+                      title_fr,
+                      title_en,
                       committee_name,
-                      number, # TODO: Find out what this is!
-                      object_type,
-                      object_author,
-                      object_legal_level,
-                      legal_basis_type,
-                      has_urgent_legal_basis,
-                      degree_of_revision,
-                      is_binding,
-                      is_counter_proposal,
-                      vote_venue,
-                      starts_with("trigger_"),
-                      turnout_quorum,
-                      decision_quorum,
-                      referendum_text_options,
-                      institutional_precondition,
-                      institutional_precondition_decision,
-                      institutional_precondition_decision_actor,
-                      action,
-                      special_topics,
-                      excluded_topics,
-                      national_council_yes,
-                      national_council_no,
-                      national_council_abstentions,
-                      states_council_yes,
-                      states_council_no,
-                      states_council_abstentions,
-                      recommendation,
-                      states_yes,
-                      states_no,
-                      remarks,
+                      result,
+                      any_of("states_yes"),
+                      any_of("states_no"),
+                      electorate_total,
+                      electorate_abroad,
+                      any_of("votes_yes"),
+                      any_of("votes_no"),
+                      any_of("votes_empty"),
+                      any_of("votes_invalid"),
+                      any_of("votes_per_subterritory"),
+                      any_of("lower_house_yes"),
+                      any_of("lower_house_no"),
+                      any_of("lower_house_abstentions"),
+                      any_of("upper_house_yes"),
+                      any_of("upper_house_no"),
+                      any_of("upper_house_abstentions"),
+                      any_of("position_government"),
                       tags,
+                      remarks,
                       files,
-                      archive) %>%
-      purrr::when(incl_drafts ~ .,
-                  ~ dplyr::filter(.data = ., !is_draft))
+                      url_sudd,
+                      url_swissvotes,
+                      is_draft,
+                      date_time_created,
+                      archive,
+                      type,
+                      any_of("object_type"),
+                      any_of("object_author"),
+                      any_of("object_legal_level"),
+                      any_of("legal_basis_type"),
+                      any_of("has_urgent_legal_basis"),
+                      any_of("degree_of_revision"),
+                      any_of("is_binding"),
+                      any_of("is_counter_proposal"),
+                      any_of("vote_venue"),
+                      starts_with("trigger_"),
+                      any_of("turnout_quorum"),
+                      any_of("decision_quorum"),
+                      any_of("referendum_text_options"),
+                      any_of("institutional_precondition"),
+                      any_of("institutional_precondition_decision"),
+                      any_of("institutional_precondition_decision_actor"),
+                      any_of("action"),
+                      any_of("special_topics"),
+                      any_of("excluded_topics")) %>%
+      purrr::when(incl_archive ~ .,
+                  ~ dplyr::select(.data = ., -archive))
+    
+    # correct known errors
+    ## `id_sudd`
+    data$id_sudd[data$country_code == "AZ" & data$id_sudd == "az021009"] <- "az022009"
+    data$id_sudd[data$country_code == "BS" & data$id_sudd == "bs021002"] <- "bs022002"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011972"] <- "mg011972"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011975"] <- "mg011975"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011992"] <- "mg011992"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011995"] <- "mg011995"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011998"] <- "mg011998"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md012007"] <- "mg012007"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md012010"] <- "mg012010"
+    data$id_sudd[data$country_code == "MH" & data$id_sudd == "mh00578"] <- "mh011979"
+    data$id_sudd[data$country_code == "MW" & data$id_sudd == "mw012003"] <- "mw011993"
+    data$id_sudd[data$country_code == "EC" & data$id_sudd == "ec031993"] <- "ec031994"
+    data$id_sudd[data$country_code == "EC" & data$id_sudd == "ec021006"] <- "ec022006"
+    data$id_sudd[data$country_code == "GQ" & data$id_sudd == "gq012968"] <- "gq011968"
+    data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt011998"] <- "gt011999"
+    data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt021998"] <- "gt021999"
+    data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt031998"] <- "gt031999"
+    data$id_sudd[data$country_code == "LI" & data$id_sudd == "li021920"] <- "li021930"
+    data$id_sudd[data$country_code == "LT" & data$id_sudd == "lt031993"] <- "lt031994"
+    data$id_sudd[data$country_code == "NF" & data$id_sudd == "nf011980"] <- "nf011979"
+    data$id_sudd[data$country_code == "TV" & data$id_sudd == "tv011994"] <- "tv011974"
+    data$id_sudd[data$country_code == "UY" & data$id_sudd == "uy011918"] <- "uy011917"
+    data$id_sudd[data$country_code == "YE" & data$id_sudd == "ye012991"] <- "ye011991"
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+    
+    # return data
+    data
   },
   .use_cache = use_cache,
   .cache_lifespan = cache_lifespan,
   .pkg = pkg)
+}
+
+#' Count number of referendums
+#'
+#' Counts the number of referendums in the C2D Database.
+#'
+#' @inheritParams assemble_query_filter
+#'
+#' @return A named list with `level` as names and referendum counts as values.
+#' @export
+#'
+#' @examples
+#' # the whole database (excl. drafts)
+#' c2d::count_referendums()
+#' 
+#' # only Swiss and Austrian referendums
+#' c2d::count_referendums(country_code = c("CH", "AT"))
+#' 
+#' # only Swiss referendums between 2020 and 2021
+#' c2d::count_referendums(country_code = "CH",
+#'                        date_time_created_min = "2020-01-01",
+#'                        date_time_created_max = "2021-01-01")
+count_referendums <- function(is_draft = FALSE,
+                              country_code = NULL,
+                              subnational_entity_name = NULL,
+                              municipality = NULL,
+                              level = NULL,
+                              type = NULL,
+                              date = NULL,
+                              date_time_created_min = NULL,
+                              date_time_created_max = NULL,
+                              query_filter = NULL) {
+  httr::RETRY(verb = "GET",
+              url = "https://services.c2d.ch/referendums/stats",
+              query = list(filter = assemble_query_filter(country_code = country_code,
+                                                          subnational_entity_name = subnational_entity_name,
+                                                          municipality = municipality,
+                                                          level = level,
+                                                          type = type,
+                                                          date = date,
+                                                          is_draft = is_draft,
+                                                          date_time_created_min = date_time_created_min,
+                                                          date_time_created_max = date_time_created_max,
+                                                          query_filter = query_filter)),
+              config = httr_config(),
+              times = 5L) %>%
+    httr::content(as = "parsed") %$%
+    votes %>%
+    magrittr::set_names(names(.) %>% dplyr::recode("sub_national" = "subnational"))
 }
 
 #' Search in English referendum titles
@@ -272,7 +596,7 @@ referendums <- function(use_cache = TRUE,
 #' @export
 #'
 #' @examples
-#' search_referendums("freedom")
+#' c2d::search_referendums("freedom")
 search_referendums <- function(term) {
   
   httr::RETRY(verb = "GET",
@@ -287,6 +611,9 @@ search_referendums <- function(term) {
 }
 
 #' Download file attachment
+#'
+#' Downloads a file attachment from the C2D database. The necessary `s3_object_key`s identifying individual files are found in the `files` list column returned
+#' by [referendums()].
 #'
 #' @param s3_object_key The key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design). A character scalar.
 #' @param path The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.
@@ -386,3 +713,4 @@ validate_referendums <- function(data,
   }
   
   data
+}

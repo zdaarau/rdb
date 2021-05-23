@@ -20,5 +20,5 @@ Note that this function is probably not of much use since it doesn't return any 
 titles.
 }
 \examples{
-search_referendums("freedom")
+c2d::search_referendums("freedom")
 }

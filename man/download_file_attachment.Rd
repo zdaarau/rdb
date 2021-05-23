@@ -15,7 +15,8 @@ download_file_attachment(s3_object_key, path = ".")
 A \link[httr:response]{response object}, invisibly.
 }
 \description{
-Download file attachment
+Downloads a file attachment from the C2D database. The necessary \code{s3_object_key}s identifying individual files are found in the \code{files} list column returned
+by \code{\link[=referendums]{referendums()}}.
 }
 \examples{
 library(magrittr)

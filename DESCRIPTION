@@ -1,7 +1,7 @@
 Package: c2d
 Title: Download Data from the C2D Database, Which Covers Direct Democratic
     Votes Worldwide
-Version: 0.0.9003
+Version: 0.0.9004
 Authors@R: 
     person(given = "Salim",
            family = "Brüggemann",
@@ -17,15 +17,19 @@ BugReports: https://gitlab.com/zdaarau/c2d/issues
 Imports: 
     checkmate (>= 2.0.0),
     cli (>= 2.5.0),
+    countrycode (>= 1.2.0),
     dplyr (>= 1.0.4),
+    fs (>= 1.5.0),
     glue (>= 1.4.2),
     httr (>= 1.4.2),
+    jsonlite (>= 1.7.2),
     lubridate (>= 1.7.10),
     magrittr (>= 2.0.1),
     pkgpins (>= 0.4.2),
     purrr (>= 0.3.4),
     rlang (>= 0.4.10),
     stringr (>= 1.4.0),
+    tibble (>= 3.1.2),
     tidyr (>= 1.1.2),
     utils
 Suggests: 
