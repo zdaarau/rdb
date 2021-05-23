@@ -1,0 +1,256 @@
+# TODOs
+
+## Content
+
+-   Bei verschiedenen Abstimmungen meldet sudd.ch
+
+    > "id=..." ist gelöscht , weil keine Volksabstimmung stattgefunden hat.
+
+    Betroffen sind die folgenden Abstimmungen:
+
+    -   [Ägypten 1976-06-10](https://sudd.ch/event.php?id=eg011976)
+    -   [New Zealand 1931-12-02](https://sudd.ch/event.php?id=nz011931) (3 Einträge in der C2D-Datenbank, jeweils einer pro Option)
+    -   [Puerto Rico 1952-11-04 (3. Abstimmungsvorlage "Abolition of certain social rights")](https://sudd.ch/event.php?lang=de&id=pr041952)
+
+    Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!
+
+-   [ ] Sobald via Admin-Interface nach Draft-Status gefiltert werden kann, sollten die existierenden 12 Drafts geprüft werden -\> entweder vervollständigen und
+    freischalten oder löschen!
+
+-   [ ] Clean `id_official`; there are likely erroneous entries or ones that don't designate an `id_official` but another kind of ID; entries to double-check:
+
+    ``` {.r}
+    c2d::referendums() %>% dplyr::filter(stringr::str_detect(string = id_official, pattern = "\\D") | !(country_code == "CH" & level == "national") & !is.na(id_official))
+    ```
+
+    Plus: What does `id_official = "0"` mean?
+
+-   [ ] voting with `id == "5bbbfee992a21351232e4f37"` (Romania 2008-02-01) was limited to the region
+    [Szeklerland](https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land), therefore `subnational_entity` should be set to `Székely Land`
+
+-   [ ] **`municipality`** scheint inkonsistent zugewiesen; enthält Werte, die klar eine Gemeinde bezeichnen (bspw. `"London"`), aber auch solche wie
+    [`"Republic of Serbian Krajina until 1991"`](https://de.wikipedia.org/wiki/Republik_Serbische_Krajina) oder
+    [`Republic of Serbian People (1963-1992)`](https://de.wikipedia.org/wiki/Sozialistische_F%C3%B6derative_Republik_Jugoslawien#Sozialistische_F%C3%B6derative_Republik_Jugoslawien_(1963%E2%80%931992))...
+    bei letzteren sollte
+
+    -   der passende [`country_code_historical` für "Yugoslavia"](https://en.wikipedia.org/wiki/ISO_3166-3#Current_codes) gesetzt werden
+    -   der `country_code = "CS"` für den Folgestaat "Serbia and Montenegro" gesetzt werden
+    -   `is_past_jurisdiction = TRUE` gesetzt werden
+    -   den gegenwärtigen Wert in `municipality` stattdessen in `subnational_entity_name` eintragen
+
+## Schema
+
+-   [ ] `tags`: Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time
+    (selecting a child tag should always result in implicit selection of its parent (e.g. in a different (e.g. faded) color))! Instead, we should afterwards
+    derive parent tags automatically from child tags based on the [hierarchical tag
+    structure](https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json)!
+
+    Besides we might wanna discuss the exact rationale about the max limit of 3 tags (maybe a max. of 3 *main* tags would make more sense?).
+
+-   [ ] The set of possible `tags` has some errors and inconsistencies that should be corrected:
+
+    -   Errors:
+
+        -   `Territoral questions` -\> `Territorial questions`
+        -   `Citizen's initiatives` -\> `Citizens' initiatives`
+
+    -   Inconsistencies: lowercase everything! It makes no sense to have "sentence case" for these tags; plus there's at least one tag where the second word
+        also begins in uppercase (`Social Policy`) which just seems random.
+
+-   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
+    one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
+
+    > Diese Abstimmung ist nicht offiziell und wird von niemandem anerkannt.
+
+    Instead of not capturing such votings, it would be superior to introduce another variable indicating the status of a voting (official, inofficial, ...);
+    currently we only have an *institutional* variable `legal_basis_type` (formerly `official_status`) which measures a completely different thing.
+
+-   [ ] Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted.
+
+-   [ ] We need a proper way to capture referendums with more than yes-or-no answer options. This includes
+
+    -   multiple options (e.g. [like this one](https://sudd.ch/event.php?id=bq012014))
+    -   preference / hierarchy information, i.e. whether or not multiple choices at the same time are allowed (i.e. whether or not options are mutually
+        exclusive) -- and if so -- how ambiguities are resolved (e.g. by an additional preference list)
+
+    We would also need to decide if counterproposals are simply to be included as additional "options" or if they are to be captured as separate entries
+    (recommended); if the latter, we should introduce an additional variable `interdependent_ids` or the like to link to the "sibling" entries.
+
+    Additionally, the `result` variable needs to be changed to hold the option that won the referendum.
+
+-   [ ] Standardize `country_name`; currently it's not consistent, e.g. for `country_code == "GB"` sometimes `country_name = "United Kingdom"`, sometimes
+    `"United Kingdom of Great Britain and Northern Ireland"` is used.
+
+    See [`countrycode::codelist`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) for possible standards; [ISO 3166 English short
+    country names](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) (`countrycode::codelist$iso.name.en`) seem most promising.
+
+    Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future
+    coding inconsistencies.
+
+-   [ ] Introduce `subnational_entity_code`; [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) codes seem perfectly suitable
+
+    open points:
+
+    -   we need to establish a policy on which `country_code` to assign to [subnational entitites that have both an ISO 3166-1 country code as well as an
+        ISO-3166-2 subdivision code](https://en.wikipedia.org/wiki/ISO_3166-2#Subdivisions_included_in_ISO_3166-1) (recommended: avoid using the own ISO 3166-1
+        country code but assign the one from the subdivision's "parent" country)
+
+    -   how to deal with subnational entity changes? ISO 3166-2 is regularly updated but there doesn't seem to exist an equivalent to ISO-3166-3 codes on the
+        subnational level...
+
+    -   how to deal with "inofficial" / non-authorized subnational entities that don't have an ISO-3166-2 code?
+
+    -   (I think introducing dedicated variables to capture the administrative division hierarchy below the national level in a more fine-grained way makes
+        little sense since [administrative division levels vary widely across the globe](https://en.wikipedia.org/wiki/Administrative_division).)
+
+-   [ ] Standardize `subnational_entity_name`; [ISO 3166-2 country subdivision names](https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en) (definition in
+    chap. 3.29) seem suitable (mapping codes \<-\> names in R via `ISOcodes::ISO_3166_2`; note that for some subdivisions, different names exist for multiple
+    languages, e.g. some [Swiss cantons](https://www.iso.org/obp/ui/#iso:code:3166:CH); `ISOcodes::ISO_3166_2` only tracks one name (the most "native" one per
+    subdivision, I guess))
+
+-   [ ] Introduce `is_past_jurisdiction` signifying if the relevant [jurisdiction](https://en.wikipedia.org/wiki/Jurisdiction_(area)) where the referendum took
+    place still exists (`FALSE`) or not (`TRUE`)
+
+-   [ ] Introduce `country_code_historical` that holds the [ISO 3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) code for referendums in countries that don't
+    exist anymore (see also [this site by Statistics Canada](https://www.statcan.gc.ca/eng/subjects/standard/sccai/2011/scountry-desc); also informative:
+    <https://en.wikipedia.org/wiki/United_Nations_list_of_Non-Self-Governing_Territories>); ISO 3166-3 seems to only assign codes for countries that ceased to
+    exist since 1974 -\> is there any classification for older historical entities?
+
+-   [ ] Introduce `question` holding the referendum question 1:1 as it was asked and `question_en` containing an English translation; open question: what to do
+    when the question was officially asked in multiple languages like in CH?
+
+-   [ ] There is obviously not much consistency in how the referendum titles in the three languages are captured. According to the guidelines to add Swiss
+    votings (`~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx`), the `title_de` (and `title_fr` if one exists) are
+    the official titles by the authorities and `title_en` is a translation of the German one. But
+
+    -   the Swiss authorities (sometimes) also translate the title to English themselves
+        ([example](https://www.admin.ch/gov/en/start/documentation/votes/20181125/horned-cow-initiative.html))
+    -   the guidelines to add international votings (`~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx`) don't say
+        anything about the titles; but sometimes there's a German title for countries where almost certainly no official German version exists (e.g. Venezuela)
+
+-   [ ] Extend the set of variables so the `remarks` field isn't overloaded anymore. Possible extensions (taken from Louis' `remarks` structure (cf.
+    `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx`)):
+
+    -   Background information on the vote (most important actors and events (sudd.ch, Wikipedia, NZZ etc.), content/main points)
+    -   Voting question; original language
+    -   Voting question; English (translation if necessary)
+    -   Legal basis
+    -   Name of the institution in original language
+    -   Specialities of the institution (e.g. special quorum or 2 collecting periods)
+    -   Specialities of the result (e.g. contradictory numbers)
+
+## Validation
+
+-   [ ] Systematically check if all votes in the `sudd.ch` database are included in the C2D database -\> parse `https://sudd.ch/list.php?mode=allrefs` (the
+    `id_sudd` is part of the link in the last column)
+
+-   [ ] According to the guidelines in `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx`, the PDF `files` of
+    `country_code == "CH"` entries must be named consistently `Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag` ("Abstimmungsbroschüre"") and
+    `Results_CH/Kantonskürzel_Jahr_Monat_Tag` (results) -\> check if this is actually always the case!
+
+-   [ ] check `country_code` for obsolete codes, i.e. check if
+
+    ``` {.r}
+    ISOcodes::ISO_3166_3$Alpha_4 %>%
+      # exclude simple renamings where `country_code` didn't change
+      magrittr::extract(stringr::str_sub(string = ., start = 3L) != "AA")
+      # extract former `country_code`
+      strin`gr::str_sub(end = 2L) %>%
+      # check
+      magrittr::is_in(data2$country_code) %>%
+      any()
+    ```
+
+    and if so, assign `country_code_historical`, set `is_past_jurisdiction = TRUE` and assign proper new `country_code`
+    (`ISOcodes::ISO_3166_3$Alpha_4 %>% stringr::str_sub(start = 3L)`; if it's `"HH"`, a "manual" decision about which successor country we shall assign has to
+    be hard-coded)\`
+
+-   check `electorate_abroad` for obvious errors (e.g. `id == "5f99b6c8d1291cc3961f1c2c"` is one)
+
+## [Code written by CCM Design](https://github.com/ccmdesign/c2d-app/)
+
+-   [ ] License code under AGPL \>= 3?
+
+-   [ ] Make repository public?
+
+    Before doing this, we need to ensure that
+
+    1.  no sensitive information is found in the repository (I guess not, but double-check!).
+
+    2.  the access to the C2D services API can't be maliciously exploited somehow (the `filter` URL param allowing to pass MongoDB JSON query filter documents
+        might be problematic...). But note that this API is already public, it's just that a public GitHub repo might increase its visibility.
+
+### C2D Admin Front-end
+
+-   [ ] [Fix copy-paste slip in `ch.c2d.admin/referendum.js`](https://github.com/ccmdesign/c2d-app/issues/14)
+
+-   [ ] Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange)
+
+-   Siehe Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
+
+## C2D Website
+
+-   Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! [ODC-ODbL](https://opendatacommons.org/licenses/odbl/summary/) würde sich anbieten.
+
+-   Ditch the `by ccm.design` promo in the footer?
+
+-   Der C2D-Link auf der [ZDA-Webseite](https://www.zdaarau.ch/en/applications) sollte auf HTTP**S** geändert werden!
+
+## Miscellaneous
+
+-   Die Datenbank braucht ein Logo!
+
+-   Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort "aufzunehmen", könnte passen) und vergleichen mit Zenodo (siehe FA-Notizen)
+
+## Datenbank-Umbenennung
+
+-   Bislang gilt: *C2D* wird als alleiniger Name für die Datenbank bestehen bleiben, sollte die C2D-Abteilung, wie von Andreas Glaser beabsichtigt, umbenannt
+    werden. Dies weil die Datenbank unter diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat. Allerdings taugt "C2D" beim besten Willen nicht
+    als Akronym für eine Datenbank...
+
+    Ich würde daher stattdessen eine zügige Umbenennung in **D3** für *Database on Direct Democracy* nahelegen! Die Domain `d3.vote` wäre noch zu haben (1. Jahr
+    USD 650.-, danach USD 65.-/Jahr). Die alte Domain könnten wir einige Jahre weiter halten und einfach auf die neue umleiten. Im Politik-Bereich ist `D3`
+    bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch die
+    JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
+
+## Offene Fragen
+
+-   Ist `position_government` (ehemals `recommendation`) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal, dies, manchmal jenes?
+
+-   Are `id_sudd`s stable over time?
+
+    They currently seem to consist of
+
+    -   the 2-character lowercase `country_code`
+    -   plus a sequential 2-digit referendum number starting with `01` for the first referendum in the given year
+    -   plus the 4-digit `year` the referendum took place
+
+    Maybe contact the creator [Beat Müller](mailto:beat@sudd.ch) and ask?
+
+-   Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden,
+    mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des [swissdd](https://politanch.github.io/swissdd/)-R-Pakets
+    könnte womöglich ganz aufschlussreich sein!
+
+-   Stimmt Definition von `committee_name` so?
+
+-   Bei der Abstimmung *Norfolk Island 1980-07-10* meint sudd.ch, sie habe stattdessen [1979-07-10
+    stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.
+
+-   Die Abstimmungen *Netherlands 2005-04-08* und *2014-12-17* fanden genau genommen auf [Sint Eustatius](https://de.wikipedia.org/wiki/Sint_Eustatius) statt,
+    siehe sudd.ch-Einträge ([1](https://sudd.ch/event.php?id=an022005), [2](https://sudd.ch/event.php?id=bq012014)); Sint Eustatius ist zwar eine [Besondere
+    Gemeinde der Niederlande](https://de.wikipedia.org/wiki/Karibische_Niederlande), besitzt aber einen eigenen ISO-Ländercode (BQ-SE) etc.
+
+    Sollte daher als `country_name` nicht besser *Sint Eustatius* eingetragen werden? Andernfalls sollte `subnational_entity` auf `"Sint Eustatius"` gesetzt
+    werden, da ja nicht die gesamte Niederlande abstimmen konnte!
+
+-   Die Abstimmungen *France 2006-02-23* und *2006-09-06* beziehen sich auf Referenden in [Sark](https://de.wikipedia.org/wiki/Sark), `country_name` sollte
+    daher auf `"United Kingdom"` oder (besser?) [`"Guernsey"`](https://de.wikipedia.org/wiki/Sark#Gesetzgebung_und_Autonomie) gesetzt werden und
+    `subnational_entity = "Sark"`!
+
+-   Völkerrechtlich umstrittene Gebiete: Was genau ist die C2D-Policy dazu?
+
+    Bspw. werden
+
+    -   alle Abstimmungen, die die [Republik Kosovo](https://de.wikipedia.org/wiki/Kosovo) betreffen, unter dem `country_name` *Serbia* geführt...
+    -   für die Abstimmungen in Taiwan uneinheitliche `country_name`'s verwendet, für die Abstimmungen am 2018-11-24 *Taiwan, Province of China*, für die
+        anderen einfach *Taiwan*...
