@@ -208,9 +208,9 @@
     werden. Dies weil die Datenbank unter diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat. Allerdings taugt "C2D" beim besten Willen nicht
     als Akronym für eine Datenbank...
 
-    Ich würde daher stattdessen eine zügige Umbenennung in **D3** für *Database on Direct Democracy* nahelegen! Die Domain `d3.vote` wäre noch zu haben (1. Jahr
-    USD 650.-, danach USD 65.-/Jahr). Die alte Domain könnten wir einige Jahre weiter halten und einfach auf die neue umleiten. Im Politik-Bereich ist `D3`
-    bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch die
+    Ich würde daher stattdessen eine zügige Umbenennung in **D3** für ***D**atabase on **D**irect **D**emocracy* nahelegen! Die Domain `d3.vote` wäre noch zu
+    haben (1. Jahr USD 650.-, danach USD 65.-/Jahr). Die alte Domain könnten wir einige Jahre weiter halten und einfach auf die neue umleiten. Im
+    Politik-Bereich ist `D3` bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch die
     JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
 
 ## Offene Fragen
