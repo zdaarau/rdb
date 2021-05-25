@@ -647,7 +647,9 @@ referendums <- function(use_cache = TRUE,
                                              "legal text (allg. anregung)" = "legal text (general proposal)")),
         ## ordinal
         ## interval
+        date = lubridate::as_date(date),
         date_time_created = purrr::flatten_dbl(date_time_created) %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime(),
+        ## undefined
         files = files %>% purrr::map(~ .x %>%
                                        # harmonize depth (i.e. add list level if necessary)
                                        purrr::when(length(.) == 0L || purrr::vec_depth(.) > 3L ~ .,
@@ -674,6 +676,15 @@ referendums <- function(use_cache = TRUE,
                                         paste0("https://swissvotes.ch/vote/", id_official),
                                         NA_character_)
       ) %>%
+      
+      # type conversions
+      ## to factor
+      ### nominal vars without variable_values in codebook
+      dplyr::mutate(dplyr::across(any_of(c("country_code",
+                                           "country_name",
+                                           "subnational_entity_name",
+                                           "municipality")),
+                                  as.factor)) %>%
       
       # reorder columns
       dplyr::relocate(id,
