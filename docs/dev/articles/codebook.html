@@ -301,39 +301,39 @@
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 </div>
 </div>
-<div id="states_yes" class="section level3">
+<div id="subterritories_yes" class="section level3">
 <h3 class="hasAnchor">
-<a href="#states_yes" class="anchor"></a><code>states_yes</code>
+<a href="#subterritories_yes" class="anchor"></a><code>subterritories_yes</code>
 </h3>
-<p>The number of administrative subdivisions that approved the referendum.</p>
-<div id="states_yes-constraint" class="section level4">
+<p>The number of administrative subdivisions one level below <a href="#level"><code>level</code></a> that approved the referendum.</p>
+<div id="subterritories_yes-constraint" class="section level4">
 <h4 class="hasAnchor">
-<a href="#states_yes-constraint" class="anchor"></a>Applicability constraint</h4>
+<a href="#subterritories_yes-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">country_code</span> <span class="op">==</span> <span class="st">'CH'</span></code></pre></div>
 </div>
-<div id="states_yes-scale" class="section level4">
+<div id="subterritories_yes-scale" class="section level4">
 <h4 class="hasAnchor">
-<a href="#states_yes-scale" class="anchor"></a>Level of measurement</h4>
+<a href="#subterritories_yes-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>ratio</strong> level.</p>
 </div>
 </div>
-<div id="states_no" class="section level3">
+<div id="subterritories_no" class="section level3">
 <h3 class="hasAnchor">
-<a href="#states_no" class="anchor"></a><code>states_no</code>
+<a href="#subterritories_no" class="anchor"></a><code>subterritories_no</code>
 </h3>
-<p>The number of administrative subdivisions that rejected the referendum.</p>
-<div id="states_no-constraint" class="section level4">
+<p>The number of administrative subdivisions one level below <a href="#level"><code>level</code></a> that rejected the referendum.</p>
+<div id="subterritories_no-constraint" class="section level4">
 <h4 class="hasAnchor">
-<a href="#states_no-constraint" class="anchor"></a>Applicability constraint</h4>
+<a href="#subterritories_no-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">country_code</span> <span class="op">==</span> <span class="st">'CH'</span></code></pre></div>
 </div>
-<div id="states_no-scale" class="section level4">
+<div id="subterritories_no-scale" class="section level4">
 <h4 class="hasAnchor">
-<a href="#states_no-scale" class="anchor"></a>Level of measurement</h4>
+<a href="#subterritories_no-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>ratio</strong> level.</p>
 </div>
 </div>
@@ -407,7 +407,7 @@
 <h3 class="hasAnchor">
 <a href="#votes_per_subterritory" class="anchor"></a><code>votes_per_subterritory</code>
 </h3>
-<p>The number of <a href="#votes_yes"><code>votes_yes</code></a>, <a href="#votes_no"><code>votes_no</code></a>, <a href="#votes_empty"><code>votes_empty</code></a> and <a href="#votes_invalid"><code>votes_invalid</code></a> per subterritory; currently only filled for Swiss referendums on the national level.</p>
+<p>The number of <a href="#votes_yes"><code>votes_yes</code></a>, <a href="#votes_no"><code>votes_no</code></a>, <a href="#votes_empty"><code>votes_empty</code></a> and <a href="#votes_invalid"><code>votes_invalid</code></a> per administrative subdivision one level below <a href="#level"><code>level</code></a>; currently only filled for Swiss referendums on the national level.</p>
 <div id="votes_per_subterritory-constraint" class="section level4">
 <h4 class="hasAnchor">
 <a href="#votes_per_subterritory-constraint" class="anchor"></a>Applicability constraint</h4>
