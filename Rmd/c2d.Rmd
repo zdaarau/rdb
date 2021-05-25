@@ -406,8 +406,8 @@ TODO:
 #' # get all referendums (excl. drafts)
 #' c2d::referendums()}
 #' 
-#' # get only referendums in Austria on subnational level
-#' c2d::referendums(country_code = "AT",
+#' # get only referendums in Austria and Australia on subnational level
+#' c2d::referendums(country_code = c("AT", "AU"),
 #'                  level = "subnational")
 #' 
 #' # provide custom `query_filter` for more complex queries like regex matches
