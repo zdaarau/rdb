@@ -138,9 +138,6 @@ v_vals <- function(v) {
 NOTE: `date` is not stored as an actual [MongoDB `Date` type](https://docs.mongodb.com/manual/reference/bson-types/#std-label-document-bson-type-date) in the
 database, so we can't filter on it. It has [been requested](https://github.com/ccmdesign/c2d-app/issues/20) to change this upstream.
 
-TODO: Check the `date_*_min/max` arguments for validity; create generic function for this (accepting either a numeric value in the valid datetime range or a
-string signifying a date/datetime), ideally in pkg pal?
-
 ```{r}
 #' Assemble MongoDB query filter document
 #'
@@ -218,8 +215,12 @@ assemble_query_filter <- function(country_code = NULL,
                                                               .var.name = "date")),
            draft = checkmate::assert_flag(is_draft,
                                           null.ok = TRUE),
-           created_on = query_filter_date(min = date_time_created_min,
-                                          max = date_time_created_max)) %>%
+           created_on = query_filter_date(min = checkmate::assert_posixct(lubridate::as_datetime(date_time_created_min),
+                                                                          any.missing = FALSE,
+                                                                          .var.name = "date_time_created_min"),
+                                          max = checkmate::assert_posixct(lubridate::as_datetime(date_time_created_max),
+                                                                          any.missing = FALSE,
+                                                                          .var.name = "date_time_created_max"))) %>%
       # remove `NULL` elements
       purrr::compact() %>%
       # convert to base64-encoded JSON
