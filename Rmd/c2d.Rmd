@@ -450,14 +450,6 @@ referendums <- function(use_cache = TRUE,
       httr::content(as = "parsed") %$%
       items %>%
       # unnest columns and ensure list type for multi-value columns
-      # NOTE: this is considerably faster than
-      # purrr::map(.f = ~ .x %>% purrr::modify_if(.p = ~ length(.x) != 1L,
-      #                                           .f = ~ list(.x))) %>%
-      # dplyr::bind_rows() %>%
-      # tidyr::unnest_wider(col = context) %>%
-      # tidyr::unnest_wider(col = categories) %>%
-      # tidyr::unnest_wider(col = title,
-      #                     names_sep = "_")
       purrr::map(.f = function(l,
                                category_names = names(l$categories),
                                context_names = names(l$context),
