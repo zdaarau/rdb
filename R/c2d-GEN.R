@@ -367,12 +367,29 @@ referendums <- function(use_cache = TRUE,
                                                      "special_topics" = "inst_topics_special",
                                                      "degree_of_revision" = "inst_degree_of_revision",
                                                      "vote_venue" = "inst_vote_venue")) %>%
+      # add vars which aren't always included
+      dplyr::full_join(y = tibble::tibble(archive = list(),
+                                          canton = character(),
+                                          municipality = character(),
+                                          id_official = character()),
+                       by = intersect(c("archive",
+                                        "canton",
+                                        "municipality",
+                                        "id_official"),
+                                      colnames(.))) %>%
+      
       # create/recode variables
       dplyr::mutate(
         # replace empty lists with `NULL` in list columns
         dplyr::across(where(is.list),
                       ~ dplyr::case_when(.x %>% purrr::map_lgl(~ length(.x) == 0L) ~ list(NULL),
                                          TRUE ~ .x)),
+        
+        # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
+        dplyr::across(any_of(c("subterritories_no",
+                               "subterritories_yes",
+                               "date_time_created")),
+                      as.double),
         
         # use explicit NA values
         dplyr::across(where(is.integer),
@@ -463,7 +480,7 @@ referendums <- function(use_cache = TRUE,
         ## ordinal
         ## interval
         date = lubridate::as_date(date),
-        date_time_created = purrr::flatten_dbl(date_time_created) %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime(),
+        date_time_created = date_time_created %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime(),
         ## undefined
         files = files %>% purrr::map(~ .x %>%
                                        # harmonize depth (i.e. add list level if necessary)
