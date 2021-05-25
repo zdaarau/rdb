@@ -119,11 +119,11 @@ variable_label = "the number of parliamentarians that abstained from the corresp
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "upper_house_yes"
-variable_label = "the number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the _upper house_; currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland))"
+variable_label = "the number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the _upper house_; currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)))"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "upper_house_no"
-variable_label = "the number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the _upper house_; currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland))"
+variable_label = "the number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the _upper house_; currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)))"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "upper_house_abstentions"

@@ -453,7 +453,7 @@
 <h3 class="hasAnchor">
 <a href="#upper_house_yes" class="anchor"></a><code>upper_house_yes</code>
 </h3>
-<p>The number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; applies only to <a href="https://en.wikipedia.org/wiki/Bicameralism" class="external-link">bicameral legislatures</a> and includes only members of the <em>upper house</em>; currently only filled for Swiss referendums on the national level (<a href="https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)" class="external-link">Council of States</a>.</p>
+<p>The number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; applies only to <a href="https://en.wikipedia.org/wiki/Bicameralism" class="external-link">bicameral legislatures</a> and includes only members of the <em>upper house</em>; currently only filled for Swiss referendums on the national level (<a href="https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)" class="external-link">Council of States</a>).</p>
 <div id="upper_house_yes-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#upper_house_yes-scale" class="anchor"></a>Level of measurement</h4>
@@ -464,7 +464,7 @@
 <h3 class="hasAnchor">
 <a href="#upper_house_no" class="anchor"></a><code>upper_house_no</code>
 </h3>
-<p>The number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; applies only to <a href="https://en.wikipedia.org/wiki/Bicameralism" class="external-link">bicameral legislatures</a> and includes only members of the <em>upper house</em>; currently only filled for Swiss referendums on the national level (<a href="https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)" class="external-link">Council of States</a>.</p>
+<p>The number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; applies only to <a href="https://en.wikipedia.org/wiki/Bicameralism" class="external-link">bicameral legislatures</a> and includes only members of the <em>upper house</em>; currently only filled for Swiss referendums on the national level (<a href="https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)" class="external-link">Council of States</a>).</p>
 <div id="upper_house_no-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#upper_house_no-scale" class="anchor"></a>Level of measurement</h4>
@@ -1215,8 +1215,8 @@
 <div id="institution-level-variables" class="section level2">
 <h2 class="hasAnchor">
 <a href="#institution-level-variables" class="anchor"></a>Institution-level variables</h2>
-<p>For the following variables, the <a href="https://en.wikipedia.org/wiki/Unit_of_observation" class="external-link">unit of observation</a> is the referendum’s <em>institutional instrument</em>, a combination of the referendum’s <code>type</code> and the jurisdiction it took place.</p>
-<p>The set of variables that constitute the jurisdiction is dependent on the referendum’s <code>level</code>:</p>
+<p>For the following variables, the <a href="https://en.wikipedia.org/wiki/Unit_of_observation" class="external-link">unit of observation</a> is the referendum’s <em>institutional instrument</em>, a combination of the referendum’s <a href="#type"><code>type</code></a> and the jurisdiction it took place.</p>
+<p>The set of variables that constitute the jurisdiction is dependent on the referendum’s <a href="#level"><code>level</code></a>:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left"><code>level</code></th>
@@ -1225,18 +1225,18 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code>national</code></td>
-<td align="left"><code>country_code</code></td>
+<td align="left"><a href="#country_code"><code>country_code</code></a></td>
 </tr>
 <tr class="even">
 <td align="left"><code>subnational</code></td>
 <td align="left">
-<code>country_code</code> + <code>subnational_entity_name</code>
+<a href="#country_code"><code>country_code</code></a> + <a href="#subnational_entity_name"><code>subnational_entity_name</code></a>
 </td>
 </tr>
 <tr class="odd">
 <td align="left"><code>local</code></td>
 <td align="left">
-<code>country_code</code> + <code>subnational_entity_name</code> + <code>municipality</code>
+<a href="#country_code"><code>country_code</code></a> + <a href="#subnational_entity_name"><code>subnational_entity_name</code></a> + <a href="#municipality"><code>municipality</code></a>
 </td>
 </tr>
 </tbody>

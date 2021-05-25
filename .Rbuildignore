@@ -1,5 +1,7 @@
 ^data-raw$
+^doc$
 ^docs$
+^Meta$
 ^pkgdown$
 ^Rmd$
 ^cran-comments\.md$
