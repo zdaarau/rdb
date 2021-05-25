@@ -105,8 +105,12 @@ assemble_query_filter <- function(country_code = NULL,
                                                               .var.name = "date")),
            draft = checkmate::assert_flag(is_draft,
                                           null.ok = TRUE),
-           created_on = query_filter_date(min = date_time_created_min,
-                                          max = date_time_created_max)) %>%
+           created_on = query_filter_date(min = checkmate::assert_posixct(lubridate::as_datetime(date_time_created_min),
+                                                                          any.missing = FALSE,
+                                                                          .var.name = "date_time_created_min"),
+                                          max = checkmate::assert_posixct(lubridate::as_datetime(date_time_created_max),
+                                                                          any.missing = FALSE,
+                                                                          .var.name = "date_time_created_max"))) %>%
       # remove `NULL` elements
       purrr::compact() %>%
       # convert to base64-encoded JSON
