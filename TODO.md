@@ -195,17 +195,42 @@
 
 -   Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! [ODC-ODbL](https://opendatacommons.org/licenses/odbl/summary/) würde sich anbieten.
 
--   Ditch the `by ccm.design` promo in the footer?
+-   Copyright notice in the footer must be updated and corrected.
+
+    New: `Copyright © 2021 Centre for Democracy Studies Aarau (ZDA)` (Additionally: The current `v0.0.0` doesn't really make sense...?)
+
+    Plus Ditch the `by ccm.design` promo?
+
+-   Consistent use of the British `centre` (instead of the American `center`).
 
 -   Der C2D-Link auf der [ZDA-Webseite](https://www.zdaarau.ch/en/applications) sollte auf HTTP**S** geändert werden!
 
+### c2d R package
+
+-   Explore possibilities for automated vote entry creation. E.g. I write a scraper (in R) for the votes of Swiss canton X and convert the result into
+    C2D-compatible JSON.
+
+    **Test credentials to fiddle with the `POST /referendums` endpoint would be good...** open questions:
+
+    1.  Is the edit history preserved (or at least backed-up)?
+
+    2.  Are edits traceable by author? And is it possible to easily undo all edit by a specific account?
+
+-   [ ] Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:
+
+    ![scan](https://i.imgur.com/88H2TZz.jpeg)
+
+    [`countrycode::codelist$region23`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) (Weltbankregionen) oder
+    `countrycode::codelist$un.regionsub.name` ([UN-Regionen](https://en.wikipedia.org/wiki/United_Nations_geoscheme)) scheint eine guter Start -\> dann einfach
+    noch abändern, sodass Uwe's Spezialwünsche erfüllt sind!
+
 ## Miscellaneous
 
--   Die Datenbank braucht ein Logo!
+-   Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons [generiert werdden](https://realfavicongenerator.net/)!)
 
 -   Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort "aufzunehmen", könnte passen) und vergleichen mit Zenodo (siehe FA-Notizen)
 
-## Datenbank-Umbenennung
+## Database renaming
 
 -   Bislang gilt: *C2D* wird als alleiniger Name für die Datenbank bestehen bleiben, sollte die C2D-Abteilung, wie von Andreas Glaser beabsichtigt, umbenannt
     werden. Dies weil die Datenbank unter diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat. Allerdings taugt "C2D" beim besten Willen nicht
@@ -216,7 +241,7 @@
     Politik-Bereich ist `D3` bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch die
     JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
 
-## Offene Fragen
+## Open questions
 
 -   Ist `position_government` (ehemals `recommendation`) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal, dies, manchmal jenes?
 
