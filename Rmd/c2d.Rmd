@@ -295,7 +295,8 @@ required_fields <- c("_id",
                      "country_name",
                      "created_on",
                      "level",
-                     "title",
+                     # "title_en", # contains NAs from before relaunch
+                     # "type", # contains NAs from before relaunch
                      "total_electorate",
                      "votes_no",
                      "votes_yes")
