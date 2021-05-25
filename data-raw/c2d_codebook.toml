@@ -69,12 +69,12 @@ value_scale = "binary"
 [[01_main.item]]
 variable_name = "subterritories_yes"
 variable_label = "the number of administrative subdivisions one level below [`level`](#level) that approved the referendum"
-applicability_constraint = "country_code == 'CH'"
+applicability_constraint = "level != 'local'"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "subterritories_no"
 variable_label = "the number of administrative subdivisions one level below [`level`](#level) that rejected the referendum"
-applicability_constraint = "country_code == 'CH'"
+applicability_constraint = "level != 'local'"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "electorate_total"
