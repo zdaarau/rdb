@@ -451,11 +451,54 @@ referendums <- function(use_cache = TRUE,
                   times = 5L) %>%
       httr::content(as = "parsed") %$%
       items %>%
-      # wrap all array fields in another list level for subsequent conversion to tibble
-      purrr::map(.f = ~ .x %>% purrr::modify_if(.p = ~ length(.x) != 1L,
-                                                .f = ~ list(.x))) %>%
+      # unnest columns and ensure list type for multi-value columns
+      # NOTE: this is considerably faster than
+      # purrr::map(.f = ~ .x %>% purrr::modify_if(.p = ~ length(.x) != 1L,
+      #                                           .f = ~ list(.x))) %>%
+      # dplyr::bind_rows() %>%
+      # tidyr::unnest_wider(col = context) %>%
+      # tidyr::unnest_wider(col = categories) %>%
+      # tidyr::unnest_wider(col = title,
+      #                     names_sep = "_")
+      purrr::map(.f = function(l,
+                               category_names = names(l$categories),
+                               context_names = names(l$context),
+                               title_langs = names(l$title)) {
+        
+        for (name in category_names) {
+          l[[name]] <- l$categories[[name]]
+        }
+        
+        for (name in context_names) {
+          l[[name]] <- l$context[[name]]
+        }
+        
+        for (lang in title_langs) {
+          l[[paste0("title_", lang)]] <- l$title[[lang]]
+        }
+        
+        l$categories <- NULL
+        l$context <- NULL
+        l$title <- NULL
+        l$`_id` %<>% purrr::flatten_chr()
+        
+        for (name in c("action",
+                       "tags",
+                       "special_topics",
+                       "excluded_topics")) {
+          l[[name]] %<>% purrr::flatten_chr() %>% list()
+        }
+        
+        for (name in c("archive",
+                       "files",
+                       "votes_per_canton")) {
+          l[[name]] %<>% list()
+        }
+        
+        l
+      }) %>%
       # convert to tibble
-      dplyr::bind_rows()
+      purrr::map_dfr(tibble::as_tibble_row)
     
     # check data integrity
     ## ensure mandatory fields are never `NA`
@@ -467,26 +510,10 @@ referendums <- function(use_cache = TRUE,
       rlang::abort(cli::format_error("Mandatory fields detected that contain {.val NA} values. Please debug."))
     }
     
-    ## ensure there's always exactly *one* `oid` per row
-    ids <- data$`_id` %>% purrr::map(length)
-    
-    if (length(unique(names(ids))) != 1L ||
-        !"$oid" %in% unique(names(ids)) ||
-        any(purrr::flatten_int(unique(ids))) != 1L) {
-      
-      rlang::abort(cli::format_error("Unexpected ID fields detected. Please debug."))
-    }
-    
-    ## ensure `oid`s are unique
-    if (data$`_id` %>%
-        purrr::flatten_chr() %>%
-        unique() %>%
-        length() %>%
-        magrittr::equals(nrow(data)) %>%
-        magrittr::not()) {
-      
-      rlang::abort(cli::format_error("Duplicated {.var oid}s detected. Please debug."))
-    }
+    # ## ensure `oid`s are unique
+    # if (anyDuplicated(data$`_id`)) {
+    #   rlang::abort(cli::format_error("Duplicated {.var oid}s detected. Please debug."))
+    # }
     
     ## ensure `country_codes`s are valid
     invalid_country_codes <- data$country_code[!(data$country_code %in% countrycode::codelist$iso2c %>% setdiff(NA_character_))]
@@ -497,11 +524,6 @@ referendums <- function(use_cache = TRUE,
     
     # tidy data
     data %<>%
-      # unnest `context`, `categories` and `title` (no technical need to be nested)
-      tidyr::unnest_wider(col = context) %>%
-      tidyr::unnest_wider(col = categories) %>%
-      tidyr::unnest_wider(col = title,
-                          names_sep = "_") %>%
       # rename variables (since the MongoDB-based API doesn't demand a schema, we can't use `dplyr::rename()`)
       magrittr::set_names(names(.) %>% dplyr::recode("created_on" = "date_time_created",
                                                      "_id" = "id",
@@ -546,14 +568,6 @@ referendums <- function(use_cache = TRUE,
                                                      "vote_venue" = "inst_vote_venue")) %>%
       # create/recode variables
       dplyr::mutate(
-        # flatten unnecessarily convoluted list columns
-        dplyr::across(c(id,
-                        inst_action,
-                        tags,
-                        any_of(c("inst_topics_excluded",
-                                 "inst_topics_special"))),
-                      ~ .x %>% purrr::map(unlist)),
-        
         # replace empty lists with `NULL` in list columns
         dplyr::across(where(is.list),
                       ~ dplyr::case_when(.x %>% purrr::map_lgl(~ length(.x) == 0L) ~ list(NULL),
@@ -602,21 +616,6 @@ referendums <- function(use_cache = TRUE,
                                          paste(collapse = " "))),
         
         # specific recodings
-        ## split `id_official` into `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
-        id_sudd =
-          id_official %>%
-          dplyr::if_else(stringr::str_detect(string = .,
-                                             pattern = "^\\D"),
-                         .,
-                         NA_character_) %>%
-          # everything beyond the 8th char seems to be manually added -> strip!
-          stringr::str_sub(end = 8L),
-        id_official =
-          id_official %>%
-          dplyr::if_else(stringr::str_detect(string = .,
-                                             pattern = "^\\D"),
-                         NA_character_,
-                         .),
         ## binary (dummies)
         dplyr::across(any_of("position_government"),
                       ~ dplyr::case_when(.x == "Acceptance" ~ "yes",
@@ -635,7 +634,21 @@ referendums <- function(use_cache = TRUE,
                                          .x == "Normal" ~ FALSE,
                                          TRUE ~ NA)),
         ## nominal
-        id = purrr::flatten_chr(id),
+        ### split `id_official` into `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
+        id_sudd =
+          id_official %>%
+          dplyr::if_else(stringr::str_detect(string = .,
+                                             pattern = "^\\D"),
+                         .,
+                         NA_character_) %>%
+          # everything beyond the 8th char seems to be manually added -> strip!
+          stringr::str_sub(end = 8L),
+        id_official =
+          id_official %>%
+          dplyr::if_else(stringr::str_detect(string = .,
+                                             pattern = "^\\D"),
+                         NA_character_,
+                         .),
         level = stringr::str_replace(string = level,
                                      pattern = "sub-national",
                                      replacement = "subnational"),
