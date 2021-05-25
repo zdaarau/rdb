@@ -67,13 +67,13 @@ value_label_prefix = "The referendum proposal was "
 value_labels = [ "approved", "rejected" ]
 value_scale = "binary"
 [[01_main.item]]
-variable_name = "states_yes"
-variable_label = "the number of administrative subdivisions that approved the referendum"
+variable_name = "subterritories_yes"
+variable_label = "the number of administrative subdivisions one level below [`level`](#level) that approved the referendum"
 applicability_constraint = "country_code == 'CH'"
 value_scale = "ratio"
 [[01_main.item]]
-variable_name = "states_no"
-variable_label = "the number of administrative subdivisions that rejected the referendum"
+variable_name = "subterritories_no"
+variable_label = "the number of administrative subdivisions one level below [`level`](#level) that rejected the referendum"
 applicability_constraint = "country_code == 'CH'"
 value_scale = "ratio"
 [[01_main.item]]
@@ -102,7 +102,7 @@ variable_label = "the number of votes that were invalid"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "votes_per_subterritory"
-variable_label = "the number of [`votes_yes`](#votes_yes), [`votes_no`](#votes_no), [`votes_empty`](#votes_empty) and [`votes_invalid`](#votes_invalid) per subterritory; currently only filled for Swiss referendums on the national level"
+variable_label = "the number of [`votes_yes`](#votes_yes), [`votes_no`](#votes_no), [`votes_empty`](#votes_empty) and [`votes_invalid`](#votes_invalid) per administrative subdivision one level below [`level`](#level); currently only filled for Swiss referendums on the national level"
 applicability_constraint = "level != 'local'"
 value_scale = "undefined"
 [[01_main.item]]
