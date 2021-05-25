@@ -332,7 +332,7 @@ metadata about files attached to the referendum, including
 - `is_deleted`: whether or not the file has been deleted since it was attached
 - `file_name`: the filename as it appears when the file is downloaded
 - `file_size`: the file's size in bytes
-- `s3_object_key`: the key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design); the file can be downloaded by feeding this key to [`c2d::download_file_attachment()`](rpkg.dev/c2d/reference/download_file_attachment.html)"""
+- `s3_object_key`: the key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design); the file can be downloaded by feeding this key to [`c2d::download_file_attachment()`](https://rpkg.dev/c2d/reference/download_file_attachment.html)"""
 value_scale = "undefined"
 [[01_main.item]]
 variable_name = "url_sudd"
