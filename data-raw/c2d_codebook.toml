@@ -82,7 +82,7 @@ variable_label = "the total number of people entitled to vote in the referendum"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "electorate_abroad"
-variable_label = "the total number of people entitled to vote in the referendum _who are living abroad_; by definition a subset of `electorate_total`"
+variable_label = "the number of people entitled to vote in the referendum _who are living abroad_; by definition a subset of [`electorate_total`](#electorate_total)"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "votes_yes"
@@ -102,7 +102,7 @@ variable_label = "the number of votes that were invalid"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "votes_per_subterritory"
-variable_label = "the number of `votes_yes`, `votes_no`, `votes_empty` and `votes_invalid` per subterritory; currently only filled for Swiss referendums on the national level"
+variable_label = "the number of [`votes_yes`](#votes_yes), [`votes_no`](#votes_no), [`votes_empty`](#votes_empty) and [`votes_invalid`](#votes_invalid) per subterritory; currently only filled for Swiss referendums on the national level"
 applicability_constraint = "level != 'local'"
 value_scale = "undefined"
 [[01_main.item]]
@@ -440,7 +440,7 @@ value_scale = "binary"
 title = "Trigger"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_type"
-variable_label = "the way the referendum was triggered; completely dependent on `trigger_actor`"
+variable_label = "the way the referendum was triggered; completely dependent on [`inst_trigger_actor`](#inst_trigger_actor)"
 variable_values = [ "automatic", "top down", "bottom up" ]
 value_label_prefix = "The referendum was triggered by"
 value_labels = [
@@ -469,12 +469,12 @@ value_default = "constitution"
 value_scale = "nominal"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_threshold"
-variable_label = "the threshold of support among `trigger_actor` that had to be reached in order to trigger the referendum"
+variable_label = "the threshold of support among [`inst_trigger_actor`](#inst_trigger_actor) that had to be reached in order to trigger the referendum"
 applicability_constraint = "trigger_actor %in% c('citizens', 'parliament', 'territorial unit')"
 value_scale = "nominal"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_time_limit"
-variable_label = "the time limit in which `trigger_threshold` (usually a minimum number of signatures) had to be reached in order to trigger the referendum"
+variable_label = "the time limit in which [`inst_trigger_threshold`](#inst_trigger_threshold) (usually a minimum number of signatures) had to be reached in order to trigger the referendum"
 applicability_constraint = "trigger_actor %in% c('citizens', 'territorial unit')"
 value_default = "None"
 value_scale = "nominal"
