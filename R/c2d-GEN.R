@@ -19,11 +19,7 @@ utils::globalVariables(names = c(".",
   pkgpins::deregister(pkg = pkg)
 }
 
-httr_config <- function() {
-  
-  httr::config(cainfo = fs::path_package(package = pkg,
-                                         "certs", "3479778542.crt"))
-}
+
 
 v_vals <- function(v) {
   
@@ -180,7 +176,6 @@ is_online <- function(quiet = FALSE) {
   result <- FALSE
   response <- rlang::with_handlers(.expr = httr::RETRY(verb = "GET",
                                                        url = "https://services.c2d.ch/health",
-                                                       config = httr_config(),
                                                        times = 5L),
                                    error = ~ paste0("Error: ", .x$message))
   
@@ -258,7 +253,6 @@ referendums <- function(use_cache = TRUE,
                                                               date_time_created_min = date_time_created_min,
                                                               date_time_created_max = date_time_created_max,
                                                               query_filter = query_filter)),
-                  config = httr_config(),
                   times = 5L) %>%
       httr::content(as = "parsed") %$%
       items %>%
@@ -663,7 +657,6 @@ count_referendums <- function(is_draft = FALSE,
                                                           date_time_created_min = date_time_created_min,
                                                           date_time_created_max = date_time_created_max,
                                                           query_filter = query_filter)),
-              config = httr_config(),
               times = 5L) %>%
     httr::content(as = "parsed") %$%
     votes %>%
@@ -691,7 +684,6 @@ search_referendums <- function(term) {
               url = "https://services.c2d.ch/referendums",
               query = list(mode = "search",
                            term = checkmate::assert_string(term)),
-              config = httr_config(),
               times = 5L) %>%
     httr::content(as = "parsed") %$%
     items %>%
@@ -740,7 +732,6 @@ download_file_attachment <- function(s3_object_key,
   
   response <- httr::RETRY(verb = "GET",
                           url = paste0("https://services.c2d.ch/s3_objects/", checkmate::assert_string(s3_object_key)),
-                          config = httr_config(),
                           httr::write_disk(path = temp_path),
                           times = 5L)
   

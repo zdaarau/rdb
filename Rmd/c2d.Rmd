@@ -107,14 +107,13 @@ utils::globalVariables(names = c(".",
 
 ### Get httr config
 
-Since the C2D API server doesn't provide the [intermediate *R3*
-certificate](https://crt.sh/?q=+730c1bdcd85f57ce5dc0bba733e5f1ba5a925b2a771d640a26f7a454224dad3b) (issued by Let's Encrypt) and [curl doesn't support *Authority
-Information Access* yet](https://github.com/curl/curl/issues/2793) to automatically discover it, we have to manually specify it. Thus, the certificate is
-shipped with this package (found under `certs/3479778542.crt`).
+Until [recently](https://github.com/ccmdesign/c2d-app/issues/10), the C2D API server didn't provide the [intermediate *R3*
+certificate](https://crt.sh/?q=+730c1bdcd85f57ce5dc0bba733e5f1ba5a925b2a771d640a26f7a454224dad3b) (issued by Let's Encrypt) and since [curl doesn't support
+*Authority Information Access* yet](https://github.com/curl/curl/issues/2793) to automatically discover it, we had to manually specify it. Thus, the certificate
+was shipped with this package (found under `certs/3479778542.crt`). Because this isn't needed anymore, the cert as well as the code chunk below (`purl = FALSE`)
+are ignored from package builds.
 
-The issue has been [reported](https://github.com/ccmdesign/c2d-app/issues/10) to the server operator.
-
-```{r}
+```{r, purl = FALSE}
 httr_config <- function() {
   
   httr::config(cainfo = fs::path_package(package = pkg,
@@ -359,7 +358,6 @@ is_online <- function(quiet = FALSE) {
   result <- FALSE
   response <- rlang::with_handlers(.expr = httr::RETRY(verb = "GET",
                                                        url = "https://services.c2d.ch/health",
-                                                       config = httr_config(),
                                                        times = 5L),
                                    error = ~ paste0("Error: ", .x$message))
   
@@ -447,7 +445,6 @@ referendums <- function(use_cache = TRUE,
                                                               date_time_created_min = date_time_created_min,
                                                               date_time_created_max = date_time_created_max,
                                                               query_filter = query_filter)),
-                  config = httr_config(),
                   times = 5L) %>%
       httr::content(as = "parsed") %$%
       items %>%
@@ -856,7 +853,6 @@ count_referendums <- function(is_draft = FALSE,
                                                           date_time_created_min = date_time_created_min,
                                                           date_time_created_max = date_time_created_max,
                                                           query_filter = query_filter)),
-              config = httr_config(),
               times = 5L) %>%
     httr::content(as = "parsed") %$%
     votes %>%
@@ -891,7 +887,6 @@ search_referendums <- function(term) {
               url = "https://services.c2d.ch/referendums",
               query = list(mode = "search",
                            term = checkmate::assert_string(term)),
-              config = httr_config(),
               times = 5L) %>%
     httr::content(as = "parsed") %$%
     items %>%
@@ -944,7 +939,6 @@ download_file_attachment <- function(s3_object_key,
   
   response <- httr::RETRY(verb = "GET",
                           url = paste0("https://services.c2d.ch/s3_objects/", checkmate::assert_string(s3_object_key)),
-                          config = httr_config(),
                           httr::write_disk(path = temp_path),
                           times = 5L)
   
