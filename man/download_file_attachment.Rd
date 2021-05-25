@@ -25,7 +25,7 @@ library(magrittr)
 # get all file object keys...
 c2d::referendums() \%$\%
   files \%>\%
-  purrr::map_depth(2L, purrr::pluck, "object_key") \%>\%
+  purrr::map_depth(2L, purrr::pluck, "s3_object_key") \%>\%
   purrr::flatten() \%>\%
   purrr::flatten_chr() \%>\%
   # ...select first one...
