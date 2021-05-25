@@ -1,0 +1,576 @@
+title = "C2D Codebook"
+
+
+[01_main]
+[[01_main.item]]
+variable_name = "id"
+variable_label = "a 24-character value that uniquely identifies the referendum and corresponds to the [MongoDB `ObjectId`](https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid) in the C2D database"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "id_official"
+variable_label = "the referendum's official identifier assigned by the authorities; this is only guaranteed to be unique per respective jurisdiction"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "id_sudd"
+variable_label = "the referendum's identifier assigned by [sudd.ch](https://sudd.ch/); multiple referendum's might share the same identifier"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "country_code"
+variable_label = "the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code identifying the country in which the referendum took place"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "country_name"
+variable_label = "the English name of the country in which the referendum took place"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "subnational_entity_name"
+variable_label = "the English name of the subnational political entity in which the referendum took place"
+applicability_constraint = "level %in% c('local', 'subnational')"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "municipality"
+variable_label = "the municipality in which the referendum took place"
+applicability_constraint = "level == 'local'"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "level"
+variable_label = "the political level at which the referendum took place"
+variable_values = [ "local", "subnational", "national" ]
+value_label_prefix = "The referendum took place at the"
+value_labels = [ "local political level", "subnational political level", "national political level" ]
+value_scale = "ordinal_ascending"
+[[01_main.item]]
+variable_name = "date"
+variable_label = "the date on which the referendum took place"
+value_scale = "interval"
+[[01_main.item]]
+variable_name = "title_de"
+variable_label = "the referendum's German title"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "title_fr"
+variable_label = "the referendum's French title"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "title_en"
+variable_label = "the referendum's English title"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "committee_name"
+variable_label = "the name of the committee that initiated the referendum"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "result"
+variable_label = "the result of the referendum"
+variable_values = [ "yes", "no" ]
+value_label_prefix = "The referendum proposal was "
+value_labels = [ "approved", "rejected" ]
+value_scale = "binary"
+[[01_main.item]]
+variable_name = "states_yes"
+variable_label = "the number of administrative subdivisions that approved the referendum"
+applicability_constraint = "country_code == 'CH'"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "states_no"
+variable_label = "the number of administrative subdivisions that rejected the referendum"
+applicability_constraint = "country_code == 'CH'"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "electorate_total"
+variable_label = "the total number of people entitled to vote in the referendum"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "electorate_abroad"
+variable_label = "the total number of people entitled to vote in the referendum _who are living abroad_; by definition a subset of `electorate_total`"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "votes_yes"
+variable_label = "the number of votes approving the referendum proposal"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "votes_no"
+variable_label = "the number of votes rejecting the referendum proposal"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "votes_empty"
+variable_label = "the number of votes that did not specify any preference on the referendum proposal"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "votes_invalid"
+variable_label = "the number of votes that were invalid"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "votes_per_subterritory"
+variable_label = "the number of `votes_yes`, `votes_no`, `votes_empty` and `votes_invalid` per subterritory; currently only filled for Swiss referendums on the national level"
+applicability_constraint = "level != 'local'"
+value_scale = "undefined"
+[[01_main.item]]
+variable_name = "lower_house_yes"
+variable_label = "the number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; in [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism), this number includes only members of the _lower house_, in [unicameral legislatures](https://en.wikipedia.org/wiki/Unicameralism) all parliamentarians; currently only filled for Swiss referendums on the national level ([National Council](https://en.wikipedia.org/wiki/National_Council_(Switzerland)))"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "lower_house_no"
+variable_label = "the number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; in [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism), this number includes only members of the _lower house_, in [unicameral legislatures](https://en.wikipedia.org/wiki/Unicameralism) all parliamentarians; currently only filled for Swiss referendums on the national level ([National Council](https://en.wikipedia.org/wiki/National_Council_(Switzerland)))"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "lower_house_abstentions"
+variable_label = "the number of parliamentarians that abstained from the corresponding parliamentary voting on the referendum proposal; in [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism), this number includes only members of the _lower house_, in [unicameral legislatures](https://en.wikipedia.org/wiki/Unicameralism) all parliamentarians; currently only filled for Swiss referendums on the national level ([National Council](https://en.wikipedia.org/wiki/National_Council_(Switzerland)))"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "upper_house_yes"
+variable_label = "the number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the _upper house_; currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland))"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "upper_house_no"
+variable_label = "the number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the _upper house_; currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland))"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "upper_house_abstentions"
+variable_label = "the number of parliamentarians that abstained from the corresponding parliamentary voting on the referendum proposal; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the [upper house](https://en.wikipedia.org/wiki/Upper_house); currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)))"
+value_scale = "ratio"
+[[01_main.item]]
+variable_name = "position_government"
+variable_label = "the government's recommendation on how to vote in the referendum"
+variable_values = [ "yes", "no" ]
+value_label_prefix = "The government recommends to"
+value_labels = [ "approve", "reject" ]
+value_label_suffix = "the referendum"
+value_scale = "binary"
+[[01_main.item]]
+variable_name = "tags"
+variable_label = "a maximum of 3 predefined political topics that best classify the referendum"
+is_multi_valued = true
+variable_values = [
+  "state organisation",
+  "national identity",
+  "political system",
+  "constitution",
+  "procedure for constitutional reform",
+  "legislative procedure",
+  "electoral system",
+  "institutions",
+  "government, administration",
+  "parliament",
+  "courts",
+  "national bank",
+  "citizens' rights",
+  "citizen's initiatives",
+  "referendum",
+  "voting rights",
+  "federalism",
+  "territoral questions",
+  "intergovernmental relations",
+  "division of tasks",
+  "legal system",
+  "international law",
+  "fundamental rights",
+  "citizenship",
+  "private law",
+  "criminal law",
+  "data protection",
+  "foreign policy",
+  "position on foreign policy",
+  "neutrality",
+  "independence",
+  "good offices",
+  "european policy",
+  "EFTA",
+  "EU",
+  "EEA",
+  "other european organisations",
+  "international organisations",
+  "UN",
+  "other international organisations",
+  "development cooperation",
+  "bilateral treaties",
+  "foreign trade policy",
+  "export promotion",
+  "customs",
+  "diplomacy",
+  "swiss abroad",
+  "security policy",
+  "public security",
+  "civil protection",
+  "state security",
+  "police",
+  "army",
+  "armed forces - general",
+  "military organisation",
+  "arms",
+  "military facilities",
+  "conscientious objection, civilian service",
+  "abolition of the armed forces",
+  "military training",
+  "international deployment",
+  "national economic supply",
+  "economy",
+  "economic policy",
+  "short-term economic policy",
+  "competition policy",
+  "structural policy",
+  "pricing policy",
+  "consumer protection",
+  "employment",
+  "employment conditions",
+  "working hours",
+  "industrial relations",
+  "employment policy",
+  "finance",
+  "monetary policy",
+  "banks, stock exchange, insurance",
+  "tourism and leisure",
+  "tourism",
+  "hospitality",
+  "lottery and gambling",
+  "agriculture",
+  "agricultural policy",
+  "livestock",
+  "crop production",
+  "forestry",
+  "fishing, hunting and pets",
+  "public finance",
+  "taxation",
+  "tax policy",
+  "tax system",
+  "direct taxation",
+  "indirect taxation",
+  "financial system",
+  "public expenditure",
+  "budget cuts and remediation measures",
+  "energy",
+  "energy policy",
+  "nuclear energy",
+  "hydro-electric power",
+  "alternative energy",
+  "oil and gas",
+  "transport and infrastructure",
+  "transport policy",
+  "urban transport",
+  "transit traffic",
+  "road transport",
+  "road construction",
+  "heavy traffic",
+  "rail transport",
+  "goods traffic",
+  "passenger traffic",
+  "air transport",
+  "shipping",
+  "post",
+  "telecommunications",
+  "environment and living space",
+  "soil",
+  "spatial planning",
+  "land law",
+  "housing",
+  "tenancy issues",
+  "building of residential housing, property ownership",
+  "environment",
+  "environmental policy",
+  "noise protection",
+  "air quality control",
+  "water pollution control",
+  "soil protection",
+  "waste",
+  "protection of nature and cultural heritage",
+  "animal protection",
+  "social policy",
+  "health",
+  "health policy",
+  "medical research and technology",
+  "medicines",
+  "addictive substances",
+  "reproductive medicine",
+  "social security",
+  "pension insurance",
+  "disability insurance",
+  "occupational benefits provision",
+  "health and accident insurance",
+  "maternity insurance",
+  "unemployment insurance",
+  "compensation for loss of earnings for persons on military service or civil protection duty",
+  "welfare",
+  "social groups",
+  "immigration policy",
+  "refugees",
+  "status of women",
+  "family policy",
+  "children and young people",
+  "senior citizens",
+  "persons with disabilities",
+  "homosexuals",
+  "education and research",
+  "education policy",
+  "schools",
+  "universities",
+  "research",
+  "genetic engineering",
+  "animal testing",
+  "professional and vocational education",
+  "culture, religion and media",
+  "cultural policy",
+  "language policy",
+  "religion - churches",
+  "sport",
+  "media and communication",
+  "media policy",
+  "press",
+  "radio, television and electronic media",
+  "freedom of the media"
+]
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "remarks"
+variable_label = "a free text field with additional information about the referendum"
+value_scale = "undefined"
+[[01_main.item]]
+variable_name = "files"
+variable_label = """
+metadata about files attached to the referendum, including
+
+- `date_time_attached`: the date and time on which the file was attached to the referendum's data entry
+- `is_deleted`: whether or not the file has been deleted since it was attached
+- `file_name`: the filename as it appears when the file is downloaded
+- `file_size`: the file's size in bytes
+- `s3_object_key`: the key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design); the file can be downloaded by feeding this key to [`c2d::download_file_attachment()`](rpkg.dev/c2d/reference/download_file_attachment.html)"""
+value_scale = "undefined"
+[[01_main.item]]
+variable_name = "url_sudd"
+variable_label = "the URL of the corresponding entry on [sudd.ch](https://sudd.ch/)"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "url_swissvotes"
+variable_label = "the URL of the corresponding entry on [swissvotes.ch](https://swissvotes.ch/)"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "is_draft"
+variable_label = "whether or not the entry is marked as a draft in the database"
+variable_values = [ true, false]
+value_label_prefix = "The entry is"
+value_labels = [ "marked as a draft", "not marked as a draft" ]
+value_scale = "binary"
+[[01_main.item]]
+variable_name = "date_time_created"
+variable_label = "the date and time on which the referendum's data entry was created"
+value_scale = "interval"
+[[01_main.item]]
+variable_name = "archive"
+variable_label = "the referendum's data from an earlier, obsolete state of the C2D database"
+value_scale = "undefined"
+[[01_main.item]]
+variable_name = "type"
+variable_label = "the institutional type of the referendum"
+variable_values = [
+  "mandatory referendum",
+  "optional referendum",
+  "counter proposal",
+  "citizens' initiative",
+  "governmental referendum",
+  "citizens' assembly",
+  "recall" ]
+value_labels = [
+  "a referendum that was automatically triggered by certain legal conditions, usually found in the constitution",
+  "a referendum against a law passed by the parliament that came about because the quorum of citizen opposition was met (usually a certain number of signatures) within a specified period after the resolution was passed",
+  "a counter proposal by the government or parliament to another referendum",
+  "a referendum launched by citizens, usually via a signature collection",
+  "a referendum launched by the government",
+  "a citizens' assembly, usually in person where people vote by raising their hands",
+  "a recall of all members of a political institution/body"
+]
+value_scale = "nominal"
+
+
+[02_institutional.01_status]
+title = "Official Status"
+[[02_institutional.01_status.item]]
+variable_name = "inst_legal_basis_type"
+variable_label = "the type of the referendum's legal basis"
+variable_values = [ "non-official", "ad-hoc", "official" ]
+value_label_prefix = "The referendum has"
+value_labels = [
+  "no legal basis",
+  "a legal basis which was specifically created for it",
+  "a legal basis that wasn’t specifically created for it"
+]
+value_default = "official"
+value_scale = "ordinal_ascending"
+[[02_institutional.01_status.item]]
+variable_name = "inst_has_urgent_legal_basis"
+variable_label = "whether or not the legal basis of the referendum was adopted urgently, i.e. in an abridged procedure"
+applicability_constraint = "trigger_actor %in% c('government', 'president', 'monarch', 'parliament')"
+variable_values = [ true, false]
+value_label_prefix = "The legal basis of the referendum was adopted in a"
+value_labels = [ "abridged procedure (urgent)", "normal procedure" ]
+value_default = false
+value_scale = "binary"
+[[02_institutional.01_status.item]]
+variable_name = "inst_is_binding"
+variable_label = "wheather the referendum result has binding force or the decision of the voters may be disregarded"
+variable_values = [ true, false]
+value_label_prefix = "The result of the referendum is"
+value_labels = [
+  "binding for the legislator",
+  "only consultative, i.e. the legislator does not have to follow the decision of the voters"
+]
+value_default = true
+value_scale = "binary"
+[[02_institutional.01_status.item]]
+variable_name = "inst_is_counter_proposal"
+variable_label = "whether or not the referendum proposal is a counterproposal to a citizen’s (or other) initiative"
+variable_values = [ true, false]
+value_label_prefix = "The referendum proposal is"
+value_labels = [
+  "a counterproposal to a citizen’s (or other) initiative",
+  "not a counterproposal to a citizen’s (or other) initiative"
+]
+value_scale = "binary"
+[[02_institutional.01_status.item]]
+variable_name = "inst_is_assembly"
+variable_label = "whether or not the referendum is held as an assembly (all voters at the same time and place; physical presence at the assembly is required to be able to vote; usually voting means raising one’s hand)"
+variable_values = [ true, false]
+value_label_prefix = "The referendum proposal is"
+value_labels = [
+  "a counterproposal to a citizen’s (or other) initiative",
+  "not a counterproposal to a citizen’s (or other) initiative"
+]
+value_scale = "binary"
+
+
+[02_institutional.02_trigger]
+title = "Trigger"
+[[02_institutional.02_trigger.item]]
+variable_name = "inst_trigger_type"
+variable_label = "the way the referendum was triggered; completely dependent on `trigger_actor`"
+variable_values = [ "automatic", "top down", "bottom up" ]
+value_label_prefix = "The referendum was triggered by"
+value_labels = [
+  "a constitutional/legal requirement",
+  "an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution",
+  "citizen demand (e.g. a signature collection)" ]
+value_scale = "nominal"
+[[02_institutional.02_trigger.item]]
+variable_name = "inst_trigger_actor"
+variable_label = "the actor that triggered the referendum procedure"
+variable_values = [ "citizens", "constitution", "law", "parliament", "government", "president", "monarch", "territorial unit", "UN", "other institution" ]
+value_label_prefix = "The referendum was triggered by"
+value_labels = [
+  "a direct citizen demand (usually a signature collection)",
+  "a constitutional requirement",
+  "a legal requirement",
+  "the parliament",
+  "the government or prime minister",
+  "presidential powers",
+  "powers of the monarch",
+  "a province or municipality",
+  "the United Nations (UN) or one of its organs",
+  "another institution such as the church or a state agency"
+]
+value_default = "constitution"
+value_scale = "nominal"
+[[02_institutional.02_trigger.item]]
+variable_name = "inst_trigger_threshold"
+variable_label = "the threshold of support among `trigger_actor` that had to be reached in order to trigger the referendum"
+applicability_constraint = "trigger_actor %in% c('citizens', 'parliament', 'territorial unit')"
+value_scale = "nominal"
+[[02_institutional.02_trigger.item]]
+variable_name = "inst_trigger_time_limit"
+variable_label = "the time limit in which `trigger_threshold` (usually a minimum number of signatures) had to be reached in order to trigger the referendum"
+applicability_constraint = "trigger_actor %in% c('citizens', 'territorial unit')"
+value_default = "None"
+value_scale = "nominal"
+[[02_institutional.02_trigger.item]]
+variable_name = "inst_trigger_state_level"
+variable_label = ""
+variable_values = [ "lower", "equal", "higher" ]
+value_labels = [
+  "a lower level of state triggers a referendum on one of the higher state levels",
+  "the trigger actor and the referendum are on the same level of state",
+  "a higher level of state triggers a referendum on one of the lower state levels"
+]
+value_default = "equal"
+value_scale = "ordinal_ascending"
+
+
+[02_institutional.03_object]
+title = "Object"
+[[02_institutional.03_object.item]]
+variable_name = "inst_object_type"
+variable_label = "the type of the object the referendum refers to"
+variable_values = [ "question", "legal text (general proposal)", "legal text (formulated proposal)", "institution", "person", "principle" ]
+value_labels = [
+  "a question which can be answered with yes or no (used as fallback option if nothing else applies)",
+  "a general proposal of a legal text, meaning the proposal is not formulated in a definite way, and therefore, if approved, needs to be implemented and concretized in a further legislative process",
+  "a precisely formulated legal text which, if approved, will directly enter into force",
+  "a recall of all members of a particular institution/body",
+  "an appointment of a single person",
+  "a question about what direction to take on a particular issue/topic, but without a proposed legal text; e.g., \"Should there be a total revision of our constitution?\""
+]
+value_default = "legal text (formulated proposal)"
+value_scale = "nominal"
+[[02_institutional.03_object.item]]
+variable_name = "inst_object_author"
+variable_label = "the actor that defines the text/content of the referendum object"
+applicability_constraint = "object_type %in% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)', 'principle')"
+variable_values = [ "citizens", "parliament", "government", "president", "monarch", "territorial unit", "UN", "other institution" ]
+value_labels = [
+  "citizens (usually a small group initiating a citizen demand)",
+  "the parliament",
+  "the government or prime minister",
+  "the president",
+  "the monarch",
+  "a province or municipality",
+  "the United Nations (UN) or one of its organs",
+  "another institution such as the church or a state agency"
+]
+value_scale = "nominal"
+[[02_institutional.03_object.item]]
+variable_name = "inst_object_legal_level"
+variable_label = "the legal level of the object the referendum refers to"
+applicability_constraint = "object_type %in% c('legal text (general proposal)', 'legal text (formulated proposal)')"
+variable_values = [ "ordinance", "law", "constitution", "treaty", "international treaty" ]
+value_labels = [
+  "an ordinance, i.e. a legal norm based on a law or the constitution",
+  "a domestic treaty, e.g. an agreement between the constituent states of a republic",
+  "a law, i.e. a legal norm based on the constitution and created by the legislative",
+  "the constitution, i.e. the aggregate of fundamental principles or established precedents that constitute the legal basis of a state and commonly determine how that state is to be governed",
+  "an international treaty, i.e. a bilateral or multilateral agreement or an accession to and international organization"
+]
+value_default = "constitution"
+value_scale = "nominal"
+[[02_institutional.03_object.item]]
+variable_name = "inst_object_revision_extent"
+variable_label = "the extent of revision of the object the referendum refers to which can be achieved within one referendum"
+applicability_constraint = "object_type %in% c('legal text (general proposal)', 'legal text (formulated proposal)')"
+variable_values = [ "partial", "total", "both" ]
+value_labels = [
+  "only parts of the concerned legal text can be revised at the same time",
+  "only the entirety of the legal text can be changed at the same time",
+  "both, parts and the entirety of the legal text, can be changed at the same time"
+]
+value_default = "partial"
+value_scale = "nominal"
+[[02_institutional.03_object.item]]
+variable_name = "inst_object_revision_modes"
+variable_label = "the different modes of revision that the object the referendum refers to allows"
+is_multi_valued = true
+variable_values = [ "introduce", "revise", "abrogate" ]
+value_label_prefix = "With this instrument, it is possible to"
+value_labels = [
+  "introduce an entirely new text/concept",
+  "change some parts of the legal text/...",
+  "strike parts of the legal text / to recall a person/institution"
+]
+value_default = [ "introduce", "revise", "abrogate" ]
+value_scale = "nominal"
+[[02_institutional.03_object.item]]
+variable_name = "inst_object_revision_divisibility"
+variable_label = "the divisibility of the object the referendum refers to"
+applicability_constraint = "object_type %in% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')"
+variable_values = [
+  "the proposed legal text can only be accepted/rejected as a whole",
+  "the same text can be split up, the voters may vote upon these parts separately",
+  "in the same text, two or more (alternative) variants can be selected"
+]
+value_labels = ""
+value_default = ""
+value_scale = ""

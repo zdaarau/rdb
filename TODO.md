@@ -25,7 +25,7 @@
 
     Plus: What does `id_official = "0"` mean?
 
--   voting with `id == "5bbbfee992a21351232e4f37"` (Romania 2008-02-01) was limited to the region
+-   Voting with `id == "5bbbfee992a21351232e4f37"` (Romania 2008-02-01) was limited to the region
     [Szeklerland](https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land), therefore `subnational_entity` should be set to `Székely Land`
 
 -   **`municipality`** scheint inkonsistent zugewiesen; enthält Werte, die klar eine Gemeinde bezeichnen (bspw. `"London"`), aber auch solche wie
@@ -37,6 +37,9 @@
     -   der `country_code = "CS"` für den Folgestaat "Serbia and Montenegro" gesetzt werden
     -   `is_past_jurisdiction = TRUE` gesetzt werden
     -   den gegenwärtigen Wert in `municipality` stattdessen in `subnational_entity_name` eintragen
+
+-   A total of 860 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
+    traced and added ASAP!
 
 ## Schema
 
@@ -231,7 +234,10 @@
     mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des [swissdd](https://politanch.github.io/swissdd/)-R-Pakets
     könnte womöglich ganz aufschlussreich sein!
 
--   Stimmt Definition von `committee_name` so?
+-   Stimmen die Definitionen im Codebook so? Insb.:
+
+    -   `committee_name`
+    -   `type` und alle `inst_*`-Variablen
 
 -   Bei der Abstimmung *Norfolk Island 1980-07-10* meint sudd.ch, sie habe stattdessen [1979-07-10
     stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.

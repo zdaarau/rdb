@@ -1,0 +1,153 @@
+---
+title: "C2D Codebook"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{C2D Codebook}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Referendum-level variables
+
+For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the individual referendum.
+
+```{r, referendum-level-vars, echo = FALSE, results = "asis"}
+# setup
+library(rlang)
+library(magrittr)
+
+# define functions
+## flatten list column values
+flatten_list_col <- function(x) {
+  
+  x %>%
+    unlist() %>%
+    purrr::when(is.character(.) ~ pal::wrap_chr(.),
+                ~ .)
+}
+
+## convert a string to sentence-case with trailing dot
+sentencify <- function(x) {
+  
+  x %>%
+    stringr::str_replace(pattern = "^.",
+                         replacement = toupper) %>%
+    purrr::map_chr(~ {if (stringr::str_sub(string = .x, start = -1L) == ".") .x else paste0(.x, ".")})
+}
+
+## prettify value scale
+prettify_value_scale <- function(x) {
+  
+  x %>%
+    stringr::str_replace(pattern = "_(.*)",
+                         replacement = " (\\1)") %>%
+    dplyr::recode("binary" = "nominal (binary)")
+}
+
+## assemble variable sections in Markdown
+cat_v_sections <- function(data) {
+  
+  data %>% purrr::pwalk(function(variable_name,
+                                 variable_label,
+                                 is_multi_valued,
+                                 applicability_constraint,
+                                 variable_values,
+                                 value_label_prefix,
+                                 value_labels,
+                                 value_label_suffix,
+                                 value_default,
+                                 value_scale) {
+    
+    variable_values %<>% flatten_list_col()
+    value_default %<>% flatten_list_col()
+    value_scale %<>% prettify_value_scale()
+    value_labels %<>%
+      unlist() %>%
+      purrr::when(is.na(value_label_prefix) ~ .,
+                  ~ paste(value_label_prefix, .)) %>%
+      purrr::when(is.na(value_label_suffix) ~ .,
+                  ~ paste(., value_label_suffix)) %>%
+      sentencify()
+    
+    pal::cat_lines(glue::glue("### `{variable_name}`"),
+                   "",
+                   variable_label %>% sentencify(),
+                   "",
+                   if (length(variable_values)) {
+                     c(glue::glue("#### Possible values {{#{variable_name}-values}}"),
+                       "",
+                       if (length(value_labels)) {
+                         c("| Value | Meaning |",
+                           "| :---- | :------ |",
+                           variable_values %>% purrr::map2_chr(.y = value_labels,
+                                                               .f = ~ glue::glue("| `{.x}` | {.y} |")))
+                       } else {
+                         c("| Value |",
+                           "| :---- |",
+                           variable_values %>% purrr::map_chr(~ glue::glue("| `{.x}` |")))
+                       },
+                       # if (!is.null(value_default)) c("", glue::glue("The default value is: `{value_default}`")),
+                       "")
+                   },
+                   if (is_multi_valued) {
+                     c("_This is a multi-value variable[^multi-val-var] and thus of type `list`._",
+                       "")
+                   },
+                   if (!is.na(applicability_constraint)) {
+                     c(glue::glue("#### Applicability constraint {{#{variable_name}-constraint}}"),
+                       "",
+                       "This variable is only applicable under the following condition:",
+                       "",
+                       "```r",
+                       applicability_constraint,
+                       "```",
+                       "")
+                   },
+                   if (value_scale != "undefined") {
+                     c(glue::glue("#### Level of measurement {{#{variable_name}-scale}}"),
+                       "",
+                       glue::glue("This variable's [scale of measure](https://en.wikipedia.org/wiki/Level_of_measurement) is the **{value_scale}** level."),
+                       "")
+                   })
+  })
+}
+
+c2d:::data_codebook %>%
+  dplyr::filter(stringr::str_detect(string = variable_name,
+                                    pattern = "^inst_",
+                                    negate = TRUE)) %>%
+  cat_v_sections()
+```
+
+## Institution-level variables
+
+For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the referendum's *institutional instrument*, a
+combination of the referendum's `type` and the jurisdiction it took place.
+
+The set of variables that constitute the jurisdiction is dependent on the referendum's `level`:
+
+| `level`       | Jurisdiction is given by                                    |
+|:--------------|:------------------------------------------------------------|
+| `national`    | `country_code`                                              |
+| `subnational` | `country_code` + `subnational_entity_name`                  |
+| `local`       | `country_code` + `subnational_entity_name` + `municipality` |
+
+```{r, institution-level-vars, echo = FALSE, results = "asis"}
+c2d:::data_codebook %>%
+  dplyr::filter(stringr::str_detect(string = variable_name,
+                                    pattern = "^inst_")) %>%
+  cat_v_sections()
+```
+
+```{r, footnotes, echo = FALSE, results = "asis"}
+cat("
+[^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/hoist.html) to convert data containing such a variable to long format. To unnest `tags` to `tag` for example, use:
+
+    \`\`\`r
+    c2d::referendums() %>% tidyr::unnest_longer(col = tags, values_to = \"tag\")
+    \`\`\`
+")
+```

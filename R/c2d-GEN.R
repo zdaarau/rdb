@@ -5,6 +5,8 @@ utils::globalVariables(names = c(".",
                                  "content-disposition",
                                  "items",
                                  "sudd_prefix",
+                                 "variable_name",
+                                 "variable_values",
                                  "votes"))
 
 .onLoad <- function(libname, pkgname) {
@@ -17,21 +19,18 @@ utils::globalVariables(names = c(".",
   pkgpins::deregister(pkg = pkg)
 }
 
-pkg <- utils::packageName()
-
-required_fields <- c("_id",
-                     "country_name",
-                     "created_on",
-                     "level",
-                     "title",
-                     "total_electorate",
-                     "votes_no",
-                     "votes_yes")
-
 httr_config <- function() {
   
   httr::config(cainfo = fs::path_package(package = pkg,
                                          "certs", "3479778542.crt"))
+}
+
+v_vals <- function(v) {
+  
+  data_codebook %>%
+    dplyr::filter(variable_name == !!v) %$%
+    variable_values %>%
+    unlist()
 }
 
 #' Assemble MongoDB query filter document
@@ -69,23 +68,44 @@ assemble_query_filter <- function(country_code = NULL,
                                   base64_encode = TRUE) {
   
   # assemble JSON query filter document if `query_filter` is not provided
-  if (is.null(query_filter)) {
+  if (is.null(checkmate::assert_string(query_filter, null.ok = TRUE))) {
     
     query_filter <-
-      list(country_code = query_filter_in(country_code),
-           canton = query_filter_in(subnational_entity_name),
-           municipality = query_filter_in(municipality),
+      list(country_code =
+             country_code %>%
+             purrr::map_chr(checkmate::assert_choice,
+                            choices = countrycode::codelist$iso2c %>% setdiff(NA_character_),
+                            null.ok = TRUE,
+                            .var.name = "country_code") %>%
+             query_filter_in(),
+           canton = query_filter_in(checkmate::assert_character(subnational_entity_name,
+                                                                any.missing = FALSE,
+                                                                null.ok = TRUE)),
+           municipality = query_filter_in(checkmate::assert_character(municipality,
+                                                                      any.missing = FALSE,
+                                                                      null.ok = TRUE)),
            level =
              level %>%
-             purrr::when(is.null(.) ~ .,
+             purrr::map_chr(checkmate::assert_choice,
+                            choices = v_vals("level"),
+                            null.ok = TRUE,
+                            .var.name = "level") %>%
+             purrr::when(length(.) == 0L ~ .,
                          ~ dplyr::recode(., "subnational" = "sub-national") %>% stringr::str_to_sentence()) %>%
              query_filter_in(),
            institution =
              type %>%
-             purrr::when(is.null(.) ~ .,
+             purrr::map_chr(checkmate::assert_choice,
+                            choices = v_vals("type"),
+                            null.ok = TRUE,
+                            .var.name = "type") %>%
+             purrr::when(length(.) == 0L ~ .,
                          ~ dplyr::recode("citizens' assembly" = "citizen assembly") %>% stringr::str_to_sentence()) %>%
              query_filter_in(),
-           date = query_filter_in(date),
+           date = query_filter_in(checkmate::assert_character(date,
+                                                              pattern = "\\d{4}-\\d{2}-\\d{2}",
+                                                              any.missing = FALSE,
+                                                              null.ok = TRUE)),
            draft = checkmate::assert_flag(is_draft,
                                           null.ok = TRUE),
            created_on = query_filter_date(min = date_time_created_min,
@@ -99,7 +119,7 @@ assemble_query_filter <- function(country_code = NULL,
                        pretty = FALSE)
   }
   
-  query_filter %>% purrr::when(base64_encode ~ jsonlite::base64_enc(.),
+  query_filter %>% purrr::when(checkmate::assert_flag(base64_encode) ~ jsonlite::base64_enc(.),
                                ~ .)
 }
 
@@ -117,6 +137,33 @@ query_filter_in <- function(x) {
                     length(.) == 1 ~ .,
                     ~ list(`$in` = .))
 }
+
+read_toml <- function(path) {
+  
+  pal::assert_pkg("RcppTOML")
+  pal::assert_pkg("xfun")
+  
+  path %>%
+    purrr::when(length(.) > 0L ~ RcppTOML::parseTOML(input = .,
+                                                     escape = FALSE),
+                ~ NULL) %>%
+    xfun::as_strict_list()
+}
+
+pkg <- utils::packageName()
+
+required_fields <- c("_id",
+                     "country_name",
+                     "created_on",
+                     "level",
+                     "title",
+                     "total_electorate",
+                     "votes_no",
+                     "votes_yes")
+
+
+
+
 
 #' Test C2D API availability
 #'
@@ -251,7 +298,7 @@ referendums <- function(use_cache = TRUE,
     }
     
     ## ensure `country_codes`s are valid
-    invalid_country_codes <- data$country_code[!(data$country_code %in% countrycode::codelist$iso2c)]
+    invalid_country_codes <- data$country_code[!(data$country_code %in% countrycode::codelist$iso2c %>% setdiff(NA_character_))]
     
     if (length(invalid_country_codes)) {
       rlang::abort(cli::format_error("Unknown {.var country_code}s detected. Please debug."))
@@ -484,7 +531,7 @@ referendums <- function(use_cache = TRUE,
                       any_of("action"),
                       any_of("special_topics"),
                       any_of("excluded_topics")) %>%
-      purrr::when(incl_archive ~ .,
+      purrr::when(checkmate::assert_flag(incl_archive) ~ .,
                   ~ dplyr::select(.data = ., -archive))
     
     # correct known errors
@@ -647,10 +694,11 @@ download_file_attachment <- function(s3_object_key,
     use_original_filename <- FALSE
   }
   
+  checkmate::assert_atomic(path)
   temp_path <- fs::file_temp()
   
   response <- httr::RETRY(verb = "GET",
-                          url = paste0("https://services.c2d.ch/s3_objects/", s3_object_key),
+                          url = paste0("https://services.c2d.ch/s3_objects/", checkmate::assert_string(s3_object_key)),
                           config = httr_config(),
                           httr::write_disk(path = temp_path),
                           times = 5L)
