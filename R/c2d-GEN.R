@@ -102,10 +102,11 @@ assemble_query_filter <- function(country_code = NULL,
              purrr::when(length(.) == 0L ~ .,
                          ~ dplyr::recode("citizens' assembly" = "citizen assembly") %>% stringr::str_to_sentence()) %>%
              query_filter_in(),
-           date = query_filter_in(checkmate::assert_character(date,
+           date = query_filter_in(checkmate::assert_character(as.character(date),
                                                               pattern = "\\d{4}-\\d{2}-\\d{2}",
                                                               any.missing = FALSE,
-                                                              null.ok = TRUE)),
+                                                              null.ok = TRUE,
+                                                              .var.name = "date")),
            draft = checkmate::assert_flag(is_draft,
                                           null.ok = TRUE),
            created_on = query_filter_date(min = date_time_created_min,
@@ -156,7 +157,8 @@ required_fields <- c("_id",
                      "country_name",
                      "created_on",
                      "level",
-                     "title",
+                     # "title_en", # contains NAs from before relaunch
+                     # "type", # contains NAs from before relaunch
                      "total_electorate",
                      "votes_no",
                      "votes_yes")
@@ -260,11 +262,54 @@ referendums <- function(use_cache = TRUE,
                   times = 5L) %>%
       httr::content(as = "parsed") %$%
       items %>%
-      # wrap all array fields in another list level for subsequent conversion to tibble
-      purrr::map(.f = ~ .x %>% purrr::modify_if(.p = ~ length(.x) != 1L,
-                                                .f = ~ list(.x))) %>%
+      # unnest columns and ensure list type for multi-value columns
+      # NOTE: this is considerably faster than
+      # purrr::map(.f = ~ .x %>% purrr::modify_if(.p = ~ length(.x) != 1L,
+      #                                           .f = ~ list(.x))) %>%
+      # dplyr::bind_rows() %>%
+      # tidyr::unnest_wider(col = context) %>%
+      # tidyr::unnest_wider(col = categories) %>%
+      # tidyr::unnest_wider(col = title,
+      #                     names_sep = "_")
+      purrr::map(.f = function(l,
+                               category_names = names(l$categories),
+                               context_names = names(l$context),
+                               title_langs = names(l$title)) {
+        
+        for (name in category_names) {
+          l[[name]] <- l$categories[[name]]
+        }
+        
+        for (name in context_names) {
+          l[[name]] <- l$context[[name]]
+        }
+        
+        for (lang in title_langs) {
+          l[[paste0("title_", lang)]] <- l$title[[lang]]
+        }
+        
+        l$categories <- NULL
+        l$context <- NULL
+        l$title <- NULL
+        l$`_id` %<>% purrr::flatten_chr()
+        
+        for (name in c("action",
+                       "tags",
+                       "special_topics",
+                       "excluded_topics")) {
+          l[[name]] %<>% purrr::flatten_chr() %>% list()
+        }
+        
+        for (name in c("archive",
+                       "files",
+                       "votes_per_canton")) {
+          l[[name]] %<>% list()
+        }
+        
+        l
+      }) %>%
       # convert to tibble
-      dplyr::bind_rows()
+      purrr::map_dfr(tibble::as_tibble_row)
     
     # check data integrity
     ## ensure mandatory fields are never `NA`
@@ -276,26 +321,10 @@ referendums <- function(use_cache = TRUE,
       rlang::abort(cli::format_error("Mandatory fields detected that contain {.val NA} values. Please debug."))
     }
     
-    ## ensure there's always exactly *one* `oid` per row
-    ids <- data$`_id` %>% purrr::map(length)
-    
-    if (length(unique(names(ids))) != 1L ||
-        !"$oid" %in% unique(names(ids)) ||
-        any(purrr::flatten_int(unique(ids))) != 1L) {
-      
-      rlang::abort(cli::format_error("Unexpected ID fields detected. Please debug."))
-    }
-    
-    ## ensure `oid`s are unique
-    if (data$`_id` %>%
-        purrr::flatten_chr() %>%
-        unique() %>%
-        length() %>%
-        magrittr::equals(nrow(data)) %>%
-        magrittr::not()) {
-      
-      rlang::abort(cli::format_error("Duplicated {.var oid}s detected. Please debug."))
-    }
+    # ## ensure `oid`s are unique
+    # if (anyDuplicated(data$`_id`)) {
+    #   rlang::abort(cli::format_error("Duplicated {.var oid}s detected. Please debug."))
+    # }
     
     ## ensure `country_codes`s are valid
     invalid_country_codes <- data$country_code[!(data$country_code %in% countrycode::codelist$iso2c %>% setdiff(NA_character_))]
@@ -306,11 +335,6 @@ referendums <- function(use_cache = TRUE,
     
     # tidy data
     data %<>%
-      # unnest `context`, `categories` and `title` (no technical need to be nested)
-      tidyr::unnest_wider(col = context) %>%
-      tidyr::unnest_wider(col = categories) %>%
-      tidyr::unnest_wider(col = title,
-                          names_sep = "_") %>%
       # rename variables (since the MongoDB-based API doesn't demand a schema, we can't use `dplyr::rename()`)
       magrittr::set_names(names(.) %>% dplyr::recode("created_on" = "date_time_created",
                                                      "_id" = "id",
@@ -355,14 +379,6 @@ referendums <- function(use_cache = TRUE,
                                                      "vote_venue" = "inst_vote_venue")) %>%
       # create/recode variables
       dplyr::mutate(
-        # flatten unnecessarily convoluted list columns
-        dplyr::across(c(id,
-                        inst_action,
-                        tags,
-                        any_of(c("inst_topics_excluded",
-                                 "inst_topics_special"))),
-                      ~ .x %>% purrr::map(unlist)),
-        
         # replace empty lists with `NULL` in list columns
         dplyr::across(where(is.list),
                       ~ dplyr::case_when(.x %>% purrr::map_lgl(~ length(.x) == 0L) ~ list(NULL),
@@ -411,21 +427,6 @@ referendums <- function(use_cache = TRUE,
                                          paste(collapse = " "))),
         
         # specific recodings
-        ## split `id_official` into `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
-        id_sudd =
-          id_official %>%
-          dplyr::if_else(stringr::str_detect(string = .,
-                                             pattern = "^\\D"),
-                         .,
-                         NA_character_) %>%
-          # everything beyond the 8th char seems to be manually added -> strip!
-          stringr::str_sub(end = 8L),
-        id_official =
-          id_official %>%
-          dplyr::if_else(stringr::str_detect(string = .,
-                                             pattern = "^\\D"),
-                         NA_character_,
-                         .),
         ## binary (dummies)
         dplyr::across(any_of("position_government"),
                       ~ dplyr::case_when(.x == "Acceptance" ~ "yes",
@@ -444,7 +445,21 @@ referendums <- function(use_cache = TRUE,
                                          .x == "Normal" ~ FALSE,
                                          TRUE ~ NA)),
         ## nominal
-        id = purrr::flatten_chr(id),
+        ### split `id_official` into `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
+        id_sudd =
+          id_official %>%
+          dplyr::if_else(stringr::str_detect(string = .,
+                                             pattern = "^\\D"),
+                         .,
+                         NA_character_) %>%
+          # everything beyond the 8th char seems to be manually added -> strip!
+          stringr::str_sub(end = 8L),
+        id_official =
+          id_official %>%
+          dplyr::if_else(stringr::str_detect(string = .,
+                                             pattern = "^\\D"),
+                         NA_character_,
+                         .),
         level = stringr::str_replace(string = level,
                                      pattern = "sub-national",
                                      replacement = "subnational"),
@@ -457,7 +472,9 @@ referendums <- function(use_cache = TRUE,
                                              "legal text (allg. anregung)" = "legal text (general proposal)")),
         ## ordinal
         ## interval
+        date = lubridate::as_date(date),
         date_time_created = purrr::flatten_dbl(date_time_created) %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime(),
+        ## undefined
         files = files %>% purrr::map(~ .x %>%
                                        # harmonize depth (i.e. add list level if necessary)
                                        purrr::when(length(.) == 0L || purrr::vec_depth(.) > 3L ~ .,
@@ -484,6 +501,15 @@ referendums <- function(use_cache = TRUE,
                                         paste0("https://swissvotes.ch/vote/", id_official),
                                         NA_character_)
       ) %>%
+      
+      # type conversions
+      ## to factor
+      ### nominal vars without variable_values in codebook
+      dplyr::mutate(dplyr::across(any_of(c("country_code",
+                                           "country_name",
+                                           "subnational_entity_name",
+                                           "municipality")),
+                                  as.factor)) %>%
       
       # reorder columns
       dplyr::relocate(id,
