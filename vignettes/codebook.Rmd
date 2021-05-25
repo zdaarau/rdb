@@ -14,7 +14,7 @@ vignette: >
 
 For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the individual referendum.
 
-```{r, referendum-level-vars, echo = FALSE, results = "asis"}
+```{r, referendum-level-vars, echo = FALSE, results = "asis", message = FALSE}
 # setup
 library(rlang)
 library(magrittr)
