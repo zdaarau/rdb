@@ -4,7 +4,16 @@
     <loc>https://rpkg.dev/c2d/index.html</loc>
   </url>
   <url>
+    <loc>https://rpkg.dev/c2d/reference/assemble_query_filter.html</loc>
+  </url>
+  <url>
     <loc>https://rpkg.dev/c2d/reference/c2d-package.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/count_referendums.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/download_file_attachment.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/is_online.html</loc>
@@ -14,5 +23,8 @@
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/search_referendums.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/articles/codebook.html</loc>
   </url>
 </urlset>

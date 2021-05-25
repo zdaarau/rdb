@@ -43,8 +43,8 @@
 
 
 <meta property="og:title" content="Get referendum data — referendums" />
-<meta name="description" content="Downloads the complete data about all referendums covered by the C2D Database.">
-<meta property="og:description" content="Downloads the complete data about all referendums covered by the C2D Database." />
+<meta name="description" content="Downloads the referendum data from the C2D Database.">
+<meta property="og:description" content="Downloads the referendum data from the C2D Database." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9005</span>
       </span>
     </div>
 
@@ -91,6 +91,9 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="../articles/codebook.html">C2D Codebook</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -119,10 +122,24 @@
     </div>
 
     <div class="ref-description">
-    <p>Downloads the complete data about all referendums covered by the C2D Database.</p>
+    <p>Downloads the referendum data from the C2D Database.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>referendums</span><span class='op'>(</span>use_cache <span class='op'>=</span> <span class='cn'>TRUE</span>, cache_lifespan <span class='op'>=</span> <span class='st'>"1 week"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>referendums</span><span class='op'>(</span>
+  use_cache <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  cache_lifespan <span class='op'>=</span> <span class='st'>"1 week"</span>,
+  incl_archive <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  is_draft <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  country_code <span class='op'>=</span> <span class='cn'>NULL</span>,
+  subnational_entity_name <span class='op'>=</span> <span class='cn'>NULL</span>,
+  municipality <span class='op'>=</span> <span class='cn'>NULL</span>,
+  level <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
+  date <span class='op'>=</span> <span class='cn'>NULL</span>,
+  date_time_created_min <span class='op'>=</span> <span class='cn'>NULL</span>,
+  date_time_created_max <span class='op'>=</span> <span class='cn'>NULL</span>,
+  query_filter <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,15 +152,124 @@
       <th>cache_lifespan</th>
       <td><p>The duration after which cached results are refreshed (i.e. newly fetched). A valid <a href='http://lubridate.tidyverse.org/reference/as.duration.html'>lubridate duration</a>. Only relevant if <code>use_cache = TRUE</code>.</p></td>
     </tr>
+    <tr>
+      <th>incl_archive</th>
+      <td><p>Whether or not to include an <code>archive</code> column containing data from an earlier, obsolete state of the C2D database.</p></td>
+    </tr>
+    <tr>
+      <th>is_draft</th>
+      <td><p><code>TRUE</code> means to include only referendum entries with <em>draft</em> status, <code>FALSE</code> to include only normal entries. Set to <code>NULL</code> in order to
+include both draft and normal entries.</p></td>
+    </tr>
+    <tr>
+      <th>country_code</th>
+      <td><p>The <code>country_code</code>(s) to be included. A character vector.</p></td>
+    </tr>
+    <tr>
+      <th>subnational_entity_name</th>
+      <td><p>The <code>subnational_entity_name</code>(s) to be included. A character vector.</p></td>
+    </tr>
+    <tr>
+      <th>municipality</th>
+      <td><p>The <code>municipality</code>(s) to be included. A character vector.</p></td>
+    </tr>
+    <tr>
+      <th>level</th>
+      <td><p>The <code>level</code>(s) to be included. A character vector.</p></td>
+    </tr>
+    <tr>
+      <th>type</th>
+      <td><p>The <code>type</code>(s) to be included. A character vector.</p></td>
+    </tr>
+    <tr>
+      <th>date</th>
+      <td><p>The <code>date</code>(s) to be included. A character vector.</p></td>
+    </tr>
+    <tr>
+      <th>date_time_created_min</th>
+      <td><p>The minimum <code>date_time_created</code> to be included. A <a href='https://rdrr.io/r/base/Dates.html'>date</a>, a <a href='https://rdrr.io/r/base/DateTimeClasses.html'>datetime</a>, or something
+coercible to (like <code>"2006-01-02"</code> or <code>"2006-01-02T15:04:05"</code>).</p></td>
+    </tr>
+    <tr>
+      <th>date_time_created_max</th>
+      <td><p>The maximum <code>date_time_created</code> to be included. A <a href='https://rdrr.io/r/base/Dates.html'>date</a>, a <a href='https://rdrr.io/r/base/DateTimeClasses.html'>datetime</a>, or something
+coercible to (like <code>"2006-01-02"</code> or <code>"2006-01-02T15:04:05"</code>).</p></td>
+    </tr>
+    <tr>
+      <th>query_filter</th>
+      <td><p>A valid <a href='https://docs.mongodb.com/manual/core/document/#query-filter-documents'>MongoDB JSON query filter document</a> which allows for
+maximum control over what data is included. This takes precedence over all the other parameters, i.e. if <code>query_filter</code> is provided, all the other
+parameters are ignored.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Currently, this function only allows to download the C2D referendums database in its entirety.</p>
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># get all referendums (excl. drafts)</span>
+<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendums</span><span class='op'>(</span><span class='op'>)</span><span class='op'>}</span>
 
+<span class='co'># get only referendums in Austria on subnational level</span>
+<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendums</span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span>,
+                 level <span class='op'>=</span> <span class='st'>"subnational"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 49</span><span>
+#&gt;   id       id_official id_sudd country_code country_name subnational_enti… level
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> 5bbbe28… 123         </span><span style='color: #BB0000;'>NA</span><span>      AT           Austria      Salzburg          subn…
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span> 5bbbe28… 122         </span><span style='color: #BB0000;'>NA</span><span>      AT           Austria      Tyrol             subn…
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span> 5bbbe28… 5644        </span><span style='color: #BB0000;'>NA</span><span>      AT           Austria      Carinthia         subn…
+#&gt; </span><span style='color: #BCBCBC;'>4</span><span> 5bbbe28… 5643        </span><span style='color: #BB0000;'>NA</span><span>      AT           Austria      Carinthia         subn…
+#&gt; </span><span style='color: #BCBCBC;'>5</span><span> 5bbbe28… 114         </span><span style='color: #BB0000;'>NA</span><span>      AT           Austria      Klagenfurt Becke… subn…
+#&gt; </span><span style='color: #BCBCBC;'>6</span><span> 5bbbe28… 101         </span><span style='color: #BB0000;'>NA</span><span>      AT           Austria      Vorarlberg        subn…
+#&gt; </span><span style='color: #949494;'># … with 42 more variables: date &lt;chr&gt;, title_de &lt;chr&gt;, title_fr &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   title_en &lt;chr&gt;, committee_name &lt;chr&gt;, result &lt;chr&gt;, electorate_total &lt;int&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;, tags &lt;list&gt;, remarks &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   files &lt;list&gt;, url_sudd &lt;chr&gt;, url_swissvotes &lt;chr&gt;, is_draft &lt;lgl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   date_time_created &lt;dttm&gt;, type &lt;chr&gt;, object_type &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   object_author &lt;chr&gt;, object_legal_level &lt;chr&gt;, legal_basis_type &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   has_urgent_legal_basis &lt;lgl&gt;, degree_of_revision &lt;chr&gt;, is_binding &lt;lgl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   is_counter_proposal &lt;lgl&gt;, vote_venue &lt;chr&gt;, trigger_threshold &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   trigger_type &lt;chr&gt;, trigger_actor &lt;chr&gt;, trigger_time_limit &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   trigger_state_level &lt;chr&gt;, turnout_quorum &lt;chr&gt;, decision_quorum &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   referendum_text_options &lt;chr&gt;, institutional_precondition &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   institutional_precondition_decision &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   institutional_precondition_decision_actor &lt;chr&gt;, action &lt;list&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   excluded_topics &lt;list&gt;</span><span></div><div class='input'>
+<span class='co'># provide custom `query_filter` for more complex queries like regex matches</span>
+<span class='co'># cf. https://docs.mongodb.com/manual/reference/operator/query/regex/</span>
+<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendums</span><span class='op'>(</span>query_filter <span class='op'>=</span> <span class='st'>'{"country_code":{"$regex":"A."}}'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 225 x 50</span><span>
+#&gt;    id      id_official id_sudd country_code country_name  subnational_ent… level
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 5d2dd6… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AS           American Sam… </span><span style='color: #BB0000;'>NA</span><span>               nati…
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 5d2dbe… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AG           Antigua and … </span><span style='color: #BB0000;'>NA</span><span>               nati…
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 5d1cc8… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia     </span><span style='color: #BB0000;'>NA</span><span>               nati…
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 5d1a18… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    Nagorno-Karabakh subn…
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 5cc9a4… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 5cc9a3… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 5cc9a2… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 5cc9a1… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 5cc9a0… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 5cc99f… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
+#&gt; </span><span style='color: #949494;'># … with 215 more rows, and 43 more variables: date &lt;chr&gt;, title_de &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   title_fr &lt;chr&gt;, title_en &lt;chr&gt;, committee_name &lt;chr&gt;, result &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;, tags &lt;list&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   remarks &lt;chr&gt;, files &lt;list&gt;, url_sudd &lt;chr&gt;, url_swissvotes &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   is_draft &lt;lgl&gt;, date_time_created &lt;dttm&gt;, type &lt;chr&gt;, object_type &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   object_author &lt;chr&gt;, object_legal_level &lt;chr&gt;, legal_basis_type &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   has_urgent_legal_basis &lt;lgl&gt;, degree_of_revision &lt;chr&gt;, is_binding &lt;lgl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   is_counter_proposal &lt;lgl&gt;, vote_venue &lt;chr&gt;, trigger_threshold &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   trigger_type &lt;chr&gt;, trigger_time_limit &lt;chr&gt;, trigger_actor &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   trigger_state_level &lt;chr&gt;, turnout_quorum &lt;chr&gt;, decision_quorum &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   referendum_text_options &lt;chr&gt;, institutional_precondition &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   institutional_precondition_decision &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   institutional_precondition_decision_actor &lt;chr&gt;, action &lt;list&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   special_topics &lt;list&gt;, excluded_topics &lt;list&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
