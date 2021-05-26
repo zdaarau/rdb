@@ -56,7 +56,7 @@ c2d::count_referendums()
 # only Swiss and Austrian referendums
 c2d::count_referendums(country_code = c("CH", "AT"))
 
-# only Swiss referendums between 2020 and 2021
+# only Swiss referendums created between 2020 and 2021
 c2d::count_referendums(country_code = "CH",
                        date_time_created_min = "2020-01-01",
                        date_time_created_max = "2021-01-01")
