@@ -154,8 +154,8 @@ database, so we can't filter on it. It has [been requested](https://github.com/c
 #' @param date_time_created_max The maximum `date_time_created` to be included. A [date][base::Date], a [datetime][base::DateTimeClasses], or something
 #'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`).
 #' @param query_filter A valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents) which allows for
-#'   maximum control over what data is included. This takes precedence over all the other parameters, i.e. if `query_filter` is provided, all the other
-#'   parameters are ignored.
+#'   maximum control over what data is included. This takes precedence over all the other parameters, i.e. if `query_filter` is provided, the parameters
+#'   ``r formals(assemble_query_filter) %>% names() %>% setdiff(c("query_filter", "base64_encode")) %>% pal::prose_ls(wrap = "`")`` are ignored.
 #' @param base64_encode Whether or not to [Base64](https://en.wikipedia.org/wiki/Base64)-encode the resulting query filter document. Note that the
 #'   `query_filter` argument provided to other functions of this package must be Base64-encoded.
 #'

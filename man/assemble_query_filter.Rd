@@ -41,8 +41,8 @@ coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
 coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
 
 \item{query_filter}{A valid \href{https://docs.mongodb.com/manual/core/document/#query-filter-documents}{MongoDB JSON query filter document} which allows for
-maximum control over what data is included. This takes precedence over all the other parameters, i.e. if \code{query_filter} is provided, all the other
-parameters are ignored.}
+maximum control over what data is included. This takes precedence over all the other parameters, i.e. if \code{query_filter} is provided, the parameters
+\code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date}, \code{is_draft}, \code{date_time_created_min} and \code{date_time_created_max})`` are ignored.}
 
 \item{base64_encode}{Whether or not to \href{https://en.wikipedia.org/wiki/Base64}{Base64}-encode the resulting query filter document. Note that the
 \code{query_filter} argument provided to other functions of this package must be Base64-encoded.}
