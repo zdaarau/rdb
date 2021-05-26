@@ -142,7 +142,11 @@
     -   Specialities of the institution (e.g. special quorum or 2 collecting periods)
     -   Specialities of the result (e.g. contradictory numbers)
 
+-   Introduce `date_time_last_edited` holding the timestamp of a referendum entry's last edit.
+
 ## Validation
+
+-   Systematically check if `applicability_constraint` is never violated.
 
 -   Systematically check if all votes in the `sudd.ch` database are included in the C2D database -\> parse `https://sudd.ch/list.php?mode=allrefs` (the
     `id_sudd` is part of the link in the last column)
@@ -172,7 +176,7 @@
 
 ## [Code written by CCM Design](https://github.com/ccmdesign/c2d-app/)
 
--   License code under AGPL \>= 3?
+-   Publish code under AGPL \>= 3, see <https://github.com/ccmdesign/c2d-app/issues/26>
 
 -   Make repository public?
 
@@ -185,9 +189,7 @@
 
 ### C2D Admin Front-end
 
--   [Fix copy-paste slip in `ch.c2d.admin/referendum.js`](https://github.com/ccmdesign/c2d-app/issues/14)
-
--   Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange)
+-   Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange), see <https://github.com/ccmdesign/c2d-app/issues/27>
 
 -   Siehe Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
 
@@ -243,6 +245,8 @@
 
 ## Open questions
 
+-   `inst_quorum_turnout` sollte standardisiert werden -\> was wäre eine geeignete, abschliessende Menge an Werten?
+
 -   Ist `position_government` (ehemals `recommendation`) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal, dies, manchmal jenes?
 
 -   Are `id_sudd`s stable over time?
@@ -263,6 +267,24 @@
 
     -   `committee_name`
     -   `type` und alle `inst_*`-Variablen
+
+-   Was ist der Nutzen/zusätzliche Informationsgehalt von `inst_is_counter_proposal` sowie `inst_is_assembly`? Ob ein Referendum ein `"counter proposal"` bzw.
+    ein `"citizens' assembly"` ist, wird ja bereits in `type` erfasst.
+
+    Diesbezüglich gilt anzumerken, dass in der Datenbank
+
+    -   21 Fälle enthalten sind, bei denen `inst_is_counter_proposal == TRUE`, aber `type != "counter proposal"`.
+    -   3 Fälle enthalten sind, bei denen `inst_is_assembly == TRUE`, aber `type != "citizens' assembly"`.
+
+    Einfach Kodierungsfehler?
+
+-   `inst_object_legal_level` sollte m.E. in Relation zu `level` stehen, tut es aber nicht. Dementsprechend kann `inst_object_legal_level` mehrdeutig sein (ist
+    `inst_object_legal_level = "law"` lokales, kantonales oder nationales Recht bei Referendum auf CH-Gemeindeebene?)
+
+    Würde dieses Problem behoben, könnte `inst_object_legal_level` vermutlich auch als `ordinal_ascending` klassifiziert werden.
+
+-   Kann mir jemand die genaue Bedeutung von `inst_object_revision_extent` sowie den `*precondition*`-Variablen erklären (insb. aus `inst_precondition_decision`
+    werde ich nicht schlau...)?
 
 -   Bei der Abstimmung *Norfolk Island 1980-07-10* meint sudd.ch, sie habe stattdessen [1979-07-10
     stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.
@@ -285,3 +307,4 @@
     -   alle Abstimmungen, die die [Republik Kosovo](https://de.wikipedia.org/wiki/Kosovo) betreffen, unter dem `country_name` *Serbia* geführt...
     -   für die Abstimmungen in Taiwan uneinheitliche `country_name`'s verwendet, für die Abstimmungen am 2018-11-24 *Taiwan, Province of China*, für die
         anderen einfach *Taiwan*...
+
