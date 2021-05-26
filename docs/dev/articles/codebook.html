@@ -1160,7 +1160,7 @@
 <h3 class="hasAnchor">
 <a href="#type" class="anchor"></a><code>type</code>
 </h3>
-<p>The institutional type of the referendum.</p>
+<p>The institutional type of direct democracy which the referendum is an instance of.</p>
 <div id="type-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#type-values" class="anchor"></a>Possible values</h4>
@@ -1245,7 +1245,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_legal_basis_type" class="anchor"></a><code>inst_legal_basis_type</code>
 </h3>
-<p>The type of the referendum’s legal basis.</p>
+<p>The type of the legal basis of the referendum <a href="#type"><code>type</code></a>.</p>
 <div id="inst_legal_basis_type-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_legal_basis_type-values" class="anchor"></a>Possible values</h4>
@@ -1261,15 +1261,15 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code>"non-official"</code></td>
-<td align="left">The referendum has no legal basis.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> has no legal basis.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>"ad-hoc"</code></td>
-<td align="left">The referendum has a legal basis which was specifically created for it.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> has a legal basis which was specifically created for it.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>"official"</code></td>
-<td align="left">The referendum has a legal basis that wasn’t specifically created for it.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> has a legal basis that wasn’t specifically created for it.</td>
 </tr>
 </tbody>
 </table>
@@ -1284,7 +1284,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_has_urgent_legal_basis" class="anchor"></a><code>inst_has_urgent_legal_basis</code>
 </h3>
-<p>Whether or not the legal basis of the referendum was adopted urgently, i.e. in an abridged procedure.</p>
+<p>Whether or not the legal basis of the referendum <a href="#type"><code>type</code></a> was adopted urgently, i.e. in an abridged procedure.</p>
 <div id="inst_has_urgent_legal_basis-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_has_urgent_legal_basis-values" class="anchor"></a>Possible values</h4>
@@ -1300,11 +1300,11 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code>TRUE</code></td>
-<td align="left">The legal basis of the referendum was adopted in an abridged procedure (urgent).</td>
+<td align="left">The legal basis of the referendum <a href="#type"><code>type</code></a> was adopted in an abridged procedure (urgent).</td>
 </tr>
 <tr class="even">
 <td align="left"><code>FALSE</code></td>
-<td align="left">The legal basis of the referendum was adopted in a normal procedure.</td>
+<td align="left">The legal basis of the referendum <a href="#type"><code>type</code></a> was adopted in a normal procedure.</td>
 </tr>
 </tbody>
 </table>
@@ -1326,7 +1326,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_is_binding" class="anchor"></a><code>inst_is_binding</code>
 </h3>
-<p>Wheather the referendum result has binding force or the decision of the voters may be disregarded.</p>
+<p>Whether the result of the referendum <a href="#type"><code>type</code></a> has binding force or the decision of the voters may be disregarded.</p>
 <div id="inst_is_binding-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_is_binding-values" class="anchor"></a>Possible values</h4>
@@ -1342,11 +1342,11 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code>TRUE</code></td>
-<td align="left">The result of the referendum is binding for the legislator.</td>
+<td align="left">The result of the referendum <a href="#type"><code>type</code></a> is binding for the legislator.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>FALSE</code></td>
-<td align="left">The result of the referendum is only consultative, i.e. the legislator does not have to follow the decision of the voters.</td>
+<td align="left">The result of the referendum <a href="#type"><code>type</code></a> is only consultative, i.e. the legislator does not have to follow the decision of the voters.</td>
 </tr>
 </tbody>
 </table>
@@ -1361,7 +1361,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_is_counter_proposal" class="anchor"></a><code>inst_is_counter_proposal</code>
 </h3>
-<p>Whether or not the referendum proposal is a counterproposal to a citizen’s (or other) initiative.</p>
+<p>Whether or not the referendum <a href="#type"><code>type</code></a> is a counterproposal to a citizen’s (or other) initiative.</p>
 <div id="inst_is_counter_proposal-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_is_counter_proposal-values" class="anchor"></a>Possible values</h4>
@@ -1377,11 +1377,11 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code>TRUE</code></td>
-<td align="left">The referendum proposal is a counterproposal to a citizen’s (or other) initiative.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is a counterproposal to a citizen’s (or other) initiative.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>FALSE</code></td>
-<td align="left">The referendum proposal is not a counterproposal to a citizen’s (or other) initiative.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is not a counterproposal to a citizen’s (or other) initiative.</td>
 </tr>
 </tbody>
 </table>
@@ -1396,7 +1396,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_is_assembly" class="anchor"></a><code>inst_is_assembly</code>
 </h3>
-<p>Whether or not the referendum is held as an assembly (all voters at the same time and place; physical presence at the assembly is required to be able to vote; usually voting means raising one’s hand).</p>
+<p>Whether or not the referendum <a href="#type"><code>type</code></a> is held as an assembly (all voters at the same time and place; physical presence at the assembly is required to be able to vote; usually voting means raising one’s hand).</p>
 <div id="inst_is_assembly-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_is_assembly-values" class="anchor"></a>Possible values</h4>
@@ -1412,11 +1412,11 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code>TRUE</code></td>
-<td align="left">The referendum proposal is a counterproposal to a citizen’s (or other) initiative.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is a counterproposal to a citizen’s (or other) initiative.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>FALSE</code></td>
-<td align="left">The referendum proposal is not a counterproposal to a citizen’s (or other) initiative.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is not a counterproposal to a citizen’s (or other) initiative.</td>
 </tr>
 </tbody>
 </table>
@@ -1431,7 +1431,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_trigger_type" class="anchor"></a><code>inst_trigger_type</code>
 </h3>
-<p>The way the referendum was triggered; completely dependent on <a href="#inst_trigger_actor"><code>inst_trigger_actor</code></a>.</p>
+<p>The way the referendum <a href="#type"><code>type</code></a> is triggered; completely dependent on <a href="#inst_trigger_actor"><code>inst_trigger_actor</code></a>.</p>
 <div id="inst_trigger_type-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_trigger_type-values" class="anchor"></a>Possible values</h4>
@@ -1447,15 +1447,15 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code>"automatic"</code></td>
-<td align="left">The referendum was triggered by a constitutional/legal requirement.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by a constitutional/legal requirement.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>"top down"</code></td>
-<td align="left">The referendum was triggered by an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>"bottom up"</code></td>
-<td align="left">The referendum was triggered by citizen demand (e.g. a signature collection).</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by citizen demand (e.g. a signature collection).</td>
 </tr>
 </tbody>
 </table>
@@ -1470,7 +1470,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_trigger_actor" class="anchor"></a><code>inst_trigger_actor</code>
 </h3>
-<p>The actor that triggered the referendum procedure.</p>
+<p>The actor that triggers the referendum <a href="#type"><code>type</code></a>.</p>
 <div id="inst_trigger_actor-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_trigger_actor-values" class="anchor"></a>Possible values</h4>
@@ -1486,43 +1486,43 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code>"citizens"</code></td>
-<td align="left">The referendum was triggered by a direct citizen demand (usually a signature collection).</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by a direct citizen demand (usually a signature collection).</td>
 </tr>
 <tr class="even">
 <td align="left"><code>"constitution"</code></td>
-<td align="left">The referendum was triggered by a constitutional requirement.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by a constitutional requirement.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>"law"</code></td>
-<td align="left">The referendum was triggered by a legal requirement.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by a legal requirement.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>"parliament"</code></td>
-<td align="left">The referendum was triggered by the parliament.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by the parliament.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>"government"</code></td>
-<td align="left">The referendum was triggered by the government or prime minister.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by the government or prime minister.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>"president"</code></td>
-<td align="left">The referendum was triggered by presidential powers.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by the president.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>"monarch"</code></td>
-<td align="left">The referendum was triggered by powers of the monarch.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by the monarch.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>"territorial unit"</code></td>
-<td align="left">The referendum was triggered by a province or municipality.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by a province or municipality.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>"UN"</code></td>
-<td align="left">The referendum was triggered by the United Nations (UN) or one of its organs.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by the United Nations (UN) or one of its organs.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>"other institution"</code></td>
-<td align="left">The referendum was triggered by another institution such as the church or a state agency.</td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is triggered by another institution such as the church or a state agency.</td>
 </tr>
 </tbody>
 </table>
@@ -1533,11 +1533,50 @@
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal</strong> level.</p>
 </div>
 </div>
+<div id="inst_trigger_actor_level" class="section level3">
+<h3 class="hasAnchor">
+<a href="#inst_trigger_actor_level" class="anchor"></a><code>inst_trigger_actor_level</code>
+</h3>
+<p>The political <a href="#level"><code>level</code></a> of <a href="#inst_trigger_actor"><code>inst_trigger_actor</code></a> in comparison to <a href="#level"><code>level</code></a>.</p>
+<div id="inst_trigger_actor_level-values" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_trigger_actor_level-values" class="anchor"></a>Possible values</h4>
+<table class="table">
+<colgroup>
+<col width="41%">
+<col width="58%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Value</th>
+<th align="left">Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>"lower"</code></td>
+<td align="left">A lower political level triggers a referendum on one of the higher political levels.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"equal"</code></td>
+<td align="left">The trigger actor and the referendum are on the same political level.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"higher"</code></td>
+<td align="left">A higher political level triggers a referendum on one of the lower political levels.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="inst_trigger_actor_level-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_trigger_actor_level-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>ordinal (ascending)</strong> level.</p>
+</div>
+</div>
 <div id="inst_trigger_threshold" class="section level3">
 <h3 class="hasAnchor">
 <a href="#inst_trigger_threshold" class="anchor"></a><code>inst_trigger_threshold</code>
 </h3>
-<p>The threshold of support among <a href="#inst_trigger_actor"><code>inst_trigger_actor</code></a> that had to be reached in order to trigger the referendum.</p>
+<p>The threshold of support among <a href="#inst_trigger_actor"><code>inst_trigger_actor</code></a> that has to be reached in order to trigger the referendum <a href="#type"><code>type</code></a>.</p>
 <div id="inst_trigger_threshold-constraint" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_trigger_threshold-constraint" class="anchor"></a>Applicability constraint</h4>
@@ -1555,7 +1594,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_trigger_time_limit" class="anchor"></a><code>inst_trigger_time_limit</code>
 </h3>
-<p>The time limit in which <a href="#inst_trigger_threshold"><code>inst_trigger_threshold</code></a> (usually a minimum number of signatures) had to be reached in order to trigger the referendum.</p>
+<p>The time limit in which <a href="#inst_trigger_threshold"><code>inst_trigger_threshold</code></a> (usually a minimum number of signatures) has to be reached in order to trigger the referendum <a href="#type"><code>type</code></a>.</p>
 <div id="inst_trigger_time_limit-constraint" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_trigger_time_limit-constraint" class="anchor"></a>Applicability constraint</h4>
@@ -1569,50 +1608,11 @@
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal</strong> level.</p>
 </div>
 </div>
-<div id="inst_trigger_state_level" class="section level3">
-<h3 class="hasAnchor">
-<a href="#inst_trigger_state_level" class="anchor"></a><code>inst_trigger_state_level</code>
-</h3>
-<p>.</p>
-<div id="inst_trigger_state_level-values" class="section level4">
-<h4 class="hasAnchor">
-<a href="#inst_trigger_state_level-values" class="anchor"></a>Possible values</h4>
-<table class="table">
-<colgroup>
-<col width="41%">
-<col width="58%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">Value</th>
-<th align="left">Meaning</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left"><code>"lower"</code></td>
-<td align="left">A lower level of state triggers a referendum on one of the higher state levels.</td>
-</tr>
-<tr class="even">
-<td align="left"><code>"equal"</code></td>
-<td align="left">The trigger actor and the referendum are on the same level of state.</td>
-</tr>
-<tr class="odd">
-<td align="left"><code>"higher"</code></td>
-<td align="left">A higher level of state triggers a referendum on one of the lower state levels.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="inst_trigger_state_level-scale" class="section level4">
-<h4 class="hasAnchor">
-<a href="#inst_trigger_state_level-scale" class="anchor"></a>Level of measurement</h4>
-<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>ordinal (ascending)</strong> level.</p>
-</div>
-</div>
 <div id="inst_object_type" class="section level3">
 <h3 class="hasAnchor">
 <a href="#inst_object_type" class="anchor"></a><code>inst_object_type</code>
 </h3>
-<p>The type of the object the referendum refers to.</p>
+<p>The type of the object the referendum <a href="#type"><code>type</code></a> refers to.</p>
 <div id="inst_object_type-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_object_type-values" class="anchor"></a>Possible values</h4>
@@ -1663,7 +1663,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_object_author" class="anchor"></a><code>inst_object_author</code>
 </h3>
-<p>The actor that defines the text/content of the referendum object.</p>
+<p>The actor that defines the text/content of <a href="#inst_object_type"><code>inst_object_type</code></a>.</p>
 <div id="inst_object_author-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_object_author-values" class="anchor"></a>Possible values</h4>
@@ -1729,7 +1729,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_object_legal_level" class="anchor"></a><code>inst_object_legal_level</code>
 </h3>
-<p>The legal level of the object the referendum refers to.</p>
+<p>The legal level of <a href="#inst_object_type"><code>inst_object_type</code></a>.</p>
 <div id="inst_object_legal_level-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_object_legal_level-values" class="anchor"></a>Possible values</h4>
@@ -1783,7 +1783,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_object_revision_extent" class="anchor"></a><code>inst_object_revision_extent</code>
 </h3>
-<p>The extent of revision of the object the referendum refers to which can be achieved within one referendum.</p>
+<p>The extent of revision of <a href="#inst_object_type"><code>inst_object_type</code></a> which can be achieved within one referendum.</p>
 <div id="inst_object_revision_extent-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_object_revision_extent-values" class="anchor"></a>Possible values</h4>
@@ -1829,7 +1829,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_object_revision_modes" class="anchor"></a><code>inst_object_revision_modes</code>
 </h3>
-<p>The different modes of revision that the object the referendum refers to allows.</p>
+<p>The different modes of revision that <a href="#inst_object_type"><code>inst_object_type</code></a> allows.</p>
 <div id="inst_object_revision_modes-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_object_revision_modes-values" class="anchor"></a>Possible values</h4>
@@ -1869,7 +1869,7 @@
 <h3 class="hasAnchor">
 <a href="#inst_object_revision_divisibility" class="anchor"></a><code>inst_object_revision_divisibility</code>
 </h3>
-<p>The divisibility of the object the referendum refers to.</p>
+<p>The divisibility of <a href="#inst_object_type"><code>inst_object_type</code></a>.</p>
 <div id="inst_object_revision_divisibility-values" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_object_revision_divisibility-values" class="anchor"></a>Possible values</h4>
@@ -1884,16 +1884,20 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left"><code>"the proposed legal text can only be accepted/rejected as a whole"</code></td>
-<td align="left">.</td>
+<td align="left"><code>"as a whole"</code></td>
+<td align="left">The proposed legal text can only be accepted/rejected as a whole.</td>
 </tr>
 <tr class="even">
-<td align="left"><code>"the same text can be split up, the voters may vote upon these parts separately"</code></td>
-<td align="left">.</td>
+<td align="left"><code>"split up"</code></td>
+<td align="left">The proposed legal text can be split up, the voters may vote upon these parts separately.</td>
 </tr>
 <tr class="odd">
-<td align="left"><code>"in the same text, two or more (alternative) variants can be selected"</code></td>
-<td align="left">.</td>
+<td align="left"><code>"as variants"</code></td>
+<td align="left">The proposed legal text can be presented as two or more (alternative) variants.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"both split up and as variants"</code></td>
+<td align="left">The proposed legal text can be both split up as well as presented as two or more (alternative) variants.</td>
 </tr>
 </tbody>
 </table>
@@ -1908,7 +1912,316 @@
 <div id="inst_object_revision_divisibility-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#inst_object_revision_divisibility-scale" class="anchor"></a>Level of measurement</h4>
-<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the **** level.</p>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="inst_topics_only" class="section level3">
+<h3 class="hasAnchor">
+<a href="#inst_topics_only" class="anchor"></a><code>inst_topics_only</code>
+</h3>
+<p>The legal topics to which the referendum <a href="#type"><code>type</code></a> is limited.</p>
+<div id="inst_topics_only-values" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_topics_only-values" class="anchor"></a>Possible values</h4>
+<table class="table">
+<colgroup>
+<col width="41%">
+<col width="58%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Value</th>
+<th align="left">Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>"infrastructural acts"</code></td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is limited to TODO.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"territorial questions"</code></td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is limited to TODO.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"competence shifts"</code></td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is limited to TODO.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"financial acts"</code></td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is limited to TODO.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"financial acts (expenses)"</code></td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is limited to TODO.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"financial acts (taxes)"</code></td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is limited to TODO.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"financial acts (obligations)"</code></td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is limited to TODO.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"treaties"</code></td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is limited to TODO (automatically limited to if <code>inst_object_legal_level == "law"</code>).</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"total revisions of the constitution"</code></td>
+<td align="left">The referendum <a href="#type"><code>type</code></a> is limited to TODO.</td>
+</tr>
+</tbody>
+</table>
+<p><em>This is a multi-value variable<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> and thus of type <code>list</code>.</em></p>
+</div>
+<div id="inst_topics_only-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_topics_only-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="inst_topics_excluded" class="section level3">
+<h3 class="hasAnchor">
+<a href="#inst_topics_excluded" class="anchor"></a><code>inst_topics_excluded</code>
+</h3>
+<p>The legal topics that are excluded from the referendum <a href="#type"><code>type</code></a>.</p>
+<div id="inst_topics_excluded-values" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_topics_excluded-values" class="anchor"></a>Possible values</h4>
+<table class="table">
+<colgroup>
+<col width="41%">
+<col width="58%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Value</th>
+<th align="left">Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>"jus cogens"</code></td>
+<td align="left">TODO is exluded from the referendum <a href="#type"><code>type</code></a>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"international treaties"</code></td>
+<td align="left">TODO is exluded from the referendum <a href="#type"><code>type</code></a>.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"pardons"</code></td>
+<td align="left">TODO is exluded from the referendum <a href="#type"><code>type</code></a>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"personnel appointments"</code></td>
+<td align="left">TODO is exluded from the referendum <a href="#type"><code>type</code></a>.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"budgets"</code></td>
+<td align="left">TODO is exluded from the referendum <a href="#type"><code>type</code></a>.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"financial matters"</code></td>
+<td align="left">TODO is exluded from the referendum <a href="#type"><code>type</code></a>.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"everything within parliamentary competence"</code></td>
+<td align="left">TODO is exluded from the referendum <a href="#type"><code>type</code></a>.</td>
+</tr>
+</tbody>
+</table>
+<p><em>This is a multi-value variable<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> and thus of type <code>list</code>.</em></p>
+</div>
+<div id="inst_topics_excluded-constraint" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_topics_excluded-constraint" class="anchor"></a>Applicability constraint</h4>
+<p>This variable is only applicable under the following condition:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">inst_topics_only</span> <span class="op">%&gt;%</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_lgl</a></span><span class="op">(</span><span class="fu">rlang</span><span class="fu">::</span><span class="va"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">)</span></code></pre></div>
+</div>
+<div id="inst_topics_excluded-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_topics_excluded-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="inst_quorum_turnout" class="section level3">
+<h3 class="hasAnchor">
+<a href="#inst_quorum_turnout" class="anchor"></a><code>inst_quorum_turnout</code>
+</h3>
+<p>The minimum percentage of the <a href="#electorate_total"><code>electorate_total</code></a> that have to participate in the referendum <a href="#type"><code>type</code></a> in order for it to be passed.</p>
+<div id="inst_quorum_turnout-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_quorum_turnout-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="inst_quorum_approval" class="section level3">
+<h3 class="hasAnchor">
+<a href="#inst_quorum_approval" class="anchor"></a><code>inst_quorum_approval</code>
+</h3>
+<p>The minimum number of voters that have to approve the referendum <a href="#type"><code>type</code></a> in order for it to be passed.</p>
+<div id="inst_quorum_approval-values" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_quorum_approval-values" class="anchor"></a>Possible values</h4>
+<table class="table">
+<colgroup>
+<col width="41%">
+<col width="58%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Value</th>
+<th align="left">Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>"simple majority"</code></td>
+<td align="left">&gt; 50 % of the voters have to approve the referendum proposal.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"qualified majority"</code></td>
+<td align="left">A percentage higher than &gt; 50 % of the voters has to approve the referendum proposal.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"double majority"</code></td>
+<td align="left">Two simultaneous quorums of &gt; 50 % or higher of the voters apply.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="inst_quorum_approval-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_quorum_approval-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="inst_has_precondition" class="section level3">
+<h3 class="hasAnchor">
+<a href="#inst_has_precondition" class="anchor"></a><code>inst_has_precondition</code>
+</h3>
+<p>Whether or not an institutional actor must take a preconditional decision in order for the referendum <a href="#type"><code>type</code></a> to be held.</p>
+<div id="inst_has_precondition-values" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_has_precondition-values" class="anchor"></a>Possible values</h4>
+<table class="table">
+<colgroup>
+<col width="41%">
+<col width="58%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Value</th>
+<th align="left">Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>TRUE</code></td>
+<td align="left">An institutional actor must take a preconditional decision in order for the referendum <a href="#type"><code>type</code></a> to be held.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>FALSE</code></td>
+<td align="left">No institutional actor must take a preconditional decision in order for the referendum <a href="#type"><code>type</code></a> to be held.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="inst_has_precondition-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_has_precondition-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
+</div>
+</div>
+<div id="inst_precondition_actor" class="section level3">
+<h3 class="hasAnchor">
+<a href="#inst_precondition_actor" class="anchor"></a><code>inst_precondition_actor</code>
+</h3>
+<p>The actor that must take a preconditional decision in order for the referendum <a href="#type"><code>type</code></a> to be held.</p>
+<div id="inst_precondition_actor-values" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_precondition_actor-values" class="anchor"></a>Possible values</h4>
+<table class="table">
+<colgroup>
+<col width="41%">
+<col width="58%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Value</th>
+<th align="left">Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>"parliament"</code></td>
+<td align="left">The parliament.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"government"</code></td>
+<td align="left">The government or prime minister.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"president"</code></td>
+<td align="left">The president.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"UN"</code></td>
+<td align="left">The United Nations (UN) or one of its organs.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"parliament and government"</code></td>
+<td align="left">The parliament and the government or prime minister.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"parliament and president"</code></td>
+<td align="left">The parliament and the president.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>"central government and SPLM"</code></td>
+<td align="left">The central government and <a href="https://en.wikipedia.org/wiki/Sudan_People%27s_Liberation_Movement" class="external-link">Sudan People’s Liberation Movement</a>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="inst_precondition_actor-constraint" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_precondition_actor-constraint" class="anchor"></a>Applicability constraint</h4>
+<p>This variable is only applicable under the following condition:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">inst_has_precondition</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="inst_precondition_actor-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_precondition_actor-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="inst_precondition_decision" class="section level3">
+<h3 class="hasAnchor">
+<a href="#inst_precondition_decision" class="anchor"></a><code>inst_precondition_decision</code>
+</h3>
+<p>The decision that <a href="#inst_precondition_actor"><code>inst_precondition_actor</code></a> has taken.</p>
+<div id="inst_precondition_decision-values" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_precondition_decision-values" class="anchor"></a>Possible values</h4>
+<table class="table">
+<colgroup>
+<col width="41%">
+<col width="58%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Value</th>
+<th align="left">Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>"yes"</code></td>
+<td align="left">Affirmative answer (e.g. yes, we will hold a vote that has been requested by citizens).</td>
+</tr>
+<tr class="even">
+<td align="left"><code>"no"</code></td>
+<td align="left">Negative answer (e.g. no, we will not implement the demands of a citizens’ initiative voluntarily).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="inst_precondition_decision-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_precondition_decision-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 </div>
 </div>
 </div>
@@ -1926,6 +2239,18 @@
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/referendums.html">referendums</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">tags</span>, values_to <span class="op">=</span> <span class="st">"tag"</span><span class="op">)</span></code></pre></div>
 <a href="#fnref2" class="footnote-back">↩︎</a>
+</li>
+<li id="fn3">
+<p>A multi-value variable allows for more than one value per observation and thus breaks with the <a href="https://tidyr.tidyverse.org/articles/tidy-data.html" class="external-link">tidy-data convention</a>. Use <a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link"><code>tidyr::unnest_longer()</code></a> to convert data containing such a variable to long format. To unnest <code>tags</code> to <code>tag</code> for example, use:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/referendums.html">referendums</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">tags</span>, values_to <span class="op">=</span> <span class="st">"tag"</span><span class="op">)</span></code></pre></div>
+<a href="#fnref3" class="footnote-back">↩︎</a>
+</li>
+<li id="fn4">
+<p>A multi-value variable allows for more than one value per observation and thus breaks with the <a href="https://tidyr.tidyverse.org/articles/tidy-data.html" class="external-link">tidy-data convention</a>. Use <a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link"><code>tidyr::unnest_longer()</code></a> to convert data containing such a variable to long format. To unnest <code>tags</code> to <code>tag</code> for example, use:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/referendums.html">referendums</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">tags</span>, values_to <span class="op">=</span> <span class="st">"tag"</span><span class="op">)</span></code></pre></div>
+<a href="#fnref4" class="footnote-back">↩︎</a>
 </li>
 </ol>
 </div>

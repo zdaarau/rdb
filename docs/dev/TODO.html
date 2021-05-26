@@ -238,12 +238,14 @@
 <li>Specialities of the result (e.g. contradictory numbers)</li>
 </ul>
 </li>
+<li><p>Introduce <code>date_time_last_edited</code> holding the timestamp of a referendum entry’s last edit.</p></li>
 </ul>
 </div>
 <div id="validation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#validation" class="anchor"></a>Validation</h2>
 <ul>
+<li><p>Systematically check if <code>applicability_constraint</code> is never violated.</p></li>
 <li><p>Systematically check if all votes in the <code>sudd.ch</code> database are included in the C2D database -&gt; parse <code>https://sudd.ch/list.php?mode=allrefs</code> (the <code>id_sudd</code> is part of the link in the last column)</p></li>
 <li><p>According to the guidelines in <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx</code>, the PDF <code>files</code> of <code>country_code == "CH"</code> entries must be named consistently <code>Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag</code> (“Abstimmungsbroschüre”") and <code>Results_CH/Kantonskürzel_Jahr_Monat_Tag</code> (results) -&gt; check if this is actually always the case!</p></li>
 <li>
@@ -266,7 +268,7 @@
 <a href="#code-written-by-ccm-design" class="anchor"></a><a href="https://github.com/ccmdesign/c2d-app/" class="external-link">Code written by CCM Design</a>
 </h2>
 <ul>
-<li><p>License code under AGPL &gt;= 3?</p></li>
+<li><p>Publish code under AGPL &gt;= 3, see <a href="https://github.com/ccmdesign/c2d-app/issues/26" class="external-link uri">https://github.com/ccmdesign/c2d-app/issues/26</a></p></li>
 <li>
 <p>Make repository public?</p>
 <p>Before doing this, we need to ensure that</p>
@@ -280,8 +282,7 @@
 <h3 class="hasAnchor">
 <a href="#c2d-admin-front-end" class="anchor"></a>C2D Admin Front-end</h3>
 <ul>
-<li><p><a href="https://github.com/ccmdesign/c2d-app/issues/14" class="external-link">Fix copy-paste slip in <code>ch.c2d.admin/referendum.js</code></a></p></li>
-<li><p>Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange)</p></li>
+<li><p>Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange), see <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link uri">https://github.com/ccmdesign/c2d-app/issues/27</a></p></li>
 <li><p>Siehe Louis’ Dokument <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx</code></p></li>
 </ul>
 </div>
@@ -291,21 +292,48 @@
 <a href="#c2d-website" class="anchor"></a>C2D Website</h2>
 <ul>
 <li><p>Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! <a href="https://opendatacommons.org/licenses/odbl/summary/" class="external-link">ODC-ODbL</a> würde sich anbieten.</p></li>
-<li><p>Ditch the <code>by ccm.design</code> promo in the footer?</p></li>
+<li>
+<p>Copyright notice in the footer must be updated and corrected.</p>
+<p>New: <code>Copyright © 2021 Centre for Democracy Studies Aarau (ZDA)</code> (Additionally: The current <code>v0.0.0</code> doesn’t really make sense…?)</p>
+<p>Plus Ditch the <code>by ccm.design</code> promo?</p>
+</li>
+<li><p>Consistent use of the British <code>centre</code> (instead of the American <code>center</code>).</p></li>
 <li><p>Der C2D-Link auf der <a href="https://www.zdaarau.ch/en/applications" class="external-link">ZDA-Webseite</a> sollte auf HTTP<strong>S</strong> geändert werden!</p></li>
 </ul>
+<div id="c2d-r-package" class="section level3">
+<h3 class="hasAnchor">
+<a href="#c2d-r-package" class="anchor"></a>c2d R package</h3>
+<ul>
+<li>
+<p>Explore possibilities for automated vote entry creation. E.g. I write a scraper (in R) for the votes of Swiss canton X and convert the result into C2D-compatible JSON.</p>
+<p><strong>Test credentials to fiddle with the <code>POST /referendums</code> endpoint would be good…</strong> open questions:</p>
+<ol style="list-style-type: decimal">
+<li><p>Is the edit history preserved (or at least backed-up)?</p></li>
+<li><p>Are edits traceable by author? And is it possible to easily undo all edit by a specific account?</p></li>
+</ol>
+</li>
+<li>
+<p><input type="checkbox" disabled>
+Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:</p>
+<div class="figure">
+<img src="https://i.imgur.com/88H2TZz.jpeg" alt=""><p class="caption">scan</p>
+</div>
+<p><a href="https://vincentarelbundock.github.io/countrycode/reference/codelist.html" class="external-link"><code>countrycode::codelist$region23</code></a> (Weltbankregionen) oder <code>countrycode::codelist$un.regionsub.name</code> (<a href="https://en.wikipedia.org/wiki/United_Nations_geoscheme" class="external-link">UN-Regionen</a>) scheint eine guter Start -&gt; dann einfach noch abändern, sodass Uwe’s Spezialwünsche erfüllt sind!</p>
+</li>
+</ul>
+</div>
 </div>
 <div id="miscellaneous" class="section level2">
 <h2 class="hasAnchor">
 <a href="#miscellaneous" class="anchor"></a>Miscellaneous</h2>
 <ul>
-<li><p>Die Datenbank braucht ein Logo!</p></li>
+<li><p>Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons <a href="https://realfavicongenerator.net/" class="external-link">generiert werdden</a>!)</p></li>
 <li><p>Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort “aufzunehmen”, könnte passen) und vergleichen mit Zenodo (siehe FA-Notizen)</p></li>
 </ul>
 </div>
-<div id="datenbank-umbenennung" class="section level2">
+<div id="database-renaming" class="section level2">
 <h2 class="hasAnchor">
-<a href="#datenbank-umbenennung" class="anchor"></a>Datenbank-Umbenennung</h2>
+<a href="#database-renaming" class="anchor"></a>Database renaming</h2>
 <ul>
 <li>
 <p>Bislang gilt: <em>C2D</em> wird als alleiniger Name für die Datenbank bestehen bleiben, sollte die C2D-Abteilung, wie von Andreas Glaser beabsichtigt, umbenannt werden. Dies weil die Datenbank unter diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat. Allerdings taugt “C2D” beim besten Willen nicht als Akronym für eine Datenbank…</p>
@@ -313,10 +341,11 @@
 </li>
 </ul>
 </div>
-<div id="offene-fragen" class="section level2">
+<div id="open-questions" class="section level2">
 <h2 class="hasAnchor">
-<a href="#offene-fragen" class="anchor"></a>Offene Fragen</h2>
+<a href="#open-questions" class="anchor"></a>Open questions</h2>
 <ul>
+<li><p><code>inst_quorum_turnout</code> sollte standardisiert werden -&gt; was wäre eine geeignete, abschliessende Menge an Werten?</p></li>
 <li><p>Ist <code>position_government</code> (ehemals <code>recommendation</code>) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal, dies, manchmal jenes?</p></li>
 <li>
 <p>Are <code>id_sudd</code>s stable over time?</p>
@@ -338,6 +367,20 @@
 <code>type</code> und alle <code>inst_*</code>-Variablen</li>
 </ul>
 </li>
+<li>
+<p>Was ist der Nutzen/zusätzliche Informationsgehalt von <code>inst_is_counter_proposal</code> sowie <code>inst_is_assembly</code>? Ob ein Referendum ein <code>"counter proposal"</code> bzw. ein <code>"citizens' assembly"</code> ist, wird ja bereits in <code>type</code> erfasst.</p>
+<p>Diesbezüglich gilt anzumerken, dass in der Datenbank</p>
+<ul>
+<li>21 Fälle enthalten sind, bei denen <code>inst_is_counter_proposal == TRUE</code>, aber <code>type != "counter proposal"</code>.</li>
+<li>3 Fälle enthalten sind, bei denen <code>inst_is_assembly == TRUE</code>, aber <code>type != "citizens' assembly"</code>.</li>
+</ul>
+<p>Einfach Kodierungsfehler?</p>
+</li>
+<li>
+<p><code>inst_object_legal_level</code> sollte m.E. in Relation zu <code>level</code> stehen, tut es aber nicht. Dementsprechend kann <code>inst_object_legal_level</code> mehrdeutig sein (ist <code>inst_object_legal_level = "law"</code> lokales, kantonales oder nationales Recht bei Referendum auf CH-Gemeindeebene?)</p>
+<p>Würde dieses Problem behoben, könnte <code>inst_object_legal_level</code> vermutlich auch als <code>ordinal_ascending</code> klassifiziert werden.</p>
+</li>
+<li><p>Kann mir jemand die genaue Bedeutung von <code>inst_object_revision_extent</code> sowie den <code>*precondition*</code>-Variablen erklären (insb. aus <code>inst_precondition_decision</code> werde ich nicht schlau…)?</p></li>
 <li><p>Bei der Abstimmung <em>Norfolk Island 1980-07-10</em> meint sudd.ch, sie habe stattdessen <a href="https://sudd.ch/event.php?lang=de&amp;id=nf011979" class="external-link">1979-07-10 stattgefunden</a>. Falls sudd.ch Recht hat, sollte das korrigiert werden.</p></li>
 <li>
 <p>Die Abstimmungen <em>Netherlands 2005-04-08</em> und <em>2014-12-17</em> fanden genau genommen auf <a href="https://de.wikipedia.org/wiki/Sint_Eustatius" class="external-link">Sint Eustatius</a> statt, siehe sudd.ch-Einträge (<a href="https://sudd.ch/event.php?id=an022005" class="external-link">1</a>, <a href="https://sudd.ch/event.php?id=bq012014" class="external-link">2</a>); Sint Eustatius ist zwar eine <a href="https://de.wikipedia.org/wiki/Karibische_Niederlande" class="external-link">Besondere Gemeinde der Niederlande</a>, besitzt aber einen eigenen ISO-Ländercode (BQ-SE) etc.</p>

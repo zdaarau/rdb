@@ -3,7 +3,7 @@ pkgdown: 1.6.1.9000
 pkgdown_sha: ~
 articles:
   codebook: codebook.html
-last_built: 2021-05-25T06:53Z
+last_built: 2021-05-26T02:28Z
 urls:
   reference: https://rpkg.dev/c2d/reference
   article: https://rpkg.dev/c2d/articles

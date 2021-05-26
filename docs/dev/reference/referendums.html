@@ -215,69 +215,71 @@ parameters are ignored.</p></td>
 <span class='co'># get only referendums in Austria and Australia on subnational level</span>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendums</span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AT"</span>, <span class='st'>"AU"</span><span class='op'>)</span>,
                  level <span class='op'>=</span> <span class='st'>"subnational"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 31 x 50</span><span>
-#&gt;    id      id_official id_sudd country_code country_name subnational_enti… level
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 5bbbfb… 12707       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territo… subn…
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 5bbbf9… 1219        </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Christmas Island  subn…
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 5bbbf9… 12706       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territo… subn…
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 5bbbf8… 1710        </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territo… subn…
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 5bbbf7… 12705       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territo… subn…
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 5bbbf7… 12704       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territo… subn…
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 5bbbf5… 12703       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territo… subn…
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 5bbbf4… 872         </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Christmas Island  subn…
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 5bbbf4… 871         </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Christmas Island  subn…
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 5bbbf2… 12694       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territo… subn…
-#&gt; </span><span style='color: #949494;'># … with 21 more rows, and 43 more variables: date &lt;chr&gt;, title_de &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   title_fr &lt;chr&gt;, title_en &lt;chr&gt;, committee_name &lt;chr&gt;, result &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;, tags &lt;list&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   remarks &lt;chr&gt;, files &lt;list&gt;, url_sudd &lt;chr&gt;, url_swissvotes &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   is_draft &lt;lgl&gt;, date_time_created &lt;dttm&gt;, type &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_object_type &lt;chr&gt;, inst_object_author &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_object_legal_level &lt;chr&gt;, inst_legal_basis_type &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_has_urgent_legal_basis &lt;lgl&gt;, inst_degree_of_revision &lt;chr&gt;,</span><span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 31 x 52</span><span>
+#&gt;    id           id_official id_sudd country_code country_name subnational_entit…
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>             
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 5bbbfb4f92a… 12707       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territory
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 5bbbf9b192a… 1219        </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Christmas Island  
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 5bbbf92f92a… 12706       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territory
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 5bbbf82092a… 1710        </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territory
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 5bbbf7ff92a… 12705       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territory
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 5bbbf70392a… 12704       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territory
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 5bbbf59192a… 12703       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territory
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 5bbbf4d492a… 872         </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Christmas Island  
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 5bbbf4d492a… 871         </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Christmas Island  
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 5bbbf29e92a… 12694       </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia    Northern Territory
+#&gt; </span><span style='color: #949494;'># … with 21 more rows, and 46 more variables: municipality &lt;fct&gt;, level &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   date &lt;date&gt;, title_de &lt;chr&gt;, title_fr &lt;chr&gt;, title_en &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   committee_name &lt;chr&gt;, result &lt;chr&gt;, electorate_total &lt;int&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;, votes_per_subterritory &lt;list&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   tags &lt;list&gt;, remarks &lt;chr&gt;, files &lt;list&gt;, url_sudd &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   url_swissvotes &lt;chr&gt;, is_draft &lt;lgl&gt;, date_time_created &lt;dttm&gt;, type &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_legal_basis_type &lt;chr&gt;, inst_has_urgent_legal_basis &lt;lgl&gt;,</span><span>
 #&gt; </span><span style='color: #949494;'>#   inst_is_binding &lt;lgl&gt;, inst_is_counter_proposal &lt;lgl&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_vote_venue &lt;chr&gt;, inst_trigger_threshold &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_trigger_type &lt;chr&gt;, inst_trigger_actor &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_trigger_time_limit &lt;chr&gt;, inst_trigger_state_level &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_quorum_turnout &lt;chr&gt;, inst_quorum_decision &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_referendum_text_options &lt;chr&gt;, inst_precondition &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_precondition_decision &lt;chr&gt;, inst_precondition_decision_actor &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_action &lt;list&gt;, inst_topics_special &lt;list&gt;, inst_topics_excluded &lt;list&gt;</span><span></div><div class='input'>
+#&gt; </span><span style='color: #949494;'>#   inst_is_assembly &lt;lgl&gt;, inst_trigger_type &lt;chr&gt;, inst_trigger_actor &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_trigger_actor_level &lt;chr&gt;, inst_trigger_threshold &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_trigger_time_limit &lt;chr&gt;, inst_object_type &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_object_author &lt;chr&gt;, inst_object_legal_level &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_object_revision_extent &lt;chr&gt;, inst_object_revision_modes &lt;list&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_object_revision_divisibility &lt;chr&gt;, inst_topics_only &lt;list&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_topics_excluded &lt;list&gt;, inst_quorum_turnout &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_quorum_approval &lt;chr&gt;, inst_has_precondition &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_precondition_actor &lt;chr&gt;, inst_precondition_decision &lt;chr&gt;</span><span></div><div class='input'>
 <span class='co'># provide custom `query_filter` for more complex queries like regex matches</span>
 <span class='co'># cf. https://docs.mongodb.com/manual/reference/operator/query/regex/</span>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendums</span><span class='op'>(</span>query_filter <span class='op'>=</span> <span class='st'>'{"country_code":{"$regex":"A."}}'</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 225 x 50</span><span>
-#&gt;    id      id_official id_sudd country_code country_name  subnational_ent… level
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 5d2dd6… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AS           American Sam… </span><span style='color: #BB0000;'>NA</span><span>               nati…
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 5d2dbe… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AG           Antigua and … </span><span style='color: #BB0000;'>NA</span><span>               nati…
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 5d1cc8… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia     </span><span style='color: #BB0000;'>NA</span><span>               nati…
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 5d1a18… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    Nagorno-Karabakh subn…
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 5cc9a4… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 5cc9a3… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 5cc9a2… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 5cc9a1… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 5cc9a0… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 5cc99f… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan    </span><span style='color: #BB0000;'>NA</span><span>               nati…
-#&gt; </span><span style='color: #949494;'># … with 215 more rows, and 43 more variables: date &lt;chr&gt;, title_de &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   title_fr &lt;chr&gt;, title_en &lt;chr&gt;, committee_name &lt;chr&gt;, result &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;, tags &lt;list&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   remarks &lt;chr&gt;, files &lt;list&gt;, url_sudd &lt;chr&gt;, url_swissvotes &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   is_draft &lt;lgl&gt;, date_time_created &lt;dttm&gt;, type &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_object_type &lt;chr&gt;, inst_object_author &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_object_legal_level &lt;chr&gt;, inst_legal_basis_type &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_has_urgent_legal_basis &lt;lgl&gt;, inst_degree_of_revision &lt;chr&gt;,</span><span>
+</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 225 x 52</span><span>
+#&gt;    id          id_official id_sudd country_code country_name   subnational_enti…
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>            
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 5d2dd694dc… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AS           American Samoa </span><span style='color: #BB0000;'>NA</span><span>               
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 5d2dbe4fdc… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AG           Antigua and B… </span><span style='color: #BB0000;'>NA</span><span>               
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 5d1cc881dc… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AU           Australia      </span><span style='color: #BB0000;'>NA</span><span>               
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 5d1a183bfe… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan     Nagorno-Karabakh 
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 5cc9a4cccb… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan     </span><span style='color: #BB0000;'>NA</span><span>               
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 5cc9a3b061… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan     </span><span style='color: #BB0000;'>NA</span><span>               
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 5cc9a2d161… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan     </span><span style='color: #BB0000;'>NA</span><span>               
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 5cc9a1e861… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan     </span><span style='color: #BB0000;'>NA</span><span>               
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 5cc9a05fcb… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan     </span><span style='color: #BB0000;'>NA</span><span>               
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 5cc99f2bcb… </span><span style='color: #BB0000;'>NA</span><span>          </span><span style='color: #BB0000;'>NA</span><span>      AZ           Azerbaijan     </span><span style='color: #BB0000;'>NA</span><span>               
+#&gt; </span><span style='color: #949494;'># … with 215 more rows, and 46 more variables: municipality &lt;fct&gt;, level &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   date &lt;date&gt;, title_de &lt;chr&gt;, title_fr &lt;chr&gt;, title_en &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   committee_name &lt;chr&gt;, result &lt;chr&gt;, electorate_total &lt;int&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;, votes_per_subterritory &lt;list&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   tags &lt;list&gt;, remarks &lt;chr&gt;, files &lt;list&gt;, url_sudd &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   url_swissvotes &lt;chr&gt;, is_draft &lt;lgl&gt;, date_time_created &lt;dttm&gt;, type &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_legal_basis_type &lt;chr&gt;, inst_has_urgent_legal_basis &lt;lgl&gt;,</span><span>
 #&gt; </span><span style='color: #949494;'>#   inst_is_binding &lt;lgl&gt;, inst_is_counter_proposal &lt;lgl&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_vote_venue &lt;chr&gt;, inst_trigger_threshold &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_trigger_type &lt;chr&gt;, inst_trigger_time_limit &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_trigger_actor &lt;chr&gt;, inst_trigger_state_level &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_quorum_turnout &lt;chr&gt;, inst_quorum_decision &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_referendum_text_options &lt;chr&gt;, inst_precondition &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_precondition_decision &lt;chr&gt;, inst_precondition_decision_actor &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   inst_action &lt;list&gt;, inst_topics_special &lt;list&gt;, inst_topics_excluded &lt;list&gt;</span><span></div></span></pre>
+#&gt; </span><span style='color: #949494;'>#   inst_is_assembly &lt;lgl&gt;, inst_trigger_type &lt;chr&gt;, inst_trigger_actor &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_trigger_actor_level &lt;chr&gt;, inst_trigger_threshold &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_trigger_time_limit &lt;chr&gt;, inst_object_type &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_object_author &lt;chr&gt;, inst_object_legal_level &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_object_revision_extent &lt;chr&gt;, inst_object_revision_modes &lt;list&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_object_revision_divisibility &lt;chr&gt;, inst_topics_only &lt;list&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_topics_excluded &lt;list&gt;, inst_quorum_turnout &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_quorum_approval &lt;chr&gt;, inst_has_precondition &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   inst_precondition_actor &lt;chr&gt;, inst_precondition_decision &lt;chr&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
