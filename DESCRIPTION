@@ -1,7 +1,7 @@
 Package: c2d
 Title: Download Data from the C2D Database, Which Covers Direct Democratic
     Votes Worldwide
-Version: 0.0.9005
+Version: 0.0.9006
 Authors@R: 
     person(given = "Salim",
            family = "Brüggemann",
