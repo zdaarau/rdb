@@ -359,7 +359,7 @@ variable_label = "the referendum's data from an earlier, obsolete state of the C
 value_scale = "undefined"
 [[01_main.item]]
 variable_name = "type"
-variable_label = "the institutional type of the referendum"
+variable_label = "the institutional type of direct democracy which the referendum is an instance of"
 variable_values = [
   "mandatory referendum",
   "optional referendum",
@@ -384,9 +384,9 @@ value_scale = "nominal"
 title = "Official Status"
 [[02_institutional.01_status.item]]
 variable_name = "inst_legal_basis_type"
-variable_label = "the type of the referendum's legal basis"
+variable_label = "the type of the legal basis of the referendum [`type`](#type)"
 variable_values = [ "non-official", "ad-hoc", "official" ]
-value_label_prefix = "The referendum has"
+value_label_prefix = "The referendum [`type`](#type) has"
 value_labels = [
   "no legal basis",
   "a legal basis which was specifically created for it",
@@ -396,18 +396,18 @@ value_default = "official"
 value_scale = "ordinal_ascending"
 [[02_institutional.01_status.item]]
 variable_name = "inst_has_urgent_legal_basis"
-variable_label = "whether or not the legal basis of the referendum was adopted urgently, i.e. in an abridged procedure"
+variable_label = "whether or not the legal basis of the referendum [`type`](#type) was adopted urgently, i.e. in an abridged procedure"
 applicability_constraint = "trigger_actor %in% c('government', 'president', 'monarch', 'parliament')"
 variable_values = [ true, false]
-value_label_prefix = "The legal basis of the referendum was adopted in a"
+value_label_prefix = "The legal basis of the referendum [`type`](#type) was adopted in a"
 value_labels = [ "abridged procedure (urgent)", "normal procedure" ]
 value_default = false
 value_scale = "binary"
 [[02_institutional.01_status.item]]
 variable_name = "inst_is_binding"
-variable_label = "wheather the referendum result has binding force or the decision of the voters may be disregarded"
+variable_label = "whether the result of the referendum [`type`](#type) has binding force or the decision of the voters may be disregarded"
 variable_values = [ true, false]
-value_label_prefix = "The result of the referendum is"
+value_label_prefix = "The result of the referendum [`type`](#type) is"
 value_labels = [
   "binding for the legislator",
   "only consultative, i.e. the legislator does not have to follow the decision of the voters"
@@ -416,9 +416,9 @@ value_default = true
 value_scale = "binary"
 [[02_institutional.01_status.item]]
 variable_name = "inst_is_counter_proposal"
-variable_label = "whether or not the referendum proposal is a counterproposal to a citizen’s (or other) initiative"
+variable_label = "whether or not the referendum [`type`](#type) is a counterproposal to a citizen’s (or other) initiative"
 variable_values = [ true, false]
-value_label_prefix = "The referendum proposal is"
+value_label_prefix = "The referendum [`type`](#type) is"
 value_labels = [
   "a counterproposal to a citizen’s (or other) initiative",
   "not a counterproposal to a citizen’s (or other) initiative"
@@ -426,9 +426,9 @@ value_labels = [
 value_scale = "binary"
 [[02_institutional.01_status.item]]
 variable_name = "inst_is_assembly"
-variable_label = "whether or not the referendum is held as an assembly (all voters at the same time and place; physical presence at the assembly is required to be able to vote; usually voting means raising one’s hand)"
+variable_label = "whether or not the referendum [`type`](#type) is held as an assembly (all voters at the same time and place; physical presence at the assembly is required to be able to vote; usually voting means raising one’s hand)"
 variable_values = [ true, false]
-value_label_prefix = "The referendum proposal is"
+value_label_prefix = "The referendum [`type`](#type) is"
 value_labels = [
   "a counterproposal to a citizen’s (or other) initiative",
   "not a counterproposal to a citizen’s (or other) initiative"
@@ -440,9 +440,9 @@ value_scale = "binary"
 title = "Trigger"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_type"
-variable_label = "the way the referendum was triggered; completely dependent on [`inst_trigger_actor`](#inst_trigger_actor)"
+variable_label = "the way the referendum [`type`](#type) is triggered; completely dependent on [`inst_trigger_actor`](#inst_trigger_actor)"
 variable_values = [ "automatic", "top down", "bottom up" ]
-value_label_prefix = "The referendum was triggered by"
+value_label_prefix = "The referendum [`type`](#type) is triggered by"
 value_labels = [
   "a constitutional/legal requirement",
   "an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution",
@@ -450,17 +450,17 @@ value_labels = [
 value_scale = "nominal"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_actor"
-variable_label = "the actor that triggered the referendum procedure"
+variable_label = "the actor that triggers the referendum [`type`](#type)"
 variable_values = [ "citizens", "constitution", "law", "parliament", "government", "president", "monarch", "territorial unit", "UN", "other institution" ]
-value_label_prefix = "The referendum was triggered by"
+value_label_prefix = "The referendum [`type`](#type) is triggered by"
 value_labels = [
   "a direct citizen demand (usually a signature collection)",
   "a constitutional requirement",
   "a legal requirement",
   "the parliament",
   "the government or prime minister",
-  "presidential powers",
-  "powers of the monarch",
+  "the president",
+  "the monarch",
   "a province or municipality",
   "the United Nations (UN) or one of its organs",
   "another institution such as the church or a state agency"
@@ -468,34 +468,34 @@ value_labels = [
 value_default = "constitution"
 value_scale = "nominal"
 [[02_institutional.02_trigger.item]]
+variable_name = "inst_trigger_actor_level"
+variable_label = "the political [`level`](#level) of [`inst_trigger_actor`](#inst_trigger_actor) in comparison to [`level`](#level)"
+variable_values = [ "lower", "equal", "higher" ]
+value_labels = [
+  "a lower political level triggers a referendum on one of the higher political levels",
+  "the trigger actor and the referendum are on the same political level",
+  "a higher political level triggers a referendum on one of the lower political levels"
+]
+value_default = "equal"
+value_scale = "ordinal_ascending"
+[[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_threshold"
-variable_label = "the threshold of support among [`inst_trigger_actor`](#inst_trigger_actor) that had to be reached in order to trigger the referendum"
+variable_label = "the threshold of support among [`inst_trigger_actor`](#inst_trigger_actor) that has to be reached in order to trigger the referendum [`type`](#type)"
 applicability_constraint = "trigger_actor %in% c('citizens', 'parliament', 'territorial unit')"
 value_scale = "nominal"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_time_limit"
-variable_label = "the time limit in which [`inst_trigger_threshold`](#inst_trigger_threshold) (usually a minimum number of signatures) had to be reached in order to trigger the referendum"
+variable_label = "the time limit in which [`inst_trigger_threshold`](#inst_trigger_threshold) (usually a minimum number of signatures) has to be reached in order to trigger the referendum [`type`](#type)"
 applicability_constraint = "trigger_actor %in% c('citizens', 'territorial unit')"
-value_default = "None"
+value_default = "none"
 value_scale = "nominal"
-[[02_institutional.02_trigger.item]]
-variable_name = "inst_trigger_state_level"
-variable_label = ""
-variable_values = [ "lower", "equal", "higher" ]
-value_labels = [
-  "a lower level of state triggers a referendum on one of the higher state levels",
-  "the trigger actor and the referendum are on the same level of state",
-  "a higher level of state triggers a referendum on one of the lower state levels"
-]
-value_default = "equal"
-value_scale = "ordinal_ascending"
 
 
 [02_institutional.03_object]
 title = "Object"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_type"
-variable_label = "the type of the object the referendum refers to"
+variable_label = "the type of the object the referendum [`type`](#type) refers to"
 variable_values = [ "question", "legal text (general proposal)", "legal text (formulated proposal)", "institution", "person", "principle" ]
 value_labels = [
   "a question which can be answered with yes or no (used as fallback option if nothing else applies)",
@@ -509,7 +509,7 @@ value_default = "legal text (formulated proposal)"
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_author"
-variable_label = "the actor that defines the text/content of the referendum object"
+variable_label = "the actor that defines the text/content of [`inst_object_type`](#inst_object_type)"
 applicability_constraint = "object_type %in% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)', 'principle')"
 variable_values = [ "citizens", "parliament", "government", "president", "monarch", "territorial unit", "UN", "other institution" ]
 value_labels = [
@@ -525,7 +525,7 @@ value_labels = [
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_legal_level"
-variable_label = "the legal level of the object the referendum refers to"
+variable_label = "the legal level of [`inst_object_type`](#inst_object_type)"
 applicability_constraint = "object_type %in% c('legal text (general proposal)', 'legal text (formulated proposal)')"
 variable_values = [ "ordinance", "law", "constitution", "treaty", "international treaty" ]
 value_labels = [
@@ -539,7 +539,7 @@ value_default = "constitution"
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_revision_extent"
-variable_label = "the extent of revision of the object the referendum refers to which can be achieved within one referendum"
+variable_label = "the extent of revision of [`inst_object_type`](#inst_object_type) which can be achieved within one referendum"
 applicability_constraint = "object_type %in% c('legal text (general proposal)', 'legal text (formulated proposal)')"
 variable_values = [ "partial", "total", "both" ]
 value_labels = [
@@ -551,7 +551,7 @@ value_default = "partial"
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_revision_modes"
-variable_label = "the different modes of revision that the object the referendum refers to allows"
+variable_label = "the different modes of revision that [`inst_object_type`](#inst_object_type) allows"
 is_multi_valued = true
 variable_values = [ "introduce", "revise", "abrogate" ]
 value_label_prefix = "With this instrument, it is possible to"
@@ -564,13 +564,120 @@ value_default = [ "introduce", "revise", "abrogate" ]
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_revision_divisibility"
-variable_label = "the divisibility of the object the referendum refers to"
+variable_label = "the divisibility of [`inst_object_type`](#inst_object_type)"
 applicability_constraint = "object_type %in% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')"
-variable_values = [
-  "the proposed legal text can only be accepted/rejected as a whole",
-  "the same text can be split up, the voters may vote upon these parts separately",
-  "in the same text, two or more (alternative) variants can be selected"
+variable_values = [ "as a whole", "split up", "as variants", "both split up and as variants" ]
+value_label_prefix = "The proposed legal text"
+value_labels = [
+  "can only be accepted/rejected as a whole",
+  "can be split up, the voters may vote upon these parts separately",
+  "can be presented as two or more (alternative) variants",
+  "can be both split up as well as presented as two or more (alternative) variants"
 ]
-value_labels = ""
-value_default = ""
-value_scale = ""
+value_default = "as a whole"
+value_scale = "nominal"
+[[02_institutional.04_other.item]]
+variable_name = "inst_topics_only"
+variable_label = "the legal topics to which the referendum [`type`](#type) is limited"
+is_multi_valued = true
+variable_values = [
+  "infrastructural acts",
+  "territorial questions",
+  "competence shifts",
+  "financial acts",
+  "financial acts (expenses)",
+  "financial acts (taxes)",
+  "financial acts (obligations)",
+  "treaties",
+  "total revisions of the constitution"
+]
+value_label_prefix = "The referendum [`type`](#type) is limited to"
+value_labels = [
+  "TODO",
+  "TODO",
+  "TODO",
+  "TODO",
+  "TODO",
+  "TODO",
+  "TODO",
+  "TODO (automatically limited to if `inst_object_legal_level == \"law\"`)",
+  "TODO"
+]
+value_default = [ "{NA_character}" ]
+value_scale = "nominal"
+[[02_institutional.04_other.item]]
+variable_name = "inst_topics_excluded"
+variable_label = "the legal topics that are excluded from the referendum [`type`](#type)"
+applicability_constraint = "inst_topics_only %>% purrr::map_lgl(rlang::is_empty)"
+is_multi_valued = true
+variable_values = [
+  "jus cogens",
+  "international treaties",
+  "pardons",
+  "personnel appointments",
+  "budgets",
+  "financial matters",
+  "everything within parliamentary competence"
+]
+value_labels = [
+  "TODO",
+  "TODO",
+  "TODO",
+  "TODO",
+  "TODO",
+  "TODO",
+  "TODO"
+]
+value_label_suffix = "is exluded from the referendum [`type`](#type)"
+value_default = [ "jus cogens" ]
+value_scale = "nominal"
+[[02_institutional.04_other.item]]
+variable_name = "inst_quorum_turnout"
+variable_label = "the minimum percentage of the [`electorate_total`](#electorate_total) that have to participate in the referendum [`type`](#type) in order for it to be passed"
+value_scale = "nominal" # should actually be "ratio" but we'd have to properly recode the values first
+[[02_institutional.04_other.item]]
+variable_name = "inst_quorum_approval"
+variable_label = "the minimum number of voters that have to approve the referendum [`type`](#type) in order for it to be passed"
+variable_values = [ "simple majority", "qualified majority", "double majority" ]
+value_labels = [
+  "> 50 % of the voters have to approve the referendum proposal",
+  "a percentage higher than > 50 % of the voters has to approve the referendum proposal",
+  "two simultaneous quorums of > 50 % or higher of the voters apply"
+]
+value_default = "simple majority"
+value_scale = "nominal"
+[[02_institutional.04_other.item]]
+variable_name = "inst_has_precondition"
+variable_label = "whether or not an institutional actor must take a preconditional decision in order for the referendum [`type`](#type) to be held"
+variable_values = [ true, false ]
+value_labels = [
+  "an institutional actor must take a preconditional decision",
+  "no institutional actor must take a preconditional decision"
+]
+value_label_suffix = "in order for the referendum [`type`](#type) to be held"
+value_scale = "binary"
+[[02_institutional.04_other.item]]
+variable_name = "inst_precondition_actor"
+variable_label = "the actor that must take a preconditional decision in order for the referendum [`type`](#type) to be held"
+applicability_constraint = "isTRUE(inst_has_precondition)"
+variable_values = [ "parliament", "government", "president", "UN", "parliament and government", "parliament and president", "central government and SPLM" ]
+value_labels = [
+  "the parliament",
+  "the government or prime minister",
+  "the president",
+  "the United Nations (UN) or one of its organs",
+  "the parliament and the government or prime minister",
+  "the parliament and the president",
+  "the central government and [Sudan People's Liberation Movement](https://en.wikipedia.org/wiki/Sudan_People%27s_Liberation_Movement)"
+]
+value_default = "parliament"
+value_scale = "nominal"
+[[02_institutional.04_other.item]]
+variable_name = "inst_precondition_decision"
+variable_label = "the decision that [`inst_precondition_actor`](#inst_precondition_actor) has taken"
+variable_values = [ "yes", "no" ]
+value_labels = [
+  "affirmative answer (e.g. yes, we will hold a vote that has been requested by citizens)",
+  "negative answer (e.g. no, we will not implement the demands of a citizens’ initiative voluntarily)"
+]
+value_scale = "binary"

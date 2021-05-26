@@ -319,7 +319,8 @@ data_codebook <- {
   c(codebook$`01_main`$item,
     codebook$`02_institutional`$`01_status`$item,
     codebook$`02_institutional`$`02_trigger`$item,
-    codebook$`02_institutional`$`03_object`$item) %>%
+    codebook$`02_institutional`$`03_object`$item,
+    codebook$`02_institutional`$`04_other`$item) %>%
     purrr::map_dfr(~ tibble::tibble(variable_name = .x$variable_name %||% NA_character_,
                                     variable_label = .x$variable_label %||% NA_character_,
                                     is_multi_valued = .x$is_multi_valued %||% FALSE,
