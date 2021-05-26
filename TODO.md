@@ -68,7 +68,7 @@
     Instead of not capturing such votings, it would be superior to introduce another variable indicating the status of a voting (official, inofficial, ...);
     currently we only have an *institutional* variable `legal_basis_type` (formerly `official_status`) which measures a completely different thing.
 
--   Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted.
+-   Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted; see <https://github.com/ccmdesign/c2d-app/issues/29>
 
 -   We need a proper way to capture referendums with more than yes-or-no answer options. This includes
 
