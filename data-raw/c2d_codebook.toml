@@ -527,7 +527,7 @@ value_scale = "nominal"
 variable_name = "inst_object_legal_level"
 variable_label = "the legal level of [`inst_object_type`](#inst_object_type)"
 applicability_constraint = "object_type %in% c('legal text (general proposal)', 'legal text (formulated proposal)')"
-variable_values = [ "ordinance", "law", "constitution", "treaty", "international treaty" ]
+variable_values = [ "ordinance", "treaty", "law", "constitution", "international treaty" ]
 value_labels = [
   "an ordinance, i.e. a legal norm based on a law or the constitution",
   "a domestic treaty, e.g. an agreement between the constituent states of a republic",
