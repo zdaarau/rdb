@@ -68,7 +68,8 @@
     Instead of not capturing such votings, it would be superior to introduce another variable indicating the status of a voting (official, inofficial, ...);
     currently we only have an *institutional* variable `legal_basis_type` (formerly `official_status`) which measures a completely different thing.
 
--   Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted; see <https://github.com/ccmdesign/c2d-app/issues/29>
+-   Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted; see
+    <https://github.com/ccmdesign/c2d-app/issues/29>
 
 -   We need a proper way to capture referendums with more than yes-or-no answer options. This includes
 
@@ -230,7 +231,9 @@
 
 -   Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons [generiert werdden](https://realfavicongenerator.net/)!)
 
--   Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort "aufzunehmen", könnte passen) und vergleichen mit Zenodo (siehe FA-Notizen)
+-   Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort "aufzunehmen", könnte passen) und vergleichen mit Zenodo (siehe FA-Notizen).
+
+    Abklären: Lizenzanforderungen? Datensätze tatsächlich hinterlegt oder nur Referenzen?
 
 ## Database renaming
 
@@ -244,6 +247,8 @@
     JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
 
 ## Open questions
+
+-   Automatisierte Lösung zur Aufnahme amerikanischer Referenden (auf Bundesstaatsebene) abklären!
 
 -   `inst_quorum_turnout` sollte standardisiert werden -\> was wäre eine geeignete, abschliessende Menge an Werten?
 
@@ -300,7 +305,7 @@
     daher auf `"United Kingdom"` oder (besser?) [`"Guernsey"`](https://de.wikipedia.org/wiki/Sark#Gesetzgebung_und_Autonomie) gesetzt werden und
     `subnational_entity = "Sark"`!
 
--   Völkerrechtlich umstrittene Gebiete: Was genau ist die C2D-Policy dazu?
+-   Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.
 
     Bspw. werden
 
@@ -308,3 +313,4 @@
     -   für die Abstimmungen in Taiwan uneinheitliche `country_name`'s verwendet, für die Abstimmungen am 2018-11-24 *Taiwan, Province of China*, für die
         anderen einfach *Taiwan*...
 
+    Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen.

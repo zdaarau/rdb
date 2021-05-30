@@ -247,7 +247,7 @@
 <ul>
 <li><p>Systematically check if <code>applicability_constraint</code> is never violated.</p></li>
 <li><p>Systematically check if all votes in the <code>sudd.ch</code> database are included in the C2D database -&gt; parse <code>https://sudd.ch/list.php?mode=allrefs</code> (the <code>id_sudd</code> is part of the link in the last column)</p></li>
-<li><p>According to the guidelines in <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx</code>, the PDF <code>files</code> of <code>country_code == "CH"</code> entries must be named consistently <code>Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag</code> (“Abstimmungsbroschüre”") and <code>Results_CH/Kantonskürzel_Jahr_Monat_Tag</code> (results) -&gt; check if this is actually always the case!</p></li>
+<li><p>According to the guidelines in <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx</code>, the PDF <code>files</code> of <code>country_code == "CH"</code> entries must be named consistently <code>Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag</code> (“Abstimmungsbroschüre”“) and <code>Results_CH/Kantonskürzel_Jahr_Monat_Tag</code> (results) -&gt; check if this is actually always the case!</p></li>
 <li>
 <p>check <code>country_code</code> for obsolete codes, i.e. check if</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ISOcodes<span class="sc">::</span>ISO_3166_3<span class="sc">$</span>Alpha_4 <span class="sc">%&gt;%</span></span>
@@ -328,7 +328,10 @@ Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:</p>
 <a href="#miscellaneous" class="anchor"></a>Miscellaneous</h2>
 <ul>
 <li><p>Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons <a href="https://realfavicongenerator.net/" class="external-link">generiert werdden</a>!)</p></li>
-<li><p>Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort “aufzunehmen”, könnte passen) und vergleichen mit Zenodo (siehe FA-Notizen)</p></li>
+<li>
+<p>Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort “aufzunehmen”, könnte passen) und vergleichen mit Zenodo (siehe FA-Notizen).</p>
+<p>Abklären: Lizenzanforderungen? Datensätze tatsächlich hinterlegt oder nur Referenzen?</p>
+</li>
 </ul>
 </div>
 <div id="database-renaming" class="section level2">
@@ -345,6 +348,7 @@ Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:</p>
 <h2 class="hasAnchor">
 <a href="#open-questions" class="anchor"></a>Open questions</h2>
 <ul>
+<li><p>Automatisierte Lösung zur Aufnahme amerikanischer Referenden (auf Bundesstaatsebene) abklären!</p></li>
 <li><p><code>inst_quorum_turnout</code> sollte standardisiert werden -&gt; was wäre eine geeignete, abschliessende Menge an Werten?</p></li>
 <li><p>Ist <code>position_government</code> (ehemals <code>recommendation</code>) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal, dies, manchmal jenes?</p></li>
 <li>
@@ -388,12 +392,13 @@ Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:</p>
 </li>
 <li><p>Die Abstimmungen <em>France 2006-02-23</em> und <em>2006-09-06</em> beziehen sich auf Referenden in <a href="https://de.wikipedia.org/wiki/Sark" class="external-link">Sark</a>, <code>country_name</code> sollte daher auf <code>"United Kingdom"</code> oder (besser?) <a href="https://de.wikipedia.org/wiki/Sark#Gesetzgebung_und_Autonomie" class="external-link"><code>"Guernsey"</code></a> gesetzt werden und <code>subnational_entity = "Sark"</code>!</p></li>
 <li>
-<p>Völkerrechtlich umstrittene Gebiete: Was genau ist die C2D-Policy dazu?</p>
+<p>Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.</p>
 <p>Bspw. werden</p>
 <ul>
 <li>alle Abstimmungen, die die <a href="https://de.wikipedia.org/wiki/Kosovo" class="external-link">Republik Kosovo</a> betreffen, unter dem <code>country_name</code> <em>Serbia</em> geführt…</li>
 <li>für die Abstimmungen in Taiwan uneinheitliche <code>country_name</code>’s verwendet, für die Abstimmungen am 2018-11-24 <em>Taiwan, Province of China</em>, für die anderen einfach <em>Taiwan</em>…</li>
 </ul>
+<p>Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen.</p>
 </li>
 </ul>
 </div>
