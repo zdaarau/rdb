@@ -19,6 +19,8 @@ For the following variables, the [unit of observation](https://en.wikipedia.org/
 library(rlang)
 library(magrittr)
 
+pal::assert_pkg("salim")
+
 # define functions
 ## flatten list column values
 flatten_list_col <- function(x) {
@@ -27,25 +29,6 @@ flatten_list_col <- function(x) {
     unlist() %>%
     purrr::when(is.character(.) ~ pal::wrap_chr(.),
                 ~ .)
-}
-
-# TODO: outsource to pal!
-## convert a string to sentence-case with trailing dot
-sentenceify <- function(x) {
-  
-  x %>%
-    stringr::str_replace(pattern = "^.",
-                         replacement = toupper) %>%
-    purrr::map_chr(~ {if (stringr::str_sub(string = .x, start = -1L) == ".") .x else paste0(.x, ".")})
-}
-
-## append grammatical "n" after "a " where appropriate
-n_ify <- function(x) {
-  
-  purrr::map_chr(.x = x,
-                 .f = stringr::str_replace_all,
-                 pattern = "(^[Aa]| a)(?= [aeoi]\\w+)",
-                 replacement = "\\1n")
 }
 
 ## prettify value scale
@@ -80,12 +63,12 @@ cat_v_sections <- function(data) {
                   ~ paste(value_label_prefix, .)) %>%
       purrr::when(is.na(value_label_suffix) ~ .,
                   ~ paste(., value_label_suffix)) %>%
-      sentenceify() %>%
-      n_ify()
+      pal::sentenceify() %>%
+      salim::n_ify()
     
     pal::cat_lines(glue::glue("### `{variable_name}`"),
                    "",
-                   variable_label %>% sentenceify(),
+                   variable_label %>% pal::sentenceify(),
                    "",
                    if (length(variable_values)) {
                      c(glue::glue("#### Possible values {{#{variable_name}-values}}"),
