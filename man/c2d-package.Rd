@@ -9,7 +9,8 @@
 \description{
 c2d provides access to the C2D Database (https://c2d.ch) from
     R. This database aims to record all direct democratic votes worldwide
-    and is operated by the Swiss Centre for Democracy Studies Aarau (ZDA).
+    and is operated by the Centre for Democracy Studies Aarau (ZDA) at the
+    University of Zurich, Switzerland.
 }
 \seealso{
 Useful links:

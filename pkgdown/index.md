@@ -1,12 +1,12 @@
 # c2d: Download Data from the C2D Database, Which Covers Direct Democratic Votes Worldwide
 
-c2d provides access to the C2D Database (https://c2d.ch) from R. This database aims to record all direct democratic votes worldwide and is operated by the Swiss Centre for Democracy Studies Aarau (ZDA).
+c2d provides access to the C2D Database (https://c2d.ch) from R. This database aims to record all direct democratic votes worldwide and is operated by the Centre for Democracy Studies Aarau (ZDA) at the University of Zurich, Switzerland.
 
 ## Installation
 
 To install the latest development version of c2d, run the following in R:
 
-``` {.r}
+``` r
 if (!("remotes" %in% rownames(installed.packages()))) {
   install.packages(pkgs = "remotes",
                    repos = "https://cloud.r-project.org/")
@@ -37,7 +37,7 @@ This package borrows a lot of the [Tidyverse](https://www.tidyverse.org/) design
 
 As far as possible, these deviations from the TSG plus some additional restrictions are formally specified in the [lintr configuration file](https://github.com/jimhester/lintr#project-configuration) [`.lintr`](.lintr), so lintr can be used right away to check for formatting issues:
 
-``` {.r}
+``` r
 pkgpurl::lint_rmd()
 ```
 
