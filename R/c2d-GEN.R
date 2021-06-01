@@ -559,7 +559,7 @@ referendums <- function(use_cache = TRUE,
         url_sudd = dplyr::if_else(!is.na(id_sudd),
                                   paste0("https://sudd.ch/event.php?id=", id_sudd),
                                   NA_character_),
-        url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national",
+        url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
                                         paste0("https://swissvotes.ch/vote/", id_official),
                                         NA_character_)
       ) %>%
