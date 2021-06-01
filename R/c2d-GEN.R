@@ -404,7 +404,7 @@ referendums <- function(use_cache = TRUE,
                       ~ dplyr::if_else(.x %in% c(-1.0, -2.0),
                                        NA_real_,
                                        .x)),
-        result = result %>% dplyr::if_else(. %in% c("unknown", "not provided"),
+        result = result %>% dplyr::if_else(. %in% c("Unknown", "Not provided"),
                                            NA_character_,
                                            .),
         
