@@ -669,7 +669,7 @@ value_labels = [
   "the United Nations (UN) or one of its organs",
   "the parliament and the government or prime minister",
   "the parliament and the president",
-  "the central government and the [Sudan People's Liberation Movement](https://en.wikipedia.org/wiki/Sudan_People%27s_Liberation_Movement)"
+  "the central government and the [Sudan People's Liberation Movement](https://en.wikipedia.org/wiki/Sudan_People's_Liberation_Movement)"
 ]
 value_default = "parliament"
 value_scale = "nominal"
