@@ -2,15 +2,15 @@
 # See `README.md#r-markdown-format` for more information on the literate programming approach used applying the R Markdown format.
 
 # c2d: Download Data from the C2D Database, Which Covers Direct Democratic Votes Worldwide
-# Copyright (C) 2021  Salim Brüggemann
-#
+# Copyright (C) 2021 Salim Brüggemann
+# 
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-# A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 utils::globalVariables(names = c(".",
                                  "content-disposition",
