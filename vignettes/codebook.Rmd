@@ -41,7 +41,9 @@ prettify_value_scale <- function(x) {
 }
 
 ## assemble variable sections in Markdown
-cat_v_sections <- function(data) {
+cat_v_sections <- function(data,
+                           # useful when target format doesn't support them like GFM in roxygen2 documentation
+                           strip_footnotes = FALSE) {
   
   data %>% purrr::pwalk(function(variable_name,
                                  variable_label,
@@ -66,6 +68,13 @@ cat_v_sections <- function(data) {
       pal::sentenceify() %>%
       salim::n_ify()
     
+    if (strip_footnotes) {
+      variable_label %<>% pal::strip_md_footnotes()
+      value_labels %<>% pal::strip_md_footnotes()
+      value_label_prefix %<>% pal::strip_md_footnotes()
+      value_label_suffix %<>% pal::strip_md_footnotes()
+    }
+    
     pal::cat_lines(glue::glue("### `{variable_name}`"),
                    "",
                    variable_label %>% pal::sentenceify(),
@@ -87,7 +96,7 @@ cat_v_sections <- function(data) {
                        "")
                    },
                    if (is_multi_valued) {
-                     c("_This is a multi-value variable[^multi-val-var] and thus of type `list`._",
+                     c(paste0("_This is a multi-value variable", "[^multi-val-var]"[!strip_footnotes], " and thus of type `list`._"),
                        "")
                    },
                    if (!is.na(applicability_constraint)) {
@@ -113,7 +122,7 @@ c2d:::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_",
                                     negate = TRUE)) %>%
-  cat_v_sections()
+  cat_v_sections(strip_footnotes = knitr::pandoc_to("gfm"))
 ```
 
 ## Institution-level variables
@@ -133,10 +142,10 @@ The set of variables that constitute the jurisdiction is dependent on the refere
 c2d:::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_")) %>%
-  cat_v_sections()
+  cat_v_sections(strip_footnotes = knitr::pandoc_to("gfm"))
 ```
 
-```{r, footnotes, echo = FALSE, results = "asis"}
+```{r, footnotes, echo = FALSE, results = "asis", include = !knitr::pandoc_to("gfm")}
 cat("
 [^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/hoist.html) to convert data containing such a variable to long format. To unnest `tags` to `tag` for example, use:
 

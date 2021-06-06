@@ -214,7 +214,7 @@ is_online <- function(quiet = FALSE) {
 
 #' Get referendum data
 #'
-#' Downloads the referendum data from the C2D Database.
+#' Downloads the referendum data from the C2D Database. See [`codebook`][codebook] for a detailed description of all variables.
 #'
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
@@ -699,6 +699,18 @@ referendums <- function(use_cache = TRUE,
   .cache_lifespan = cache_lifespan,
   .pkg = pkg)
 }
+
+#' C2D Codebook
+#'
+#' A tibble containing the complete metadata of all [referendums()] variables. The Codebook below is also available
+#' [online](https://rpkg.dev/c2d/articles/codebook.html).
+#'
+#' @includeRmd vignettes/codebook.Rmd
+#'
+#' @format `r pkgsnip::return_label("data")`
+#' @aliases codebook 
+#' @export
+"data_codebook"
 
 #' Count number of referendums
 #'

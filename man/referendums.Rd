@@ -56,7 +56,7 @@ maximum control over what data is included. This takes precedence over all the o
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Downloads the referendum data from the C2D Database.
+Downloads the referendum data from the C2D Database. See \code{\link{codebook}} for a detailed description of all variables.
 }
 \examples{
 \dontrun{
