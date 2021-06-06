@@ -219,7 +219,7 @@
 
     2.  Are edits traceable by author? And is it possible to easily undo all edit by a specific account?
 
--   [ ] Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:
+-   Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:
 
     ![scan](https://i.imgur.com/88H2TZz.jpeg)
 
