@@ -220,7 +220,7 @@ is_online <- function(quiet = FALSE) {
 #' @examples
 #' \dontrun{
 #' # get all referendums (excl. drafts)
-#' c2d::referendums()}
+#' c2d::referendums()
 #' 
 #' # get only referendums in Austria and Australia on subnational level
 #' c2d::referendums(country_code = c("AT", "AU"),
@@ -228,7 +228,7 @@ is_online <- function(quiet = FALSE) {
 #' 
 #' # provide custom `query_filter` for more complex queries like regex matches
 #' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-#' c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')
+#' c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')}
 referendums <- function(use_cache = TRUE,
                         cache_lifespan = "1 week",
                         incl_archive = FALSE,
@@ -572,14 +572,45 @@ referendums <- function(use_cache = TRUE,
                                         NA_character_)
       ) %>%
       
-      # type conversions
-      ## to factor
-      ### nominal vars without variable_values in codebook
+      # convert types
+      ## based on codebook
+      dplyr::mutate(dplyr::across(.fns = ~ {
+        
+        metadata <- data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
+        if (nrow(metadata) != 1L) rlang::abort("Missing codebook metadata! Please debug")
+        
+        if (!is.logical(.x) && !is.null(metadata$variable_values[[1L]])) {
+          
+          lvls <- purrr::flatten_chr(metadata$variable_values)
+          is_ordered <- metadata$value_scale %in% c("ordinal_ascending", "ordinal_descending")
+          
+          if (is.list(.x)) {
+            .x %>% purrr::map(.f = factor,
+                              levels = lvls,
+                              ordered = is_ordered)
+          } else {
+            factor(x = .x,
+                   levels = lvls,
+                   ordered = is_ordered)
+          }
+        } else .x
+      })) %>%
+      ## nominal vars without variable_values in codebook
       dplyr::mutate(dplyr::across(any_of(c("country_code",
                                            "country_name",
                                            "subnational_entity_name",
                                            "municipality")),
                                   as.factor)) %>%
+      
+      # add variable labels
+      labelled::set_variable_labels(.labels =
+                                      data_codebook$variable_label %>%
+                                      # NOTE: `pal::strip_md()` here somehow breaks `devtools::run_examples()` during pkg check
+                                      #       ("C stack usage (...) is too close to the limit"); maybe too large fn stack?
+                                      pal::strip_md() %>%
+                                      as.list() %>%
+                                      magrittr::set_names(value = data_codebook$variable_name),
+                                    .strict = FALSE) %>%
       
       # reorder columns
       dplyr::relocate(id,
