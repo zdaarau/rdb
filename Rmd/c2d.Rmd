@@ -330,7 +330,13 @@ data_codebook <- {
                                     value_labels = list(.x$value_labels) %||% list(character()),
                                     value_label_suffix = .x$value_label_suffix %||% NA_character_,
                                     value_default = list(.x$value_default) %||% list(character()),
-                                    value_scale = .x$value_scale %||% NA_character_))
+                                    value_scale = .x$value_scale %||% NA_character_)) %>%
+    # integrity checks
+    assertr::assert(predicate = assertr::not_na,
+                    variable_name,
+                    variable_label,
+                    value_scale,
+                    is_multi_valued)
 }
 ```
 
