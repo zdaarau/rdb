@@ -48,6 +48,7 @@ VignetteBuilder:
 Remotes:
     gitlab::salim_b/r/pkgs/pal,
     gitlab::salim_b/r/pkgs/pkgpins,
+    gitlab::salim_b/r/pkgs/pkgsnip,
     gitlab::salim_b/r/pkgs/salim
 Encoding: UTF-8
 LazyData: true
