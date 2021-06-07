@@ -86,7 +86,7 @@ The English name of the subnational political entity in which the
 referendum took place.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level \%in\% c('local', 'subnational')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level \%in\% c('local', 'subnational')
 }\if{html}{\out{</div>}}
 }
 
@@ -103,7 +103,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The municipality in which the referendum took place.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level == 'local'
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level == 'local'
 }\if{html}{\out{</div>}}
 }
 
@@ -215,7 +215,7 @@ The number of administrative subdivisions one level below
 \href{#level}{\code{level}} that approved the referendum.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level != 'local'
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
 }\if{html}{\out{</div>}}
 }
 
@@ -233,7 +233,7 @@ The number of administrative subdivisions one level below
 \href{#level}{\code{level}} that rejected the referendum.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level != 'local'
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
 }\if{html}{\out{</div>}}
 }
 
@@ -322,7 +322,7 @@ administrative subdivision one level below \href{#level}{\code{level}}; currentl
 only filled for Swiss referendums on the national level.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level != 'local'
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
 }\if{html}{\out{</div>}}
 }
 
@@ -786,7 +786,7 @@ adopted urgently, i.e. in an abridged procedure.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{trigger_actor \%in\% c('government', 'president', 'monarch', 'parliament')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{trigger_actor \%in\% c('government', 'president', 'monarch', 'parliament')
 }\if{html}{\out{</div>}}
 }
 
@@ -937,7 +937,7 @@ The threshold of support among
 order to trigger the referendum \href{#type}{\code{type}}.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{trigger_actor \%in\% c('citizens', 'parliament', 'territorial unit')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{trigger_actor \%in\% c('citizens', 'parliament', 'territorial unit')
 }\if{html}{\out{</div>}}
 }
 
@@ -957,7 +957,7 @@ number of signatures) has to be reached in order to trigger the
 referendum \href{#type}{\code{type}}.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{trigger_actor \%in\% c('citizens', 'territorial unit')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{trigger_actor \%in\% c('citizens', 'territorial unit')
 }\if{html}{\out{</div>}}
 }
 
@@ -1012,7 +1012,7 @@ The actor that defines the text/content of
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)', 'principle')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)', 'principle')
 }\if{html}{\out{</div>}}
 }
 
@@ -1040,7 +1040,7 @@ The legal level of \href{#inst_object_type}{\code{inst_object_type}}.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
 }\if{html}{\out{</div>}}
 }
 
@@ -1067,7 +1067,7 @@ can be achieved within one referendum.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
 }\if{html}{\out{</div>}}
 }
 
@@ -1117,7 +1117,7 @@ The divisibility of \href{#inst_object_type}{\code{inst_object_type}}.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')
 }\if{html}{\out{</div>}}
 }
 
@@ -1151,7 +1151,7 @@ The legal topics to which the referendum \href{#type}{\code{type}} is limited.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_topics_excluded \%>\% purrr::map_lgl(rlang::is_empty)
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_topics_excluded \%>\% purrr::map_lgl(rlang::is_empty)
 }\if{html}{\out{</div>}}
 }
 
@@ -1183,7 +1183,7 @@ The legal topics that are excluded from the referendum \href{#type}{\code{type}}
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_topics_only \%>\% purrr::map_lgl(rlang::is_empty)
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_topics_only \%>\% purrr::map_lgl(rlang::is_empty)
 }\if{html}{\out{</div>}}
 }
 
@@ -1268,7 +1268,7 @@ referendum \href{#type}{\code{type}} to be held.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{isTRUE(inst_has_precondition)
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{isTRUE(inst_has_precondition)
 }\if{html}{\out{</div>}}
 }
 
@@ -1301,5 +1301,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 }
 
 }
+}
+\seealso{
+Metadata functions \code{\link[=v_vals]{v_vals()}} and \code{\link[=val_lbls]{val_lbls()}}.
 }
 \keyword{datasets}

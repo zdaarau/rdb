@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Download file attachment — download_file_attachment • c2d</title>
+<title>Get the set of possible value labels of a referendum data variable — val_lbls • c2d</title>
 
 
 
@@ -42,9 +42,9 @@
 <script src="../pkgdown.js"></script>
 
 
-<meta property="og:title" content="Download file attachment — download_file_attachment" />
-<meta name="description" content="Downloads a file attachment from the C2D database. The necessary s3_object_keys identifying individual files are found in the files list column returned by referendums().">
-<meta property="og:description" content="Downloads a file attachment from the C2D database. The necessary s3_object_keys identifying individual files are found in the files list column returned by referendums()." />
+<meta property="og:title" content="Get the set of possible value labels of a referendum data variable — val_lbls" />
+<meta name="description" content="Returns a character vector of value labels of a specific referendums() column, in the same order as v_vals(), or of length 0 if v_name's values are not restricted to a predefined set or no value labels are defined in the codebook.">
+<meta property="og:description" content="Returns a character vector of value labels of a specific referendums() column, in the same order as v_vals(), or of length 0 if v_name's values are not restricted to a predefined set or no value labels are defined in the codebook." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -116,50 +116,52 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Download file attachment</h1>
+    <h1>Get the set of possible <em>value labels</em> of a referendum data variable</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/c2d/blob/master/R/c2d-GEN.R'><code>R/c2d-GEN.R</code></a></small>
-    <div class="hidden name"><code>download_file_attachment.Rd</code></div>
+    <div class="hidden name"><code>val_lbls.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Downloads a file attachment from the C2D database. The necessary <code>s3_object_key</code>s identifying individual files are found in the <code>files</code> list column returned
-by <code><a href='referendums.html'>referendums()</a></code>.</p>
+    <p>Returns a character vector of value labels of a specific <code><a href='referendums.html'>referendums()</a></code> column, in the same order as <code><a href='v_vals.html'>v_vals()</a></code>, or of length <code>0</code> if <code>v_name</code>'s values are
+not restricted to a predefined set or no value labels are defined in the <a href='data_codebook.html'>codebook</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>download_file_attachment</span><span class='op'>(</span><span class='va'>s3_object_key</span>, path <span class='op'>=</span> <span class='st'>"."</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>val_lbls</span><span class='op'>(</span><span class='va'>v_name</span>, incl_affixes <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>s3_object_key</th>
-      <td><p>The key uniquely identifying the file in the C2D <a href='https://en.wikipedia.org/wiki/Amazon_S3#Design'>Amazon S3 bucket</a>. A character scalar.</p></td>
+      <th>v_name</th>
+      <td><p>A variable name. Must be one of the column names of <code><a href='data_codebook.html'>data_codebook</a></code>.</p></td>
     </tr>
     <tr>
-      <th>path</th>
-      <td><p>The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.</p></td>
+      <th>incl_affixes</th>
+      <td><p>Whether or not to add the corresponding <code>value_label_prefix</code> and <code>value_label_suffix</code> to the returned labels.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <a href='https://httr.r-lib.org/reference/response.html'>response object</a>, invisibly.</p>
+    <p>A character vector. Of length <code>0</code> if <code>v_name</code>'s values are not restricted to a predefined set or no value labels are defined in the
+<a href='data_codebook.html'>codebook</a>.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='data_codebook.html'>data_codebook</a></code></p>
+<p>Other metadata functions:
+<code><a href='v_vals.html'>v_vals</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://magrittr.tidyverse.org'>magrittr</a></span><span class='op'>)</span>
-
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='co'># get all file object keys...</span>
-<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='referendums.html'>referendums</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%$%</span>
-  <span class='va'>files</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map_if.html'>map_depth</a></span><span class='op'>(</span><span class='fl'>2L</span>, <span class='fu'>purrr</span><span class='fu'>::</span><span class='va'><a href='https://purrr.tidyverse.org/reference/pluck.html'>pluck</a></span>, <span class='st'>"s3_object_key"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/flatten.html'>flatten</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/flatten.html'>flatten_chr</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='co'># ...select first one...</span>
-  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/nth.html'>first</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='co'># ...and download the corresponding file to the current working dir</span>
-  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>download_file_attachment</span><span class='op'>(</span><span class='op'>)</span><span class='op'>}</span>
-</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>val_lbls</span><span class='op'>(</span><span class='st'>"result"</span>,
+              incl_affixes <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "approved" "rejected"</div><div class='input'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>val_lbls</span><span class='op'>(</span><span class='st'>"result"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "The referendum proposal was approved"
+#&gt; [2] "The referendum proposal was rejected"</div><div class='input'>
+<span class='co'># Convert the labels to sentence case with trailing dot</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://magrittr.tidyverse.org'>magrittr</a></span><span class='op'>)</span>
+<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>val_lbls</span><span class='op'>(</span><span class='st'>"result"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'>pal</span><span class='fu'>::</span><span class='fu'><a href='https://rpkg.dev/pal/reference/sentenceify.html'>sentenceify</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "The referendum proposal was approved."
+#&gt; [2] "The referendum proposal was rejected."</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

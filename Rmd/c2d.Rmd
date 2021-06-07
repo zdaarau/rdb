@@ -875,7 +875,9 @@ referendums <- function(use_cache = TRUE,
 }
 ```
 
-## Codebook
+## Get metadata
+
+### Codebook data
 
 ```{r}
 #' C2D Codebook
@@ -886,9 +888,85 @@ referendums <- function(use_cache = TRUE,
 #' @includeRmd vignettes/codebook.Rmd
 #'
 #' @format `r pkgsnip::return_label("data")`
-#' @aliases codebook 
+#' @aliases codebook
+#' @seealso Metadata functions [v_vals()] and [val_lbls()].
 #' @export
 "data_codebook"
+```
+
+### Get the set of possible value labels of a referendum data variable
+
+```{r}
+#' Get the set of possible *value labels* of a referendum data variable
+#'
+#' Returns a character vector of value labels of a specific [referendums()] column, in the same order as [v_vals()], or of length `0` if `v_name`'s values are
+#' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
+#'
+#' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
+#' @param incl_affixes Whether or not to add the corresponding `value_label_prefix` and `value_label_suffix` to the returned labels.
+#'
+#' @return A character vector. Of length `0` if `v_name`'s values are not restricted to a predefined set or no value labels are defined in the
+#'   [codebook][data_codebook].
+#' @seealso [`data_codebook`][data_codebook]
+#' @family metadata
+#' @export
+#'
+#' @examples
+#' c2d::val_lbls("result",
+#'               incl_affixes = FALSE)
+#' c2d::val_lbls("result")
+#' 
+#' # Convert the labels to sentence case with trailing dot
+#' library(magrittr)
+#' c2d::val_lbls("result") %>% pal::sentenceify()
+val_lbls <- function(v_name,
+                     incl_affixes = TRUE) {
+  v_name <- rlang::arg_match(arg = v_name,
+                             values = data_codebook$variable_name)
+  metadata <- data_codebook %>% dplyr::filter(variable_name == !!v_name)
+  result <- metadata$value_labels %>% purrr::flatten_chr()
+  
+  if (incl_affixes) {
+    if (!is.na(metadata$value_label_prefix)) result <- paste(metadata$value_label_prefix, result)
+    if (!is.na(metadata$value_label_suffix)) result <- paste(metadata$value_label_suffix, result)
+  }
+  
+  result
+}
+```
+
+### Get the set of possible values of a referendum data variable
+
+```{r}
+#' Get the set of possible *values* of a referendum data variable
+#'
+#' Returns a vector of the possible predefined values a specific column in [referendums()] can hold. If the variable values aren't restricted to a predefined
+#' set, `NULL` is returned.
+#'
+#' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
+#'
+#' @return
+#' If `v_name`'s values are restricted to a predefined set and
+#' - `v_name` is *not* of type list, a vector of the same type as `v_name`.
+#' - `v_name` is of type list, a vector of the same type as the elements of `v_name`.
+#'
+#' Else `NULL`.
+#' @seealso [`data_codebook`][data_codebook]
+#' @family metadata
+#' @export
+#'
+#' @examples
+#' v_vals("result")
+#' v_vals("id")
+v_vals <- function(v_name) {
+  
+  v_name <- rlang::arg_match(arg = v_name,
+                             values = data_codebook$variable_name)
+  data_codebook %>%
+    dplyr::filter(variable_name == !!v_name) %$%
+    variable_values %>%
+    unlist()
+}
 ```
 
 ## Count
