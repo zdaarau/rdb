@@ -84,6 +84,7 @@ utils::globalVariables(names = c(".",
                                  "content-disposition",
                                  "items",
                                  "sudd_prefix",
+                                 "value_labels",
                                  "variable_name",
                                  "variable_values",
                                  "votes"))
@@ -118,18 +119,6 @@ httr_config <- function() {
   
   httr::config(cainfo = fs::path_package(package = pkg,
                                          "certs", "3479778542.crt"))
-}
-```
-
-### Get variable values
-
-```{r}
-v_vals <- function(v) {
-  
-  data_codebook %>%
-    dplyr::filter(variable_name == !!v) %$%
-    variable_values %>%
-    unlist()
 }
 ```
 

@@ -63,7 +63,7 @@ value_scale = "nominal"
 variable_name = "result"
 variable_label = "the result of the referendum"
 variable_values = [ "yes", "no" ]
-value_label_prefix = "The referendum proposal was "
+value_label_prefix = "The referendum proposal was"
 value_labels = [ "approved", "rejected" ]
 value_scale = "binary"
 [[01_main.item]]
