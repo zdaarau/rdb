@@ -3,11 +3,19 @@ Title: Download Data from the C2D Database, Which Covers Direct Democratic
     Votes Worldwide
 Version: 0.0.9009
 Authors@R: 
-    person(given = "Salim",
-           family = "Brüggemann",
-           role = c("aut", "cre"),
-           email = "salim-b@pm.me",
-           comment = c(ORCID = "0000-0002-5329-5987"))
+    c(person(given = "Salim",
+             family = "Brüggemann",
+             role = c("aut", "cre"),
+             email = "salim-b@pm.me",
+             comment = c(ORCID = "0000-0002-5329-5987")),
+      person(given = "Uwe",
+             family = "Serdült",
+             role = "aut",
+             email = "uwe.serduelt@zda.uzh.ch",
+             comment = c(ORCID = "0000-0002-5329-5987")),
+      person(family = "Centre for Democracy Studies Aarau (ZDA)",
+             role = "cph",
+             email = "info@zdaarau.ch"))
 Description: c2d provides access to the C2D Database (https://c2d.ch) from
     R. This database aims to record all direct democratic votes worldwide
     and is operated by the Centre for Democracy Studies Aarau (ZDA) at the
