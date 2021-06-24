@@ -2,7 +2,7 @@
 # See `README.md#r-markdown-format` for more information on the literate programming approach used applying the R Markdown format.
 
 # c2d: Download Data from the C2D Database, Which Covers Direct Democratic Votes Worldwide
-# Copyright (C) 2021 Salim Brüggemann
+# Copyright (C) 2021 Centre for Democracy Studies Aarau (ZDA)
 # 
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or any later version.
@@ -141,6 +141,141 @@ query_filter_in <- function(x) {
   x %>% purrr::when(is.null(.) || length(.) == 0L ~ NULL,
                     length(.) == 1 ~ .,
                     ~ list(`$in` = .))
+}
+
+tags <- function(tiers = 1:3L) {
+  
+  checkmate::assert_integer(tiers,
+                            lower = 1L,
+                            upper = 3L,
+                            any.missing = FALSE,
+                            unique = TRUE)
+  
+  tag_set <- character()
+  
+  if (1L %in% tiers) {
+    tag_set %<>% c(data_tags$name)
+  }
+  
+  if (2L %in% tiers) {
+    
+    tag_set %<>% c(data_tags$children %>%
+                     purrr::map_depth(.depth = 1L,
+                                      .f = purrr::chuck,
+                                      "name") %>%
+                     pal::as_chr())
+  }
+  
+  if (3L %in% tiers) {
+    
+    tag_set %<>% c(data_tags$children %>%
+                     purrr::map_depth(.depth = 1L,
+                                      .f = purrr::chuck,
+                                      "children") %>%
+                     pal::as_chr())
+  }
+  
+  tag_set
+}
+
+infer_tags_tier_1 <- function(tags) {
+  
+  checkmate::assert_subset(tags,
+                           choices = tags())
+  
+  # inferred from tier-3 tags
+  result <-
+    data_tags$children %>%
+    purrr::map_depth(.depth = 1L,
+                     .f = purrr::chuck,
+                     "children") %>%
+    purrr::flatten() %>%
+    magrittr::set_names(data_tags$name %>% rep(times = purrr::map_int(data_tags$children,
+                                                                      nrow))) %>%
+    purrr::compact() %>%
+    purrr::map_lgl(~ any(magrittr::is_in(x = tags,
+                                         table = .x))) %>%
+    magrittr::extract(., .) %>%
+    names()
+  
+  # inferred from tier-2 tags
+  result <-
+    data_tags$children %>%
+    magrittr::set_names(data_tags$name) %>%
+    purrr::map_depth(.depth = 1L,
+                     .f = purrr::chuck,
+                     "name") %>%
+    purrr::compact() %>%
+    purrr::map_lgl(~ any(magrittr::is_in(x = tags,
+                                         table = .x))) %>%
+    magrittr::extract(., .) %>%
+    names() %>%
+    c(result)
+  
+  # plus direct tier-1 tags
+  result %>%
+    c(tags[tags %in% tags(tiers = 1L)]) %>%
+    unique()
+}
+
+infer_tags_tier_2 <- function(tags) {
+  
+  checkmate::assert_subset(tags,
+                           choices = tags())
+  
+  # inferred from tier-3 tags
+  data_tags$children %>%
+    purrr::map_depth(.depth = 1L,
+                     .f = purrr::chuck,
+                     "children") %>%
+    purrr::flatten() %>%
+    magrittr::set_names(data_tags$children %>%
+                            purrr::map(purrr::chuck,
+                                       "name") %>%
+                            purrr::flatten_chr()) %>%
+    purrr::compact() %>%
+    purrr::map_lgl(~ any(magrittr::is_in(x = tags,
+                                         table = .x))) %>%
+    magrittr::extract(., .) %>%
+    names() %>%
+    # plus direct tier-2 tags
+    c(tags[tags %in% tags(tiers = 2L)]) %>%
+    unique()
+}
+
+infer_tags_tier_3 <- function(tags) {
+  
+  checkmate::assert_subset(tags,
+                           choices = tags()) %>%
+    magrittr::extract(. %in% tags(tiers = 3L)) %>%
+    unique()
+}
+
+#' Search in English referendum titles
+#'
+#' Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no [fuzzy
+#' search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are returned).
+#'
+#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
+#' titles.
+#'
+#' @param term The Search term. A character scalar.
+#'
+#' @return A character vector of English referendum titles matching the search `term`.
+#' @export
+#'
+#' @examples
+#' c2d::search_referendums("freedom")
+search_referendums <- function(term) {
+  
+  httr::RETRY(verb = "GET",
+              url = "https://services.c2d.ch/referendums",
+              query = list(mode = "search",
+                           term = checkmate::assert_string(term)),
+              times = 5L) %>%
+    httr::content(as = "parsed") %$%
+    items %>%
+    purrr::flatten_chr() 
 }
 
 read_toml <- function(path) {
@@ -412,6 +547,11 @@ referendums <- function(use_cache = TRUE,
                                            NA_character_,
                                            .),
         
+        # split `tags` into separate per-tier vars
+        tags_tier_1 = tags %>% purrr::map(infer_tags_tier_1),
+        tags_tier_2 = tags %>% purrr::map(infer_tags_tier_2),
+        tags_tier_3 = tags %>% purrr::map(infer_tags_tier_3),
+        
         # convert all values to lowercase
         ## vectors
         dplyr::across(c(level,
@@ -450,7 +590,7 @@ referendums <- function(use_cache = TRUE,
                                                         stringr::str_to_lower(.)) %>%
                                          paste0(collapse = " "))),
         ## lists
-        dplyr::across(.cols = tags,
+        dplyr::across(.cols = c(tags_tier_1, tags_tier_2, tags_tier_3),
                       .fns = purrr::map,
                       .f = ~
                         .x %>%
@@ -572,6 +712,9 @@ referendums <- function(use_cache = TRUE,
                                         NA_character_)
       ) %>%
       
+      # remove obsolete vars
+      dplyr::select(-tags) %>%
+      
       # convert types
       ## based on codebook
       dplyr::mutate(dplyr::across(.fns = ~ {
@@ -643,7 +786,9 @@ referendums <- function(use_cache = TRUE,
                       any_of("upper_house_no"),
                       any_of("upper_house_abstentions"),
                       any_of("position_government"),
-                      tags,
+                      tags_tier_1,
+                      tags_tier_2,
+                      tags_tier_3,
                       remarks,
                       files,
                       url_sudd,
@@ -850,33 +995,6 @@ count_referendums <- function(is_draft = FALSE,
     httr::content(as = "parsed") %$%
     votes %>%
     magrittr::set_names(names(.) %>% dplyr::recode("sub_national" = "subnational"))
-}
-
-#' Search in English referendum titles
-#'
-#' Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no [fuzzy
-#' search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are returned).
-#'
-#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
-#' titles.
-#'
-#' @param term The Search term. A character scalar.
-#'
-#' @return A character vector of English referendum titles matching the search `term`.
-#' @export
-#'
-#' @examples
-#' c2d::search_referendums("freedom")
-search_referendums <- function(term) {
-  
-  httr::RETRY(verb = "GET",
-              url = "https://services.c2d.ch/referendums",
-              query = list(mode = "search",
-                           term = checkmate::assert_string(term)),
-              times = 5L) %>%
-    httr::content(as = "parsed") %$%
-    items %>%
-    purrr::flatten_chr() 
 }
 
 #' Download file attachment

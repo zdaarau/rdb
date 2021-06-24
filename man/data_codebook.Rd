@@ -435,65 +435,156 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 }
 
-\subsection{\code{tags}}{
+\subsection{\code{tags_tier_1}}{
 
-A maximum of 3 predefined political topics that best classify the
+A maximum of 3 predefined political tier-1 topics that best classify the
 referendum.
 \subsection{Possible values}{\tabular{l}{
    Value \cr
    \code{"state organisation"} \cr
+   \code{"foreign policy"} \cr
+   \code{"security policy"} \cr
+   \code{"economy"} \cr
+   \code{"agriculture"} \cr
+   \code{"public finance"} \cr
+   \code{"energy"} \cr
+   \code{"transport and infrastructure"} \cr
+   \code{"environment and living space"} \cr
+   \code{"social policy"} \cr
+   \code{"education and research"} \cr
+   \code{"culture, religion and media"} \cr
+}
+
+
+\emph{This is a multi-value variable and thus of type \code{list}.}
+}
+
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{nominal} level.
+}
+
+}
+
+\subsection{\code{tags_tier_2}}{
+
+A maximum of 3 predefined political tier-2 topics that best classify the
+referendum.
+\subsection{Possible values}{\tabular{l}{
+   Value \cr
    \code{"national identity"} \cr
    \code{"political system"} \cr
+   \code{"institutions"} \cr
+   \code{"citizens' rights"} \cr
+   \code{"federalism"} \cr
+   \code{"legal system"} \cr
+   \code{"position on foreign policy"} \cr
+   \code{"european policy"} \cr
+   \code{"international organisations"} \cr
+   \code{"development cooperation"} \cr
+   \code{"bilateral treaties"} \cr
+   \code{"foreign trade policy"} \cr
+   \code{"diplomacy"} \cr
+   \code{"swiss abroad"} \cr
+   \code{"public security"} \cr
+   \code{"army"} \cr
+   \code{"national economic supply"} \cr
+   \code{"economic policy"} \cr
+   \code{"employment"} \cr
+   \code{"finance"} \cr
+   \code{"tourism and leisure"} \cr
+   \code{"agricultural policy"} \cr
+   \code{"livestock"} \cr
+   \code{"crop production"} \cr
+   \code{"forestry"} \cr
+   \code{"fishing, hunting and pets"} \cr
+   \code{"taxation"} \cr
+   \code{"financial system"} \cr
+   \code{"public expenditure"} \cr
+   \code{"budget cuts and remediation measures"} \cr
+   \code{"energy policy"} \cr
+   \code{"nuclear energy"} \cr
+   \code{"hydro-electric power"} \cr
+   \code{"alternative energy"} \cr
+   \code{"oil and gas"} \cr
+   \code{"transport policy"} \cr
+   \code{"road transport"} \cr
+   \code{"rail transport"} \cr
+   \code{"air transport"} \cr
+   \code{"shipping"} \cr
+   \code{"post"} \cr
+   \code{"telecommunications"} \cr
+   \code{"soil"} \cr
+   \code{"housing"} \cr
+   \code{"environment"} \cr
+   \code{"health"} \cr
+   \code{"social security"} \cr
+   \code{"social groups"} \cr
+   \code{"education policy"} \cr
+   \code{"schools"} \cr
+   \code{"universities"} \cr
+   \code{"research"} \cr
+   \code{"professional and vocational education"} \cr
+   \code{"cultural policy"} \cr
+   \code{"language policy"} \cr
+   \code{"religion - churches"} \cr
+   \code{"sport"} \cr
+   \code{"media and communication"} \cr
+}
+
+
+\emph{This is a multi-value variable and thus of type \code{list}.}
+}
+
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{nominal} level.
+}
+
+}
+
+\subsection{\code{tags_tier_3}}{
+
+A maximum of 3 predefined political tier-3 topics that best classify the
+referendum.
+\subsection{Possible values}{\tabular{l}{
+   Value \cr
    \code{"constitution"} \cr
    \code{"procedure for constitutional reform"} \cr
    \code{"legislative procedure"} \cr
    \code{"electoral system"} \cr
-   \code{"institutions"} \cr
    \code{"government, administration"} \cr
    \code{"parliament"} \cr
    \code{"courts"} \cr
    \code{"national bank"} \cr
-   \code{"citizens' rights"} \cr
    \code{"citizen's initiatives"} \cr
    \code{"referendum"} \cr
    \code{"voting rights"} \cr
-   \code{"federalism"} \cr
    \code{"territoral questions"} \cr
    \code{"intergovernmental relations"} \cr
    \code{"division of tasks"} \cr
-   \code{"legal system"} \cr
    \code{"international law"} \cr
    \code{"fundamental rights"} \cr
    \code{"citizenship"} \cr
    \code{"private law"} \cr
    \code{"criminal law"} \cr
    \code{"data protection"} \cr
-   \code{"foreign policy"} \cr
-   \code{"position on foreign policy"} \cr
    \code{"neutrality"} \cr
    \code{"independence"} \cr
    \code{"good offices"} \cr
-   \code{"european policy"} \cr
    \code{"EFTA"} \cr
    \code{"EU"} \cr
    \code{"EEA"} \cr
    \code{"other european organisations"} \cr
-   \code{"international organisations"} \cr
    \code{"UN"} \cr
    \code{"other international organisations"} \cr
-   \code{"development cooperation"} \cr
-   \code{"bilateral treaties"} \cr
-   \code{"foreign trade policy"} \cr
    \code{"export promotion"} \cr
    \code{"customs"} \cr
-   \code{"diplomacy"} \cr
-   \code{"swiss abroad"} \cr
-   \code{"security policy"} \cr
-   \code{"public security"} \cr
    \code{"civil protection"} \cr
    \code{"state security"} \cr
    \code{"police"} \cr
-   \code{"army"} \cr
    \code{"armed forces - general"} \cr
    \code{"military organisation"} \cr
    \code{"arms"} \cr
@@ -502,69 +593,34 @@ referendum.
    \code{"abolition of the armed forces"} \cr
    \code{"military training"} \cr
    \code{"international deployment"} \cr
-   \code{"national economic supply"} \cr
-   \code{"economy"} \cr
-   \code{"economic policy"} \cr
    \code{"short-term economic policy"} \cr
    \code{"competition policy"} \cr
    \code{"structural policy"} \cr
    \code{"pricing policy"} \cr
    \code{"consumer protection"} \cr
-   \code{"employment"} \cr
    \code{"employment conditions"} \cr
    \code{"working hours"} \cr
    \code{"industrial relations"} \cr
    \code{"employment policy"} \cr
-   \code{"finance"} \cr
    \code{"monetary policy"} \cr
    \code{"banks, stock exchange, insurance"} \cr
-   \code{"tourism and leisure"} \cr
    \code{"tourism"} \cr
    \code{"hospitality"} \cr
    \code{"lottery and gambling"} \cr
-   \code{"agriculture"} \cr
-   \code{"agricultural policy"} \cr
-   \code{"livestock"} \cr
-   \code{"crop production"} \cr
-   \code{"forestry"} \cr
-   \code{"fishing, hunting and pets"} \cr
-   \code{"public finance"} \cr
-   \code{"taxation"} \cr
    \code{"tax policy"} \cr
    \code{"tax system"} \cr
    \code{"direct taxation"} \cr
    \code{"indirect taxation"} \cr
-   \code{"financial system"} \cr
-   \code{"public expenditure"} \cr
-   \code{"budget cuts and remediation measures"} \cr
-   \code{"energy"} \cr
-   \code{"energy policy"} \cr
-   \code{"nuclear energy"} \cr
-   \code{"hydro-electric power"} \cr
-   \code{"alternative energy"} \cr
-   \code{"oil and gas"} \cr
-   \code{"transport and infrastructure"} \cr
-   \code{"transport policy"} \cr
    \code{"urban transport"} \cr
    \code{"transit traffic"} \cr
-   \code{"road transport"} \cr
    \code{"road construction"} \cr
    \code{"heavy traffic"} \cr
-   \code{"rail transport"} \cr
    \code{"goods traffic"} \cr
    \code{"passenger traffic"} \cr
-   \code{"air transport"} \cr
-   \code{"shipping"} \cr
-   \code{"post"} \cr
-   \code{"telecommunications"} \cr
-   \code{"environment and living space"} \cr
-   \code{"soil"} \cr
    \code{"spatial planning"} \cr
    \code{"land law"} \cr
-   \code{"housing"} \cr
    \code{"tenancy issues"} \cr
    \code{"building of residential housing, property ownership"} \cr
-   \code{"environment"} \cr
    \code{"environmental policy"} \cr
    \code{"noise protection"} \cr
    \code{"air quality control"} \cr
@@ -573,14 +629,11 @@ referendum.
    \code{"waste"} \cr
    \code{"protection of nature and cultural heritage"} \cr
    \code{"animal protection"} \cr
-   \code{"social policy"} \cr
-   \code{"health"} \cr
    \code{"health policy"} \cr
    \code{"medical research and technology"} \cr
    \code{"medicines"} \cr
    \code{"addictive substances"} \cr
    \code{"reproductive medicine"} \cr
-   \code{"social security"} \cr
    \code{"pension insurance"} \cr
    \code{"disability insurance"} \cr
    \code{"occupational benefits provision"} \cr
@@ -589,7 +642,6 @@ referendum.
    \code{"unemployment insurance"} \cr
    \code{"compensation for loss of earnings for persons on military service or civil protection duty"} \cr
    \code{"welfare"} \cr
-   \code{"social groups"} \cr
    \code{"immigration policy"} \cr
    \code{"refugees"} \cr
    \code{"status of women"} \cr
@@ -598,20 +650,8 @@ referendum.
    \code{"senior citizens"} \cr
    \code{"persons with disabilities"} \cr
    \code{"homosexuals"} \cr
-   \code{"education and research"} \cr
-   \code{"education policy"} \cr
-   \code{"schools"} \cr
-   \code{"universities"} \cr
-   \code{"research"} \cr
    \code{"genetic engineering"} \cr
    \code{"animal testing"} \cr
-   \code{"professional and vocational education"} \cr
-   \code{"culture, religion and media"} \cr
-   \code{"cultural policy"} \cr
-   \code{"language policy"} \cr
-   \code{"religion - churches"} \cr
-   \code{"sport"} \cr
-   \code{"media and communication"} \cr
    \code{"media policy"} \cr
    \code{"press"} \cr
    \code{"radio, television and electronic media"} \cr
