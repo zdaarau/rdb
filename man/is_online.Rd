@@ -7,7 +7,7 @@
 is_online(quiet = FALSE)
 }
 \arguments{
-\item{quiet}{Whether to suppress printing a warning in case the API is unavailable.}
+\item{quiet}{Whether or not to suppress printing a warning in case the API is unavailable.}
 }
 \value{
 A logical scalar.

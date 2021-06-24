@@ -306,11 +306,13 @@ required_fields <- c("_id",
 
 
 
+
+
 #' Test C2D API availability
 #'
 #' Checks if the C2D API server is online and operational.
 #'
-#' @param quiet Whether to suppress printing a warning in case the API is unavailable.
+#' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
 #'
 #' @return A logical scalar.
 #' @export
