@@ -12,7 +12,7 @@ Authors@R:
              family = "Serdült",
              role = "aut",
              email = "uwe.serduelt@zda.uzh.ch",
-             comment = c(ORCID = "0000-0002-5329-5987")),
+             comment = c(ORCID = "0000-0002-2383-3158")),
       person(family = "Centre for Democracy Studies Aarau (ZDA)",
              role = "cph",
              email = "info@zdaarau.ch"))
