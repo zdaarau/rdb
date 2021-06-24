@@ -41,6 +41,9 @@
 -   A total of 860 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
     traced and added ASAP!
 
+-   [Silagadze & Gherghina (2019)](https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf) (S. 467) detected some referendums that are missing in
+    the database -\> systematically check/add these!
+
 ## Schema
 
 -   `tags`: Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time
@@ -145,6 +148,10 @@
 
 -   Introduce `date_time_last_edited` holding the timestamp of a referendum entry's last edit.
 
+-   Currently, `inst_trigger_threshold` is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should
+    define, in what way the same information could be captured in a more systematic way (splitting it into two vars `inst_trigger_threshold_relative` and
+    `inst_trigger_threshold_absolute` might make sense), introduce the new variable and then convert the old values to the new format.
+
 ## Validation
 
 -   Systematically check if `applicability_constraint` is never violated.
@@ -197,6 +204,8 @@
 ## C2D Website
 
 -   Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! [ODC-ODbL](https://opendatacommons.org/licenses/odbl/summary/) würde sich anbieten.
+
+-   Möglichkeit zum Report falscher/fehlender Daten schaffen!
 
 -   Copyright notice in the footer must be updated and corrected.
 

@@ -156,6 +156,7 @@
 </ul>
 </li>
 <li><p>A total of 860 referendums don’t have a <code>type</code> set though it’s a mandatory field (at least in the C2D admin interface) -&gt; the missing <code>type</code>s should be traced and added ASAP!</p></li>
+<li><p><a href="https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf" class="external-link">Silagadze &amp; Gherghina (2019)</a> (S. 467) detected some referendums that are missing in the database -&gt; systematically check/add these!</p></li>
 </ul>
 </div>
 <div id="schema" class="section level2">
@@ -239,6 +240,7 @@
 </ul>
 </li>
 <li><p>Introduce <code>date_time_last_edited</code> holding the timestamp of a referendum entry’s last edit.</p></li>
+<li><p>Currently, <code>inst_trigger_threshold</code> is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should define, in what way the same information could be captured in a more systematic way (splitting it into two vars <code>inst_trigger_threshold_relative</code> and <code>inst_trigger_threshold_absolute</code> might make sense), introduce the new variable and then convert the old values to the new format.</p></li>
 </ul>
 </div>
 <div id="validation" class="section level2">
@@ -292,6 +294,7 @@
 <a href="#c2d-website" class="anchor"></a>C2D Website</h2>
 <ul>
 <li><p>Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! <a href="https://opendatacommons.org/licenses/odbl/summary/" class="external-link">ODC-ODbL</a> würde sich anbieten.</p></li>
+<li><p>Möglichkeit zum Report falscher/fehlender Daten schaffen!</p></li>
 <li>
 <p>Copyright notice in the footer must be updated and corrected.</p>
 <p>New: <code>Copyright © 2021 Centre for Democracy Studies Aarau (ZDA)</code> (Additionally: The current <code>v0.0.0</code> doesn’t really make sense…?)</p>
