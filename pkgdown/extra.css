@@ -1,0 +1,23 @@
+.color-azure {
+  color: #007fff;
+}
+
+.color-violet {
+  color: #7f00ff;
+}
+
+.color-rose {
+  color: #ff007f;
+}
+
+a.color-azure > code {
+  color: #007fff;
+}
+
+a.color-violet > code {
+  color: #7f00ff;
+}
+
+a.color-rose > code{
+  color: #ff007f;
+}
