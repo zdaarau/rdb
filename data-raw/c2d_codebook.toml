@@ -161,7 +161,7 @@ value_scale = "nominal"
 variable_name = "tags_tier_2"
 variable_label = "a maximum of 3 predefined second-tier political topics that best classify the referendum; the presence of a second-tier topic always implies presence of its parent [top-tier topic](#tags_tier_1)"
 is_multi_valued = true
-applicability_constraint = "purrr::pmap_lgl(list(tags_tier_1 = tags_tier_1, tags_tier_2 = tags_tier_2), ~ all(tags_tier_1 %in% infer_tags_tier_1(tags_tier_2)))"
+applicability_constraint = "purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_2, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) %in% .x))"
 variable_values = [
   "national identity",
   "political system",
@@ -227,7 +227,7 @@ value_scale = "nominal"
 variable_name = "tags_tier_3"
 variable_label = "a maximum of 3 predefined third-tier political topics that best classify the referendum; the presence of a third-tier topic always implies presence of its parent [second-tier topic](#tags_tier_2) and grandparent [top-tier topic](#tags_tier_1)"
 is_multi_valued = true
-applicability_constraint = "list(tags_tier_1 = tags_tier_1, tags_tier_2 = tags_tier_2, tags_tier_3 = tags_tier_3) %>% purrr::pmap_lgl(~ all(tags_tier_1 %in% infer_tags_tier_1(tags_tier_3)) & all(tags_tier_2 %in% infer_tags_tier_2(tags_tier_3)))"
+applicability_constraint = "purrr::map2_lgl(.x = tags_tier_2, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 2L) %in% .x)) & purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) %in% .x))"
 variable_values = [
   "constitution",
   "procedure for constitutional reform",
