@@ -19,17 +19,14 @@ Downloads a file attachment from the C2D database. The necessary \code{s3_object
 by \code{\link[=referendums]{referendums()}}.
 }
 \examples{
-library(magrittr)
-
 \dontrun{
 # get all file object keys...
-c2d::referendums() \%$\%
-  files \%>\%
-  purrr::map_depth(2L, purrr::pluck, "s3_object_key") \%>\%
-  purrr::flatten() \%>\%
-  purrr::flatten_chr() \%>\%
-  # ...select first one...
-  dplyr::first() \%>\%
-  # ...and download the corresponding file to the current working dir
-  c2d::download_file_attachment()}
+c2d::referendums()$files |>
+  purrr::map_depth(2L, purrr::pluck, "s3_object_key") |>
+  purrr::flatten() |>
+  purrr::flatten_chr() |>
+  # ...select first three keys...
+  magrittr::extract(1:3) |>
+  # ...and download the corresponding files to the current working dir
+  purrr::walk(c2d::download_file_attachment)}
 }

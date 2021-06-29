@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Test C2D API availability — is_online • c2d</title>
+<title>Infer higher-tier tags — infer_tags • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Test C2D API availability — is_online" />
-<meta name="description" content="Checks if the C2D API server is online and operational.">
-<meta property="og:description" content="Checks if the C2D API server is online and operational." />
+<meta property="og:title" content="Infer higher-tier tags — infer_tags" />
+<meta name="description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) tags that are the parents or grandparents of tags in the hierarchy.">
+<meta property="og:description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) tags that are the parents or grandparents of tags in the hierarchy." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -118,30 +118,49 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Test C2D API availability</h1>
+    <h1>Infer higher-tier tags</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/c2d/blob/master/R/c2d-GEN.R'><code>R/c2d-GEN.R</code></a></small>
-    <div class="hidden name"><code>is_online.Rd</code></div>
+    <div class="hidden name"><code>infer_tags.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Checks if the C2D API server is online and operational.</p>
+    <p>Determines the top-tier (<code>tier = 1L</code>) or second-tier (<code>tier = 2L</code>) tags that are the parents or grandparents of <code>tags</code> in the
+<a href='https://rpkg.dev/c2d/articles/codebook.html#tags'>hierarchy</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>is_online</span><span class='op'>(</span>quiet <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>infer_tags</span><span class='op'>(</span><span class='va'>tags</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>quiet</th>
-      <td><p>Whether or not to suppress printing a warning in case the API is unavailable.</p></td>
+      <th>tags</th>
+      <td><p>The tags to determine the corresponding (grand)parent tags of. A factor or character vector.</p></td>
+    </tr>
+    <tr>
+      <th>tier</th>
+      <td><p>The tier of the inferred tags. Should be &gt;= than the tier of the <code>tags</code>. An integer scalar.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A logical scalar.</p>
+    <p>A character vector.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,
+                tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "foreign policy"               "environment and living space"</div><div class='input'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,
+                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "european policy" "environment"    </div><div class='input'>
+<span class='co'># tags of different tiers can mixed in `tags`</span>
+<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"environment"</span><span class='op'>)</span>,
+                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "european policy" "environment"    </div><div class='input'>
+<span class='co'># but `tags` of a higher tier than `tier` will be ignored</span>
+<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='st'>"foreign policy"</span>,
+                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; character(0)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

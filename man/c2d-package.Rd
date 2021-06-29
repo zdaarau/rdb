@@ -25,7 +25,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Uwe Serdült \email{uwe.serduelt@zda.uzh.ch} (\href{https://orcid.org/0000-0002-5329-5987}{ORCID})
+  \item Uwe Serdült \email{uwe.serduelt@zda.uzh.ch} (\href{https://orcid.org/0000-0002-2383-3158}{ORCID})
 }
 
 Other contributors:

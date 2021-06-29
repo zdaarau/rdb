@@ -41,6 +41,8 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script>
 
+  <link href="../extra.css" rel="stylesheet">
+  
 
 <meta property="og:title" content="Download file attachment — download_file_attachment" />
 <meta name="description" content="Downloads a file attachment from the C2D database. The necessary s3_object_keys identifying individual files are found in the files list column returned by referendums().">
@@ -146,19 +148,16 @@ by <code><a href='referendums.html'>referendums()</a></code>.</p>
     <p>A <a href='https://httr.r-lib.org/reference/response.html'>response object</a>, invisibly.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://magrittr.tidyverse.org'>magrittr</a></span><span class='op'>)</span>
-
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># get all file object keys...</span>
-<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='referendums.html'>referendums</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%$%</span>
-  <span class='va'>files</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map_if.html'>map_depth</a></span><span class='op'>(</span><span class='fl'>2L</span>, <span class='fu'>purrr</span><span class='fu'>::</span><span class='va'><a href='https://purrr.tidyverse.org/reference/pluck.html'>pluck</a></span>, <span class='st'>"s3_object_key"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/flatten.html'>flatten</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/flatten.html'>flatten_chr</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='co'># ...select first one...</span>
-  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/nth.html'>first</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='co'># ...and download the corresponding file to the current working dir</span>
-  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>download_file_attachment</span><span class='op'>(</span><span class='op'>)</span><span class='op'>}</span>
+<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='referendums.html'>referendums</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>files</span> |&gt;
+  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map_if.html'>map_depth</a></span><span class='op'>(</span><span class='fl'>2L</span>, <span class='fu'>purrr</span><span class='fu'>::</span><span class='va'><a href='https://purrr.tidyverse.org/reference/pluck.html'>pluck</a></span>, <span class='st'>"s3_object_key"</span><span class='op'>)</span> |&gt;
+  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/flatten.html'>flatten</a></span><span class='op'>(</span><span class='op'>)</span> |&gt;
+  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/flatten.html'>flatten_chr</a></span><span class='op'>(</span><span class='op'>)</span> |&gt;
+  <span class='co'># ...select first three keys...</span>
+  <span class='fu'>magrittr</span><span class='fu'>::</span><span class='fu'><a href='https://magrittr.tidyverse.org/reference/aliases.html'>extract</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span> |&gt;
+  <span class='co'># ...and download the corresponding files to the current working dir</span>
+  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>download_file_attachment</span><span class='op'>)</span><span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

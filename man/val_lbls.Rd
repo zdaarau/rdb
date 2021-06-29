@@ -25,8 +25,7 @@ c2d::val_lbls("result",
 c2d::val_lbls("result")
 
 # Convert the labels to sentence case with trailing dot
-library(magrittr)
-c2d::val_lbls("result") \%>\% pal::sentenceify()
+c2d::val_lbls("result") |> pal::sentenceify()
 }
 \seealso{
 \code{\link{data_codebook}}
