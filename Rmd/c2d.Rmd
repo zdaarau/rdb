@@ -84,6 +84,8 @@ utils::globalVariables(names = c(".",
                                  "content-disposition",
                                  "items",
                                  "sudd_prefix",
+                                 "tag_tier_2",
+                                 "tag_tier_3",
                                  "value_labels",
                                  "variable_name",
                                  "variable_values",
@@ -311,32 +313,6 @@ tags <- function(tiers = 1:3) {
   }
   
   unique(tag_set)
-}
-```
-
-#### Infer higher-tier tags
-
-```{r}
-infer_tags <- function(tags,
-                       tier = 1L) {
-  
-  checkmate::assert_subset(tags,
-                           choices = clean_tags(tags()))
-  checkmate::assert_int(tier,
-                        lower = 1L,
-                        upper = 2L)
-  
-  data_tags_tidy %<>% dplyr::mutate(dplyr::across(.fns = clean_tags))
-  
-  # inferred from lower-tier tags
-  data_tags_tidy %>%
-    dplyr::filter(dplyr::if_any(.cols = c(tag_tier_2, tag_tier_3),
-                                .fns = ~ .x %in% tags)) %$%
-    eval(as.symbol(paste0("tag_tier_", tier))) %>%
-    # plus top-tier tags
-    purrr::when(tier == 1L ~ c(., tags[tags %in% clean_tags(tags(tiers = 1L))]),
-                ~ .) %>%
-    unique()
 }
 ```
 
@@ -1334,3 +1310,135 @@ search_referendums <- function(term) {
     purrr::flatten_chr() 
 }
 ```
+
+## Tags-related
+
+### Hierarchize Tags
+
+```{r}
+#' Hierarchize Tags
+#'
+#' Reconstructs the hierarchical relations between the three tag variables `tags_tier_1`, `tags_tier_2` and `tags_tier_3`. Can also be used to simply determine
+#' the parent tag(s) of any tag.
+#'
+#' @param x The tags to hierarchize. Either a character vector of tags or a single-row data frame containing at least the columns `tags_tier_1`, `tags_tier_2`
+#'   and `tags_tier_3`.
+#'
+#' @return `r pkgsnip::param_label("data")`
+#' @export
+#'
+#' @examples
+#' c2d::hierarchize_tags("territorial questions")
+#'
+#' # hierarchize the tags of all Austrian referendums
+#' c2d::referendums(country_code = "AT") |>
+#'   dplyr::group_by(id) |>
+#'   dplyr::group_split() |>
+#'   purrr::map(c2d::hierarchize_tags)
+hierarchize_tags <- function(x) {
+  
+  test_char <- checkmate::test_character(x,
+                                         any.missing = FALSE)
+  
+  if (!test_char) {
+    
+    tag_var_names <- paste0("tags_tier_", 1:3)
+    test_df <- checkmate::test_data_frame(x,
+                                          min.rows = 1L,
+                                          max.rows = 1L)
+    has_tag_vars <- all(tag_var_names %in% colnames(x))
+    
+    if (!test_df || !has_tag_vars) {
+      rlang::abort(cli::format_error(paste0("{.arg x} must be either a character vector of tags or a single-row data frame containing at least the columns ",
+                                            "{.field tags_tier_1}, {.field tags_tier_2} and {.field tags_tier_3}.")))
+    }
+    
+    x %<>%
+      dplyr::select(all_of(tag_var_names)) %>%
+      purrr::pmap(~ as.character(c(..1, ..2, ..3))) %>%
+      purrr::flatten_chr()
+  }
+  
+  checkmate::assert_subset(x,
+                           choices = clean_tags(tags()),
+                           empty.ok = TRUE,
+                           .var.name = "tags")
+  
+  tags_tier_1 <- x[x %in% clean_tags(tags(tiers = 1L))]
+  tags_tier_2 <- x[x %in% clean_tags(tags(tiers = 2L))]
+  tags_tier_3 <- x[x %in% clean_tags(tags(tiers = 3L))]
+  inferred_tags_tier_1 <- infer_tags(tags = c(tags_tier_2, tags_tier_3),
+                                     tier = 1L)
+  inferred_tags_tier_2 <- infer_tags(tags = tags_tier_3,
+                                     tier = 2L)
+  
+  # 1. add third-tier tags
+  result <- tibble::tibble(tag_tier_1 = infer_tags(tags = tags_tier_3,
+                                                   tier = 1L),
+                           tag_tier_2 = infer_tags(tags = tags_tier_3,
+                                                   tier = 2L),
+                           tag_tier_3 = tags_tier_3)
+  
+  # 2. add remaining second-tier tags
+  result %<>% dplyr::bind_rows(tibble::tibble(tag_tier_1 = infer_tags(tags = tags_tier_2,
+                                                                      tier = 1L),
+                                              tag_tier_2 = tags_tier_2 %>% setdiff(inferred_tags_tier_2),
+                                              tag_tier_3 = NA_character_))
+  # 3. add remaining top-tier tags
+  result %<>% dplyr::bind_rows(tibble::tibble(tag_tier_1 = tags_tier_1 %>% setdiff(inferred_tags_tier_1),
+                                              tag_tier_2 = NA_character_,
+                                              tag_tier_3 = NA_character_))
+  result
+}
+```
+
+### Infer higher-tier tags
+
+```{r}
+#' Infer higher-tier tags
+#'
+#' Determines the top-tier (`tier = 1L`) or second-tier (`tier = 2L`) tags that are the parents or grandparents of `tags` in the
+#' [hierarchy](https://rpkg.dev/c2d/articles/codebook.html#tags).
+#'
+#' @param tags The tags to determine the corresponding (grand)parent tags of. A factor or character vector.
+#' @param tier The tier of the inferred tags. Should be >= than the tier of the `tags`. An integer scalar.
+#'
+#' @return A character vector.
+#' @export
+#'
+#' @examples
+#' c2d::infer_tags(tags = c("EU", "animal protection"),
+#'                 tier = 1L)
+#' c2d::infer_tags(tags = c("EU", "animal protection"),
+#'                 tier = 2L)
+#' 
+#' # tags of different tiers can mixed in `tags`
+#' c2d::infer_tags(tags = c("EU", "environment"),
+#'                 tier = 2L)
+#' 
+#' # but `tags` of a higher tier than `tier` will be ignored
+#' c2d::infer_tags(tags = "foreign policy",
+#'                 tier = 2L)
+infer_tags <- function(tags,
+                       tier = 1L) {
+  
+  if (is.factor(tags)) tags <- as.character(tags)
+  
+  checkmate::assert_subset(tags,
+                           choices = clean_tags(tags()))
+  checkmate::assert_int(tier,
+                        lower = 1L,
+                        upper = 2L)
+  
+  data_tags_tidy %<>% dplyr::mutate(dplyr::across(.fns = clean_tags))
+  
+  # inferred from lower-tier tags
+  data_tags_tidy %>%
+    dplyr::filter(dplyr::if_any(.cols = c(tag_tier_2, tag_tier_3),
+                                .fns = ~ .x %in% tags)) %$%
+    eval(as.symbol(paste0("tag_tier_", tier))) %>%
+    # plus top-tier tags
+    purrr::when(tier == 1L ~ c(., tags[tags %in% clean_tags(tags(tiers = 1L))]),
+                ~ .) %>%
+    unique()
+}

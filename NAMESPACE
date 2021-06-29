@@ -3,6 +3,8 @@
 export(count_referendums)
 export(data_codebook)
 export(download_file_attachment)
+export(hierarchize_tags)
+export(infer_tags)
 export(is_online)
 export(referendums)
 export(search_referendums)
