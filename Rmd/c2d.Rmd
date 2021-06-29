@@ -462,8 +462,8 @@ data_tags_tidy <-
   tidyr::unnest_longer(col = tag_tier_2)
 
 data_tags_tidy <-
-  dplyr::bind_cols(tag_tier_1 = result$tag_tier_1,
-                   result$tag_tier_2) %>%
+  dplyr::bind_cols(tag_tier_1 = data_tags_tidy$tag_tier_1,
+                   data_tags_tidy$tag_tier_2) %>%
   dplyr::rename(tag_tier_2 = name,
                 tag_tier_3 = children) %>%
   # ensure consistent col subtypes
