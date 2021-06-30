@@ -156,6 +156,12 @@
 
 -   Systematically check if `applicability_constraint` is never violated.
 
+-   Systematically check if variables that are "completely dependent" on other variables (like `inst_trigger_actor` on `inst_trigger_type`) are correctly
+    filled.
+
+    E.g. is `inst_trigger_type` missing for referendums with IDs `5cb82f07cb48652399618eb1` and `6080ef7d4132d76d38bfe9e0` although `inst_trigger_actor` is
+    present!
+
 -   Systematically check if all votes in the `sudd.ch` database are included in the C2D database -\> parse `https://sudd.ch/list.php?mode=allrefs` (the
     `id_sudd` is part of the link in the last column)
 

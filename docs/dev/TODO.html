@@ -250,6 +250,10 @@
 <a href="#validation" class="anchor"></a>Validation</h2>
 <ul>
 <li><p>Systematically check if <code>applicability_constraint</code> is never violated.</p></li>
+<li>
+<p>Systematically check if variables that are “completely dependent” on other variables (like <code>inst_trigger_actor</code> on <code>inst_trigger_type</code>) are correctly filled.</p>
+<p>E.g. is <code>inst_trigger_type</code> missing for referendums with IDs <code>5cb82f07cb48652399618eb1</code> and <code>6080ef7d4132d76d38bfe9e0</code> although <code>inst_trigger_actor</code> is present!</p>
+</li>
 <li><p>Systematically check if all votes in the <code>sudd.ch</code> database are included in the C2D database -&gt; parse <code>https://sudd.ch/list.php?mode=allrefs</code> (the <code>id_sudd</code> is part of the link in the last column)</p></li>
 <li><p>According to the guidelines in <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx</code>, the PDF <code>files</code> of <code>country_code == "CH"</code> entries must be named consistently <code>Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag</code> (“Abstimmungsbroschüre”“) and <code>Results_CH/Kantonskürzel_Jahr_Monat_Tag</code> (results) -&gt; check if this is actually always the case!</p></li>
 <li>
