@@ -211,8 +211,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{subterritories_yes}}{
 
-The number of administrative subdivisions one level below
-\href{#level}{\code{level}} that approved the referendum.
+The number of administrative subdivisions one level below \code{level} that
+approved the referendum.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
@@ -229,8 +229,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{subterritories_no}}{
 
-The number of administrative subdivisions one level below
-\href{#level}{\code{level}} that rejected the referendum.
+The number of administrative subdivisions one level below \code{level} that
+rejected the referendum.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
@@ -259,8 +259,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 \subsection{\code{electorate_abroad}}{
 
 The number of people entitled to vote in the referendum \emph{who are living
-abroad}; by definition a subset of
-\href{#electorate_total}{\code{electorate_total}}.
+abroad}; by definition a subset of \code{electorate_total}.
 \subsection{Level of measurement}{
 
 This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
@@ -316,10 +315,9 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{votes_per_subterritory}}{
 
-The number of \href{#votes_yes}{\code{votes_yes}}, \href{#votes_no}{\code{votes_no}},
-\href{#votes_empty}{\code{votes_empty}} and \href{#votes_invalid}{\code{votes_invalid}} per
-administrative subdivision one level below \href{#level}{\code{level}}; currently
-only filled for Swiss referendums on the national level.
+The number of \code{votes_yes}, \code{votes_no}, \code{votes_empty} and \code{votes_invalid}
+per administrative subdivision one level below \code{level}; currently only
+filled for Swiss referendums on the national level.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
@@ -752,7 +750,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 A maximum of 3 predefined second-tier political topics that best
 classify the referendum; the presence of a second-tier topic always
-implies presence of its parent \href{#tags_tier_1}{top-tier topic}.
+implies presence of its parent top-tier topic.
 }
 
 \subsection{Possible values}{\tabular{l}{
@@ -837,8 +835,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 A maximum of 3 predefined third-tier political topics that best classify
 the referendum; the presence of a third-tier topic always implies
-presence of its parent \href{#tags_tier_2}{second-tier topic} and grandparent
-\href{#tags_tier_1}{top-tier topic}.
+presence of its parent second-tier topic and grandparent top-tier topic.
 }
 
 \subsection{Possible values}{\tabular{l}{
@@ -1080,24 +1077,24 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 For the following variables, the \href{https://en.wikipedia.org/wiki/Unit_of_observation}{unit of observation} is the
 referendum’s \emph{institutional instrument}, a combination of the
-referendum’s \href{#type}{\code{type}} and the jurisdiction it took place.
+referendum’s \code{type} and the jurisdiction it took place.
 
 The set of variables that constitute the jurisdiction is dependent on
-the referendum’s \href{#level}{\code{level}}:\tabular{ll}{
+the referendum’s \code{level}:\tabular{ll}{
    \code{level} \tab Jurisdiction is given by \cr
-   \code{national} \tab \href{#country_code}{\code{country_code}} \cr
-   \code{subnational} \tab \href{#country_code}{\code{country_code}} + \href{#subnational_entity_name}{\code{subnational_entity_name}} \cr
-   \code{local} \tab \href{#country_code}{\code{country_code}} + \href{#subnational_entity_name}{\code{subnational_entity_name}} + \href{#municipality}{\code{municipality}} \cr
+   \code{national} \tab \code{country_code} \cr
+   \code{subnational} \tab \code{country_code} + \code{subnational_entity_name} \cr
+   \code{local} \tab \code{country_code} + \code{subnational_entity_name} + \code{municipality} \cr
 }
 
 \subsection{\code{inst_legal_basis_type}}{
 
-The type of the legal basis of the referendum \href{#type}{\code{type}}.
+The type of the legal basis of the referendum \code{type}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"non-official"} \tab The referendum \href{#type}{\code{type}} has no legal basis. \cr
-   \code{"ad-hoc"} \tab The referendum \href{#type}{\code{type}} has a legal basis which was specifically created for it. \cr
-   \code{"official"} \tab The referendum \href{#type}{\code{type}} has a legal basis that wasn’t specifically created for it. \cr
+   \code{"non-official"} \tab The referendum \code{type} has no legal basis. \cr
+   \code{"ad-hoc"} \tab The referendum \code{type} has a legal basis which was specifically created for it. \cr
+   \code{"official"} \tab The referendum \code{type} has a legal basis that wasn’t specifically created for it. \cr
 }
 
 }
@@ -1112,12 +1109,12 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_has_urgent_legal_basis}}{
 
-Whether or not the legal basis of the referendum \href{#type}{\code{type}} was
-adopted urgently, i.e. in an abridged procedure.
+Whether or not the legal basis of the referendum \code{type} was adopted
+urgently, i.e. in an abridged procedure.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{TRUE} \tab The legal basis of the referendum \href{#type}{\code{type}} was adopted in an abridged procedure (urgent). \cr
-   \code{FALSE} \tab The legal basis of the referendum \href{#type}{\code{type}} was adopted in a normal procedure. \cr
+   \code{TRUE} \tab The legal basis of the referendum \code{type} was adopted in an abridged procedure (urgent). \cr
+   \code{FALSE} \tab The legal basis of the referendum \code{type} was adopted in a normal procedure. \cr
 }
 
 }
@@ -1138,12 +1135,12 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_is_binding}}{
 
-Whether the result of the referendum \href{#type}{\code{type}} has binding force
-or the decision of the voters may be disregarded.
+Whether the result of the referendum \code{type} has binding force or the
+decision of the voters may be disregarded.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{TRUE} \tab The result of the referendum \href{#type}{\code{type}} is binding for the legislator. \cr
-   \code{FALSE} \tab The result of the referendum \href{#type}{\code{type}} is only consultative, i.e. the legislator does not have to follow the decision of the voters. \cr
+   \code{TRUE} \tab The result of the referendum \code{type} is binding for the legislator. \cr
+   \code{FALSE} \tab The result of the referendum \code{type} is only consultative, i.e. the legislator does not have to follow the decision of the voters. \cr
 }
 
 }
@@ -1158,12 +1155,12 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_is_counter_proposal}}{
 
-Whether or not the referendum \href{#type}{\code{type}} is a counterproposal to a
-citizen’s (or other) initiative.
+Whether or not the referendum \code{type} is a counterproposal to a citizen’s
+(or other) initiative.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{TRUE} \tab The referendum \href{#type}{\code{type}} is a counterproposal to a citizen’s (or other) initiative. \cr
-   \code{FALSE} \tab The referendum \href{#type}{\code{type}} is not a counterproposal to a citizen’s (or other) initiative. \cr
+   \code{TRUE} \tab The referendum \code{type} is a counterproposal to a citizen’s (or other) initiative. \cr
+   \code{FALSE} \tab The referendum \code{type} is not a counterproposal to a citizen’s (or other) initiative. \cr
 }
 
 }
@@ -1178,14 +1175,13 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_is_assembly}}{
 
-Whether or not the referendum \href{#type}{\code{type}} is held as an assembly
-(all voters at the same time and place; physical presence at the
-assembly is required to be able to vote; usually voting means raising
-one’s hand).
+Whether or not the referendum \code{type} is held as an assembly (all voters
+at the same time and place; physical presence at the assembly is
+required to be able to vote; usually voting means raising one’s hand).
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{TRUE} \tab The referendum \href{#type}{\code{type}} is a counterproposal to a citizen’s (or other) initiative. \cr
-   \code{FALSE} \tab The referendum \href{#type}{\code{type}} is not a counterproposal to a citizen’s (or other) initiative. \cr
+   \code{TRUE} \tab The referendum \code{type} is a counterproposal to a citizen’s (or other) initiative. \cr
+   \code{FALSE} \tab The referendum \code{type} is not a counterproposal to a citizen’s (or other) initiative. \cr
 }
 
 }
@@ -1200,13 +1196,13 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_trigger_type}}{
 
-The way the referendum \href{#type}{\code{type}} is triggered; completely
-dependent on \href{#inst_trigger_actor}{\code{inst_trigger_actor}}.
+The way the referendum \code{type} is triggered; completely dependent on
+\code{inst_trigger_actor}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"automatic"} \tab The referendum \href{#type}{\code{type}} is triggered by a constitutional/legal requirement. \cr
-   \code{"top down"} \tab The referendum \href{#type}{\code{type}} is triggered by an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution. \cr
-   \code{"bottom up"} \tab The referendum \href{#type}{\code{type}} is triggered by citizen demand (e.g. a signature collection). \cr
+   \code{"automatic"} \tab The referendum \code{type} is triggered by a constitutional/legal requirement. \cr
+   \code{"top down"} \tab The referendum \code{type} is triggered by an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution. \cr
+   \code{"bottom up"} \tab The referendum \code{type} is triggered by citizen demand (e.g. a signature collection). \cr
 }
 
 }
@@ -1221,19 +1217,19 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_trigger_actor}}{
 
-The actor that triggers the referendum \href{#type}{\code{type}}.
+The actor that triggers the referendum \code{type}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"citizens"} \tab The referendum \href{#type}{\code{type}} is triggered by a direct citizen demand (usually a signature collection). \cr
-   \code{"constitution"} \tab The referendum \href{#type}{\code{type}} is triggered by a constitutional requirement. \cr
-   \code{"law"} \tab The referendum \href{#type}{\code{type}} is triggered by a legal requirement. \cr
-   \code{"parliament"} \tab The referendum \href{#type}{\code{type}} is triggered by the parliament. \cr
-   \code{"government"} \tab The referendum \href{#type}{\code{type}} is triggered by the government or prime minister. \cr
-   \code{"president"} \tab The referendum \href{#type}{\code{type}} is triggered by the president. \cr
-   \code{"monarch"} \tab The referendum \href{#type}{\code{type}} is triggered by the monarch. \cr
-   \code{"territorial unit"} \tab The referendum \href{#type}{\code{type}} is triggered by a province or municipality. \cr
-   \code{"UN"} \tab The referendum \href{#type}{\code{type}} is triggered by the United Nations (UN) or one of its organs. \cr
-   \code{"other institution"} \tab The referendum \href{#type}{\code{type}} is triggered by another institution such as the church or a state agency. \cr
+   \code{"citizens"} \tab The referendum \code{type} is triggered by a direct citizen demand (usually a signature collection). \cr
+   \code{"constitution"} \tab The referendum \code{type} is triggered by a constitutional requirement. \cr
+   \code{"law"} \tab The referendum \code{type} is triggered by a legal requirement. \cr
+   \code{"parliament"} \tab The referendum \code{type} is triggered by the parliament. \cr
+   \code{"government"} \tab The referendum \code{type} is triggered by the government or prime minister. \cr
+   \code{"president"} \tab The referendum \code{type} is triggered by the president. \cr
+   \code{"monarch"} \tab The referendum \code{type} is triggered by the monarch. \cr
+   \code{"territorial unit"} \tab The referendum \code{type} is triggered by a province or municipality. \cr
+   \code{"UN"} \tab The referendum \code{type} is triggered by the United Nations (UN) or one of its organs. \cr
+   \code{"other institution"} \tab The referendum \code{type} is triggered by another institution such as the church or a state agency. \cr
 }
 
 }
@@ -1248,9 +1244,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_trigger_actor_level}}{
 
-The political \href{#level}{\code{level}} of
-\href{#inst_trigger_actor}{\code{inst_trigger_actor}} in comparison to
-\href{#level}{\code{level}}.
+The political \code{level} of \code{inst_trigger_actor} in comparison to \code{level}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"lower"} \tab A lower political level triggers a referendum on one of the higher political levels. \cr
@@ -1270,9 +1264,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_trigger_threshold}}{
 
-The threshold of support among
-\href{#inst_trigger_actor}{\code{inst_trigger_actor}} that has to be reached in
-order to trigger the referendum \href{#type}{\code{type}}.
+The threshold of support among \code{inst_trigger_actor} that has to be
+reached in order to trigger the referendum \code{type}.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{trigger_actor \%in\% c('citizens', 'parliament', 'territorial unit')
@@ -1289,10 +1282,9 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_trigger_time_limit}}{
 
-The time limit in which
-\href{#inst_trigger_threshold}{\code{inst_trigger_threshold}} (usually a minimum
+The time limit in which \code{inst_trigger_threshold} (usually a minimum
 number of signatures) has to be reached in order to trigger the
-referendum \href{#type}{\code{type}}.
+referendum \code{type}.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{trigger_actor \%in\% c('citizens', 'territorial unit')
@@ -1309,7 +1301,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_object_type}}{
 
-The type of the object the referendum \href{#type}{\code{type}} refers to.
+The type of the object the referendum \code{type} refers to.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"question"} \tab A question which can be answered with yes or no (used as fallback option if nothing else applies). \cr
@@ -1332,8 +1324,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_object_author}}{
 
-The actor that defines the text/content of
-\href{#inst_object_type}{\code{inst_object_type}}.
+The actor that defines the text/content of \code{inst_object_type}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"citizens"} \tab Citizens (usually a small group initiating a citizen demand). \cr
@@ -1364,7 +1355,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_object_legal_level}}{
 
-The legal level of \href{#inst_object_type}{\code{inst_object_type}}.
+The legal level of \code{inst_object_type}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"ordinance"} \tab An ordinance, i.e. a legal norm based on a law or the constitution. \cr
@@ -1392,8 +1383,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_object_revision_extent}}{
 
-The extent of revision of \href{#inst_object_type}{\code{inst_object_type}} which
-can be achieved within one referendum.
+The extent of revision of \code{inst_object_type} which can be achieved
+within one referendum.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"partial"} \tab Only parts of the concerned legal text can be revised at the same time. \cr
@@ -1419,8 +1410,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_object_revision_modes}}{
 
-The different modes of revision that
-\href{#inst_object_type}{\code{inst_object_type}} allows.
+The different modes of revision that \code{inst_object_type} allows.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"introduce"} \tab With this instrument, it is possible to introduce an entirely new text/concept. \cr
@@ -1442,7 +1432,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_object_revision_divisibility}}{
 
-The divisibility of \href{#inst_object_type}{\code{inst_object_type}}.
+The divisibility of \code{inst_object_type}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"as a whole"} \tab The proposed legal text can only be accepted/rejected as a whole. \cr
@@ -1469,18 +1459,18 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_topics_only}}{
 
-The legal topics to which the referendum \href{#type}{\code{type}} is limited.
+The legal topics to which the referendum \code{type} is limited.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"infrastructural acts"} \tab The referendum \href{#type}{\code{type}} is limited to TODO. \cr
-   \code{"territorial questions"} \tab The referendum \href{#type}{\code{type}} is limited to TODO. \cr
-   \code{"competence shifts"} \tab The referendum \href{#type}{\code{type}} is limited to TODO. \cr
-   \code{"financial acts"} \tab The referendum \href{#type}{\code{type}} is limited to TODO. \cr
-   \code{"financial acts (expenses)"} \tab The referendum \href{#type}{\code{type}} is limited to TODO. \cr
-   \code{"financial acts (taxes)"} \tab The referendum \href{#type}{\code{type}} is limited to TODO. \cr
-   \code{"financial acts (obligations)"} \tab The referendum \href{#type}{\code{type}} is limited to TODO. \cr
-   \code{"treaties"} \tab The referendum \href{#type}{\code{type}} is limited to TODO (automatically limited to if \code{inst_object_legal_level == "law"}). \cr
-   \code{"total revisions of the constitution"} \tab The referendum \href{#type}{\code{type}} is limited to TODO. \cr
+   \code{"infrastructural acts"} \tab The referendum \code{type} is limited to TODO. \cr
+   \code{"territorial questions"} \tab The referendum \code{type} is limited to TODO. \cr
+   \code{"competence shifts"} \tab The referendum \code{type} is limited to TODO. \cr
+   \code{"financial acts"} \tab The referendum \code{type} is limited to TODO. \cr
+   \code{"financial acts (expenses)"} \tab The referendum \code{type} is limited to TODO. \cr
+   \code{"financial acts (taxes)"} \tab The referendum \code{type} is limited to TODO. \cr
+   \code{"financial acts (obligations)"} \tab The referendum \code{type} is limited to TODO. \cr
+   \code{"treaties"} \tab The referendum \code{type} is limited to TODO (automatically limited to if \code{inst_object_legal_level == "law"}). \cr
+   \code{"total revisions of the constitution"} \tab The referendum \code{type} is limited to TODO. \cr
 }
 
 
@@ -1503,16 +1493,16 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_topics_excluded}}{
 
-The legal topics that are excluded from the referendum \href{#type}{\code{type}}.
+The legal topics that are excluded from the referendum \code{type}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"jus cogens"} \tab TODO is exluded from the referendum \href{#type}{\code{type}}. \cr
-   \code{"international treaties"} \tab TODO is exluded from the referendum \href{#type}{\code{type}}. \cr
-   \code{"pardons"} \tab TODO is exluded from the referendum \href{#type}{\code{type}}. \cr
-   \code{"personnel appointments"} \tab TODO is exluded from the referendum \href{#type}{\code{type}}. \cr
-   \code{"budgets"} \tab TODO is exluded from the referendum \href{#type}{\code{type}}. \cr
-   \code{"financial matters"} \tab TODO is exluded from the referendum \href{#type}{\code{type}}. \cr
-   \code{"everything within parliamentary competence"} \tab TODO is exluded from the referendum \href{#type}{\code{type}}. \cr
+   \code{"jus cogens"} \tab TODO is exluded from the referendum \code{type}. \cr
+   \code{"international treaties"} \tab TODO is exluded from the referendum \code{type}. \cr
+   \code{"pardons"} \tab TODO is exluded from the referendum \code{type}. \cr
+   \code{"personnel appointments"} \tab TODO is exluded from the referendum \code{type}. \cr
+   \code{"budgets"} \tab TODO is exluded from the referendum \code{type}. \cr
+   \code{"financial matters"} \tab TODO is exluded from the referendum \code{type}. \cr
+   \code{"everything within parliamentary competence"} \tab TODO is exluded from the referendum \code{type}. \cr
 }
 
 
@@ -1535,9 +1525,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_quorum_turnout}}{
 
-The minimum percentage of the \href{#electorate_total}{\code{electorate_total}}
-that have to participate in the referendum \href{#type}{\code{type}} in order for
-it to be passed.
+The minimum percentage of the \code{electorate_total} that have to
+participate in the referendum \code{type} in order for it to be passed.
 \subsection{Level of measurement}{
 
 This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
@@ -1548,8 +1537,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_quorum_approval}}{
 
-The minimum number of voters that have to approve the referendum
-\href{#type}{\code{type}} in order for it to be passed.
+The minimum number of voters that have to approve the referendum \code{type}
+in order for it to be passed.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"simple majority"} \tab > 50 \% of the voters have to approve the referendum proposal. \cr
@@ -1570,11 +1559,11 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 \subsection{\code{inst_has_precondition}}{
 
 Whether or not an institutional actor must take a preconditional
-decision in order for the referendum \href{#type}{\code{type}} to be held.
+decision in order for the referendum \code{type} to be held.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{TRUE} \tab An institutional actor must take a preconditional decision in order for the referendum \href{#type}{\code{type}} to be held. \cr
-   \code{FALSE} \tab No institutional actor must take a preconditional decision in order for the referendum \href{#type}{\code{type}} to be held. \cr
+   \code{TRUE} \tab An institutional actor must take a preconditional decision in order for the referendum \code{type} to be held. \cr
+   \code{FALSE} \tab No institutional actor must take a preconditional decision in order for the referendum \code{type} to be held. \cr
 }
 
 }
@@ -1590,7 +1579,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 \subsection{\code{inst_precondition_actor}}{
 
 The actor that must take a preconditional decision in order for the
-referendum \href{#type}{\code{type}} to be held.
+referendum \code{type} to be held.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"parliament"} \tab The parliament. \cr
@@ -1620,8 +1609,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_precondition_decision}}{
 
-The decision that \href{#inst_precondition_actor}{\code{inst_precondition_actor}}
-has taken.
+The decision that \code{inst_precondition_actor} has taken.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"yes"} \tab Affirmative answer (e.g. yes, we will hold a vote that has been requested by citizens). \cr

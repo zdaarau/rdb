@@ -43,10 +43,24 @@ prettify_value_scale <- function(x) {
     dplyr::recode("binary" = "nominal (binary)")
 }
 
+## strip MD anchor links (recursively)
+strip_anchors <- function(x) {
+  
+  if (purrr::vec_depth(x) > 1L) {
+    x %>% purrr::map(strip_anchors)
+  } else if (is.character(x)) {
+    x %>% stringr::str_replace_all(pattern = "(\\[)([^\\]]+?)(\\]\\(#[^\\)]+?\\))",
+                                   replacement = "\\2")
+  } else {
+    x
+  }
+}
+
 ## assemble variable sections in Markdown
 v_sections <- function(data,
                        # useful when target format doesn't support them like GFM in roxygen2 documentation
-                       strip_extended_pandoc = FALSE) {
+                       strip_extended_pandoc = FALSE,
+                       strip_anchors = FALSE) {
   
   data %>% purrr::pmap(function(variable_name,
                                 variable_label,
@@ -142,7 +156,9 @@ v_sections <- function(data,
         "",
         glue::glue("This variable's [scale of measure](https://en.wikipedia.org/wiki/Level_of_measurement) is the **{value_scale}** level."),
         "")
-    })
+    }) %>%
+      purrr::when(strip_anchors ~ strip_anchors(.),
+                  ~ .)
   })
 }
 
@@ -150,13 +166,15 @@ c2d::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_",
                                     negate = TRUE)) %>%
-  v_sections(strip_extended_pandoc = is_gfm) %>%
+  v_sections(strip_extended_pandoc = is_gfm,
+             strip_anchors = is_gfm) %>%
   pal::cat_lines()
 ```
 
 ## Institution-level variables
 
-For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the referendum's *institutional instrument*, a
+```{r, institution-level-vars, echo = FALSE, results = "asis"}
+"For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the referendum's *institutional instrument*, a
 combination of the referendum's [`type`](#type) and the jurisdiction it took place.
 
 The set of variables that constitute the jurisdiction is dependent on the referendum's [`level`](#level):
@@ -167,11 +185,16 @@ The set of variables that constitute the jurisdiction is dependent on the refere
 | `subnational` | [`country_code`](#country_code) + [`subnational_entity_name`](#subnational_entity_name)                                   |
 | `local`       | [`country_code`](#country_code) + [`subnational_entity_name`](#subnational_entity_name) + [`municipality`](#municipality) |
 
-```{r, institution-level-vars, echo = FALSE, results = "asis"}
+" %>%
+  purrr::when(is_gfm ~ strip_anchors(.),
+              ~ .) %>%
+  cat()
+
 c2d::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_")) %>%
-  v_sections(strip_extended_pandoc = is_gfm) %>%
+  v_sections(strip_extended_pandoc = is_gfm,
+             strip_anchors = is_gfm) %>%
   pal::cat_lines()
 ```
 

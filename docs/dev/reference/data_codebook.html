@@ -337,8 +337,8 @@ referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint'><a
 <h4 class='hasAnchor' id='list-subterritories-yes-'><a class='anchor' href='#list-subterritories-yes-'></a><code>subterritories_yes</code></h4>
 
 
-<p>The number of administrative subdivisions one level below
-<a href='#level'><code>level</code></a> that approved the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The number of administrative subdivisions one level below <code>level</code> that
+approved the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>level</span> <span class='op'>!=</span> <span class='st'>'local'</span>
@@ -355,8 +355,8 @@ referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint'><a
 <h4 class='hasAnchor' id='list-subterritories-no-'><a class='anchor' href='#list-subterritories-no-'></a><code>subterritories_no</code></h4>
 
 
-<p>The number of administrative subdivisions one level below
-<a href='#level'><code>level</code></a> that rejected the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The number of administrative subdivisions one level below <code>level</code> that
+rejected the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>level</span> <span class='op'>!=</span> <span class='st'>'local'</span>
@@ -385,8 +385,7 @@ referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint'><a
 
 
 <p>The number of people entitled to vote in the referendum <em>who are living
-abroad</em>; by definition a subset of
-<a href='#electorate_total'><code>electorate_total</code></a>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+abroad</em>; by definition a subset of <code>electorate_total</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
@@ -442,10 +441,9 @@ referendum proposal.</p><h5 class='hasAnchor' id='level-of-measurement'><a class
 <h4 class='hasAnchor' id='list-votes-per-subterritory-'><a class='anchor' href='#list-votes-per-subterritory-'></a><code>votes_per_subterritory</code></h4>
 
 
-<p>The number of <a href='#votes_yes'><code>votes_yes</code></a>, <a href='#votes_no'><code>votes_no</code></a>,
-<a href='#votes_empty'><code>votes_empty</code></a> and <a href='#votes_invalid'><code>votes_invalid</code></a> per
-administrative subdivision one level below <a href='#level'><code>level</code></a>; currently
-only filled for Swiss referendums on the national level.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The number of <code>votes_yes</code>, <code>votes_no</code>, <code>votes_empty</code> and <code>votes_invalid</code>
+per administrative subdivision one level below <code>level</code>; currently only
+filled for Swiss referendums on the national level.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>level</span> <span class='op'>!=</span> <span class='st'>'local'</span>
@@ -842,7 +840,7 @@ the referendum.</p>
 
 <p>A maximum of 3 predefined second-tier political topics that best
 classify the referendum; the presence of a second-tier topic always
-implies presence of its parent <a href='#tags_tier_1'>top-tier topic</a>.</p>
+implies presence of its parent top-tier topic.</p>
 
 <h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
@@ -929,8 +927,7 @@ implies presence of its parent <a href='#tags_tier_1'>top-tier topic</a>.</p>
 
 <p>A maximum of 3 predefined third-tier political topics that best classify
 the referendum; the presence of a third-tier topic always implies
-presence of its parent <a href='#tags_tier_2'>second-tier topic</a> and grandparent
-<a href='#tags_tier_1'>top-tier topic</a>.</p>
+presence of its parent second-tier topic and grandparent top-tier topic.</p>
 
 <h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
@@ -1178,25 +1175,25 @@ instance of.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' hre
 
 <p>For the following variables, the <a href='https://en.wikipedia.org/wiki/Unit_of_observation'>unit of observation</a> is the
 referendum’s <em>institutional instrument</em>, a combination of the
-referendum’s <a href='#type'><code>type</code></a> and the jurisdiction it took place.</p>
+referendum’s <code>type</code> and the jurisdiction it took place.</p>
 <p>The set of variables that constitute the jurisdiction is dependent on
-the referendum’s <a href='#level'><code>level</code></a>:</p><table class='table'>
+the referendum’s <code>level</code>:</p><table class='table'>
 <tr><td><code>level</code></td><td>Jurisdiction is given by</td></tr>
-<tr><td><code>national</code></td><td><a href='#country_code'><code>country_code</code></a></td></tr>
-<tr><td><code>subnational</code></td><td><a href='#country_code'><code>country_code</code></a> + <a href='#subnational_entity_name'><code>subnational_entity_name</code></a></td></tr>
-<tr><td><code>local</code></td><td><a href='#country_code'><code>country_code</code></a> + <a href='#subnational_entity_name'><code>subnational_entity_name</code></a> + <a href='#municipality'><code>municipality</code></a></td></tr>
+<tr><td><code>national</code></td><td><code>country_code</code></td></tr>
+<tr><td><code>subnational</code></td><td><code>country_code</code> + <code>subnational_entity_name</code></td></tr>
+<tr><td><code>local</code></td><td><code>country_code</code> + <code>subnational_entity_name</code> + <code>municipality</code></td></tr>
 </table>
 
 
 <h4 class='hasAnchor' id='list-inst-legal-basis-type-'><a class='anchor' href='#list-inst-legal-basis-type-'></a><code>inst_legal_basis_type</code></h4>
 
 
-<p>The type of the legal basis of the referendum <a href='#type'><code>type</code></a>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The type of the legal basis of the referendum <code>type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>"non-official"</code></td><td>The referendum <a href='#type'><code>type</code></a> has no legal basis.</td></tr>
-<tr><td><code>"ad-hoc"</code></td><td>The referendum <a href='#type'><code>type</code></a> has a legal basis which was specifically created for it.</td></tr>
-<tr><td><code>"official"</code></td><td>The referendum <a href='#type'><code>type</code></a> has a legal basis that wasn’t specifically created for it.</td></tr>
+<tr><td><code>"non-official"</code></td><td>The referendum <code>type</code> has no legal basis.</td></tr>
+<tr><td><code>"ad-hoc"</code></td><td>The referendum <code>type</code> has a legal basis which was specifically created for it.</td></tr>
+<tr><td><code>"official"</code></td><td>The referendum <code>type</code> has a legal basis that wasn’t specifically created for it.</td></tr>
 </table>
 
 
@@ -1213,12 +1210,12 @@ the referendum’s <a href='#level'><code>level</code></a>:</p><table class='tab
 <h4 class='hasAnchor' id='list-inst-has-urgent-legal-basis-'><a class='anchor' href='#list-inst-has-urgent-legal-basis-'></a><code>inst_has_urgent_legal_basis</code></h4>
 
 
-<p>Whether or not the legal basis of the referendum <a href='#type'><code>type</code></a> was
-adopted urgently, i.e. in an abridged procedure.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether or not the legal basis of the referendum <code>type</code> was adopted
+urgently, i.e. in an abridged procedure.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>TRUE</code></td><td>The legal basis of the referendum <a href='#type'><code>type</code></a> was adopted in an abridged procedure (urgent).</td></tr>
-<tr><td><code>FALSE</code></td><td>The legal basis of the referendum <a href='#type'><code>type</code></a> was adopted in a normal procedure.</td></tr>
+<tr><td><code>TRUE</code></td><td>The legal basis of the referendum <code>type</code> was adopted in an abridged procedure (urgent).</td></tr>
+<tr><td><code>FALSE</code></td><td>The legal basis of the referendum <code>type</code> was adopted in a normal procedure.</td></tr>
 </table>
 
 
@@ -1241,12 +1238,12 @@ adopted urgently, i.e. in an abridged procedure.</p><h5 class='hasAnchor' id='p
 <h4 class='hasAnchor' id='list-inst-is-binding-'><a class='anchor' href='#list-inst-is-binding-'></a><code>inst_is_binding</code></h4>
 
 
-<p>Whether the result of the referendum <a href='#type'><code>type</code></a> has binding force
-or the decision of the voters may be disregarded.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether the result of the referendum <code>type</code> has binding force or the
+decision of the voters may be disregarded.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>TRUE</code></td><td>The result of the referendum <a href='#type'><code>type</code></a> is binding for the legislator.</td></tr>
-<tr><td><code>FALSE</code></td><td>The result of the referendum <a href='#type'><code>type</code></a> is only consultative, i.e. the legislator does not have to follow the decision of the voters.</td></tr>
+<tr><td><code>TRUE</code></td><td>The result of the referendum <code>type</code> is binding for the legislator.</td></tr>
+<tr><td><code>FALSE</code></td><td>The result of the referendum <code>type</code> is only consultative, i.e. the legislator does not have to follow the decision of the voters.</td></tr>
 </table>
 
 
@@ -1263,12 +1260,12 @@ or the decision of the voters may be disregarded.</p><h5 class='hasAnchor' id='p
 <h4 class='hasAnchor' id='list-inst-is-counter-proposal-'><a class='anchor' href='#list-inst-is-counter-proposal-'></a><code>inst_is_counter_proposal</code></h4>
 
 
-<p>Whether or not the referendum <a href='#type'><code>type</code></a> is a counterproposal to a
-citizen’s (or other) initiative.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether or not the referendum <code>type</code> is a counterproposal to a citizen’s
+(or other) initiative.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>TRUE</code></td><td>The referendum <a href='#type'><code>type</code></a> is a counterproposal to a citizen’s (or other) initiative.</td></tr>
-<tr><td><code>FALSE</code></td><td>The referendum <a href='#type'><code>type</code></a> is not a counterproposal to a citizen’s (or other) initiative.</td></tr>
+<tr><td><code>TRUE</code></td><td>The referendum <code>type</code> is a counterproposal to a citizen’s (or other) initiative.</td></tr>
+<tr><td><code>FALSE</code></td><td>The referendum <code>type</code> is not a counterproposal to a citizen’s (or other) initiative.</td></tr>
 </table>
 
 
@@ -1285,14 +1282,13 @@ citizen’s (or other) initiative.</p><h5 class='hasAnchor' id='possible-values'
 <h4 class='hasAnchor' id='list-inst-is-assembly-'><a class='anchor' href='#list-inst-is-assembly-'></a><code>inst_is_assembly</code></h4>
 
 
-<p>Whether or not the referendum <a href='#type'><code>type</code></a> is held as an assembly
-(all voters at the same time and place; physical presence at the
-assembly is required to be able to vote; usually voting means raising
-one’s hand).</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether or not the referendum <code>type</code> is held as an assembly (all voters
+at the same time and place; physical presence at the assembly is
+required to be able to vote; usually voting means raising one’s hand).</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>TRUE</code></td><td>The referendum <a href='#type'><code>type</code></a> is a counterproposal to a citizen’s (or other) initiative.</td></tr>
-<tr><td><code>FALSE</code></td><td>The referendum <a href='#type'><code>type</code></a> is not a counterproposal to a citizen’s (or other) initiative.</td></tr>
+<tr><td><code>TRUE</code></td><td>The referendum <code>type</code> is a counterproposal to a citizen’s (or other) initiative.</td></tr>
+<tr><td><code>FALSE</code></td><td>The referendum <code>type</code> is not a counterproposal to a citizen’s (or other) initiative.</td></tr>
 </table>
 
 
@@ -1309,13 +1305,13 @@ one’s hand).</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' h
 <h4 class='hasAnchor' id='list-inst-trigger-type-'><a class='anchor' href='#list-inst-trigger-type-'></a><code>inst_trigger_type</code></h4>
 
 
-<p>The way the referendum <a href='#type'><code>type</code></a> is triggered; completely
-dependent on <a href='#inst_trigger_actor'><code>inst_trigger_actor</code></a>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The way the referendum <code>type</code> is triggered; completely dependent on
+<code>inst_trigger_actor</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>"automatic"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by a constitutional/legal requirement.</td></tr>
-<tr><td><code>"top down"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution.</td></tr>
-<tr><td><code>"bottom up"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by citizen demand (e.g. a signature collection).</td></tr>
+<tr><td><code>"automatic"</code></td><td>The referendum <code>type</code> is triggered by a constitutional/legal requirement.</td></tr>
+<tr><td><code>"top down"</code></td><td>The referendum <code>type</code> is triggered by an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution.</td></tr>
+<tr><td><code>"bottom up"</code></td><td>The referendum <code>type</code> is triggered by citizen demand (e.g. a signature collection).</td></tr>
 </table>
 
 
@@ -1332,19 +1328,19 @@ dependent on <a href='#inst_trigger_actor'><code>inst_trigger_actor</code></a>.<
 <h4 class='hasAnchor' id='list-inst-trigger-actor-'><a class='anchor' href='#list-inst-trigger-actor-'></a><code>inst_trigger_actor</code></h4>
 
 
-<p>The actor that triggers the referendum <a href='#type'><code>type</code></a>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The actor that triggers the referendum <code>type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>"citizens"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by a direct citizen demand (usually a signature collection).</td></tr>
-<tr><td><code>"constitution"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by a constitutional requirement.</td></tr>
-<tr><td><code>"law"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by a legal requirement.</td></tr>
-<tr><td><code>"parliament"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by the parliament.</td></tr>
-<tr><td><code>"government"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by the government or prime minister.</td></tr>
-<tr><td><code>"president"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by the president.</td></tr>
-<tr><td><code>"monarch"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by the monarch.</td></tr>
-<tr><td><code>"territorial unit"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by a province or municipality.</td></tr>
-<tr><td><code>"UN"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by the United Nations (UN) or one of its organs.</td></tr>
-<tr><td><code>"other institution"</code></td><td>The referendum <a href='#type'><code>type</code></a> is triggered by another institution such as the church or a state agency.</td></tr>
+<tr><td><code>"citizens"</code></td><td>The referendum <code>type</code> is triggered by a direct citizen demand (usually a signature collection).</td></tr>
+<tr><td><code>"constitution"</code></td><td>The referendum <code>type</code> is triggered by a constitutional requirement.</td></tr>
+<tr><td><code>"law"</code></td><td>The referendum <code>type</code> is triggered by a legal requirement.</td></tr>
+<tr><td><code>"parliament"</code></td><td>The referendum <code>type</code> is triggered by the parliament.</td></tr>
+<tr><td><code>"government"</code></td><td>The referendum <code>type</code> is triggered by the government or prime minister.</td></tr>
+<tr><td><code>"president"</code></td><td>The referendum <code>type</code> is triggered by the president.</td></tr>
+<tr><td><code>"monarch"</code></td><td>The referendum <code>type</code> is triggered by the monarch.</td></tr>
+<tr><td><code>"territorial unit"</code></td><td>The referendum <code>type</code> is triggered by a province or municipality.</td></tr>
+<tr><td><code>"UN"</code></td><td>The referendum <code>type</code> is triggered by the United Nations (UN) or one of its organs.</td></tr>
+<tr><td><code>"other institution"</code></td><td>The referendum <code>type</code> is triggered by another institution such as the church or a state agency.</td></tr>
 </table>
 
 
@@ -1361,9 +1357,7 @@ dependent on <a href='#inst_trigger_actor'><code>inst_trigger_actor</code></a>.<
 <h4 class='hasAnchor' id='list-inst-trigger-actor-level-'><a class='anchor' href='#list-inst-trigger-actor-level-'></a><code>inst_trigger_actor_level</code></h4>
 
 
-<p>The political <a href='#level'><code>level</code></a> of
-<a href='#inst_trigger_actor'><code>inst_trigger_actor</code></a> in comparison to
-<a href='#level'><code>level</code></a>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The political <code>level</code> of <code>inst_trigger_actor</code> in comparison to <code>level</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"lower"</code></td><td>A lower political level triggers a referendum on one of the higher political levels.</td></tr>
@@ -1385,9 +1379,8 @@ dependent on <a href='#inst_trigger_actor'><code>inst_trigger_actor</code></a>.<
 <h4 class='hasAnchor' id='list-inst-trigger-threshold-'><a class='anchor' href='#list-inst-trigger-threshold-'></a><code>inst_trigger_threshold</code></h4>
 
 
-<p>The threshold of support among
-<a href='#inst_trigger_actor'><code>inst_trigger_actor</code></a> that has to be reached in
-order to trigger the referendum <a href='#type'><code>type</code></a>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The threshold of support among <code>inst_trigger_actor</code> that has to be
+reached in order to trigger the referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>trigger_actor</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'citizens'</span>, <span class='st'>'parliament'</span>, <span class='st'>'territorial unit'</span><span class='op'>)</span>
@@ -1404,10 +1397,9 @@ order to trigger the referendum <a href='#type'><code>type</code></a>.</p><h5 cl
 <h4 class='hasAnchor' id='list-inst-trigger-time-limit-'><a class='anchor' href='#list-inst-trigger-time-limit-'></a><code>inst_trigger_time_limit</code></h4>
 
 
-<p>The time limit in which
-<a href='#inst_trigger_threshold'><code>inst_trigger_threshold</code></a> (usually a minimum
+<p>The time limit in which <code>inst_trigger_threshold</code> (usually a minimum
 number of signatures) has to be reached in order to trigger the
-referendum <a href='#type'><code>type</code></a>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>trigger_actor</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'citizens'</span>, <span class='st'>'territorial unit'</span><span class='op'>)</span>
@@ -1424,7 +1416,7 @@ referendum <a href='#type'><code>type</code></a>.</p><h5 class='hasAnchor' id='a
 <h4 class='hasAnchor' id='list-inst-object-type-'><a class='anchor' href='#list-inst-object-type-'></a><code>inst_object_type</code></h4>
 
 
-<p>The type of the object the referendum <a href='#type'><code>type</code></a> refers to.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The type of the object the referendum <code>type</code> refers to.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"question"</code></td><td>A question which can be answered with yes or no (used as fallback option if nothing else applies).</td></tr>
@@ -1449,8 +1441,7 @@ referendum <a href='#type'><code>type</code></a>.</p><h5 class='hasAnchor' id='a
 <h4 class='hasAnchor' id='list-inst-object-author-'><a class='anchor' href='#list-inst-object-author-'></a><code>inst_object_author</code></h4>
 
 
-<p>The actor that defines the text/content of
-<a href='#inst_object_type'><code>inst_object_type</code></a>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The actor that defines the text/content of <code>inst_object_type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"citizens"</code></td><td>Citizens (usually a small group initiating a citizen demand).</td></tr>
@@ -1483,7 +1474,7 @@ referendum <a href='#type'><code>type</code></a>.</p><h5 class='hasAnchor' id='a
 <h4 class='hasAnchor' id='list-inst-object-legal-level-'><a class='anchor' href='#list-inst-object-legal-level-'></a><code>inst_object_legal_level</code></h4>
 
 
-<p>The legal level of <a href='#inst_object_type'><code>inst_object_type</code></a>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The legal level of <code>inst_object_type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"ordinance"</code></td><td>An ordinance, i.e. a legal norm based on a law or the constitution.</td></tr>
@@ -1513,8 +1504,8 @@ referendum <a href='#type'><code>type</code></a>.</p><h5 class='hasAnchor' id='a
 <h4 class='hasAnchor' id='list-inst-object-revision-extent-'><a class='anchor' href='#list-inst-object-revision-extent-'></a><code>inst_object_revision_extent</code></h4>
 
 
-<p>The extent of revision of <a href='#inst_object_type'><code>inst_object_type</code></a> which
-can be achieved within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The extent of revision of <code>inst_object_type</code> which can be achieved
+within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"partial"</code></td><td>Only parts of the concerned legal text can be revised at the same time.</td></tr>
@@ -1542,8 +1533,7 @@ can be achieved within one referendum.</p><h5 class='hasAnchor' id='possible-val
 <h4 class='hasAnchor' id='list-inst-object-revision-modes-'><a class='anchor' href='#list-inst-object-revision-modes-'></a><code>inst_object_revision_modes</code></h4>
 
 
-<p>The different modes of revision that
-<a href='#inst_object_type'><code>inst_object_type</code></a> allows.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The different modes of revision that <code>inst_object_type</code> allows.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"introduce"</code></td><td>With this instrument, it is possible to introduce an entirely new text/concept.</td></tr>
@@ -1566,7 +1556,7 @@ can be achieved within one referendum.</p><h5 class='hasAnchor' id='possible-val
 <h4 class='hasAnchor' id='list-inst-object-revision-divisibility-'><a class='anchor' href='#list-inst-object-revision-divisibility-'></a><code>inst_object_revision_divisibility</code></h4>
 
 
-<p>The divisibility of <a href='#inst_object_type'><code>inst_object_type</code></a>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The divisibility of <code>inst_object_type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"as a whole"</code></td><td>The proposed legal text can only be accepted/rejected as a whole.</td></tr>
@@ -1595,18 +1585,18 @@ can be achieved within one referendum.</p><h5 class='hasAnchor' id='possible-val
 <h4 class='hasAnchor' id='list-inst-topics-only-'><a class='anchor' href='#list-inst-topics-only-'></a><code>inst_topics_only</code></h4>
 
 
-<p>The legal topics to which the referendum <a href='#type'><code>type</code></a> is limited.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The legal topics to which the referendum <code>type</code> is limited.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>"infrastructural acts"</code></td><td>The referendum <a href='#type'><code>type</code></a> is limited to TODO.</td></tr>
-<tr><td><code>"territorial questions"</code></td><td>The referendum <a href='#type'><code>type</code></a> is limited to TODO.</td></tr>
-<tr><td><code>"competence shifts"</code></td><td>The referendum <a href='#type'><code>type</code></a> is limited to TODO.</td></tr>
-<tr><td><code>"financial acts"</code></td><td>The referendum <a href='#type'><code>type</code></a> is limited to TODO.</td></tr>
-<tr><td><code>"financial acts (expenses)"</code></td><td>The referendum <a href='#type'><code>type</code></a> is limited to TODO.</td></tr>
-<tr><td><code>"financial acts (taxes)"</code></td><td>The referendum <a href='#type'><code>type</code></a> is limited to TODO.</td></tr>
-<tr><td><code>"financial acts (obligations)"</code></td><td>The referendum <a href='#type'><code>type</code></a> is limited to TODO.</td></tr>
-<tr><td><code>"treaties"</code></td><td>The referendum <a href='#type'><code>type</code></a> is limited to TODO (automatically limited to if <code>inst_object_legal_level == "law"</code>).</td></tr>
-<tr><td><code>"total revisions of the constitution"</code></td><td>The referendum <a href='#type'><code>type</code></a> is limited to TODO.</td></tr>
+<tr><td><code>"infrastructural acts"</code></td><td>The referendum <code>type</code> is limited to TODO.</td></tr>
+<tr><td><code>"territorial questions"</code></td><td>The referendum <code>type</code> is limited to TODO.</td></tr>
+<tr><td><code>"competence shifts"</code></td><td>The referendum <code>type</code> is limited to TODO.</td></tr>
+<tr><td><code>"financial acts"</code></td><td>The referendum <code>type</code> is limited to TODO.</td></tr>
+<tr><td><code>"financial acts (expenses)"</code></td><td>The referendum <code>type</code> is limited to TODO.</td></tr>
+<tr><td><code>"financial acts (taxes)"</code></td><td>The referendum <code>type</code> is limited to TODO.</td></tr>
+<tr><td><code>"financial acts (obligations)"</code></td><td>The referendum <code>type</code> is limited to TODO.</td></tr>
+<tr><td><code>"treaties"</code></td><td>The referendum <code>type</code> is limited to TODO (automatically limited to if <code>inst_object_legal_level == "law"</code>).</td></tr>
+<tr><td><code>"total revisions of the constitution"</code></td><td>The referendum <code>type</code> is limited to TODO.</td></tr>
 </table>
 
 
@@ -1630,16 +1620,16 @@ can be achieved within one referendum.</p><h5 class='hasAnchor' id='possible-val
 <h4 class='hasAnchor' id='list-inst-topics-excluded-'><a class='anchor' href='#list-inst-topics-excluded-'></a><code>inst_topics_excluded</code></h4>
 
 
-<p>The legal topics that are excluded from the referendum <a href='#type'><code>type</code></a>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The legal topics that are excluded from the referendum <code>type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>"jus cogens"</code></td><td>TODO is exluded from the referendum <a href='#type'><code>type</code></a>.</td></tr>
-<tr><td><code>"international treaties"</code></td><td>TODO is exluded from the referendum <a href='#type'><code>type</code></a>.</td></tr>
-<tr><td><code>"pardons"</code></td><td>TODO is exluded from the referendum <a href='#type'><code>type</code></a>.</td></tr>
-<tr><td><code>"personnel appointments"</code></td><td>TODO is exluded from the referendum <a href='#type'><code>type</code></a>.</td></tr>
-<tr><td><code>"budgets"</code></td><td>TODO is exluded from the referendum <a href='#type'><code>type</code></a>.</td></tr>
-<tr><td><code>"financial matters"</code></td><td>TODO is exluded from the referendum <a href='#type'><code>type</code></a>.</td></tr>
-<tr><td><code>"everything within parliamentary competence"</code></td><td>TODO is exluded from the referendum <a href='#type'><code>type</code></a>.</td></tr>
+<tr><td><code>"jus cogens"</code></td><td>TODO is exluded from the referendum <code>type</code>.</td></tr>
+<tr><td><code>"international treaties"</code></td><td>TODO is exluded from the referendum <code>type</code>.</td></tr>
+<tr><td><code>"pardons"</code></td><td>TODO is exluded from the referendum <code>type</code>.</td></tr>
+<tr><td><code>"personnel appointments"</code></td><td>TODO is exluded from the referendum <code>type</code>.</td></tr>
+<tr><td><code>"budgets"</code></td><td>TODO is exluded from the referendum <code>type</code>.</td></tr>
+<tr><td><code>"financial matters"</code></td><td>TODO is exluded from the referendum <code>type</code>.</td></tr>
+<tr><td><code>"everything within parliamentary competence"</code></td><td>TODO is exluded from the referendum <code>type</code>.</td></tr>
 </table>
 
 
@@ -1663,9 +1653,8 @@ can be achieved within one referendum.</p><h5 class='hasAnchor' id='possible-val
 <h4 class='hasAnchor' id='list-inst-quorum-turnout-'><a class='anchor' href='#list-inst-quorum-turnout-'></a><code>inst_quorum_turnout</code></h4>
 
 
-<p>The minimum percentage of the <a href='#electorate_total'><code>electorate_total</code></a>
-that have to participate in the referendum <a href='#type'><code>type</code></a> in order for
-it to be passed.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The minimum percentage of the <code>electorate_total</code> that have to
+participate in the referendum <code>type</code> in order for it to be passed.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
@@ -1676,8 +1665,8 @@ it to be passed.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='an
 <h4 class='hasAnchor' id='list-inst-quorum-approval-'><a class='anchor' href='#list-inst-quorum-approval-'></a><code>inst_quorum_approval</code></h4>
 
 
-<p>The minimum number of voters that have to approve the referendum
-<a href='#type'><code>type</code></a> in order for it to be passed.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The minimum number of voters that have to approve the referendum <code>type</code>
+in order for it to be passed.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"simple majority"</code></td><td>&gt; 50 % of the voters have to approve the referendum proposal.</td></tr>
@@ -1700,11 +1689,11 @@ it to be passed.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='an
 
 
 <p>Whether or not an institutional actor must take a preconditional
-decision in order for the referendum <a href='#type'><code>type</code></a> to be held.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+decision in order for the referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>TRUE</code></td><td>An institutional actor must take a preconditional decision in order for the referendum <a href='#type'><code>type</code></a> to be held.</td></tr>
-<tr><td><code>FALSE</code></td><td>No institutional actor must take a preconditional decision in order for the referendum <a href='#type'><code>type</code></a> to be held.</td></tr>
+<tr><td><code>TRUE</code></td><td>An institutional actor must take a preconditional decision in order for the referendum <code>type</code> to be held.</td></tr>
+<tr><td><code>FALSE</code></td><td>No institutional actor must take a preconditional decision in order for the referendum <code>type</code> to be held.</td></tr>
 </table>
 
 
@@ -1722,7 +1711,7 @@ decision in order for the referendum <a href='#type'><code>type</code></a> to be
 
 
 <p>The actor that must take a preconditional decision in order for the
-referendum <a href='#type'><code>type</code></a> to be held.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"parliament"</code></td><td>The parliament.</td></tr>
@@ -1754,8 +1743,7 @@ referendum <a href='#type'><code>type</code></a> to be held.</p><h5 class='hasAn
 <h4 class='hasAnchor' id='list-inst-precondition-decision-'><a class='anchor' href='#list-inst-precondition-decision-'></a><code>inst_precondition_decision</code></h4>
 
 
-<p>The decision that <a href='#inst_precondition_actor'><code>inst_precondition_actor</code></a>
-has taken.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The decision that <code>inst_precondition_actor</code> has taken.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"yes"</code></td><td>Affirmative answer (e.g. yes, we will hold a vote that has been requested by citizens).</td></tr>
