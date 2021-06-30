@@ -479,6 +479,13 @@ tags_cleaned <- clean_tags(tags())
 tags_tier_1_cleaned <- clean_tags(tags(tiers = 1L))
 tags_tier_2_cleaned <- clean_tags(tags(tiers = 2L))
 tags_tier_3_cleaned <- clean_tags(tags(tiers = 3L))
+# NOTE: `var_lbls` is assigned here because when inlined, it somehow breaks `devtools::run_examples()` during pkg check ("C stack usage (...) is too close to
+#       the limit"); maybe too large fn stack? (modifying `pal::strip_md()` to minimize the fn stack was tried but didn't help)
+var_lbls <-
+  data_codebook$variable_label %>%
+  pal::strip_md() %>%
+  as.list() %>%
+  magrittr::set_names(value = data_codebook$variable_name)
 ```
 
 Finally, we have to save all the external data objects to `data/*.RData` as well as the internal data objects to `R/sysdata.rda`.
@@ -494,6 +501,7 @@ usethis::use_data(data_codebook,
                   tags_tier_1_cleaned,
                   tags_tier_2_cleaned,
                   tags_tier_3_cleaned,
+                  var_lbls,
                   internal = TRUE,
                   overwrite = TRUE,
                   compress = "xz",
@@ -565,7 +573,7 @@ TODO:
 #' @examples
 #' \dontrun{
 #' # get all referendums (excl. drafts)
-#' c2d::referendums()
+#' c2d::referendums()}
 #' 
 #' # get only referendums in Austria and Australia on subnational level
 #' c2d::referendums(country_code = c("AT", "AU"),
@@ -573,7 +581,7 @@ TODO:
 #' 
 #' # provide custom `query_filter` for more complex queries like regex matches
 #' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-#' c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')}
+#' c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')
 referendums <- function(use_cache = TRUE,
                         cache_lifespan = "1 week",
                         incl_archive = FALSE,
@@ -948,13 +956,7 @@ referendums <- function(use_cache = TRUE,
                                     as.factor)) %>%
         
         # add variable labels
-        labelled::set_variable_labels(.labels =
-                                        data_codebook$variable_label %>%
-                                        # NOTE: `pal::strip_md()` here somehow breaks `devtools::run_examples()` during pkg check
-                                        #       ("C stack usage (...) is too close to the limit"); maybe too large fn stack?
-                                        pal::strip_md() %>%
-                                        as.list() %>%
-                                        magrittr::set_names(value = data_codebook$variable_name),
+        labelled::set_variable_labels(.labels = var_lbls,
                                       .strict = FALSE) %>%
         
         # reorder columns

@@ -313,7 +313,7 @@ is_online <- function(quiet = FALSE) {
 #' @examples
 #' \dontrun{
 #' # get all referendums (excl. drafts)
-#' c2d::referendums()
+#' c2d::referendums()}
 #' 
 #' # get only referendums in Austria and Australia on subnational level
 #' c2d::referendums(country_code = c("AT", "AU"),
@@ -321,7 +321,7 @@ is_online <- function(quiet = FALSE) {
 #' 
 #' # provide custom `query_filter` for more complex queries like regex matches
 #' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-#' c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')}
+#' c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')
 referendums <- function(use_cache = TRUE,
                         cache_lifespan = "1 week",
                         incl_archive = FALSE,
@@ -696,13 +696,7 @@ referendums <- function(use_cache = TRUE,
                                     as.factor)) %>%
         
         # add variable labels
-        labelled::set_variable_labels(.labels =
-                                        data_codebook$variable_label %>%
-                                        # NOTE: `pal::strip_md()` here somehow breaks `devtools::run_examples()` during pkg check
-                                        #       ("C stack usage (...) is too close to the limit"); maybe too large fn stack?
-                                        pal::strip_md() %>%
-                                        as.list() %>%
-                                        magrittr::set_names(value = data_codebook$variable_name),
+        labelled::set_variable_labels(.labels = var_lbls,
                                       .strict = FALSE) %>%
         
         # reorder columns

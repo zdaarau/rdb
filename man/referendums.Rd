@@ -66,7 +66,7 @@ Downloads the referendum data from the C2D Database. See \code{\link{codebook}} 
 \examples{
 \dontrun{
 # get all referendums (excl. drafts)
-c2d::referendums()
+c2d::referendums()}
 
 # get only referendums in Austria and Australia on subnational level
 c2d::referendums(country_code = c("AT", "AU"),
@@ -74,5 +74,5 @@ c2d::referendums(country_code = c("AT", "AU"),
 
 # provide custom `query_filter` for more complex queries like regex matches
 # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')}
+c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')
 }
