@@ -259,6 +259,8 @@ required_fields <- c("_id",
 
 
 
+
+
 #' Test C2D API availability
 #'
 #' Checks if the C2D API server is online and operational.
@@ -590,7 +592,7 @@ referendums <- function(use_cache = TRUE,
                                             tier = 1L),
           tags_tier_2 = tags %>% purrr::map(infer_tags,
                                             tier = 2L),
-          tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% clean_tags(tags(tiers = 3L))]),
+          tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags_tier_3_cleaned]),
           ### various cleanups
           level = stringr::str_replace(string = level,
                                        pattern = "sub-national",
@@ -768,6 +770,8 @@ referendums <- function(use_cache = TRUE,
                         any_of("inst_has_precondition"),
                         any_of("inst_precondition_actor"),
                         any_of("inst_precondition_decision")) %>%
+        
+        # exclude `archive` if requested
         purrr::when(incl_archive ~ .,
                     ~ dplyr::select(.data = ., -archive))
       
@@ -1075,19 +1079,19 @@ hierarchize_tags <- function(x) {
     }
     
     x %<>%
-      dplyr::select(all_of(tag_var_names)) %>%
+      .[, tag_var_names] %>%
       purrr::pmap(~ as.character(c(..1, ..2, ..3))) %>%
       purrr::flatten_chr()
   }
   
   checkmate::assert_subset(x,
-                           choices = clean_tags(tags()),
+                           choices = tags_cleaned,
                            empty.ok = TRUE,
                            .var.name = "tags")
   
-  tags_tier_1 <- x[x %in% clean_tags(tags(tiers = 1L))]
-  tags_tier_2 <- x[x %in% clean_tags(tags(tiers = 2L))]
-  tags_tier_3 <- x[x %in% clean_tags(tags(tiers = 3L))]
+  tags_tier_1 <- x[x %in% tags_tier_1_cleaned]
+  tags_tier_2 <- x[x %in% tags_tier_2_cleaned]
+  tags_tier_3 <- x[x %in% tags_tier_3_cleaned]
   inferred_tags_tier_1 <- infer_tags(tags = c(tags_tier_2, tags_tier_3),
                                      tier = 1L)
   inferred_tags_tier_2 <- infer_tags(tags = tags_tier_3,
@@ -1143,20 +1147,17 @@ infer_tags <- function(tags,
   if (is.factor(tags)) tags <- as.character(tags)
   
   checkmate::assert_subset(tags,
-                           choices = clean_tags(tags()))
+                           choices = tags_cleaned)
   checkmate::assert_int(tier,
                         lower = 1L,
                         upper = 2L)
   
-  data_tags_tidy %<>% dplyr::mutate(dplyr::across(.fns = clean_tags))
-  
   # inferred from lower-tier tags
-  data_tags_tidy %>%
-    dplyr::filter(dplyr::if_any(.cols = c(tag_tier_2, tag_tier_3),
-                                .fns = ~ .x %in% tags)) %$%
-    eval(as.symbol(paste0("tag_tier_", tier))) %>%
-    # plus top-tier tags
-    purrr::when(tier == 1L ~ c(., tags[tags %in% clean_tags(tags(tiers = 1L))]),
-                ~ .) %>%
-    unique()
+  result <- data_tags_tidy_cleaned[data_tags_tidy_cleaned$tag_tier_2 %in% tags | data_tags_tidy_cleaned$tag_tier_3 %in% tags, ]
+  result %<>% .[[paste0("tag_tier_", tier)]]
+  
+  # plus top-tier tags
+  if (tier == 1L) result %<>% c(tags[tags %in% tags_tier_1_cleaned])
+  
+  unique(result)
 }
