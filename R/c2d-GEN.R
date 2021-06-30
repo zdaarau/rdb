@@ -1045,6 +1045,7 @@ search_referendums <- function(term) {
 #'   and `tags_tier_3`.
 #'
 #' @return `r pkgsnip::param_label("data")`
+#' @family tags
 #' @export
 #'
 #' @examples
@@ -1120,6 +1121,7 @@ hierarchize_tags <- function(x) {
 #' @param tier The tier of the inferred tags. Should be >= than the tier of the `tags`. An integer scalar.
 #'
 #' @return A character vector.
+#' @family tags
 #' @export
 #'
 #' @examples

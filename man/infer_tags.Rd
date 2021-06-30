@@ -32,3 +32,8 @@ c2d::infer_tags(tags = c("EU", "environment"),
 c2d::infer_tags(tags = "foreign policy",
                 tier = 2L)
 }
+\seealso{
+Other tag-related functions:
+\code{\link{hierarchize_tags}()}
+}
+\concept{tags}

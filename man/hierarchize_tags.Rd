@@ -26,3 +26,8 @@ c2d::referendums(country_code = "AT") |>
   dplyr::group_split() |>
   purrr::map(c2d::hierarchize_tags)
 }
+\seealso{
+Other tag-related functions:
+\code{\link{infer_tags}()}
+}
+\concept{tags}
