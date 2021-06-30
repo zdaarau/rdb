@@ -21,6 +21,9 @@ library(magrittr)
 
 pal::assert_pkg("salim")
 
+# determine if knit to GFM which doesn't support extended Pandoc MD syntax (like footnotes)
+is_gfm <- knitr::pandoc_to("gfm")
+
 # define functions
 ## flatten list column values
 flatten_list_col <- function(x) {
@@ -41,20 +44,20 @@ prettify_value_scale <- function(x) {
 }
 
 ## assemble variable sections in Markdown
-cat_v_sections <- function(data,
-                           # useful when target format doesn't support them like GFM in roxygen2 documentation
-                           strip_extended_pandoc = FALSE) {
+v_sections <- function(data,
+                       # useful when target format doesn't support them like GFM in roxygen2 documentation
+                       strip_extended_pandoc = FALSE) {
   
-  data %>% purrr::pwalk(function(variable_name,
-                                 variable_label,
-                                 is_multi_valued,
-                                 applicability_constraint,
-                                 variable_values,
-                                 value_label_prefix,
-                                 value_labels,
-                                 value_label_suffix,
-                                 value_default,
-                                 value_scale) {
+  data %>% purrr::pmap(function(variable_name,
+                                variable_label,
+                                is_multi_valued,
+                                applicability_constraint,
+                                variable_values,
+                                value_label_prefix,
+                                value_labels,
+                                value_label_suffix,
+                                value_default,
+                                value_scale) {
     
     variable_values %<>% flatten_list_col()
     value_default %<>% flatten_list_col()
@@ -75,72 +78,71 @@ cat_v_sections <- function(data,
       value_label_suffix %<>% pal::strip_md_footnotes()
     }
     
-    pal::cat_lines(
-      if (variable_name == "tags_tier_1") {
-        c("### Tags",
-          "",
-          "The tags (political topics) are organized on a three-tier hierarchy as follows:",
-          "",
-          c2d:::data_tags %>% purrr::pmap_chr(~ paste0("- [", ..1, "]{.color-azure}",
-                                                       ..2 %>%
-                                                         purrr::pmap_chr(~ paste0("\n  - [", ..1, "]{.color-violet}",
-                                                                                  ..2 %>%
-                                                                                    purrr::map_chr(~ paste0("\n    - [", .x, "]{.color-rose}")) %>%
-                                                                                    paste0(collapse = ""))) %>%
-                                                         paste0(collapse = ""))),
-          "",
-          paste0("<sup>[`tags_tier_1`](#tags_tier_1){.color-azure} are colored in [azure]{.color-azure}, [`tags_tier_2`](#tags_tier_2){.color-violet} in ",
-                 "[violet]{.color-violet} and [`tags_tier_3`](#tags_tier_3){.color-rose} in [rose]{.color-rose}.</sup>")[!strip_extended_pandoc],
-          "",
-          paste0("The hierarchical relations between the three tag variables `tags_tier_1`, `tags_tier_2` and `tags_tier_3` can be reconstructed at any time ",
-                 "using [`hierarchize_tags()`](https://rpkg.dev/c2d/reference/hierarchize_tags.html). This function can also be used to simply determine the ",
-                 "parent tag(s) of any tag."),
-          "")
-      },
-      glue::glue(dplyr::if_else(stringr::str_detect(string = variable_name,
-                                                    pattern = "^tags_tier_\\d+$"),
-                                "#",
-                                ""),
-                 "### `{variable_name}`"),
-      "",
-      variable_label %>% pal::sentenceify(),
-      "",
-      if (length(variable_values)) {
-        c(glue::glue("#### Possible values {{#{variable_name}-values}}"),
-          "",
-          if (length(value_labels)) {
-            c("| Value | Meaning |",
-              "| :---- | :------ |",
-              variable_values %>% purrr::map2_chr(.y = value_labels,
-                                                  .f = ~ glue::glue("| `{.x}` | {.y} |")))
-          } else {
-            c("| Value |",
-              "| :---- |",
-              variable_values %>% purrr::map_chr(~ glue::glue("| `{.x}` |")))
-          },
-          # if (!is.null(value_default)) c("", glue::glue("The default value is: `{value_default}`")),
-          "")
-      },
-      if (is_multi_valued) {
-        c(paste0("_This is a multi-value variable", "[^multi-val-var]"[!strip_extended_pandoc], " and thus of type `list`._"),
-          "")
-      },
-      if (!is.na(applicability_constraint)) {
-        c(glue::glue("#### Applicability constraint {{#{variable_name}-constraint}}"),
-          "",
-          "This variable is only applicable under the following condition:",
-          "",
-          "```r",
-          applicability_constraint,
-          "```",
-          "")
-      },
-      if (value_scale != "undefined") {
-        c(glue::glue("#### Level of measurement {{#{variable_name}-scale}}"),
-          "",
-          glue::glue("This variable's [scale of measure](https://en.wikipedia.org/wiki/Level_of_measurement) is the **{value_scale}** level."),
-          "")
-      })
+    list(if (variable_name == "tags_tier_1") {
+      c("### Tags",
+        "",
+        "The tags (political topics) are organized on a three-tier hierarchy as follows:",
+        "",
+        c2d:::data_tags %>% purrr::pmap_chr(~ paste0("- [", ..1, "]{.color-azure}",
+                                                     ..2 %>%
+                                                       purrr::pmap_chr(~ paste0("\n  - [", ..1, "]{.color-violet}",
+                                                                                ..2 %>%
+                                                                                  purrr::map_chr(~ paste0("\n    - [", .x, "]{.color-rose}")) %>%
+                                                                                  paste0(collapse = ""))) %>%
+                                                       paste0(collapse = ""))),
+        "",
+        paste0("<sup>[`tags_tier_1`](#tags_tier_1){.color-azure} are colored in [azure]{.color-azure}, [`tags_tier_2`](#tags_tier_2){.color-violet} in ",
+               "[violet]{.color-violet} and [`tags_tier_3`](#tags_tier_3){.color-rose} in [rose]{.color-rose}.</sup>")[!strip_extended_pandoc],
+        "",
+        paste0("The hierarchical relations between the three tag variables `tags_tier_1`, `tags_tier_2` and `tags_tier_3` can be reconstructed at any time ",
+               "using [`hierarchize_tags()`](https://rpkg.dev/c2d/reference/hierarchize_tags.html). This function can also be used to simply determine the ",
+               "parent tag(s) of any tag."),
+        "")
+    },
+    glue::glue(dplyr::if_else(stringr::str_detect(string = variable_name,
+                                                  pattern = "^tags_tier_\\d+$"),
+                              "#",
+                              ""),
+               "### `{variable_name}`"),
+    "",
+    variable_label %>% pal::sentenceify(),
+    "",
+    if (length(variable_values)) {
+      c(glue::glue("#### Possible values {{#{variable_name}-values}}"),
+        "",
+        if (length(value_labels)) {
+          c("| Value | Meaning |",
+            "| :---- | :------ |",
+            variable_values %>% purrr::map2_chr(.y = value_labels,
+                                                .f = ~ glue::glue("| `{.x}` | {.y} |")))
+        } else {
+          c("| Value |",
+            "| :---- |",
+            variable_values %>% purrr::map_chr(~ glue::glue("| `{.x}` |")))
+        },
+        # if (!is.null(value_default)) c("", glue::glue("The default value is: `{value_default}`")),
+        "")
+    },
+    if (is_multi_valued) {
+      c(paste0("_This is a multi-value variable", "[^multi-val-var]"[!strip_extended_pandoc], " and thus of type `list`._"),
+        "")
+    },
+    if (!is.na(applicability_constraint)) {
+      c(glue::glue("#### Applicability constraint {{#{variable_name}-constraint}}"),
+        "",
+        "This variable is only applicable under the following condition:",
+        "",
+        "```r",
+        applicability_constraint,
+        "```",
+        "")
+    },
+    if (value_scale != "undefined") {
+      c(glue::glue("#### Level of measurement {{#{variable_name}-scale}}"),
+        "",
+        glue::glue("This variable's [scale of measure](https://en.wikipedia.org/wiki/Level_of_measurement) is the **{value_scale}** level."),
+        "")
+    })
   })
 }
 
@@ -148,7 +150,8 @@ c2d::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_",
                                     negate = TRUE)) %>%
-  cat_v_sections(strip_extended_pandoc = knitr::pandoc_to("gfm"))
+  v_sections(strip_extended_pandoc = is_gfm) %>%
+  pal::cat_lines()
 ```
 
 ## Institution-level variables
@@ -168,10 +171,11 @@ The set of variables that constitute the jurisdiction is dependent on the refere
 c2d::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_")) %>%
-  cat_v_sections(strip_extended_pandoc = knitr::pandoc_to("gfm"))
+  v_sections(strip_extended_pandoc = is_gfm) %>%
+  pal::cat_lines()
 ```
 
-```{r, footnotes, echo = FALSE, results = "asis", include = !knitr::pandoc_to("gfm")}
+```{r, footnotes, echo = FALSE, results = "asis", include = !is_gfm}
 cat("
 [^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/hoist.html) to convert data containing such a variable to long format. To unnest `tags` to `tag` for example, use:
 
