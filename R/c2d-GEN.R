@@ -271,6 +271,7 @@ required_fields <- c("_id",
 #' @export
 is_online <- function(quiet = FALSE) {
   
+  checkmate::assert_flag(quiet)
   result <- FALSE
   response <- rlang::with_handlers(.expr = httr::RETRY(verb = "GET",
                                                        url = "https://services.c2d.ch/health",
@@ -285,10 +286,8 @@ is_online <- function(quiet = FALSE) {
     if (response == "OK") {
       result <- TRUE
       
-    } else if (checkmate::assert_flag(quiet)) {
-      warning(glue::glue("C2D API server responded with '{response}'"),
-              call. = FALSE,
-              immediate. = TRUE)
+    } else if (quiet) {
+      cli::cli_warn("C2D API server responded with: {.val {response}}")
     }
   }
   
@@ -409,19 +408,19 @@ referendums <- function(use_cache = TRUE,
         dplyr::filter(dplyr::if_any(.fns = is.na)) %>%
         nrow()) {
       
-      rlang::abort(cli::format_error("Mandatory fields detected that contain {.val NA} values. Please debug."))
+      cli::cli_abort("Mandatory fields detected that contain {.val NA} values. Please debug.")
     }
     
     # ## ensure `oid`s are unique
     # if (anyDuplicated(data$`_id`)) {
-    #   rlang::abort(cli::format_error("Duplicated {.var oid}s detected. Please debug."))
+    #   cli::cli_abort("Duplicated {.var oid}s detected. Please debug.")
     # }
     
     ## ensure `country_codes`s are valid
     invalid_country_codes <- data$country_code[!(data$country_code %in% countrycode::codelist$iso2c %>% setdiff(NA_character_))]
     
     if (length(invalid_country_codes)) {
-      rlang::abort(cli::format_error("Unknown {.var country_code}s detected. Please debug."))
+      cli::cli_abort("Unknown {.var country_code}s detected. Please debug.")
     }
     
     # tidy data
@@ -670,7 +669,7 @@ referendums <- function(use_cache = TRUE,
         dplyr::mutate(dplyr::across(.fns = ~ {
           
           metadata <- data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
-          if (nrow(metadata) != 1L) rlang::abort("Missing codebook metadata! Please debug")
+          if (nrow(metadata) != 1L) cli::cli_abort("Missing codebook metadata! Please debug")
           
           if (!is.logical(.x) && !is.null(metadata$variable_values[[1L]])) {
             
@@ -1068,8 +1067,8 @@ hierarchize_tags <- function(x) {
     has_tag_vars <- all(tag_var_names %in% colnames(x))
     
     if (!test_df || !has_tag_vars) {
-      rlang::abort(cli::format_error(paste0("{.arg x} must be either a character vector of tags or a single-row data frame containing at least the columns ",
-                                            "{.field tags_tier_1}, {.field tags_tier_2} and {.field tags_tier_3}.")))
+      cli::cli_abort(paste0("{.arg x} must be either a character vector of tags or a single-row data frame containing at least the columns ",
+                            "{.field tags_tier_1}, {.field tags_tier_2} and {.field tags_tier_3}."))
     }
     
     x %<>%

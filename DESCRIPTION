@@ -27,7 +27,7 @@ Depends:
     R (>= 3.5.0)
 Imports: 
     checkmate (>= 2.0.0),
-    cli (>= 2.5.0),
+    cli (>= 3.0.0),
     countrycode (>= 1.2.0),
     dplyr (>= 1.0.4),
     fs (>= 1.5.0),
