@@ -1715,7 +1715,7 @@
 <a href="#inst_has_urgent_legal_basis-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">trigger_actor</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'government'</span>, <span class="st">'president'</span>, <span class="st">'monarch'</span>, <span class="st">'parliament'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">inst_trigger_actor</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'government'</span>, <span class="st">'president'</span>, <span class="st">'monarch'</span>, <span class="st">'parliament'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="inst_has_urgent_legal_basis-scale" class="section level4">
 <h4 class="hasAnchor">
@@ -1983,7 +1983,7 @@
 <a href="#inst_trigger_threshold-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">trigger_actor</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'citizens'</span>, <span class="st">'parliament'</span>, <span class="st">'territorial unit'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">inst_trigger_actor</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'citizens'</span>, <span class="st">'parliament'</span>, <span class="st">'territorial unit'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="inst_trigger_threshold-scale" class="section level4">
 <h4 class="hasAnchor">
@@ -2001,7 +2001,7 @@
 <a href="#inst_trigger_time_limit-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">trigger_actor</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'citizens'</span>, <span class="st">'territorial unit'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">inst_trigger_actor</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'citizens'</span>, <span class="st">'territorial unit'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="inst_trigger_time_limit-scale" class="section level4">
 <h4 class="hasAnchor">
@@ -2118,7 +2118,7 @@
 <a href="#inst_object_author-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">object_type</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'question'</span>, <span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span>, <span class="st">'principle'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">inst_object_type</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'question'</span>, <span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span>, <span class="st">'principle'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="inst_object_author-scale" class="section level4">
 <h4 class="hasAnchor">
@@ -2172,7 +2172,7 @@
 <a href="#inst_object_legal_level-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">object_type</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">inst_object_type</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="inst_object_legal_level-scale" class="section level4">
 <h4 class="hasAnchor">
@@ -2218,7 +2218,7 @@
 <a href="#inst_object_revision_extent-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">object_type</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">inst_object_type</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="inst_object_revision_extent-scale" class="section level4">
 <h4 class="hasAnchor">
@@ -2308,7 +2308,7 @@
 <a href="#inst_object_revision_divisibility-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">object_type</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'question'</span>, <span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">inst_object_type</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'question'</span>, <span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="inst_object_revision_divisibility-scale" class="section level4">
 <h4 class="hasAnchor">

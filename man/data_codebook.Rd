@@ -1121,7 +1121,7 @@ urgently, i.e. in an abridged procedure.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{trigger_actor \%in\% c('government', 'president', 'monarch', 'parliament')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_trigger_actor \%in\% c('government', 'president', 'monarch', 'parliament')
 }\if{html}{\out{</div>}}
 }
 
@@ -1268,7 +1268,7 @@ The threshold of support among \code{inst_trigger_actor} that has to be
 reached in order to trigger the referendum \code{type}.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{trigger_actor \%in\% c('citizens', 'parliament', 'territorial unit')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_trigger_actor \%in\% c('citizens', 'parliament', 'territorial unit')
 }\if{html}{\out{</div>}}
 }
 
@@ -1287,7 +1287,7 @@ number of signatures) has to be reached in order to trigger the
 referendum \code{type}.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{trigger_actor \%in\% c('citizens', 'territorial unit')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_trigger_actor \%in\% c('citizens', 'territorial unit')
 }\if{html}{\out{</div>}}
 }
 
@@ -1341,7 +1341,7 @@ The actor that defines the text/content of \code{inst_object_type}.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)', 'principle')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)', 'principle')
 }\if{html}{\out{</div>}}
 }
 
@@ -1369,7 +1369,7 @@ The legal level of \code{inst_object_type}.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
 }\if{html}{\out{</div>}}
 }
 
@@ -1396,7 +1396,7 @@ within one referendum.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
 }\if{html}{\out{</div>}}
 }
 
@@ -1445,7 +1445,7 @@ The divisibility of \code{inst_object_type}.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')
 }\if{html}{\out{</div>}}
 }
 
