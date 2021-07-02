@@ -13,7 +13,9 @@
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 utils::globalVariables(names = c(".",
+                                 "applicability_constraint",
                                  "content-disposition",
+                                 "id_sudd_prefix",
                                  "items",
                                  "sudd_prefix",
                                  "tag_tier_2",
@@ -198,47 +200,6 @@ read_toml <- function(path) {
                                                      escape = FALSE),
                 ~ NULL) %>%
     xfun::as_strict_list()
-}
-
-validate_referendums <- function(data,
-                                 check_sudd_prefix = TRUE) {
-  
-  if (checkmate::assert_flag(check_sudd_prefix)) {
-    
-    # define allowed exceptions
-    allowed_exceptions <- tibble::tribble(
-      ~country_code, ~sudd_prefix,
-      # Curaçao
-      "CW", "an",
-      # Szeklerland, cf. https://sudd.ch/event.php?id=hu042008
-      "RO", "hu"
-    )
-    
-    # assemble target country codes
-    country_codes <- data$country_code %>% as.list()
-    
-    for (country_code in allowed_exceptions$country_code) {
-      
-      additional_country_codes <- allowed_exceptions %>% dplyr::filter(country_code == !!country_code) %$% sudd_prefix %>% stringr::str_to_upper()
-      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code == .x) %>% which()
-      
-      for (i in i_country_codes) {
-        country_codes[[i]] <- unique(c(country_codes[[i]], additional_country_codes))
-      }
-    }
-    
-    # add dummy indicating if target country codes match
-    data$matches_sudd_prefix <-
-      data$id_sudd %>%
-      stringr::str_extract(pattern = "^..") %>%
-      stringr::str_to_upper() %>%
-      purrr::map2_lgl(.y = country_codes,
-                      .f = ~ .x %in% .y)
-    
-    data$matches_sudd_prefix[is.na(data$id_sudd)] <- NA
-  }
-  
-  data
 }
 
 pkg <- utils::packageName()
@@ -1155,4 +1116,121 @@ infer_tags <- function(tags,
   if (tier == 1L) result %<>% c(tags[tags %in% tags_tier_1_cleaned])
   
   unique(result)
+}
+
+#' Validate referendums
+#'
+#' @param data The referendum data to validate, as returned by [referendums()].
+#' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
+#' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
+#'
+#' @return `data`, invisibly.
+#' @export
+validate_referendums <- function(data,
+                                 check_applicability_constraint = TRUE,
+                                 check_id_sudd_prefix = TRUE) {
+  
+  checkmate::assert_data_frame(data,
+                               min.rows = 1L)
+  checkmate::assert_subset(colnames(data),
+                           choices = data_codebook$variable_name)
+  checkmate::assert_flag(check_applicability_constraint)
+  checkmate::assert_flag(check_id_sudd_prefix)
+  
+  # check applicability constraints
+  if (check_applicability_constraint) {
+    
+    v_names_violated <-
+      data_codebook %>%
+      dplyr::filter(variable_name %in% colnames(data)
+                    & !is.na(applicability_constraint)) %$%
+      purrr::map2_lgl(.x = magrittr::set_names(x = variable_name,
+                                               value = variable_name),
+                      .y = applicability_constraint,
+                      .f = ~ {
+                        
+                        data %>%
+                          dplyr::filter(!eval(parse(text = .y))) %$%
+                          eval(as.symbol(.x)) %>%
+                          {is.na(.) | purrr::map_lgl(., is.null)} %>%
+                          all()
+                      }) %>%
+    magrittr::extract(. %in% FALSE) %>%
+    names()
+    
+    n_v_names_violated <- length(v_names_violated)
+    
+    if (n_v_names_violated) {
+      
+      cli::cli_alert_warning("Applicability constraints are violated for {n_v_names_violated} variable{?s}:")
+      
+      paste0("{.var ", v_names_violated, "}") %>%
+        magrittr::set_names(rep("x",
+                                times = length(.))) %>%
+        cli::cli_bullets()
+      
+      first_v_name_violated <- v_names_violated[1L]
+      
+      cli::cli_text("To get the applicability constraint of e.g. {.var {first_v_name_violated}}, run:")
+      cat("\n")
+      cli::cli_code(c("data_codebook %>%",
+                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
+                      "  applicability_constraint"))
+      cat("\n")
+      cli::cli_text("To inspect the entries in violation of the above applicability constraint, run:")
+      cat("\n")
+      cli::cli_code(c("data_codebook %>%",
+                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
+                      "  dplyr::filter(.data = data,",
+                      "                !eval(parse(text = applicability_constraint))) %$%",
+                      glue::glue("  {first_v_name_violated}")))
+    }
+  }
+  
+  # check `id_sudd` prefix if requested
+  if (check_id_sudd_prefix) {
+    
+    if (!all(c("country_code", "id_sudd") %in% colnames(data))) {
+      cli::cli_abort("Columns {.var country_code} and {.var id_sudd} must be present in {.arg data}.")
+    }
+    
+    # define allowed exceptions
+    allowed_exceptions <- tibble::tribble(
+      ~country_code, ~id_sudd_prefix,
+      # Curaçao
+      "CW", "an",
+      # Szeklerland, cf. https://sudd.ch/event.php?id=hu042008
+      "RO", "hu"
+    )
+    
+    # assemble target country codes
+    country_codes <- data$country_code %>% as.list()
+    
+    for (country_code in allowed_exceptions$country_code) {
+      
+      additional_country_codes <-
+        allowed_exceptions %>%
+        dplyr::filter(country_code == !!country_code) %$%
+        id_sudd_prefix %>%
+        stringr::str_to_upper()
+      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code == .x) %>% which()
+      
+      for (i in i_country_codes) {
+        country_codes[[i]] <- unique(c(country_codes[[i]], additional_country_codes))
+      }
+    }
+    
+    # add dummy indicating if target country codes match
+    # TODO: instead of modifying input data, print cli msg with all relevant info!
+    data$matches_id_sudd_prefix <-
+      data$id_sudd %>%
+      stringr::str_extract(pattern = "^..") %>%
+      stringr::str_to_upper() %>%
+      purrr::map2_lgl(.y = country_codes,
+                      .f = ~ .x %in% .y)
+    
+    data$matches_id_sudd_prefix[is.na(data$id_sudd)] <- NA
+  }
+  
+  invisible(data)
 }
