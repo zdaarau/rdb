@@ -261,6 +261,8 @@ required_fields <- c("_id",
 
 
 
+
+
 #' Test C2D API availability
 #'
 #' Checks if the C2D API server is online and operational.

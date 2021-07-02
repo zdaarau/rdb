@@ -508,6 +508,26 @@ usethis::use_data(data_codebook,
                   version = 3L)
 ```
 
+## Create custom CSS file for package vignettes
+
+Assembles a custom CSS file by combining [rmarkdown's default lightweight vignette
+stylesheet](https://github.com/rstudio/rmarkdown/blob/master/inst/rmarkdown/templates/html_vignette/resources/vignette.css) with our custom pkgdown CSS.
+
+The R code chunk below is *not* included in the [source package](https://r-pkgs.org/package-structure-state.html#source-package) (`purl = FALSE`) and thus has
+to be manually executed in order to regenerate the custom CSS file.
+
+```{r, purl = FALSE}
+pal::assert_pkg("brio")
+
+fs::path_package("rmarkdown/templates/html_vignette/resources/vignette.css",
+                 package = "rmarkdown") %>%
+  brio::read_file() %>%
+  paste0("/* BEGIN custom CSS */\n",
+         brio::read_file("pkgdown/extra.css"),
+         "/* END custom CSS */\n") %>%
+  brio::write_file(path = "vignettes/custom.css")
+```
+
 # Check API health
 
 ```{r}

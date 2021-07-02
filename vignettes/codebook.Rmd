@@ -4,6 +4,7 @@ output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 3
+    css: custom.css
 vignette: >
   %\VignetteIndexEntry{C2D Codebook}
   %\VignetteEngine{knitr::rmarkdown}
