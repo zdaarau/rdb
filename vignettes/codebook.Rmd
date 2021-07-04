@@ -2,9 +2,9 @@
 title: "C2D Codebook"
 output:
   rmarkdown::html_vignette:
+    css: custom.css
     toc: true
     toc_depth: 3
-    css: custom.css
 vignette: >
   %\VignetteIndexEntry{C2D Codebook}
   %\VignetteEngine{knitr::rmarkdown}
@@ -98,11 +98,12 @@ v_sections <- function(data,
         "",
         "The tags (political topics) are organized on a three-tier hierarchy as follows:",
         "",
-        c2d:::data_tags %>% purrr::pmap_chr(~ paste0("- [", ..1, "]{.color-azure}",
+        c2d:::data_tags %>% purrr::pmap_chr(~ paste0("- [", c2d:::clean_tags(..1), "]{.color-azure}",
                                                      ..2 %>%
-                                                       purrr::pmap_chr(~ paste0("\n  - [", ..1, "]{.color-violet}",
+                                                       purrr::pmap_chr(~ paste0("\n  - [", c2d:::clean_tags(..1), "]{.color-violet}",
                                                                                 ..2 %>%
-                                                                                  purrr::map_chr(~ paste0("\n    - [", .x, "]{.color-rose}")) %>%
+                                                                                  purrr::map_chr(~ paste0("\n    - [", c2d:::clean_tags(.x),
+                                                                                                          "]{.color-rose}")) %>%
                                                                                   paste0(collapse = ""))) %>%
                                                        paste0(collapse = ""))),
         "",
