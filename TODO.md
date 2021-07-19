@@ -44,6 +44,20 @@
 -   [Silagadze & Gherghina (2019)](https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf) (S. 467) detected some referendums that are missing in
     the database -\> systematically check/add these!
 
+-   Regarding data about subnational referendums in the US, we currently know of two up-to-date compilations:
+
+    -   [Ballotpedia](https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Special:Search&search=Ballotpedia) maintains a [List of veto referendum ballot
+        measures](https://ballotpedia.org/List_of_veto_referendum_ballot_measures), seems to be very rich in information.
+
+    -   The *National Conference of State Legislatures (NCSL)* maintains a [Statewide Ballot Measures
+        Database](https://www.ncsl.org/research/elections-and-campaigns/ballot-measures-database.aspx) that "includes all statewide ballot measures in the 50
+        states and the District of Columbia, starting over a century ago". It's unclear (to me) what data this database exactly includes, but it might also be a
+        viable avenue for automated additions to our database.
+
+    The NCSL also provides information about the *institutional* conditions regarding direct democracy in the US states, e.g.
+    [here](https://www.ncsl.org/research/elections-and-campaigns/chart-of-the-initiative-states.aspx). Also very rich is the information that Wikipedia provides
+    in the article [*Initiatives and referendums in the United States*](https://en.wikipedia.org/wiki/Initiatives_and_referendums_in_the_United_States)
+
 ## Schema
 
 -   `tags`: Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time
