@@ -16,8 +16,8 @@ c2d provides access to the C2D Database (https://c2d.ch) from
 Useful links:
 \itemize{
   \item \url{https://rpkg.dev/c2d}
-  \item \url{https://gitlab.com/zdaarau/c2d}
-  \item Report bugs at \url{https://gitlab.com/zdaarau/c2d/issues}
+  \item \url{https://gitlab.com/zdaarau/rpkgs/c2d}
+  \item Report bugs at \url{https://gitlab.com/zdaarau/rpkgs/c2d/issues}
 }
 
 }
