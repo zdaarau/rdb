@@ -21,8 +21,8 @@ Description: c2d provides access to the C2D Database (https://c2d.ch) from
     and is operated by the Centre for Democracy Studies Aarau (ZDA) at the
     University of Zurich, Switzerland.
 License: AGPL (>= 3)
-URL: https://rpkg.dev/c2d, https://gitlab.com/zdaarau/c2d
-BugReports: https://gitlab.com/zdaarau/c2d/issues
+URL: https://rpkg.dev/c2d, https://gitlab.com/zdaarau/rpkgs/c2d
+BugReports: https://gitlab.com/zdaarau/rpkgs/c2d/issues
 Depends: 
     R (>= 3.5.0)
 Imports: 

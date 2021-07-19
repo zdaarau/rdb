@@ -16,7 +16,7 @@ if (!("remotes" %in% rownames(installed.packages()))) {
                    repos = "https://cloud.r-project.org/")
 }
 
-remotes::install_gitlab(repo = "zdaarau/c2d")
+remotes::install_gitlab(repo = "zdaarau/rpkgs/c2d")
 ```
 
 ## Development
