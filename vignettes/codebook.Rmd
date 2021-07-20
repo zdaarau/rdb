@@ -202,10 +202,10 @@ c2d::data_codebook %>%
 
 ```{r, footnotes, echo = FALSE, results = "asis", include = !is_gfm}
 cat("
-[^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/hoist.html) to convert data containing such a variable to long format. To unnest `tags` to `tag` for example, use:
+[^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/hoist.html) to convert data containing such a variable to long format. To unnest `tags_tier_1` to `tag_tier_1` for example, use:
 
     \`\`\`r
-    c2d::referendums() %>% tidyr::unnest_longer(col = tags, values_to = \"tag\")
+    c2d::referendums() %>% tidyr::unnest_longer(col = tags_tier_1, values_to = \"tag_tier_1\")
     \`\`\`
 ")
 ```
