@@ -14,8 +14,8 @@
 
     Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!
 
--   Sobald via Admin-Interface nach Draft-Status gefiltert werden kann, sollten die existierenden 12 Drafts geprüft werden -\> entweder vervollständigen und
-    freischalten oder löschen!
+-   Sobald via Admin-Interface [nach Draft-Status gefiltert werden kann](https://github.com/ccmdesign/c2d-app/issues/27), sollten die existierenden 12 Drafts
+    geprüft werden -\> entweder vervollständigen und freischalten oder löschen!
 
 -   Clean `id_official`; there are likely erroneous entries or ones that don't designate an `id_official` but another kind of ID; entries to double-check:
 
@@ -60,53 +60,13 @@
 
 ## Schema
 
--   `tags`: Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time
-    (selecting a child tag should always result in implicit selection of its parent (e.g. in a different (e.g. faded) color))! Instead, we should afterwards
-    derive parent tags automatically from child tags based on the [hierarchical tag
-    structure](https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json)!
+### Submitted as [feature requests to CCM Design](https://github.com/ccmdesign/c2d-app/issues/)
 
-    Besides we might wanna discuss the exact rationale about the max limit of 3 tags (maybe a max. of 3 *main* tags would make more sense?).
+-   Introduce `date_time_last_edited` holding the timestamp of a referendum entry's last edit. -\> see [issue
+    \#29](https://github.com/ccmdesign/c2d-app/issues/29)
 
--   The set of possible `tags` has some errors and inconsistencies that should be corrected:
-
-    -   Errors:
-
-        -   `Territoral questions` -\> `Territorial questions`
-        -   `Citizen's initiatives` -\> `Citizens' initiatives`
-
-    -   Inconsistencies: lowercase everything! It makes no sense to have "sentence case" for these tags; plus there's at least one tag where the second word
-        also begins in uppercase (`Social Policy`) which just seems random.
-
--   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
-    one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
-
-    > Diese Abstimmung ist nicht offiziell und wird von niemandem anerkannt.
-
-    Instead of not capturing such votings, it would be superior to introduce another variable indicating the status of a voting (official, inofficial, ...);
-    currently we only have an *institutional* variable `legal_basis_type` (formerly `official_status`) which measures a completely different thing.
-
--   Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted; see
-    <https://github.com/ccmdesign/c2d-app/issues/29>
-
--   We need a proper way to capture referendums with more than yes-or-no answer options. This includes
-
-    -   multiple options (e.g. [like this one](https://sudd.ch/event.php?id=bq012014))
-    -   preference / hierarchy information, i.e. whether or not multiple choices at the same time are allowed (i.e. whether or not options are mutually
-        exclusive) -- and if so -- how ambiguities are resolved (e.g. by an additional preference list)
-
-    We would also need to decide if counterproposals are simply to be included as additional "options" or if they are to be captured as separate entries
-    (recommended); if the latter, we should introduce an additional variable `interdependent_ids` or the like to link to the "sibling" entries.
-
-    Additionally, the `result` variable needs to be changed to hold the option that won the referendum.
-
--   Standardize `country_name`; currently it's not consistent, e.g. for `country_code == "GB"` sometimes `country_name = "United Kingdom"`, sometimes
-    `"United Kingdom of Great Britain and Northern Ireland"` is used.
-
-    See [`countrycode::codelist`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) for possible standards; [ISO 3166 English short
-    country names](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) (`countrycode::codelist$iso.name.en`) seem most promising.
-
-    Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future
-    coding inconsistencies.
+-   Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted. -\> see
+    [issue \#29](https://github.com/ccmdesign/c2d-app/issues/29)
 
 -   Introduce `subnational_entity_code`; [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) codes seem perfectly suitable
 
@@ -124,43 +84,100 @@
     -   (I think introducing dedicated variables to capture the administrative division hierarchy below the national level in a more fine-grained way makes
         little sense since [administrative division levels vary widely across the globe](https://en.wikipedia.org/wiki/Administrative_division).)
 
--   Standardize `subnational_entity_name`; [ISO 3166-2 country subdivision names](https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en) (definition in
-    chap. 3.29) seem suitable (mapping codes \<-\> names in R via `ISOcodes::ISO_3166_2`; note that for some subdivisions, different names exist for multiple
-    languages, e.g. some [Swiss cantons](https://www.iso.org/obp/ui/#iso:code:3166:CH); `ISOcodes::ISO_3166_2` only tracks one name (the most "native" one per
-    subdivision, I guess))
+    -\> see [issue \#29](https://github.com/ccmdesign/c2d-app/issues/29)
 
 -   Introduce `is_past_jurisdiction` signifying if the relevant [jurisdiction](https://en.wikipedia.org/wiki/Jurisdiction_(area)) where the referendum took
-    place still exists (`FALSE`) or not (`TRUE`)
+    place still exists (`FALSE`) or not (`TRUE`) -\> see [issue \#29](https://github.com/ccmdesign/c2d-app/issues/29)
 
 -   Introduce `country_code_historical` that holds the [ISO 3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) code for referendums in countries that don't exist
     anymore (see also [this site by Statistics Canada](https://www.statcan.gc.ca/eng/subjects/standard/sccai/2011/scountry-desc); also informative:
     <https://en.wikipedia.org/wiki/United_Nations_list_of_Non-Self-Governing_Territories>); ISO 3166-3 seems to only assign codes for countries that ceased to
-    exist since 1974 -\> is there any classification for older historical entities?
+    exist since 1974 -\> is there any classification for older historical entities? -\> see [issue \#29](https://github.com/ccmdesign/c2d-app/issues/29)
 
 -   Introduce `question` holding the referendum question 1:1 as it was asked and `question_en` containing an English translation; open question: what to do when
-    the question was officially asked in multiple languages like in CH?
+    the question was officially asked in multiple languages like in CH? -\> see [issue \#29](https://github.com/ccmdesign/c2d-app/issues/29)
+
+-   Extend the set of variables so the `remarks` field isn't overloaded anymore. Possible extensions (taken from Louis' `remarks` structure (cf.
+    `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx`)):
+
+    -   [ ] Background information on the vote (most important actors and events (sudd.ch, Wikipedia, NZZ etc.), content/main points)
+    -   [x] Voting question; original language
+    -   [x] Voting question; English (translation if necessary)
+    -   [ ] Legal basis
+    -   [ ] Name of the institution in original language
+    -   [ ] Specialities of the institution (e.g. special quorum or 2 collecting periods)
+    -   [ ] Specialities of the result (e.g. contradictory numbers)
+
+### Internal (at least for now)
+
+-   The set of possible `tags` has some errors and inconsistencies that should be corrected:
+
+    -   Errors:
+
+        -   `Territoral questions` -\> `Territorial questions`
+        -   `Citizen's initiatives` -\> `Citizens' initiatives`
+
+    -   Inconsistencies: lowercase everything! It makes no sense to have "sentence case" for these tags; plus there's at least one tag where the second word
+        also begins in uppercase (`Social Policy`) which just seems random.
+
+-   `tags`: Adapt back-end to apply the same 3-tier tags logic that the R package does:
+
+    -   Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time (selecting a
+        child tag should always result in implicit selection of its parent (e.g. in a different (e.g. faded) color)).
+    -   The upper limit of 3 tags should refer to *main* tags (i.e. excluding any implicit parent tags).
+    -   Based on the user's selection of *main* tags, parent tags should automatically be derived from child tags based on the [hierarchical tag
+        structure](https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json) and all the tags should be assigned to the 3 variables
+        `tags_tier_1`, `tags_tier_2`, `tags_tier_3`.
+
+-   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
+    one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
+
+    > Diese Abstimmung ist nicht offiziell und wird von niemandem anerkannt.
+
+    Instead of not capturing such votings, it would be superior to introduce another variable indicating the status of a voting (official, inofficial, ...);
+    currently we only have an *institutional* variable `legal_basis_type` (formerly `official_status`) which measures a completely different thing. Maybe name
+    this new variable simply `status`?
+
+-   We need a proper way to capture referendums with more than yes-or-no answer options. This includes
+
+    -   multiple options (e.g. [like this one](https://sudd.ch/event.php?id=bq012014))
+    -   preference / hierarchy information, i.e. whether or not multiple choices at the same time are allowed (i.e. whether or not options are mutually
+        exclusive) -- and if so -- how ambiguities are resolved (e.g. by an additional preference list)
+
+    We would also need to decide if counterproposals are simply to be included as additional "options" or if they are to be captured as separate entries
+    (recommended); if the latter, we should introduce an additional variable `interdependent_ids` or the like to link to the "sibling" entries.
+
+    Additionally,
+
+    -   the `result` variable needs to be changed to hold the option that won the referendum and
+    -   the `votes_yes` and `votes_no` (as well as the same sub-vars in `votes_per_subterritory`) variables need to be replaced by a single nested (list-type)
+        variable `votes_substantive` that holds a subfield with the number of votes per option (named by the option?).
+
+-   Standardize `country_name`; currently it's not consistent, e.g. for `country_code == "GB"` sometimes `country_name = "United Kingdom"`, sometimes
+    `"United Kingdom of Great Britain and Northern Ireland"` is used.
+
+    See [`countrycode::codelist`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) for possible standards; [ISO 3166 English short
+    country names](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) (`countrycode::codelist$iso.name.en`) seem most promising.
+
+    Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future
+    coding inconsistencies.
+
+-   Standardize `subnational_entity_name`; [ISO 3166-2 country subdivision names](https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en) (definition in
+    chap. 3.29) seem suitable (mapping codes \<-\> names in R via `ISOcodes::ISO_3166_2`; note that for some subdivisions, different names exist for multiple
+    languages, e.g. some [Swiss cantons](https://www.iso.org/obp/ui/#iso:code:3166:CH); `ISOcodes::ISO_3166_2` only tracks one name (the most "native" one per
+    subdivision, I guess))
 
 -   There is obviously not much consistency in how the referendum titles in the three languages are captured. According to the guidelines to add Swiss votings
     (`~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx`), the `title_de` (and `title_fr` if one exists) are the
     official titles by the authorities and `title_en` is a translation of the German one. But
 
     -   the Swiss authorities (sometimes) also translate the title to English themselves
-        ([example](https://www.admin.ch/gov/en/start/documentation/votes/20181125/horned-cow-initiative.html))
+        ([example](https://www.admin.ch/gov/en/start/documentation/votes/20181125/horned-cow-initiative.html)).
     -   the guidelines to add international votings (`~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx`) don't say
-        anything about the titles; but sometimes there's a German title for countries where almost certainly no official German version exists (e.g. Venezuela)
+        anything about the titles; but sometimes there's a German title for countries where almost certainly no official German version exists (e.g. Venezuela).
 
--   Extend the set of variables so the `remarks` field isn't overloaded anymore. Possible extensions (taken from Louis' `remarks` structure (cf.
-    `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx`)):
-
-    -   Background information on the vote (most important actors and events (sudd.ch, Wikipedia, NZZ etc.), content/main points)
-    -   Voting question; original language
-    -   Voting question; English (translation if necessary)
-    -   Legal basis
-    -   Name of the institution in original language
-    -   Specialities of the institution (e.g. special quorum or 2 collecting periods)
-    -   Specialities of the result (e.g. contradictory numbers)
-
--   Introduce `date_time_last_edited` holding the timestamp of a referendum entry's last edit.
+    Therefore, we should define a better/stricter policy how titles are captured (and identify existing entries violating this policy, so they can be
+    corrected).
 
 -   Currently, `inst_trigger_threshold` is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should
     define, in what way the same information could be captured in a more systematic way (splitting it into two vars `inst_trigger_threshold_relative` and
@@ -204,7 +221,7 @@
 
 ## [Code written by CCM Design](https://github.com/ccmdesign/c2d-app/)
 
--   Publish code under AGPL \>= 3, see <https://github.com/ccmdesign/c2d-app/issues/26>
+-   Publish code under AGPL \>= 3, see [issue \#26](https://github.com/ccmdesign/c2d-app/issues/26)
 
 -   Make repository public?
 
@@ -217,7 +234,7 @@
 
 ### C2D Admin Front-end
 
--   Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange), see <https://github.com/ccmdesign/c2d-app/issues/27>
+-   Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange), see [issue \#26](https://github.com/ccmdesign/c2d-app/issues/27)
 
 -   Siehe Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
 
@@ -233,11 +250,17 @@
 
     Plus Ditch the `by ccm.design` promo?
 
+    -\> see [issue 37\#](https://github.com/ccmdesign/c2d-app/issues/37)
+
 -   Consistent use of the British `centre` (instead of the American `center`).
 
 -   Der C2D-Link auf der [ZDA-Webseite](https://www.zdaarau.ch/en/applications) sollte auf HTTP**S** geändert werden!
 
 ### c2d R package
+
+-   Implement fn for back-end data manipulation leveraging the `POST` functionality of the [`/referendums` API
+    endpoint](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes), allowing to change an arbitrary number of entries at a
+    time.
 
 -   Explore possibilities for automated vote entry creation. E.g. I write a scraper (in R) for the votes of Swiss canton X and convert the result into
     C2D-compatible JSON.
@@ -260,9 +283,16 @@
 
 -   Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons [generiert werdden](https://realfavicongenerator.net/)!)
 
--   Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort "aufzunehmen", könnte passen) und vergleichen mit Zenodo (siehe FA-Notizen).
+-   Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort "aufzunehmen", könnte passen) und vergleichen mit [Zenodo](https://zenodo.org/) (siehe
+    FA-Notizen).
 
-    Abklären: Lizenzanforderungen? Datensätze tatsächlich hinterlegt oder nur Referenzen?
+    Abklären:
+
+    -   *Lizenzanforderungen?* Default für Uploads ist CC0, aber es kann eine abweichende Lizenz definiert werden (es finden sich Beispiele mit ODbL 1.0!);
+        darüber hinaus gelten nicht-rechtlich-bindende [*community norms*](https://dataverse.org/best-practices/dataverse-community-norms) (viel besserer Ansatz
+        als in FORSbase!)
+
+    -   Datensätze tatsächlich hinterlegt oder nur Referenzen?
 
 ## Database renaming
 
@@ -276,8 +306,6 @@
     JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
 
 ## Open questions
-
--   Automatisierte Lösung zur Aufnahme amerikanischer Referenden (auf Bundesstaatsebene) abklären!
 
 -   `inst_quorum_turnout` sollte standardisiert werden -\> was wäre eine geeignete, abschliessende Menge an Werten?
 
