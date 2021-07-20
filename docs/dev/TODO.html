@@ -139,7 +139,7 @@
 </ul>
 <p>Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!</p>
 </li>
-<li><p>Sobald via Admin-Interface nach Draft-Status gefiltert werden kann, sollten die existierenden 12 Drafts geprüft werden -&gt; entweder vervollständigen und freischalten oder löschen!</p></li>
+<li><p>Sobald via Admin-Interface <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link">nach Draft-Status gefiltert werden kann</a>, sollten die existierenden 12 Drafts geprüft werden -&gt; entweder vervollständigen und freischalten oder löschen!</p></li>
 <li>
 <p>Clean <code>id_official</code>; there are likely erroneous entries or ones that don’t designate an <code>id_official</code> but another kind of ID; entries to double-check:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -172,11 +172,59 @@
 <div id="schema" class="section level2">
 <h2 class="hasAnchor">
 <a href="#schema" class="anchor"></a>Schema</h2>
+<div id="submitted-as-feature-requests-to-ccm-design" class="section level3">
+<h3 class="hasAnchor">
+<a href="#submitted-as-feature-requests-to-ccm-design" class="anchor"></a>Submitted as <a href="https://github.com/ccmdesign/c2d-app/issues/" class="external-link">feature requests to CCM Design</a>
+</h3>
 <ul>
+<li><p>Introduce <code>date_time_last_edited</code> holding the timestamp of a referendum entry’s last edit. -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
+<li><p>Add <code>id_official</code> and <code>id_sudd</code>! Then I can populate them with the (corrected) data from the former <code>number</code> variable and <code>number</code> can be deleted. -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
 <li>
-<p><code>tags</code>: Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time (selecting a child tag should always result in implicit selection of its parent (e.g. in a different (e.g. faded) color))! Instead, we should afterwards derive parent tags automatically from child tags based on the <a href="https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json" class="external-link">hierarchical tag structure</a>!</p>
-<p>Besides we might wanna discuss the exact rationale about the max limit of 3 tags (maybe a max. of 3 <em>main</em> tags would make more sense?).</p>
+<p>Introduce <code>subnational_entity_code</code>; <a href="https://en.wikipedia.org/wiki/ISO_3166-2" class="external-link">ISO 3166-2</a> codes seem perfectly suitable</p>
+<p>open points:</p>
+<ul>
+<li><p>we need to establish a policy on which <code>country_code</code> to assign to <a href="https://en.wikipedia.org/wiki/ISO_3166-2#Subdivisions_included_in_ISO_3166-1" class="external-link">subnational entitites that have both an ISO 3166-1 country code as well as an ISO-3166-2 subdivision code</a> (recommended: avoid using the own ISO 3166-1 country code but assign the one from the subdivision’s “parent” country)</p></li>
+<li><p>how to deal with subnational entity changes? ISO 3166-2 is regularly updated but there doesn’t seem to exist an equivalent to ISO-3166-3 codes on the subnational level…</p></li>
+<li><p>how to deal with “inofficial” / non-authorized subnational entities that don’t have an ISO-3166-2 code?</p></li>
+<li><p>(I think introducing dedicated variables to capture the administrative division hierarchy below the national level in a more fine-grained way makes little sense since <a href="https://en.wikipedia.org/wiki/Administrative_division" class="external-link">administrative division levels vary widely across the globe</a>.)</p></li>
+</ul>
+<p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p>
 </li>
+<li><p>Introduce <code>is_past_jurisdiction</code> signifying if the relevant <a href="https://en.wikipedia.org/wiki/Jurisdiction_(area)" class="external-link">jurisdiction</a> where the referendum took place still exists (<code>FALSE</code>) or not (<code>TRUE</code>) -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
+<li><p>Introduce <code>country_code_historical</code> that holds the <a href="https://en.wikipedia.org/wiki/ISO_3166-3" class="external-link">ISO 3166-3</a> code for referendums in countries that don’t exist anymore (see also <a href="https://www.statcan.gc.ca/eng/subjects/standard/sccai/2011/scountry-desc" class="external-link">this site by Statistics Canada</a>; also informative: <a href="https://en.wikipedia.org/wiki/United_Nations_list_of_Non-Self-Governing_Territories" class="external-link uri">https://en.wikipedia.org/wiki/United_Nations_list_of_Non-Self-Governing_Territories</a>); ISO 3166-3 seems to only assign codes for countries that ceased to exist since 1974 -&gt; is there any classification for older historical entities? -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
+<li><p>Introduce <code>question</code> holding the referendum question 1:1 as it was asked and <code>question_en</code> containing an English translation; open question: what to do when the question was officially asked in multiple languages like in CH? -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
+<li>
+<p>Extend the set of variables so the <code>remarks</code> field isn’t overloaded anymore. Possible extensions (taken from Louis’ <code>remarks</code> structure (cf. <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx</code>)):</p>
+<ul class="task-list">
+<li>
+<input type="checkbox" disabled>
+Background information on the vote (most important actors and events (sudd.ch, Wikipedia, NZZ etc.), content/main points)</li>
+<li>
+<input type="checkbox" disabled checked>
+Voting question; original language</li>
+<li>
+<input type="checkbox" disabled checked>
+Voting question; English (translation if necessary)</li>
+<li>
+<input type="checkbox" disabled>
+Legal basis</li>
+<li>
+<input type="checkbox" disabled>
+Name of the institution in original language</li>
+<li>
+<input type="checkbox" disabled>
+Specialities of the institution (e.g. special quorum or 2 collecting periods)</li>
+<li>
+<input type="checkbox" disabled>
+Specialities of the result (e.g. contradictory numbers)</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="internal-at-least-for-now" class="section level3">
+<h3 class="hasAnchor">
+<a href="#internal-at-least-for-now" class="anchor"></a>Internal (at least for now)</h3>
+<ul>
 <li>
 <p>The set of possible <code>tags</code> has some errors and inconsistencies that should be corrected:</p>
 <ul>
@@ -195,13 +243,20 @@
 </ul>
 </li>
 <li>
+<p><code>tags</code>: Adapt back-end to apply the same 3-tier tags logic that the R package does:</p>
+<ul>
+<li>Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time (selecting a child tag should always result in implicit selection of its parent (e.g. in a different (e.g. faded) color)).</li>
+<li>The upper limit of 3 tags should refer to <em>main</em> tags (i.e. excluding any implicit parent tags).</li>
+<li>Based on the user’s selection of <em>main</em> tags, parent tags should automatically be derived from child tags based on the <a href="https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json" class="external-link">hierarchical tag structure</a> and all the tags should be assigned to the 3 variables <code>tags_tier_1</code>, <code>tags_tier_2</code>, <code>tags_tier_3</code>.</li>
+</ul>
+</li>
+<li>
 <p>According to Uwe, we only capture “official”/“authorized” votings, but there are already inofficial ones present in the database like <a href="https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37" class="external-link">this one</a> for which sudd.ch <a href="https://sudd.ch/event.php?id=hu042008" class="external-link">reports</a>:</p>
 <blockquote>
 <p>Diese Abstimmung ist nicht offiziell und wird von niemandem anerkannt.</p>
 </blockquote>
-<p>Instead of not capturing such votings, it would be superior to introduce another variable indicating the status of a voting (official, inofficial, …); currently we only have an <em>institutional</em> variable <code>legal_basis_type</code> (formerly <code>official_status</code>) which measures a completely different thing.</p>
+<p>Instead of not capturing such votings, it would be superior to introduce another variable indicating the status of a voting (official, inofficial, …); currently we only have an <em>institutional</em> variable <code>legal_basis_type</code> (formerly <code>official_status</code>) which measures a completely different thing. Maybe name this new variable simply <code>status</code>?</p>
 </li>
-<li><p>Add <code>id_official</code> and <code>id_sudd</code>! Then I can populate them with the (corrected) data from the former <code>number</code> variable and <code>number</code> can be deleted; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link uri">https://github.com/ccmdesign/c2d-app/issues/29</a></p></li>
 <li>
 <p>We need a proper way to capture referendums with more than yes-or-no answer options. This includes</p>
 <ul>
@@ -209,49 +264,29 @@
 <li>preference / hierarchy information, i.e. whether or not multiple choices at the same time are allowed (i.e. whether or not options are mutually exclusive) – and if so – how ambiguities are resolved (e.g. by an additional preference list)</li>
 </ul>
 <p>We would also need to decide if counterproposals are simply to be included as additional “options” or if they are to be captured as separate entries (recommended); if the latter, we should introduce an additional variable <code>interdependent_ids</code> or the like to link to the “sibling” entries.</p>
-<p>Additionally, the <code>result</code> variable needs to be changed to hold the option that won the referendum.</p>
+<p>Additionally,</p>
+<ul>
+<li>the <code>result</code> variable needs to be changed to hold the option that won the referendum and</li>
+<li>the <code>votes_yes</code> and <code>votes_no</code> (as well as the same sub-vars in <code>votes_per_subterritory</code>) variables need to be replaced by a single nested (list-type) variable <code>votes_substantive</code> that holds a subfield with the number of votes per option (named by the option?).</li>
+</ul>
 </li>
 <li>
 <p>Standardize <code>country_name</code>; currently it’s not consistent, e.g. for <code>country_code == "GB"</code> sometimes <code>country_name = "United Kingdom"</code>, sometimes <code>"United Kingdom of Great Britain and Northern Ireland"</code> is used.</p>
 <p>See <a href="https://vincentarelbundock.github.io/countrycode/reference/codelist.html" class="external-link"><code>countrycode::codelist</code></a> for possible standards; <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" class="external-link">ISO 3166 English short country names</a> (<code>countrycode::codelist$iso.name.en</code>) seem most promising.</p>
 <p>Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future coding inconsistencies.</p>
 </li>
-<li>
-<p>Introduce <code>subnational_entity_code</code>; <a href="https://en.wikipedia.org/wiki/ISO_3166-2" class="external-link">ISO 3166-2</a> codes seem perfectly suitable</p>
-<p>open points:</p>
-<ul>
-<li><p>we need to establish a policy on which <code>country_code</code> to assign to <a href="https://en.wikipedia.org/wiki/ISO_3166-2#Subdivisions_included_in_ISO_3166-1" class="external-link">subnational entitites that have both an ISO 3166-1 country code as well as an ISO-3166-2 subdivision code</a> (recommended: avoid using the own ISO 3166-1 country code but assign the one from the subdivision’s “parent” country)</p></li>
-<li><p>how to deal with subnational entity changes? ISO 3166-2 is regularly updated but there doesn’t seem to exist an equivalent to ISO-3166-3 codes on the subnational level…</p></li>
-<li><p>how to deal with “inofficial” / non-authorized subnational entities that don’t have an ISO-3166-2 code?</p></li>
-<li><p>(I think introducing dedicated variables to capture the administrative division hierarchy below the national level in a more fine-grained way makes little sense since <a href="https://en.wikipedia.org/wiki/Administrative_division" class="external-link">administrative division levels vary widely across the globe</a>.)</p></li>
-</ul>
-</li>
 <li><p>Standardize <code>subnational_entity_name</code>; <a href="https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en" class="external-link">ISO 3166-2 country subdivision names</a> (definition in chap. 3.29) seem suitable (mapping codes &lt;-&gt; names in R via <code><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISOcodes::ISO_3166_2</a></code>; note that for some subdivisions, different names exist for multiple languages, e.g. some <a href="https://www.iso.org/obp/ui/#iso:code:3166:CH" class="external-link">Swiss cantons</a>; <code><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISOcodes::ISO_3166_2</a></code> only tracks one name (the most “native” one per subdivision, I guess))</p></li>
-<li><p>Introduce <code>is_past_jurisdiction</code> signifying if the relevant <a href="https://en.wikipedia.org/wiki/Jurisdiction_(area)" class="external-link">jurisdiction</a> where the referendum took place still exists (<code>FALSE</code>) or not (<code>TRUE</code>)</p></li>
-<li><p>Introduce <code>country_code_historical</code> that holds the <a href="https://en.wikipedia.org/wiki/ISO_3166-3" class="external-link">ISO 3166-3</a> code for referendums in countries that don’t exist anymore (see also <a href="https://www.statcan.gc.ca/eng/subjects/standard/sccai/2011/scountry-desc" class="external-link">this site by Statistics Canada</a>; also informative: <a href="https://en.wikipedia.org/wiki/United_Nations_list_of_Non-Self-Governing_Territories" class="external-link uri">https://en.wikipedia.org/wiki/United_Nations_list_of_Non-Self-Governing_Territories</a>); ISO 3166-3 seems to only assign codes for countries that ceased to exist since 1974 -&gt; is there any classification for older historical entities?</p></li>
-<li><p>Introduce <code>question</code> holding the referendum question 1:1 as it was asked and <code>question_en</code> containing an English translation; open question: what to do when the question was officially asked in multiple languages like in CH?</p></li>
 <li>
 <p>There is obviously not much consistency in how the referendum titles in the three languages are captured. According to the guidelines to add Swiss votings (<code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx</code>), the <code>title_de</code> (and <code>title_fr</code> if one exists) are the official titles by the authorities and <code>title_en</code> is a translation of the German one. But</p>
 <ul>
-<li>the Swiss authorities (sometimes) also translate the title to English themselves (<a href="https://www.admin.ch/gov/en/start/documentation/votes/20181125/horned-cow-initiative.html" class="external-link">example</a>)</li>
-<li>the guidelines to add international votings (<code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx</code>) don’t say anything about the titles; but sometimes there’s a German title for countries where almost certainly no official German version exists (e.g. Venezuela)</li>
+<li>the Swiss authorities (sometimes) also translate the title to English themselves (<a href="https://www.admin.ch/gov/en/start/documentation/votes/20181125/horned-cow-initiative.html" class="external-link">example</a>).</li>
+<li>the guidelines to add international votings (<code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx</code>) don’t say anything about the titles; but sometimes there’s a German title for countries where almost certainly no official German version exists (e.g. Venezuela).</li>
 </ul>
+<p>Therefore, we should define a better/stricter policy how titles are captured (and identify existing entries violating this policy, so they can be corrected).</p>
 </li>
-<li>
-<p>Extend the set of variables so the <code>remarks</code> field isn’t overloaded anymore. Possible extensions (taken from Louis’ <code>remarks</code> structure (cf. <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx</code>)):</p>
-<ul>
-<li>Background information on the vote (most important actors and events (sudd.ch, Wikipedia, NZZ etc.), content/main points)</li>
-<li>Voting question; original language</li>
-<li>Voting question; English (translation if necessary)</li>
-<li>Legal basis</li>
-<li>Name of the institution in original language</li>
-<li>Specialities of the institution (e.g. special quorum or 2 collecting periods)</li>
-<li>Specialities of the result (e.g. contradictory numbers)</li>
-</ul>
-</li>
-<li><p>Introduce <code>date_time_last_edited</code> holding the timestamp of a referendum entry’s last edit.</p></li>
 <li><p>Currently, <code>inst_trigger_threshold</code> is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should define, in what way the same information could be captured in a more systematic way (splitting it into two vars <code>inst_trigger_threshold_relative</code> and <code>inst_trigger_threshold_absolute</code> might make sense), introduce the new variable and then convert the old values to the new format.</p></li>
 </ul>
+</div>
 </div>
 <div id="validation" class="section level2">
 <h2 class="hasAnchor">
@@ -284,7 +319,7 @@
 <a href="#code-written-by-ccm-design" class="anchor"></a><a href="https://github.com/ccmdesign/c2d-app/" class="external-link">Code written by CCM Design</a>
 </h2>
 <ul>
-<li><p>Publish code under AGPL &gt;= 3, see <a href="https://github.com/ccmdesign/c2d-app/issues/26" class="external-link uri">https://github.com/ccmdesign/c2d-app/issues/26</a></p></li>
+<li><p>Publish code under AGPL &gt;= 3, see <a href="https://github.com/ccmdesign/c2d-app/issues/26" class="external-link">issue #26</a></p></li>
 <li>
 <p>Make repository public?</p>
 <p>Before doing this, we need to ensure that</p>
@@ -298,7 +333,7 @@
 <h3 class="hasAnchor">
 <a href="#c2d-admin-front-end" class="anchor"></a>C2D Admin Front-end</h3>
 <ul>
-<li><p>Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange), see <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link uri">https://github.com/ccmdesign/c2d-app/issues/27</a></p></li>
+<li><p>Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange), see <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link">issue #26</a></p></li>
 <li><p>Siehe Louis’ Dokument <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx</code></p></li>
 </ul>
 </div>
@@ -313,6 +348,7 @@
 <p>Copyright notice in the footer must be updated and corrected.</p>
 <p>New: <code>Copyright © 2021 Centre for Democracy Studies Aarau (ZDA)</code> (Additionally: The current <code>v0.0.0</code> doesn’t really make sense…?)</p>
 <p>Plus Ditch the <code>by ccm.design</code> promo?</p>
+<p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/37" class="external-link">issue 37#</a></p>
 </li>
 <li><p>Consistent use of the British <code>centre</code> (instead of the American <code>center</code>).</p></li>
 <li><p>Der C2D-Link auf der <a href="https://www.zdaarau.ch/en/applications" class="external-link">ZDA-Webseite</a> sollte auf HTTP<strong>S</strong> geändert werden!</p></li>
@@ -321,6 +357,7 @@
 <h3 class="hasAnchor">
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h3>
 <ul>
+<li><p>Implement fn for back-end data manipulation leveraging the <code>POST</code> functionality of the <a href="https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes" class="external-link"><code>/referendums</code> API endpoint</a>, allowing to change an arbitrary number of entries at a time.</p></li>
 <li>
 <p>Explore possibilities for automated vote entry creation. E.g. I write a scraper (in R) for the votes of Swiss canton X and convert the result into C2D-compatible JSON.</p>
 <p><strong>Test credentials to fiddle with the <code>POST /referendums</code> endpoint would be good…</strong> open questions:</p>
@@ -345,8 +382,12 @@
 <ul>
 <li><p>Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons <a href="https://realfavicongenerator.net/" class="external-link">generiert werdden</a>!)</p></li>
 <li>
-<p>Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort “aufzunehmen”, könnte passen) und vergleichen mit Zenodo (siehe FA-Notizen).</p>
-<p>Abklären: Lizenzanforderungen? Datensätze tatsächlich hinterlegt oder nur Referenzen?</p>
+<p>Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort “aufzunehmen”, könnte passen) und vergleichen mit <a href="https://zenodo.org/" class="external-link">Zenodo</a> (siehe FA-Notizen).</p>
+<p>Abklären:</p>
+<ul>
+<li><p><em>Lizenzanforderungen?</em> Default für Uploads ist CC0, aber es kann eine abweichende Lizenz definiert werden (es finden sich Beispiele mit ODbL 1.0!); darüber hinaus gelten nicht-rechtlich-bindende <a href="https://dataverse.org/best-practices/dataverse-community-norms" class="external-link"><em>community norms</em></a> (viel besserer Ansatz als in FORSbase!)</p></li>
+<li><p>Datensätze tatsächlich hinterlegt oder nur Referenzen?</p></li>
+</ul>
 </li>
 </ul>
 </div>
@@ -364,7 +405,7 @@
 <h2 class="hasAnchor">
 <a href="#open-questions" class="anchor"></a>Open questions</h2>
 <ul>
-<li><p>Automatisierte Lösung zur Aufnahme amerikanischer Referenden (auf Bundesstaatsebene) abklären!</p></li>
+<li><p>Kann mir jemand die genaue Bedeutung von <code>inst_object_revision_extent</code> sowie den <code>*precondition*</code>-Variablen erklären (insb. aus <code>inst_precondition_decision</code> werde ich nicht schlau…)?</p></li>
 <li><p><code>inst_quorum_turnout</code> sollte standardisiert werden -&gt; was wäre eine geeignete, abschliessende Menge an Werten?</p></li>
 <li><p>Ist <code>position_government</code> (ehemals <code>recommendation</code>) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal, dies, manchmal jenes?</p></li>
 <li>
@@ -378,7 +419,6 @@
 </ul>
 <p>Maybe contact the creator <a href="mailto:beat@sudd.ch">Beat Müller</a> and ask?</p>
 </li>
-<li><p>Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden, mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des <a href="https://politanch.github.io/swissdd/" class="external-link">swissdd</a>-R-Pakets könnte womöglich ganz aufschlussreich sein!</p></li>
 <li>
 <p>Stimmen die Definitionen im Codebook so? Insb.:</p>
 <ul>
@@ -400,13 +440,6 @@
 <p><code>inst_object_legal_level</code> sollte m.E. in Relation zu <code>level</code> stehen, tut es aber nicht. Dementsprechend kann <code>inst_object_legal_level</code> mehrdeutig sein (ist <code>inst_object_legal_level = "law"</code> lokales, kantonales oder nationales Recht bei Referendum auf CH-Gemeindeebene?)</p>
 <p>Würde dieses Problem behoben, könnte <code>inst_object_legal_level</code> vermutlich auch als <code>ordinal_ascending</code> klassifiziert werden.</p>
 </li>
-<li><p>Kann mir jemand die genaue Bedeutung von <code>inst_object_revision_extent</code> sowie den <code>*precondition*</code>-Variablen erklären (insb. aus <code>inst_precondition_decision</code> werde ich nicht schlau…)?</p></li>
-<li><p>Bei der Abstimmung <em>Norfolk Island 1980-07-10</em> meint sudd.ch, sie habe stattdessen <a href="https://sudd.ch/event.php?lang=de&amp;id=nf011979" class="external-link">1979-07-10 stattgefunden</a>. Falls sudd.ch Recht hat, sollte das korrigiert werden.</p></li>
-<li>
-<p>Die Abstimmungen <em>Netherlands 2005-04-08</em> und <em>2014-12-17</em> fanden genau genommen auf <a href="https://de.wikipedia.org/wiki/Sint_Eustatius" class="external-link">Sint Eustatius</a> statt, siehe sudd.ch-Einträge (<a href="https://sudd.ch/event.php?id=an022005" class="external-link">1</a>, <a href="https://sudd.ch/event.php?id=bq012014" class="external-link">2</a>); Sint Eustatius ist zwar eine <a href="https://de.wikipedia.org/wiki/Karibische_Niederlande" class="external-link">Besondere Gemeinde der Niederlande</a>, besitzt aber einen eigenen ISO-Ländercode (BQ-SE) etc.</p>
-<p>Sollte daher als <code>country_name</code> nicht besser <em>Sint Eustatius</em> eingetragen werden? Andernfalls sollte <code>subnational_entity</code> auf <code>"Sint Eustatius"</code> gesetzt werden, da ja nicht die gesamte Niederlande abstimmen konnte!</p>
-</li>
-<li><p>Die Abstimmungen <em>France 2006-02-23</em> und <em>2006-09-06</em> beziehen sich auf Referenden in <a href="https://de.wikipedia.org/wiki/Sark" class="external-link">Sark</a>, <code>country_name</code> sollte daher auf <code>"United Kingdom"</code> oder (besser?) <a href="https://de.wikipedia.org/wiki/Sark#Gesetzgebung_und_Autonomie" class="external-link"><code>"Guernsey"</code></a> gesetzt werden und <code>subnational_entity = "Sark"</code>!</p></li>
 <li>
 <p>Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.</p>
 <p>Bspw. werden</p>
@@ -416,6 +449,13 @@
 </ul>
 <p>Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen.</p>
 </li>
+<li><p>Bei der Abstimmung <em>Norfolk Island 1980-07-10</em> meint sudd.ch, sie habe stattdessen <a href="https://sudd.ch/event.php?lang=de&amp;id=nf011979" class="external-link">1979-07-10 stattgefunden</a>. Falls sudd.ch Recht hat, sollte das korrigiert werden.</p></li>
+<li>
+<p>Die Abstimmungen <em>Netherlands 2005-04-08</em> und <em>2014-12-17</em> fanden genau genommen auf <a href="https://de.wikipedia.org/wiki/Sint_Eustatius" class="external-link">Sint Eustatius</a> statt, siehe sudd.ch-Einträge (<a href="https://sudd.ch/event.php?id=an022005" class="external-link">1</a>, <a href="https://sudd.ch/event.php?id=bq012014" class="external-link">2</a>); Sint Eustatius ist zwar eine <a href="https://de.wikipedia.org/wiki/Karibische_Niederlande" class="external-link">Besondere Gemeinde der Niederlande</a>, besitzt aber einen eigenen ISO-Ländercode (BQ-SE) etc.</p>
+<p>Sollte daher als <code>country_name</code> nicht besser <em>Sint Eustatius</em> eingetragen werden? Andernfalls sollte <code>subnational_entity</code> auf <code>"Sint Eustatius"</code> gesetzt werden, da ja nicht die gesamte Niederlande abstimmen konnte!</p>
+</li>
+<li><p>Die Abstimmungen <em>France 2006-02-23</em> und <em>2006-09-06</em> beziehen sich auf Referenden in <a href="https://de.wikipedia.org/wiki/Sark" class="external-link">Sark</a>, <code>country_name</code> sollte daher auf <code>"United Kingdom"</code> oder (besser?) <a href="https://de.wikipedia.org/wiki/Sark#Gesetzgebung_und_Autonomie" class="external-link"><code>"Guernsey"</code></a> gesetzt werden und <code>subnational_entity = "Sark"</code>!</p></li>
+<li><p>Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden, mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des <a href="https://politanch.github.io/swissdd/" class="external-link">swissdd</a>-R-Pakets könnte womöglich ganz aufschlussreich sein!</p></li>
 </ul>
 </div>
 </div>

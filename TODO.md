@@ -307,6 +307,9 @@
 
 ## Open questions
 
+-   Kann mir jemand die genaue Bedeutung von `inst_object_revision_extent` sowie den `*precondition*`-Variablen erklären (insb. aus `inst_precondition_decision`
+    werde ich nicht schlau...)?
+
 -   `inst_quorum_turnout` sollte standardisiert werden -\> was wäre eine geeignete, abschliessende Menge an Werten?
 
 -   Ist `position_government` (ehemals `recommendation`) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal, dies, manchmal jenes?
@@ -320,10 +323,6 @@
     -   plus the 4-digit `year` the referendum took place
 
     Maybe contact the creator [Beat Müller](mailto:beat@sudd.ch) and ask?
-
--   Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden,
-    mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des [swissdd](https://politanch.github.io/swissdd/)-R-Pakets
-    könnte womöglich ganz aufschlussreich sein!
 
 -   Stimmen die Definitionen im Codebook so? Insb.:
 
@@ -345,8 +344,15 @@
 
     Würde dieses Problem behoben, könnte `inst_object_legal_level` vermutlich auch als `ordinal_ascending` klassifiziert werden.
 
--   Kann mir jemand die genaue Bedeutung von `inst_object_revision_extent` sowie den `*precondition*`-Variablen erklären (insb. aus `inst_precondition_decision`
-    werde ich nicht schlau...)?
+-   Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.
+
+    Bspw. werden
+
+    -   alle Abstimmungen, die die [Republik Kosovo](https://de.wikipedia.org/wiki/Kosovo) betreffen, unter dem `country_name` *Serbia* geführt...
+    -   für die Abstimmungen in Taiwan uneinheitliche `country_name`'s verwendet, für die Abstimmungen am 2018-11-24 *Taiwan, Province of China*, für die
+        anderen einfach *Taiwan*...
+
+    Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen.
 
 -   Bei der Abstimmung *Norfolk Island 1980-07-10* meint sudd.ch, sie habe stattdessen [1979-07-10
     stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.
@@ -362,12 +368,6 @@
     daher auf `"United Kingdom"` oder (besser?) [`"Guernsey"`](https://de.wikipedia.org/wiki/Sark#Gesetzgebung_und_Autonomie) gesetzt werden und
     `subnational_entity = "Sark"`!
 
--   Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.
-
-    Bspw. werden
-
-    -   alle Abstimmungen, die die [Republik Kosovo](https://de.wikipedia.org/wiki/Kosovo) betreffen, unter dem `country_name` *Serbia* geführt...
-    -   für die Abstimmungen in Taiwan uneinheitliche `country_name`'s verwendet, für die Abstimmungen am 2018-11-24 *Taiwan, Province of China*, für die
-        anderen einfach *Taiwan*...
-
-    Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen.
+-   Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden,
+    mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des [swissdd](https://politanch.github.io/swissdd/)-R-Pakets
+    könnte womöglich ganz aufschlussreich sein!
