@@ -1079,14 +1079,20 @@ For the following variables, the \href{https://en.wikipedia.org/wiki/Unit_of_obs
 referendum’s \emph{institutional instrument}, a combination of the
 referendum’s \code{type} and the jurisdiction it took place.
 
-The set of variables that constitute the jurisdiction is dependent on
-the referendum’s \code{level}:\tabular{ll}{
-   \code{level} \tab Jurisdiction is given by \cr
+The set of variables that constitute the \emph{geographical} component of the
+jurisdiction is dependent on the referendum’s \code{level}:\tabular{ll}{
+   \code{level} \tab Geographical jurisdiction is given by \cr
    \code{national} \tab \code{country_code} \cr
    \code{subnational} \tab \code{country_code} + \code{subnational_entity_name} \cr
    \code{local} \tab \code{country_code} + \code{subnational_entity_name} + \code{municipality} \cr
 }
 
+
+The actual jurisdiction is also dependent on a \emph{temporal} component
+since the legal setting in a geographical jurisdiction can vary over
+time. Thus, the actual jurisdicion is dependent on the geographical
+jurisdiction plus the \code{date} a referendum took place (more specifically
+the date \emph{range} in between a specific legal setting is in force).
 \subsection{\code{inst_legal_basis_type}}{
 
 The type of the legal basis of the referendum \code{type}.

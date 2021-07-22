@@ -1617,11 +1617,11 @@
 <h2 class="hasAnchor">
 <a href="#institution-level-variables" class="anchor"></a>Institution-level variables</h2>
 <p>For the following variables, the <a href="https://en.wikipedia.org/wiki/Unit_of_observation" class="external-link">unit of observation</a> is the referendum’s <em>institutional instrument</em>, a combination of the referendum’s <a href="#type"><code>type</code></a> and the jurisdiction it took place.</p>
-<p>The set of variables that constitute the jurisdiction is dependent on the referendum’s <a href="#level"><code>level</code></a>:</p>
+<p>The set of variables that constitute the <em>geographical</em> component of the jurisdiction is dependent on the referendum’s <a href="#level"><code>level</code></a>:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left"><code>level</code></th>
-<th align="left">Jurisdiction is given by</th>
+<th align="left">Geographical jurisdiction is given by</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -1642,6 +1642,7 @@
 </tr>
 </tbody>
 </table>
+<p>The actual jurisdiction is also dependent on a <em>temporal</em> component since the legal setting in a geographical jurisdiction can vary over time. Thus, the actual jurisdicion is dependent on the geographical jurisdiction plus the <a href="#date"><code>date</code></a> a referendum took place (more specifically the date <em>range</em> in between a specific legal setting is in force).</p>
 <div id="inst_legal_basis_type" class="section level3">
 <h3 class="hasAnchor">
 <a href="#inst_legal_basis_type" class="anchor"></a><code>inst_legal_basis_type</code>

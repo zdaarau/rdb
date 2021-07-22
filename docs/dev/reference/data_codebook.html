@@ -1176,16 +1176,21 @@ instance of.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' hre
 <p>For the following variables, the <a href='https://en.wikipedia.org/wiki/Unit_of_observation'>unit of observation</a> is the
 referendum’s <em>institutional instrument</em>, a combination of the
 referendum’s <code>type</code> and the jurisdiction it took place.</p>
-<p>The set of variables that constitute the jurisdiction is dependent on
-the referendum’s <code>level</code>:</p><table class='table'>
-<tr><td><code>level</code></td><td>Jurisdiction is given by</td></tr>
+<p>The set of variables that constitute the <em>geographical</em> component of the
+jurisdiction is dependent on the referendum’s <code>level</code>:</p><table class='table'>
+<tr><td><code>level</code></td><td>Geographical jurisdiction is given by</td></tr>
 <tr><td><code>national</code></td><td><code>country_code</code></td></tr>
 <tr><td><code>subnational</code></td><td><code>country_code</code> + <code>subnational_entity_name</code></td></tr>
 <tr><td><code>local</code></td><td><code>country_code</code> + <code>subnational_entity_name</code> + <code>municipality</code></td></tr>
 </table>
 
 
-<h4 class='hasAnchor' id='list-inst-legal-basis-type-'><a class='anchor' href='#list-inst-legal-basis-type-'></a><code>inst_legal_basis_type</code></h4>
+
+<p>The actual jurisdiction is also dependent on a <em>temporal</em> component
+since the legal setting in a geographical jurisdiction can vary over
+time. Thus, the actual jurisdicion is dependent on the geographical
+jurisdiction plus the <code>date</code> a referendum took place (more specifically
+the date <em>range</em> in between a specific legal setting is in force).</p><h4 class='hasAnchor' id='list-inst-legal-basis-type-'><a class='anchor' href='#list-inst-legal-basis-type-'></a><code>inst_legal_basis_type</code></h4>
 
 
 <p>The type of the legal basis of the referendum <code>type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>

@@ -179,13 +179,17 @@ c2d::data_codebook %>%
 "For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the referendum's *institutional instrument*, a
 combination of the referendum's [`type`](#type) and the jurisdiction it took place.
 
-The set of variables that constitute the jurisdiction is dependent on the referendum's [`level`](#level):
+The set of variables that constitute the *geographical* component of the jurisdiction is dependent on the referendum's [`level`](#level):
 
-| `level`       | Jurisdiction is given by                                                                                                  |
+| `level`       | Geographical jurisdiction is given by                                                                                     |
 |:--------------|:--------------------------------------------------------------------------------------------------------------------------|
 | `national`    | [`country_code`](#country_code)                                                                                           |
 | `subnational` | [`country_code`](#country_code) + [`subnational_entity_name`](#subnational_entity_name)                                   |
 | `local`       | [`country_code`](#country_code) + [`subnational_entity_name`](#subnational_entity_name) + [`municipality`](#municipality) |
+
+The actual jurisdiction is also dependent on a *temporal* component since the legal setting in a geographical jurisdiction can vary over time. Thus, the actual
+jurisdicion is dependent on the geographical jurisdiction plus the [`date`](#date) a referendum took place (more specifically the date *range* in between a
+specific legal setting is in force).
 
 " %>%
   purrr::when(is_gfm ~ strip_anchors(.),

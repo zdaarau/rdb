@@ -169,14 +169,24 @@
 </li>
 </ul>
 </div>
-<div id="schema" class="section level2">
+<div id="schema--code-written-by-ccm-design" class="section level2">
 <h2 class="hasAnchor">
-<a href="#schema" class="anchor"></a>Schema</h2>
+<a href="#schema--code-written-by-ccm-design" class="anchor"></a>Schema / <a href="https://github.com/ccmdesign/c2d-app/" class="external-link">Code written by CCM Design</a>
+</h2>
 <div id="submitted-as-feature-requests-to-ccm-design" class="section level3">
 <h3 class="hasAnchor">
 <a href="#submitted-as-feature-requests-to-ccm-design" class="anchor"></a>Submitted as <a href="https://github.com/ccmdesign/c2d-app/issues/" class="external-link">feature requests to CCM Design</a>
 </h3>
 <ul>
+<li>
+<p>Publish code under AGPL &gt;= 3, see <a href="https://github.com/ccmdesign/c2d-app/issues/26" class="external-link">issue #26</a></p>
+<p>We should then make the repository public!</p>
+</li>
+<li><p>C2D Admin Front-end: Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange) -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link">issue #26</a></p></li>
+<li>
+<p>C2D Website: Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! <a href="https://opendatacommons.org/licenses/odbl/summary/" class="external-link">ODC-ODbL</a> würde sich anbieten. -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/37" class="external-link">issue #37</a></p>
+<p>Once this is implemented, the same license terms should be added to the c2d package documentation!</p>
+</li>
 <li><p>Introduce <code>date_time_last_edited</code> holding the timestamp of a referendum entry’s last edit. -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
 <li><p>Add <code>id_official</code> and <code>id_sudd</code>! Then I can populate them with the (corrected) data from the former <code>number</code> variable and <code>number</code> can be deleted. -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
 <li>
@@ -193,6 +203,7 @@
 <li><p>Introduce <code>is_past_jurisdiction</code> signifying if the relevant <a href="https://en.wikipedia.org/wiki/Jurisdiction_(area)" class="external-link">jurisdiction</a> where the referendum took place still exists (<code>FALSE</code>) or not (<code>TRUE</code>) -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
 <li><p>Introduce <code>country_code_historical</code> that holds the <a href="https://en.wikipedia.org/wiki/ISO_3166-3" class="external-link">ISO 3166-3</a> code for referendums in countries that don’t exist anymore (see also <a href="https://www.statcan.gc.ca/eng/subjects/standard/sccai/2011/scountry-desc" class="external-link">this site by Statistics Canada</a>; also informative: <a href="https://en.wikipedia.org/wiki/United_Nations_list_of_Non-Self-Governing_Territories" class="external-link uri">https://en.wikipedia.org/wiki/United_Nations_list_of_Non-Self-Governing_Territories</a>); ISO 3166-3 seems to only assign codes for countries that ceased to exist since 1974 -&gt; is there any classification for older historical entities? -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
 <li><p>Introduce <code>question</code> holding the referendum question 1:1 as it was asked and <code>question_en</code> containing an English translation; open question: what to do when the question was officially asked in multiple languages like in CH? -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
+<li><p>Outsource institutional variables into separate database/MongoDB collection and adapt everything. -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/42" class="external-link">issue #42</a></p></li>
 <li>
 <p>Extend the set of variables so the <code>remarks</code> field isn’t overloaded anymore. Possible extensions (taken from Louis’ <code>remarks</code> structure (cf. <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx</code>)):</p>
 <ul class="task-list">
@@ -259,12 +270,6 @@ Specialities of the result (e.g. contradictory numbers)</li>
 );
 '</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://rpkg.dev/pal/reference/cat_lines.html" class="external-link">cat_lines</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </li>
-</ul>
-</div>
-<div id="internal-at-least-for-now" class="section level3">
-<h3 class="hasAnchor">
-<a href="#internal-at-least-for-now" class="anchor"></a>Internal (at least for now)</h3>
-<ul>
 <li>
 <p><code>tags</code>: Adapt back-end to apply the same 3-tier tags logic that the R package does:</p>
 <ul>
@@ -272,7 +277,14 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li>The upper limit of 3 tags should refer to <em>main</em> tags (i.e. excluding any implicit parent tags).</li>
 <li>Based on the user’s selection of <em>main</em> tags, parent tags should automatically be derived from child tags based on the <a href="https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json" class="external-link">hierarchical tag structure</a> and all the tags should be assigned to the 3 variables <code>tags_tier_1</code>, <code>tags_tier_2</code>, <code>tags_tier_3</code>.</li>
 </ul>
+<p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/41" class="external-link">issue #41</a></p>
 </li>
+</ul>
+</div>
+<div id="internal-at-least-for-now" class="section level3">
+<h3 class="hasAnchor">
+<a href="#internal-at-least-for-now" class="anchor"></a>Internal (at least for now)</h3>
+<ul>
 <li>
 <p>According to Uwe, we only capture “official”/“authorized” votings, but there are already inofficial ones present in the database like <a href="https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37" class="external-link">this one</a> for which sudd.ch <a href="https://sudd.ch/event.php?id=hu042008" class="external-link">reports</a>:</p>
 <blockquote>
@@ -308,6 +320,10 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <p>Therefore, we should define a better/stricter policy how titles are captured (and identify existing entries violating this policy, so they can be corrected).</p>
 </li>
 <li><p>Currently, <code>inst_trigger_threshold</code> is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should define, in what way the same information could be captured in a more systematic way (splitting it into two vars <code>inst_trigger_threshold_relative</code> and <code>inst_trigger_threshold_absolute</code> might make sense), introduce the new variable and then convert the old values to the new format.</p></li>
+<li><p>C2D website: Möglichkeit zum Report falscher/fehlender Daten schaffen! Bevor CCM Design damit beauftragt wird, sollten wir definieren, wie ungefähr das aussehen soll. Bspw. einfach via HTML-Formular mit geeigneten Feldern (je nach Seite, von dem es aufgerufen wird, bereits vorbefüllt (<code>country_code</code>, <code>level</code>, <code>id</code> etc.))?</p></li>
+<li><p>C2D website: The about text should be overhauled.</p></li>
+<li><p>C2D website: The listing of referendums should be overhauled. It currently lacks important information, e.g. <code>level</code>.</p></li>
+<li><p>C2D admin front-end: Louis’ Dokument <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx</code></p></li>
 </ul>
 </div>
 </div>
@@ -315,10 +331,11 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <h2 class="hasAnchor">
 <a href="#validation" class="anchor"></a>Validation</h2>
 <ul>
-<li><p>Systematically check if <code>applicability_constraint</code> is never violated.</p></li>
+<li><p>Systematically inspect/handle all <code>applicability_constraint</code> violations (see <code><a href="reference/validate_referendums.html">validate_referendums(check_applicability_constraint = TRUE)</a></code>).</p></li>
 <li>
 <p>Systematically check if variables that are “completely dependent” on other variables (like <code>inst_trigger_actor</code> on <code>inst_trigger_type</code>) are correctly filled.</p>
 <p>E.g. is <code>inst_trigger_type</code> missing for referendums with IDs <code>5cb82f07cb48652399618eb1</code> and <code>6080ef7d4132d76d38bfe9e0</code> although <code>inst_trigger_actor</code> is present!</p>
+<p>If the “completely dependent” property of these variables really holds, we should auto-fill them and avoid the possibility of manual changes.</p>
 </li>
 <li><p>Systematically check if all votes in the <code>sudd.ch</code> database are included in the C2D database -&gt; parse <code>https://sudd.ch/list.php?mode=allrefs</code> (the <code>id_sudd</code> is part of the link in the last column)</p></li>
 <li><p>According to the guidelines in <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx</code>, the PDF <code>files</code> of <code>country_code == "CH"</code> entries must be named consistently <code>Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag</code> (“Abstimmungsbroschüre”“) and <code>Results_CH/Kantonskürzel_Jahr_Monat_Tag</code> (results) -&gt; check if this is actually always the case!</p></li>
@@ -335,46 +352,6 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <p>and if so, assign <code>country_code_historical</code>, set <code>is_past_jurisdiction = TRUE</code> and assign proper new <code>country_code</code> (<code>ISOcodes::ISO_3166_3$Alpha_4 %&gt;% stringr::str_sub(start = 3L)</code>; if it’s <code>"HH"</code>, a “manual” decision about which successor country we shall assign has to be hard-coded)`</p>
 </li>
 <li><p>check <code>electorate_abroad</code> for obvious errors (e.g. <code>id == "5f99b6c8d1291cc3961f1c2c"</code> is one)</p></li>
-</ul>
-</div>
-<div id="code-written-by-ccm-design" class="section level2">
-<h2 class="hasAnchor">
-<a href="#code-written-by-ccm-design" class="anchor"></a><a href="https://github.com/ccmdesign/c2d-app/" class="external-link">Code written by CCM Design</a>
-</h2>
-<ul>
-<li><p>Publish code under AGPL &gt;= 3, see <a href="https://github.com/ccmdesign/c2d-app/issues/26" class="external-link">issue #26</a></p></li>
-<li>
-<p>Make repository public?</p>
-<p>Before doing this, we need to ensure that</p>
-<ol style="list-style-type: decimal">
-<li><p>no sensitive information is found in the repository (I guess not, but double-check!).</p></li>
-<li><p>the access to the C2D services API can’t be maliciously exploited somehow (the <code>filter</code> URL param allowing to pass MongoDB JSON query filter documents might be problematic…). But note that this API is already public, it’s just that a public GitHub repo might increase its visibility.</p></li>
-</ol>
-</li>
-</ul>
-<div id="c2d-admin-front-end" class="section level3">
-<h3 class="hasAnchor">
-<a href="#c2d-admin-front-end" class="anchor"></a>C2D Admin Front-end</h3>
-<ul>
-<li><p>Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange), see <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link">issue #26</a></p></li>
-<li><p>Siehe Louis’ Dokument <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx</code></p></li>
-</ul>
-</div>
-</div>
-<div id="c2d-website" class="section level2">
-<h2 class="hasAnchor">
-<a href="#c2d-website" class="anchor"></a>C2D Website</h2>
-<ul>
-<li><p>Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! <a href="https://opendatacommons.org/licenses/odbl/summary/" class="external-link">ODC-ODbL</a> würde sich anbieten.</p></li>
-<li><p>Möglichkeit zum Report falscher/fehlender Daten schaffen!</p></li>
-<li>
-<p>Copyright notice in the footer must be updated and corrected.</p>
-<p>New: <code>Copyright © 2021 Centre for Democracy Studies Aarau (ZDA)</code> (Additionally: The current <code>v0.0.0</code> doesn’t really make sense…?)</p>
-<p>Plus Ditch the <code>by ccm.design</code> promo?</p>
-<p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/37" class="external-link">issue 37#</a></p>
-</li>
-<li><p>Consistent use of the British <code>centre</code> (instead of the American <code>center</code>).</p></li>
-<li><p>Der C2D-Link auf der <a href="https://www.zdaarau.ch/en/applications" class="external-link">ZDA-Webseite</a> sollte auf HTTP<strong>S</strong> geändert werden!</p></li>
 </ul>
 <div id="c2d-r-package" class="section level3">
 <h3 class="hasAnchor">
@@ -412,6 +389,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li><p>Datensätze tatsächlich hinterlegt oder nur Referenzen?</p></li>
 </ul>
 </li>
+<li><p>Der C2D-Link auf der <a href="https://www.zdaarau.ch/en/applications" class="external-link">ZDA-Webseite</a> sollte auf HTTP<strong>S</strong> geändert werden!</p></li>
 </ul>
 </div>
 <div id="database-renaming" class="section level2">
@@ -487,6 +465,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </li>
 <li><p>Die Abstimmungen <em>France 2006-02-23</em> und <em>2006-09-06</em> beziehen sich auf Referenden in <a href="https://de.wikipedia.org/wiki/Sark" class="external-link">Sark</a>, <code>country_name</code> sollte daher auf <code>"United Kingdom"</code> oder (besser?) <a href="https://de.wikipedia.org/wiki/Sark#Gesetzgebung_und_Autonomie" class="external-link"><code>"Guernsey"</code></a> gesetzt werden und <code>subnational_entity = "Sark"</code>!</p></li>
 <li><p>Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden, mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des <a href="https://politanch.github.io/swissdd/" class="external-link">swissdd</a>-R-Pakets könnte womöglich ganz aufschlussreich sein!</p></li>
+<li><p>C2D Website: Ditch the <code>by ccm.design</code> promo in the footer?</p></li>
 </ul>
 </div>
 </div>
