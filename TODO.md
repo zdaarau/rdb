@@ -58,9 +58,21 @@
     [here](https://www.ncsl.org/research/elections-and-campaigns/chart-of-the-initiative-states.aspx). Also very rich is the information that Wikipedia provides
     in the article [*Initiatives and referendums in the United States*](https://en.wikipedia.org/wiki/Initiatives_and_referendums_in_the_United_States)
 
-## Schema
+## Schema / [Code written by CCM Design](https://github.com/ccmdesign/c2d-app/)
 
 ### Submitted as [feature requests to CCM Design](https://github.com/ccmdesign/c2d-app/issues/)
+
+-   Publish code under AGPL \>= 3, see [issue \#26](https://github.com/ccmdesign/c2d-app/issues/26)
+
+    We should then make the repository public!
+
+-   C2D Admin Front-end: Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange) -\> see [issue
+    \#26](https://github.com/ccmdesign/c2d-app/issues/27)
+
+-   C2D Website: Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! [ODC-ODbL](https://opendatacommons.org/licenses/odbl/summary/) würde
+    sich anbieten. -\> see [issue \#37](https://github.com/ccmdesign/c2d-app/issues/37)
+
+    Once this is implemented, the same license terms should be added to the c2d package documentation!
 
 -   Introduce `date_time_last_edited` holding the timestamp of a referendum entry's last edit. -\> see [issue
     \#29](https://github.com/ccmdesign/c2d-app/issues/29)
@@ -145,8 +157,6 @@
     ')) %>% pal::cat_lines()
     ```
 
-### Internal (at least for now)
-
 -   `tags`: Adapt back-end to apply the same 3-tier tags logic that the R package does:
 
     -   Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time (selecting a
@@ -155,6 +165,10 @@
     -   Based on the user's selection of *main* tags, parent tags should automatically be derived from child tags based on the [hierarchical tag
         structure](https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json) and all the tags should be assigned to the 3 variables
         `tags_tier_1`, `tags_tier_2`, `tags_tier_3`.
+
+    -\> see [issue \#41](https://github.com/ccmdesign/c2d-app/issues/41)
+
+### Internal (at least for now)
 
 -   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
     one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
@@ -210,15 +224,25 @@
     define, in what way the same information could be captured in a more systematic way (splitting it into two vars `inst_trigger_threshold_relative` and
     `inst_trigger_threshold_absolute` might make sense), introduce the new variable and then convert the old values to the new format.
 
+-   C2D Website: Möglichkeit zum Report falscher/fehlender Daten schaffen! Bevor CCM Design damit beauftragt wird, sollten wir definieren, wie ungefähr das
+    aussehen soll. Bspw. einfach via HTML-Formular mit geeigneten Feldern (je nach Seite, von dem es aufgerufen wird, bereits vorbefüllt (`country_code`,
+    `level`, `id` etc.))?
+
+-   C2D Website: The about text should be overhauled.
+
+-   C2D Admin Front-end: Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
+
 ## Validation
 
--   Systematically check if `applicability_constraint` is never violated.
+-   Systematically inspect/handle all `applicability_constraint` violations (see `validate_referendums(check_applicability_constraint = TRUE)`).
 
 -   Systematically check if variables that are "completely dependent" on other variables (like `inst_trigger_actor` on `inst_trigger_type`) are correctly
     filled.
 
     E.g. is `inst_trigger_type` missing for referendums with IDs `5cb82f07cb48652399618eb1` and `6080ef7d4132d76d38bfe9e0` although `inst_trigger_actor` is
     present!
+
+    If the "completely dependent" property of these variables really holds, we should auto-fill them and avoid the possibility of manual changes.
 
 -   Systematically check if all votes in the `sudd.ch` database are included in the C2D database -\> parse `https://sudd.ch/list.php?mode=allrefs` (the
     `id_sudd` is part of the link in the last column)
@@ -245,43 +269,6 @@
     be hard-coded)\`
 
 -   check `electorate_abroad` for obvious errors (e.g. `id == "5f99b6c8d1291cc3961f1c2c"` is one)
-
-## [Code written by CCM Design](https://github.com/ccmdesign/c2d-app/)
-
--   Publish code under AGPL \>= 3, see [issue \#26](https://github.com/ccmdesign/c2d-app/issues/26)
-
--   Make repository public?
-
-    Before doing this, we need to ensure that
-
-    1.  no sensitive information is found in the repository (I guess not, but double-check!).
-
-    2.  the access to the C2D services API can't be maliciously exploited somehow (the `filter` URL param allowing to pass MongoDB JSON query filter documents
-        might be problematic...). But note that this API is already public, it's just that a public GitHub repo might increase its visibility.
-
-### C2D Admin Front-end
-
--   Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange), see [issue \#26](https://github.com/ccmdesign/c2d-app/issues/27)
-
--   Siehe Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
-
-## C2D Website
-
--   Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! [ODC-ODbL](https://opendatacommons.org/licenses/odbl/summary/) würde sich anbieten.
-
--   Möglichkeit zum Report falscher/fehlender Daten schaffen!
-
--   Copyright notice in the footer must be updated and corrected.
-
-    New: `Copyright © 2021 Centre for Democracy Studies Aarau (ZDA)` (Additionally: The current `v0.0.0` doesn't really make sense...?)
-
-    Plus Ditch the `by ccm.design` promo?
-
-    -\> see [issue 37\#](https://github.com/ccmdesign/c2d-app/issues/37)
-
--   Consistent use of the British `centre` (instead of the American `center`).
-
--   Der C2D-Link auf der [ZDA-Webseite](https://www.zdaarau.ch/en/applications) sollte auf HTTP**S** geändert werden!
 
 ### c2d R package
 
@@ -320,6 +307,8 @@
         als in FORSbase!)
 
     -   Datensätze tatsächlich hinterlegt oder nur Referenzen?
+
+-   Der C2D-Link auf der [ZDA-Webseite](https://www.zdaarau.ch/en/applications) sollte auf HTTP**S** geändert werden!
 
 ## Database renaming
 
@@ -405,3 +394,5 @@
 -   Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden,
     mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des [swissdd](https://politanch.github.io/swissdd/)-R-Pakets
     könnte womöglich ganz aufschlussreich sein!
+
+-   C2D Website: Ditch the `by ccm.design` promo in the footer?
