@@ -108,8 +108,6 @@
     -   [ ] Specialities of the institution (e.g. special quorum or 2 collecting periods)
     -   [ ] Specialities of the result (e.g. contradictory numbers)
 
-### Internal (at least for now)
-
 -   The set of possible `tags` has some errors and inconsistencies that should be corrected:
 
     -   Errors:
@@ -119,6 +117,35 @@
 
     -   Inconsistencies: lowercase everything! It makes no sense to have "sentence case" for these tags; plus there's at least one tag where the second word
         also begins in uppercase (`Social Policy`) which just seems random.
+
+    -\> see [PR \#40](https://github.com/ccmdesign/c2d-app/pull/40)
+
+    Temp R snippets:
+
+    ``` {.r}
+    pal::gh_text_file(owner = "ccmdesign",
+                  name = "c2d-app",
+                  rev = "master",
+                  path = "ch.c2d/web/themes.json") %>%
+    stringr::str_split(pattern = "\n") %>% purrr::flatten_chr() %>%
+    stringr::str_extract_all(pattern = '(?<=")\\w[^"]+(?=")') %>%
+    purrr::flatten_chr() %>%
+    setdiff(c("name", "children")) -> old
+
+    brio::read_file("/home/salim/Arbeit/ZDA/Git/ccmdesign/c2d-app/ch.c2d/web/themes.json") %>%
+    stringr::str_split(pattern = "\n") %>% purrr::flatten_chr() %>%
+    stringr::str_extract_all(pattern = '(?<=")\\w[^"]+(?=")') %>%
+    purrr::flatten_chr() %>%
+    setdiff(c("name", "children")) -> new
+
+    purrr::map2_chr(.x = old, .y = new, .f = ~ paste0('db.COLLECTION.updateMany(
+      {"tags" : "', .x, '"},
+      {$set: { "tags.$" : "', .y, '"}}
+    );
+    ')) %>% pal::cat_lines()
+    ```
+
+### Internal (at least for now)
 
 -   `tags`: Adapt back-end to apply the same 3-tier tags logic that the R package does:
 
@@ -305,7 +332,7 @@
     Politik-Bereich ist `D3` bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch die
     JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
 
-## Open questions
+## Open questions / suggestions
 
 -   Kann mir jemand die genaue Bedeutung von `inst_object_revision_extent` sowie den `*precondition*`-Variablen erklären (insb. aus `inst_precondition_decision`
     werde ich nicht schlau...)?
@@ -353,6 +380,13 @@
         anderen einfach *Taiwan*...
 
     Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen.
+
+-   Woher genau stammt die Tag-Hierarchy? Ist sie "custom"?
+
+    Falls ja, sollten wir
+
+    -   den `tag_tier_3` "homosexuals" wohl etwas breiter fassen, bspw. "sexual orientation / gender identity".
+    -   den `tag_tier_3` "compensation for loss of earnings for persons on military service or civil protection duty" kürzen!
 
 -   Bei der Abstimmung *Norfolk Island 1980-07-10* meint sudd.ch, sie habe stattdessen [1979-07-10
     stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.
