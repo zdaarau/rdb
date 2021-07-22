@@ -109,6 +109,9 @@
 -   Introduce `question` holding the referendum question 1:1 as it was asked and `question_en` containing an English translation; open question: what to do when
     the question was officially asked in multiple languages like in CH? -\> see [issue \#29](https://github.com/ccmdesign/c2d-app/issues/29)
 
+-   Outsource institutional variables into separate database/MongoDB collection and adapt everything. -\> see [issue
+    \#42](https://github.com/ccmdesign/c2d-app/issues/42)
+
 -   Extend the set of variables so the `remarks` field isn't overloaded anymore. Possible extensions (taken from Louis' `remarks` structure (cf.
     `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx`)):
 
@@ -224,13 +227,15 @@
     define, in what way the same information could be captured in a more systematic way (splitting it into two vars `inst_trigger_threshold_relative` and
     `inst_trigger_threshold_absolute` might make sense), introduce the new variable and then convert the old values to the new format.
 
--   C2D Website: Möglichkeit zum Report falscher/fehlender Daten schaffen! Bevor CCM Design damit beauftragt wird, sollten wir definieren, wie ungefähr das
+-   C2D website: Möglichkeit zum Report falscher/fehlender Daten schaffen! Bevor CCM Design damit beauftragt wird, sollten wir definieren, wie ungefähr das
     aussehen soll. Bspw. einfach via HTML-Formular mit geeigneten Feldern (je nach Seite, von dem es aufgerufen wird, bereits vorbefüllt (`country_code`,
     `level`, `id` etc.))?
 
--   C2D Website: The about text should be overhauled.
+-   C2D website: The about text should be overhauled.
 
--   C2D Admin Front-end: Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
+-   C2D website: The listing of referendums should be overhauled. It currently lacks important information, e.g. `level`.
+
+-   C2D admin front-end: Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
 
 ## Validation
 
