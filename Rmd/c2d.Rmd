@@ -279,12 +279,18 @@ lower_non_abbrs <- function(x) {
 
 TODO:
 
--   This should eventually be done in the back-end/MongoDB and removed from this pkg.
+-   PR to implement this in the back-end/MongoDB [was submitted](https://github.com/ccmdesign/c2d-app/pull/40); once merged, remove from this pkg!
 
 ```{r}
 clean_tags <- function(tags) {
   
-  lower_non_abbrs(tags) %>% dplyr::recode("territoral questions" = "territorial questions")
+  lower_non_abbrs(tags) %>% dplyr::recode("armed forces - general" = "armed forces in general",
+                                          "citizen's initiatives" = "citizens' initiatives",
+                                          "european policy" = "European policy",
+                                          "other european organisations" = "other European organisations",
+                                          "religion - churches" = "religion, churches",
+                                          "swiss abroad" = "Swiss abroad",
+                                          "territoral questions" = "territorial questions")
 }
 ```
 

@@ -458,7 +458,7 @@ reform\if{html}{\out{</span>}}
 }
 \item \if{html}{\out{<span class="color-violet">}}citizens’ rights\if{html}{\out{</span>}}
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}citizen’s initiatives\if{html}{\out{</span>}}
+\item \if{html}{\out{<span class="color-rose">}}citizens’ initiatives\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}referendum\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}voting rights\if{html}{\out{</span>}}
 }
@@ -486,12 +486,12 @@ reform\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}independence\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}good offices\if{html}{\out{</span>}}
 }
-\item \if{html}{\out{<span class="color-violet">}}european policy\if{html}{\out{</span>}}
+\item \if{html}{\out{<span class="color-violet">}}European policy\if{html}{\out{</span>}}
 \itemize{
 \item \if{html}{\out{<span class="color-rose">}}EFTA\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}EU\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}EEA\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}other european organisations\if{html}{\out{</span>}}
+\item \if{html}{\out{<span class="color-rose">}}other European organisations\if{html}{\out{</span>}}
 }
 \item \if{html}{\out{<span class="color-violet">}}international organisations\if{html}{\out{</span>}}
 \itemize{
@@ -507,7 +507,7 @@ organisations\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}customs\if{html}{\out{</span>}}
 }
 \item \if{html}{\out{<span class="color-violet">}}diplomacy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}swiss abroad\if{html}{\out{</span>}}
+\item \if{html}{\out{<span class="color-violet">}}Swiss abroad\if{html}{\out{</span>}}
 }
 \item \if{html}{\out{<span class="color-azure">}}security policy\if{html}{\out{</span>}}
 \itemize{
@@ -519,7 +519,7 @@ organisations\if{html}{\out{</span>}}
 }
 \item \if{html}{\out{<span class="color-violet">}}army\if{html}{\out{</span>}}
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}armed forces - general\if{html}{\out{</span>}}
+\item \if{html}{\out{<span class="color-rose">}}armed forces in general\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}military organisation\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}arms\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-rose">}}military facilities\if{html}{\out{</span>}}
@@ -695,7 +695,7 @@ education\if{html}{\out{</span>}}
 \itemize{
 \item \if{html}{\out{<span class="color-violet">}}cultural policy\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-violet">}}language policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}religion - churches\if{html}{\out{</span>}}
+\item \if{html}{\out{<span class="color-violet">}}religion, churches\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-violet">}}sport\if{html}{\out{</span>}}
 \item \if{html}{\out{<span class="color-violet">}}media and communication\if{html}{\out{</span>}}
 \itemize{
@@ -762,13 +762,13 @@ implies presence of its parent top-tier topic.
    \code{"federalism"} \cr
    \code{"legal system"} \cr
    \code{"position on foreign policy"} \cr
-   \code{"european policy"} \cr
+   \code{"European policy"} \cr
    \code{"international organisations"} \cr
    \code{"development cooperation"} \cr
    \code{"bilateral treaties"} \cr
    \code{"foreign trade policy"} \cr
    \code{"diplomacy"} \cr
-   \code{"swiss abroad"} \cr
+   \code{"Swiss abroad"} \cr
    \code{"public security"} \cr
    \code{"army"} \cr
    \code{"national economic supply"} \cr
@@ -810,7 +810,7 @@ implies presence of its parent top-tier topic.
    \code{"professional and vocational education"} \cr
    \code{"cultural policy"} \cr
    \code{"language policy"} \cr
-   \code{"religion - churches"} \cr
+   \code{"religion, churches"} \cr
    \code{"sport"} \cr
    \code{"media and communication"} \cr
 }
@@ -848,7 +848,7 @@ presence of its parent second-tier topic and grandparent top-tier topic.
    \code{"parliament"} \cr
    \code{"courts"} \cr
    \code{"national bank"} \cr
-   \code{"citizen's initiatives"} \cr
+   \code{"citizens' initiatives"} \cr
    \code{"referendum"} \cr
    \code{"voting rights"} \cr
    \code{"territorial questions"} \cr
@@ -866,7 +866,7 @@ presence of its parent second-tier topic and grandparent top-tier topic.
    \code{"EFTA"} \cr
    \code{"EU"} \cr
    \code{"EEA"} \cr
-   \code{"other european organisations"} \cr
+   \code{"other European organisations"} \cr
    \code{"UN"} \cr
    \code{"other international organisations"} \cr
    \code{"export promotion"} \cr
@@ -874,7 +874,7 @@ presence of its parent second-tier topic and grandparent top-tier topic.
    \code{"civil protection"} \cr
    \code{"state security"} \cr
    \code{"police"} \cr
-   \code{"armed forces - general"} \cr
+   \code{"armed forces in general"} \cr
    \code{"military organisation"} \cr
    \code{"arms"} \cr
    \code{"military facilities"} \cr

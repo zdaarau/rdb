@@ -161,7 +161,13 @@ lower_non_abbrs <- function(x) {
 
 clean_tags <- function(tags) {
   
-  lower_non_abbrs(tags) %>% dplyr::recode("territoral questions" = "territorial questions")
+  lower_non_abbrs(tags) %>% dplyr::recode("armed forces - general" = "armed forces in general",
+                                          "citizen's initiatives" = "citizens' initiatives",
+                                          "european policy" = "European policy",
+                                          "other european organisations" = "other European organisations",
+                                          "religion - churches" = "religion, churches",
+                                          "swiss abroad" = "Swiss abroad",
+                                          "territoral questions" = "territorial questions")
 }
 
 tags <- function(tiers = 1:3) {
@@ -178,16 +184,14 @@ tags <- function(tiers = 1:3) {
   }
   
   if (2L %in% tiers) {
-    
     tag_set %<>% c(data_tags_tidy$tag_tier_2)
   }
   
   if (3L %in% tiers) {
-    
     tag_set %<>% c(data_tags_tidy$tag_tier_3)
   }
   
-  unique(tag_set)
+  tag_set %>% setdiff(NA_character_) %>% unique()
 }
 
 read_toml <- function(path) {
