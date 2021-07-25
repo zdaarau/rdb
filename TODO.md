@@ -1,66 +1,6 @@
 # TODOs
 
-## Content
-
--   Bei verschiedenen Abstimmungen meldet sudd.ch
-
-    > "id=..." ist gelöscht , weil keine Volksabstimmung stattgefunden hat.
-
-    Betroffen sind die folgenden Abstimmungen:
-
-    -   [Ägypten 1976-06-10](https://sudd.ch/event.php?id=eg011976)
-    -   [New Zealand 1931-12-02](https://sudd.ch/event.php?id=nz011931) (3 Einträge in der C2D-Datenbank, jeweils einer pro Option)
-    -   [Puerto Rico 1952-11-04 (3. Abstimmungsvorlage "Abolition of certain social rights")](https://sudd.ch/event.php?lang=de&id=pr041952)
-
-    Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!
-
--   Sobald via Admin-Interface [nach Draft-Status gefiltert werden kann](https://github.com/ccmdesign/c2d-app/issues/27), sollten die existierenden 12 Drafts
-    geprüft werden -\> entweder vervollständigen und freischalten oder löschen!
-
--   Clean `id_official`; there are likely erroneous entries or ones that don't designate an `id_official` but another kind of ID; entries to double-check:
-
-    ``` {.r}
-    c2d::referendums() %>% dplyr::filter(stringr::str_detect(string = id_official, pattern = "\\D") | !(country_code == "CH" & level == "national") & !is.na(id_official))
-    ```
-
-    Plus: What does `id_official = "0"` mean?
-
--   Voting with `id == "5bbbfee992a21351232e4f37"` (Romania 2008-02-01) was limited to the region
-    [Szeklerland](https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land), therefore `subnational_entity` should be set to `Székely Land`
-
--   **`municipality`** scheint inkonsistent zugewiesen; enthält Werte, die klar eine Gemeinde bezeichnen (bspw. `"London"`), aber auch solche wie
-    [`"Republic of Serbian Krajina until 1991"`](https://de.wikipedia.org/wiki/Republik_Serbische_Krajina) oder
-    [`Republic of Serbian People (1963-1992)`](https://de.wikipedia.org/wiki/Sozialistische_F%C3%B6derative_Republik_Jugoslawien#Sozialistische_F%C3%B6derative_Republik_Jugoslawien_(1963%E2%80%931992))...
-    bei letzteren sollte
-
-    -   der passende [`country_code_historical` für "Yugoslavia"](https://en.wikipedia.org/wiki/ISO_3166-3#Current_codes) gesetzt werden
-    -   der `country_code = "CS"` für den Folgestaat "Serbia and Montenegro" gesetzt werden
-    -   `is_past_jurisdiction = TRUE` gesetzt werden
-    -   den gegenwärtigen Wert in `municipality` stattdessen in `subnational_entity_name` eintragen
-
--   A total of 860 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
-    traced and added ASAP!
-
--   [Silagadze & Gherghina (2019)](https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf) (S. 467) detected some referendums that are missing in
-    the database -\> systematically check/add these!
-
--   Regarding data about subnational referendums in the US, we currently know of two up-to-date compilations:
-
-    -   [Ballotpedia](https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Special:Search&search=Ballotpedia) maintains a [List of veto referendum ballot
-        measures](https://ballotpedia.org/List_of_veto_referendum_ballot_measures), seems to be very rich in information.
-
-    -   The *National Conference of State Legislatures (NCSL)* maintains a [Statewide Ballot Measures
-        Database](https://www.ncsl.org/research/elections-and-campaigns/ballot-measures-database.aspx) that "includes all statewide ballot measures in the 50
-        states and the District of Columbia, starting over a century ago". It's unclear (to me) what data this database exactly includes, but it might also be a
-        viable avenue for automated additions to our database.
-
-    The NCSL also provides information about the *institutional* conditions regarding direct democracy in the US states, e.g.
-    [here](https://www.ncsl.org/research/elections-and-campaigns/chart-of-the-initiative-states.aspx). Also very rich is the information that Wikipedia provides
-    in the article [*Initiatives and referendums in the United States*](https://en.wikipedia.org/wiki/Initiatives_and_referendums_in_the_United_States)
-
-## Schema / [Code written by CCM Design](https://github.com/ccmdesign/c2d-app/)
-
-### Submitted as [feature requests to CCM Design](https://github.com/ccmdesign/c2d-app/issues/)
+## Reported to [CCM Design](https://github.com/ccmdesign/c2d-app/issues/)
 
 -   Publish code under AGPL \>= 3, see [issue \#26](https://github.com/ccmdesign/c2d-app/issues/26)
 
@@ -171,7 +111,25 @@
 
     -\> see [issue \#41](https://github.com/ccmdesign/c2d-app/issues/41)
 
-### Internal (at least for now)
+-   Standardize `country_name`; currently it's not consistent, e.g. for `country_code == "GB"` sometimes `country_name = "United Kingdom"`, sometimes
+    `"United Kingdom of Great Britain and Northern Ireland"` is used.
+
+    See [`countrycode::codelist`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) for possible standards; [ISO 3166 English short
+    country names](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) (`countrycode::codelist$iso.name.en`) seem most promising.
+
+    Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future
+    coding inconsistencies.
+
+    -\> see [issue \#42](https://github.com/ccmdesign/c2d-app/issues/43)
+
+-   Standardize `subnational_entity_name`; [ISO 3166-2 country subdivision names](https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en) (definition in
+    chap. 3.29) seem suitable (mapping codes \<-\> names in R via `ISOcodes::ISO_3166_2`; note that for some subdivisions, different names exist for multiple
+    languages, e.g. some [Swiss cantons](https://www.iso.org/obp/ui/#iso:code:3166:CH); `ISOcodes::ISO_3166_2` only tracks one name (the most "native" one per
+    subdivision, I guess))
+
+    -\> see [issue \#44](https://github.com/ccmdesign/c2d-app/issues/44)
+
+## Internal (at least for now)
 
 -   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
     one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
@@ -196,20 +154,6 @@
     -   the `result` variable needs to be changed to hold the option that won the referendum and
     -   the `votes_yes` and `votes_no` (as well as the same sub-vars in `votes_per_subterritory`) variables need to be replaced by a single nested (list-type)
         variable `votes_substantive` that holds a subfield with the number of votes per option (named by the option?).
-
--   Standardize `country_name`; currently it's not consistent, e.g. for `country_code == "GB"` sometimes `country_name = "United Kingdom"`, sometimes
-    `"United Kingdom of Great Britain and Northern Ireland"` is used.
-
-    See [`countrycode::codelist`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) for possible standards; [ISO 3166 English short
-    country names](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) (`countrycode::codelist$iso.name.en`) seem most promising.
-
-    Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future
-    coding inconsistencies.
-
--   Standardize `subnational_entity_name`; [ISO 3166-2 country subdivision names](https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en) (definition in
-    chap. 3.29) seem suitable (mapping codes \<-\> names in R via `ISOcodes::ISO_3166_2`; note that for some subdivisions, different names exist for multiple
-    languages, e.g. some [Swiss cantons](https://www.iso.org/obp/ui/#iso:code:3166:CH); `ISOcodes::ISO_3166_2` only tracks one name (the most "native" one per
-    subdivision, I guess))
 
 -   There is obviously not much consistency in how the referendum titles in the three languages are captured. According to the guidelines to add Swiss votings
     (`~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx`), the `title_de` (and `title_fr` if one exists) are the
@@ -237,7 +181,65 @@
 
 -   C2D admin front-end: Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
 
-## Validation
+### Content
+
+-   Bei verschiedenen Abstimmungen meldet sudd.ch
+
+    > "id=..." ist gelöscht , weil keine Volksabstimmung stattgefunden hat.
+
+    Betroffen sind die folgenden Abstimmungen:
+
+    -   [Ägypten 1976-06-10](https://sudd.ch/event.php?id=eg011976)
+    -   [New Zealand 1931-12-02](https://sudd.ch/event.php?id=nz011931) (3 Einträge in der C2D-Datenbank, jeweils einer pro Option)
+    -   [Puerto Rico 1952-11-04 (3. Abstimmungsvorlage "Abolition of certain social rights")](https://sudd.ch/event.php?lang=de&id=pr041952)
+
+    Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!
+
+-   Sobald via Admin-Interface [nach Draft-Status gefiltert werden kann](https://github.com/ccmdesign/c2d-app/issues/27), sollten die existierenden 12 Drafts
+    geprüft werden -\> entweder vervollständigen und freischalten oder löschen!
+
+-   Clean `id_official`; there are likely erroneous entries or ones that don't designate an `id_official` but another kind of ID; entries to double-check:
+
+    ``` {.r}
+    c2d::referendums() %>% dplyr::filter(stringr::str_detect(string = id_official, pattern = "\\D") | !(country_code == "CH" & level == "national") & !is.na(id_official))
+    ```
+
+    Plus: What does `id_official = "0"` mean?
+
+-   Voting with `id == "5bbbfee992a21351232e4f37"` (Romania 2008-02-01) was limited to the region
+    [Szeklerland](https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land), therefore `subnational_entity` should be set to `Székely Land`
+
+-   **`municipality`** scheint inkonsistent zugewiesen; enthält Werte, die klar eine Gemeinde bezeichnen (bspw. `"London"`), aber auch solche wie
+    [`"Republic of Serbian Krajina until 1991"`](https://de.wikipedia.org/wiki/Republik_Serbische_Krajina) oder
+    [`Republic of Serbian People (1963-1992)`](https://de.wikipedia.org/wiki/Sozialistische_F%C3%B6derative_Republik_Jugoslawien#Sozialistische_F%C3%B6derative_Republik_Jugoslawien_(1963%E2%80%931992))...
+    bei letzteren sollte
+
+    -   der passende [`country_code_historical` für "Yugoslavia"](https://en.wikipedia.org/wiki/ISO_3166-3#Current_codes) gesetzt werden
+    -   der `country_code = "CS"` für den Folgestaat "Serbia and Montenegro" gesetzt werden
+    -   `is_past_jurisdiction = TRUE` gesetzt werden
+    -   den gegenwärtigen Wert in `municipality` stattdessen in `subnational_entity_name` eintragen
+
+-   A total of 860 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
+    traced and added ASAP!
+
+-   [Silagadze & Gherghina (2019)](https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf) (S. 467) detected some referendums that are missing in
+    the database -\> systematically check/add these!
+
+-   Regarding data about subnational referendums in the US, we currently know of two up-to-date compilations:
+
+    -   [Ballotpedia](https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Special:Search&search=Ballotpedia) maintains a [List of veto referendum ballot
+        measures](https://ballotpedia.org/List_of_veto_referendum_ballot_measures), seems to be very rich in information.
+
+    -   The *National Conference of State Legislatures (NCSL)* maintains a [Statewide Ballot Measures
+        Database](https://www.ncsl.org/research/elections-and-campaigns/ballot-measures-database.aspx) that "includes all statewide ballot measures in the 50
+        states and the District of Columbia, starting over a century ago". It's unclear (to me) what data this database exactly includes, but it might also be a
+        viable avenue for automated additions to our database.
+
+    The NCSL also provides information about the *institutional* conditions regarding direct democracy in the US states, e.g.
+    [here](https://www.ncsl.org/research/elections-and-campaigns/chart-of-the-initiative-states.aspx). Also very rich is the information that Wikipedia provides
+    in the article [*Initiatives and referendums in the United States*](https://en.wikipedia.org/wiki/Initiatives_and_referendums_in_the_United_States)
+
+### Validation
 
 -   Systematically inspect/handle all `applicability_constraint` violations (see `validate_referendums(check_applicability_constraint = TRUE)`).
 
@@ -298,7 +300,7 @@
     `countrycode::codelist$un.regionsub.name` ([UN-Regionen](https://en.wikipedia.org/wiki/United_Nations_geoscheme)) scheint eine guter Start -\> dann einfach
     noch abändern, sodass Uwe's Spezialwünsche erfüllt sind!
 
-## Miscellaneous
+### Miscellaneous
 
 -   Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons [generiert werdden](https://realfavicongenerator.net/)!)
 
@@ -315,7 +317,7 @@
 
 -   Der C2D-Link auf der [ZDA-Webseite](https://www.zdaarau.ch/en/applications) sollte auf HTTP**S** geändert werden!
 
-## Database renaming
+### Database renaming
 
 -   Bislang gilt: *C2D* wird als alleiniger Name für die Datenbank bestehen bleiben, sollte die C2D-Abteilung, wie von Andreas Glaser beabsichtigt, umbenannt
     werden. Dies weil die Datenbank unter diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat. Allerdings taugt "C2D" beim besten Willen nicht
@@ -326,7 +328,7 @@
     Politik-Bereich ist `D3` bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch die
     JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
 
-## Open questions / suggestions
+### Open questions / suggestions
 
 -   Kann mir jemand die genaue Bedeutung von `inst_object_revision_extent` sowie den `*precondition*`-Variablen erklären (insb. aus `inst_precondition_decision`
     werde ich nicht schlau...)?
