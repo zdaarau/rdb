@@ -283,6 +283,8 @@
     endpoint](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes), allowing to change an arbitrary number of entries at a
     time.
 
+-   Implement fn to delete referendums once [issue \#45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
+
 -   Explore possibilities for automated vote entry creation. E.g. I write a scraper (in R) for the votes of Swiss canton X and convert the result into
     C2D-compatible JSON.
 
