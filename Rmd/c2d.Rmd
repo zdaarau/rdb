@@ -682,6 +682,8 @@ tidy_referendums <- function(data,
     data$id_sudd[data$country_code == "YE" & data$id_sudd == "ye012991"] <- "ye011991"
     # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
   }
+  
+  data
 }
 ```
 
