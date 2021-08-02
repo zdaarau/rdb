@@ -284,7 +284,7 @@ read_toml <- function(path) {
 #' @return `r pkgsnip::return_label("data")`
 tidy_referendums <- function(data,
                              tidy = TRUE) {
-  data %>%
+  data %<>%
     # unnest columns and ensure list type for multi-value columns
     purrr::map(.f = function(l,
                              category_names = names(l$categories),
@@ -1071,7 +1071,7 @@ referendums <- function(use_cache = TRUE,
       tidy_referendums(tidy = tidy)
     
     # exclude `archive` if requested¨
-    if (!incl_archive) data %<>% dplyr::select(any_of("archive"))
+    if (!incl_archive) data %<>% dplyr::select(-any_of("archive"))
     
     # return data
     data
