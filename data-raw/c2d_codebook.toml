@@ -568,7 +568,7 @@ value_default = "partial"
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_revision_modes"
-variable_label = "the different modes of revision that [`inst_object_type`](#inst_object_type) allows"
+variable_label = "the mode(s) of revision that [`inst_object_type`](#inst_object_type) allows"
 is_multi_valued = true
 variable_values = [ "introduce", "revise", "abrogate" ]
 value_label_prefix = "With this instrument, it is possible to"
@@ -595,7 +595,7 @@ value_default = "as a whole"
 value_scale = "nominal"
 [[02_institutional.04_other.item]]
 variable_name = "inst_topics_only"
-variable_label = "the legal topics to which the referendum [`type`](#type) is limited"
+variable_label = "the legal topic(s) to which the referendum [`type`](#type) is limited"
 applicability_constraint = "inst_topics_excluded %>% purrr::map_lgl(rlang::is_empty)"
 is_multi_valued = true
 variable_values = [
@@ -625,7 +625,7 @@ value_default = [ "{NA_character}" ]
 value_scale = "nominal"
 [[02_institutional.04_other.item]]
 variable_name = "inst_topics_excluded"
-variable_label = "the legal topics that are excluded from the referendum [`type`](#type)"
+variable_label = "the legal topic(s) that are excluded from the referendum [`type`](#type)"
 applicability_constraint = "inst_topics_only %>% purrr::map_lgl(rlang::is_empty)"
 is_multi_valued = true
 variable_values = [
@@ -695,7 +695,7 @@ variable_name = "inst_precondition_decision"
 variable_label = "the decision that [`inst_precondition_actor`](#inst_precondition_actor) has taken"
 variable_values = [ "yes", "no" ]
 value_labels = [
-  "affirmative answer (e.g. yes, we will hold a vote that has been requested by citizens)",
-  "negative answer (e.g. no, we will not implement the demands of a citizens’ initiative voluntarily)"
+  "affirmative answer (e.g. \"Yes, we will hold a vote that has been requested by citizens.\")",
+  "negative answer (e.g. \"No, we will not implement the demands of a citizens’ initiative voluntarily.\")"
 ]
 value_scale = "binary"

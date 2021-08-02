@@ -1416,7 +1416,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_object_revision_modes}}{
 
-The different modes of revision that \code{inst_object_type} allows.
+The mode(s) of revision that \code{inst_object_type} allows.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"introduce"} \tab With this instrument, it is possible to introduce an entirely new text/concept. \cr
@@ -1465,7 +1465,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_topics_only}}{
 
-The legal topics to which the referendum \code{type} is limited.
+The legal topic(s) to which the referendum \code{type} is limited.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"infrastructural acts"} \tab The referendum \code{type} is limited to TODO. \cr
@@ -1499,7 +1499,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{inst_topics_excluded}}{
 
-The legal topics that are excluded from the referendum \code{type}.
+The legal topic(s) that are excluded from the referendum \code{type}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"jus cogens"} \tab TODO is exluded from the referendum \code{type}. \cr
@@ -1618,8 +1618,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The decision that \code{inst_precondition_actor} has taken.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"yes"} \tab Affirmative answer (e.g. yes, we will hold a vote that has been requested by citizens). \cr
-   \code{"no"} \tab Negative answer (e.g. no, we will not implement the demands of a citizens’ initiative voluntarily). \cr
+   \code{"yes"} \tab Affirmative answer (e.g. “Yes, we will hold a vote that has been requested by citizens.”). \cr
+   \code{"no"} \tab Negative answer (e.g. “No, we will not implement the demands of a citizens’ initiative voluntarily.”). \cr
 }
 
 }
