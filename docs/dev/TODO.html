@@ -121,62 +121,10 @@
 
 <div id="todos" class="section level1">
 
-<div id="content" class="section level2">
+<div id="reported-to-ccm-design" class="section level2">
 <h2 class="hasAnchor">
-<a href="#content" class="anchor"></a>Content</h2>
-<ul>
-<li>
-<p>Bei verschiedenen Abstimmungen meldet sudd.ch</p>
-<blockquote>
-<p>“id=…” ist gelöscht , weil keine Volksabstimmung stattgefunden hat.</p>
-</blockquote>
-<p>Betroffen sind die folgenden Abstimmungen:</p>
-<ul>
-<li><a href="https://sudd.ch/event.php?id=eg011976" class="external-link">Ägypten 1976-06-10</a></li>
-<li>
-<a href="https://sudd.ch/event.php?id=nz011931" class="external-link">New Zealand 1931-12-02</a> (3 Einträge in der C2D-Datenbank, jeweils einer pro Option)</li>
-<li><a href="https://sudd.ch/event.php?lang=de&amp;id=pr041952" class="external-link">Puerto Rico 1952-11-04 (3. Abstimmungsvorlage “Abolition of certain social rights”)</a></li>
-</ul>
-<p>Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!</p>
-</li>
-<li><p>Sobald via Admin-Interface <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link">nach Draft-Status gefiltert werden kann</a>, sollten die existierenden 12 Drafts geprüft werden -&gt; entweder vervollständigen und freischalten oder löschen!</p></li>
-<li>
-<p>Clean <code>id_official</code>; there are likely erroneous entries or ones that don’t designate an <code>id_official</code> but another kind of ID; entries to double-check:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/referendums.html">referendums</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span>string <span class="op">=</span> <span class="va">id_official</span>, pattern <span class="op">=</span> <span class="st">"\\D"</span><span class="op">)</span> <span class="op">|</span> <span class="op">!</span><span class="op">(</span><span class="va">country_code</span> <span class="op">==</span> <span class="st">"CH"</span> <span class="op">&amp;</span> <span class="va">level</span> <span class="op">==</span> <span class="st">"national"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">id_official</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>Plus: What does <code>id_official = "0"</code> mean?</p>
-</li>
-<li><p>Voting with <code>id == "5bbbfee992a21351232e4f37"</code> (Romania 2008-02-01) was limited to the region <a href="https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land" class="external-link">Szeklerland</a>, therefore <code>subnational_entity</code> should be set to <code>Székely Land</code></p></li>
-<li>
-<p><strong><code>municipality</code></strong> scheint inkonsistent zugewiesen; enthält Werte, die klar eine Gemeinde bezeichnen (bspw. <code>"London"</code>), aber auch solche wie <a href="https://de.wikipedia.org/wiki/Republik_Serbische_Krajina" class="external-link"><code>"Republic of Serbian Krajina until 1991"</code></a> oder <a href="https://de.wikipedia.org/wiki/Sozialistische_F%C3%B6derative_Republik_Jugoslawien#Sozialistische_F%C3%B6derative_Republik_Jugoslawien_(1963%E2%80%931992)" class="external-link"><code>Republic of Serbian People (1963-1992)</code></a>… bei letzteren sollte</p>
-<ul>
-<li>der passende <a href="https://en.wikipedia.org/wiki/ISO_3166-3#Current_codes" class="external-link"><code>country_code_historical</code> für “Yugoslavia”</a> gesetzt werden</li>
-<li>der <code>country_code = "CS"</code> für den Folgestaat “Serbia and Montenegro” gesetzt werden</li>
-<li>
-<code>is_past_jurisdiction = TRUE</code> gesetzt werden</li>
-<li>den gegenwärtigen Wert in <code>municipality</code> stattdessen in <code>subnational_entity_name</code> eintragen</li>
-</ul>
-</li>
-<li><p>A total of 860 referendums don’t have a <code>type</code> set though it’s a mandatory field (at least in the C2D admin interface) -&gt; the missing <code>type</code>s should be traced and added ASAP!</p></li>
-<li><p><a href="https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf" class="external-link">Silagadze &amp; Gherghina (2019)</a> (S. 467) detected some referendums that are missing in the database -&gt; systematically check/add these!</p></li>
-<li>
-<p>Regarding data about subnational referendums in the US, we currently know of two up-to-date compilations:</p>
-<ul>
-<li><p><a href="https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Special:Search&amp;search=Ballotpedia" class="external-link">Ballotpedia</a> maintains a <a href="https://ballotpedia.org/List_of_veto_referendum_ballot_measures" class="external-link">List of veto referendum ballot measures</a>, seems to be very rich in information.</p></li>
-<li><p>The <em>National Conference of State Legislatures (NCSL)</em> maintains a <a href="https://www.ncsl.org/research/elections-and-campaigns/ballot-measures-database.aspx" class="external-link">Statewide Ballot Measures Database</a> that “includes all statewide ballot measures in the 50 states and the District of Columbia, starting over a century ago”. It’s unclear (to me) what data this database exactly includes, but it might also be a viable avenue for automated additions to our database.</p></li>
-</ul>
-<p>The NCSL also provides information about the <em>institutional</em> conditions regarding direct democracy in the US states, e.g. <a href="https://www.ncsl.org/research/elections-and-campaigns/chart-of-the-initiative-states.aspx" class="external-link">here</a>. Also very rich is the information that Wikipedia provides in the article <a href="https://en.wikipedia.org/wiki/Initiatives_and_referendums_in_the_United_States" class="external-link"><em>Initiatives and referendums in the United States</em></a></p>
-</li>
-</ul>
-</div>
-<div id="schema--code-written-by-ccm-design" class="section level2">
-<h2 class="hasAnchor">
-<a href="#schema--code-written-by-ccm-design" class="anchor"></a>Schema / <a href="https://github.com/ccmdesign/c2d-app/" class="external-link">Code written by CCM Design</a>
+<a href="#reported-to-ccm-design" class="anchor"></a>Reported to <a href="https://github.com/ccmdesign/c2d-app/issues/" class="external-link">CCM Design</a>
 </h2>
-<div id="submitted-as-feature-requests-to-ccm-design" class="section level3">
-<h3 class="hasAnchor">
-<a href="#submitted-as-feature-requests-to-ccm-design" class="anchor"></a>Submitted as <a href="https://github.com/ccmdesign/c2d-app/issues/" class="external-link">feature requests to CCM Design</a>
-</h3>
 <ul>
 <li>
 <p>Publish code under AGPL &gt;= 3, see <a href="https://github.com/ccmdesign/c2d-app/issues/26" class="external-link">issue #26</a></p>
@@ -248,7 +196,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </ul>
 <p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/pull/40" class="external-link">PR #40</a></p>
 <p>Temp R snippets:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://rpkg.dev/pal/reference/gh_text_file.html" class="external-link">gh_text_file</a></span><span class="op">(</span>owner <span class="op">=</span> <span class="st">"ccmdesign"</span>,
               name <span class="op">=</span> <span class="st">"c2d-app"</span>,
               rev <span class="op">=</span> <span class="st">"master"</span>,
@@ -279,11 +227,21 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </ul>
 <p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/41" class="external-link">issue #41</a></p>
 </li>
+<li>
+<p>Standardize <code>country_name</code>; currently it’s not consistent, e.g. for <code>country_code == "GB"</code> sometimes <code>country_name = "United Kingdom"</code>, sometimes <code>"United Kingdom of Great Britain and Northern Ireland"</code> is used.</p>
+<p>See <a href="https://vincentarelbundock.github.io/countrycode/reference/codelist.html" class="external-link"><code>countrycode::codelist</code></a> for possible standards; <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" class="external-link">ISO 3166 English short country names</a> (<code>countrycode::codelist$iso.name.en</code>) seem most promising.</p>
+<p>Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future coding inconsistencies.</p>
+<p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/43" class="external-link">issue #42</a></p>
+</li>
+<li>
+<p>Standardize <code>subnational_entity_name</code>; <a href="https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en" class="external-link">ISO 3166-2 country subdivision names</a> (definition in chap. 3.29) seem suitable (mapping codes &lt;-&gt; names in R via <code><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISOcodes::ISO_3166_2</a></code>; note that for some subdivisions, different names exist for multiple languages, e.g. some <a href="https://www.iso.org/obp/ui/#iso:code:3166:CH" class="external-link">Swiss cantons</a>; <code><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISOcodes::ISO_3166_2</a></code> only tracks one name (the most “native” one per subdivision, I guess))</p>
+<p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/44" class="external-link">issue #44</a></p>
+</li>
 </ul>
 </div>
-<div id="internal-at-least-for-now" class="section level3">
-<h3 class="hasAnchor">
-<a href="#internal-at-least-for-now" class="anchor"></a>Internal (at least for now)</h3>
+<div id="internal-at-least-for-now" class="section level2">
+<h2 class="hasAnchor">
+<a href="#internal-at-least-for-now" class="anchor"></a>Internal (at least for now)</h2>
 <ul>
 <li>
 <p>According to Uwe, we only capture “official”/“authorized” votings, but there are already inofficial ones present in the database like <a href="https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37" class="external-link">this one</a> for which sudd.ch <a href="https://sudd.ch/event.php?id=hu042008" class="external-link">reports</a>:</p>
@@ -306,12 +264,6 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </ul>
 </li>
 <li>
-<p>Standardize <code>country_name</code>; currently it’s not consistent, e.g. for <code>country_code == "GB"</code> sometimes <code>country_name = "United Kingdom"</code>, sometimes <code>"United Kingdom of Great Britain and Northern Ireland"</code> is used.</p>
-<p>See <a href="https://vincentarelbundock.github.io/countrycode/reference/codelist.html" class="external-link"><code>countrycode::codelist</code></a> for possible standards; <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" class="external-link">ISO 3166 English short country names</a> (<code>countrycode::codelist$iso.name.en</code>) seem most promising.</p>
-<p>Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future coding inconsistencies.</p>
-</li>
-<li><p>Standardize <code>subnational_entity_name</code>; <a href="https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en" class="external-link">ISO 3166-2 country subdivision names</a> (definition in chap. 3.29) seem suitable (mapping codes &lt;-&gt; names in R via <code><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISOcodes::ISO_3166_2</a></code>; note that for some subdivisions, different names exist for multiple languages, e.g. some <a href="https://www.iso.org/obp/ui/#iso:code:3166:CH" class="external-link">Swiss cantons</a>; <code><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISOcodes::ISO_3166_2</a></code> only tracks one name (the most “native” one per subdivision, I guess))</p></li>
-<li>
 <p>There is obviously not much consistency in how the referendum titles in the three languages are captured. According to the guidelines to add Swiss votings (<code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx</code>), the <code>title_de</code> (and <code>title_fr</code> if one exists) are the official titles by the authorities and <code>title_en</code> is a translation of the German one. But</p>
 <ul>
 <li>the Swiss authorities (sometimes) also translate the title to English themselves (<a href="https://www.admin.ch/gov/en/start/documentation/votes/20181125/horned-cow-initiative.html" class="external-link">example</a>).</li>
@@ -325,11 +277,57 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li><p>C2D website: The listing of referendums should be overhauled. It currently lacks important information, e.g. <code>level</code>.</p></li>
 <li><p>C2D admin front-end: Louis’ Dokument <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx</code></p></li>
 </ul>
+<div id="content" class="section level3">
+<h3 class="hasAnchor">
+<a href="#content" class="anchor"></a>Content</h3>
+<ul>
+<li>
+<p>Bei verschiedenen Abstimmungen meldet sudd.ch</p>
+<blockquote>
+<p>“id=…” ist gelöscht , weil keine Volksabstimmung stattgefunden hat.</p>
+</blockquote>
+<p>Betroffen sind die folgenden Abstimmungen:</p>
+<ul>
+<li><a href="https://sudd.ch/event.php?id=eg011976" class="external-link">Ägypten 1976-06-10</a></li>
+<li>
+<a href="https://sudd.ch/event.php?id=nz011931" class="external-link">New Zealand 1931-12-02</a> (3 Einträge in der C2D-Datenbank, jeweils einer pro Option)</li>
+<li><a href="https://sudd.ch/event.php?lang=de&amp;id=pr041952" class="external-link">Puerto Rico 1952-11-04 (3. Abstimmungsvorlage “Abolition of certain social rights”)</a></li>
+</ul>
+<p>Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!</p>
+</li>
+<li><p>Sobald via Admin-Interface <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link">nach Draft-Status gefiltert werden kann</a>, sollten die existierenden 12 Drafts geprüft werden -&gt; entweder vervollständigen und freischalten oder löschen!</p></li>
+<li>
+<p>Clean <code>id_official</code>; there are likely erroneous entries or ones that don’t designate an <code>id_official</code> but another kind of ID; entries to double-check:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/referendums.html">referendums</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span>string <span class="op">=</span> <span class="va">id_official</span>, pattern <span class="op">=</span> <span class="st">"\\D"</span><span class="op">)</span> <span class="op">|</span> <span class="op">!</span><span class="op">(</span><span class="va">country_code</span> <span class="op">==</span> <span class="st">"CH"</span> <span class="op">&amp;</span> <span class="va">level</span> <span class="op">==</span> <span class="st">"national"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">id_official</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>Plus: What does <code>id_official = "0"</code> mean?</p>
+</li>
+<li><p>Voting with <code>id == "5bbbfee992a21351232e4f37"</code> (Romania 2008-02-01) was limited to the region <a href="https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land" class="external-link">Szeklerland</a>, therefore <code>subnational_entity</code> should be set to <code>Székely Land</code></p></li>
+<li>
+<p><strong><code>municipality</code></strong> scheint inkonsistent zugewiesen; enthält Werte, die klar eine Gemeinde bezeichnen (bspw. <code>"London"</code>), aber auch solche wie <a href="https://de.wikipedia.org/wiki/Republik_Serbische_Krajina" class="external-link"><code>"Republic of Serbian Krajina until 1991"</code></a> oder <a href="https://de.wikipedia.org/wiki/Sozialistische_F%C3%B6derative_Republik_Jugoslawien#Sozialistische_F%C3%B6derative_Republik_Jugoslawien_(1963%E2%80%931992)" class="external-link"><code>Republic of Serbian People (1963-1992)</code></a>… bei letzteren sollte</p>
+<ul>
+<li>der passende <a href="https://en.wikipedia.org/wiki/ISO_3166-3#Current_codes" class="external-link"><code>country_code_historical</code> für “Yugoslavia”</a> gesetzt werden</li>
+<li>der <code>country_code = "CS"</code> für den Folgestaat “Serbia and Montenegro” gesetzt werden</li>
+<li>
+<code>is_past_jurisdiction = TRUE</code> gesetzt werden</li>
+<li>den gegenwärtigen Wert in <code>municipality</code> stattdessen in <code>subnational_entity_name</code> eintragen</li>
+</ul>
+</li>
+<li><p>A total of 860 referendums don’t have a <code>type</code> set though it’s a mandatory field (at least in the C2D admin interface) -&gt; the missing <code>type</code>s should be traced and added ASAP!</p></li>
+<li><p><a href="https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf" class="external-link">Silagadze &amp; Gherghina (2019)</a> (S. 467) detected some referendums that are missing in the database -&gt; systematically check/add these!</p></li>
+<li>
+<p>Regarding data about subnational referendums in the US, we currently know of two up-to-date compilations:</p>
+<ul>
+<li><p><a href="https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Special:Search&amp;search=Ballotpedia" class="external-link">Ballotpedia</a> maintains a <a href="https://ballotpedia.org/List_of_veto_referendum_ballot_measures" class="external-link">List of veto referendum ballot measures</a>, seems to be very rich in information.</p></li>
+<li><p>The <em>National Conference of State Legislatures (NCSL)</em> maintains a <a href="https://www.ncsl.org/research/elections-and-campaigns/ballot-measures-database.aspx" class="external-link">Statewide Ballot Measures Database</a> that “includes all statewide ballot measures in the 50 states and the District of Columbia, starting over a century ago”. It’s unclear (to me) what data this database exactly includes, but it might also be a viable avenue for automated additions to our database.</p></li>
+</ul>
+<p>The NCSL also provides information about the <em>institutional</em> conditions regarding direct democracy in the US states, e.g. <a href="https://www.ncsl.org/research/elections-and-campaigns/chart-of-the-initiative-states.aspx" class="external-link">here</a>. Also very rich is the information that Wikipedia provides in the article <a href="https://en.wikipedia.org/wiki/Initiatives_and_referendums_in_the_United_States" class="external-link"><em>Initiatives and referendums in the United States</em></a></p>
+</li>
+</ul>
 </div>
-</div>
-<div id="validation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#validation" class="anchor"></a>Validation</h2>
+<div id="validation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#validation" class="anchor"></a>Validation</h3>
 <ul>
 <li><p>Systematically inspect/handle all <code>applicability_constraint</code> violations (see <code><a href="reference/validate_referendums.html">validate_referendums(check_applicability_constraint = TRUE)</a></code>).</p></li>
 <li>
@@ -353,11 +351,13 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </li>
 <li><p>check <code>electorate_abroad</code> for obvious errors (e.g. <code>id == "5f99b6c8d1291cc3961f1c2c"</code> is one)</p></li>
 </ul>
+</div>
 <div id="c2d-r-package" class="section level3">
 <h3 class="hasAnchor">
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h3>
 <ul>
 <li><p>Implement fn for back-end data manipulation leveraging the <code>POST</code> functionality of the <a href="https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes" class="external-link"><code>/referendums</code> API endpoint</a>, allowing to change an arbitrary number of entries at a time.</p></li>
+<li><p>Implement fn to delete referendums once <a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a> is resolved.</p></li>
 <li>
 <p>Explore possibilities for automated vote entry creation. E.g. I write a scraper (in R) for the votes of Swiss canton X and convert the result into C2D-compatible JSON.</p>
 <p><strong>Test credentials to fiddle with the <code>POST /referendums</code> endpoint would be good…</strong> open questions:</p>
@@ -375,10 +375,9 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </li>
 </ul>
 </div>
-</div>
-<div id="miscellaneous" class="section level2">
-<h2 class="hasAnchor">
-<a href="#miscellaneous" class="anchor"></a>Miscellaneous</h2>
+<div id="miscellaneous" class="section level3">
+<h3 class="hasAnchor">
+<a href="#miscellaneous" class="anchor"></a>Miscellaneous</h3>
 <ul>
 <li><p>Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons <a href="https://realfavicongenerator.net/" class="external-link">generiert werdden</a>!)</p></li>
 <li>
@@ -392,9 +391,9 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li><p>Der C2D-Link auf der <a href="https://www.zdaarau.ch/en/applications" class="external-link">ZDA-Webseite</a> sollte auf HTTP<strong>S</strong> geändert werden!</p></li>
 </ul>
 </div>
-<div id="database-renaming" class="section level2">
-<h2 class="hasAnchor">
-<a href="#database-renaming" class="anchor"></a>Database renaming</h2>
+<div id="database-renaming" class="section level3">
+<h3 class="hasAnchor">
+<a href="#database-renaming" class="anchor"></a>Database renaming</h3>
 <ul>
 <li>
 <p>Bislang gilt: <em>C2D</em> wird als alleiniger Name für die Datenbank bestehen bleiben, sollte die C2D-Abteilung, wie von Andreas Glaser beabsichtigt, umbenannt werden. Dies weil die Datenbank unter diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat. Allerdings taugt “C2D” beim besten Willen nicht als Akronym für eine Datenbank…</p>
@@ -402,9 +401,9 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </li>
 </ul>
 </div>
-<div id="open-questions--suggestions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#open-questions--suggestions" class="anchor"></a>Open questions / suggestions</h2>
+<div id="open-questions--suggestions" class="section level3">
+<h3 class="hasAnchor">
+<a href="#open-questions--suggestions" class="anchor"></a>Open questions / suggestions</h3>
 <ul>
 <li><p>Kann mir jemand die genaue Bedeutung von <code>inst_object_revision_extent</code> sowie den <code>*precondition*</code>-Variablen erklären (insb. aus <code>inst_precondition_decision</code> werde ich nicht schlau…)?</p></li>
 <li><p><code>inst_quorum_turnout</code> sollte standardisiert werden -&gt; was wäre eine geeignete, abschliessende Menge an Werten?</p></li>
@@ -467,6 +466,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li><p>Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden, mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des <a href="https://politanch.github.io/swissdd/" class="external-link">swissdd</a>-R-Pakets könnte womöglich ganz aufschlussreich sein!</p></li>
 <li><p>C2D Website: Ditch the <code>by ccm.design</code> promo in the footer?</p></li>
 </ul>
+</div>
 </div>
 </div>
 

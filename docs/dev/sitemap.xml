@@ -28,10 +28,22 @@
     <loc>https://rpkg.dev/c2d/reference/is_online.html</loc>
   </url>
   <url>
+    <loc>https://rpkg.dev/c2d/reference/lower_non_abbrs.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/read_toml.html</loc>
+  </url>
+  <url>
     <loc>https://rpkg.dev/c2d/reference/referendums.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/search_referendums.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/tidy_referendums.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/untidy_referendums.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/v_vals.html</loc>

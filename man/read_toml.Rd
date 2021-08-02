@@ -15,3 +15,4 @@ The TOML file's content as a \link[xfun:strict_list]{strict list}.
 \description{
 Read in a TOML file
 }
+\keyword{internal}

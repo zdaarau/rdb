@@ -15,3 +15,4 @@ A character vector of the same lenght as \code{x}.
 \description{
 Lowercase non-abbreviations
 }
+\keyword{internal}

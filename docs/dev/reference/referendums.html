@@ -206,9 +206,9 @@ maximum control over what data is included. This takes precedence over all the o
     </tr>
     <tr>
       <th>tidy</th>
-      <td><p>Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If <code>FALSE</code>, the raw referendum
-data as stored in the underlying MongoDB will be returned. Note that the latter doesn't conform to the <a href='data_codebook.html'>codebook</a> (i.a. different variable
-names).</p></td>
+      <td><p>Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If <code>FALSE</code>, the raw MongoDB
+referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the <a href='data_codebook.html'>codebook</a>
+(i.a. different variable names).</p></td>
     </tr>
     </table>
 
@@ -224,73 +224,49 @@ names).</p></td>
 <span class='co'># get only referendums in Austria and Australia on subnational level</span>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendums</span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AT"</span>, <span class='st'>"AU"</span><span class='op'>)</span>,
                  level <span class='op'>=</span> <span class='st'>"subnational"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 31 x 54</span>
-#&gt;    id           id_official id_sudd country_code country_name subnational_entit…
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>             
-#&gt; <span style='color: #BCBCBC;'> 1</span> 5bbbfb4f92a… 12707       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territory
-#&gt; <span style='color: #BCBCBC;'> 2</span> 5bbbf9b192a… 1219        <span style='color: #BB0000;'>NA</span>      AU           Australia    Christmas Island  
-#&gt; <span style='color: #BCBCBC;'> 3</span> 5bbbf92f92a… 12706       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territory
-#&gt; <span style='color: #BCBCBC;'> 4</span> 5bbbf82092a… 1710        <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territory
-#&gt; <span style='color: #BCBCBC;'> 5</span> 5bbbf7ff92a… 12705       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territory
-#&gt; <span style='color: #BCBCBC;'> 6</span> 5bbbf70392a… 12704       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territory
-#&gt; <span style='color: #BCBCBC;'> 7</span> 5bbbf59192a… 12703       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territory
-#&gt; <span style='color: #BCBCBC;'> 8</span> 5bbbf4d492a… 872         <span style='color: #BB0000;'>NA</span>      AU           Australia    Christmas Island  
-#&gt; <span style='color: #BCBCBC;'> 9</span> 5bbbf4d492a… 871         <span style='color: #BB0000;'>NA</span>      AU           Australia    Christmas Island  
-#&gt; <span style='color: #BCBCBC;'>10</span> 5bbbf29e92a… 12694       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territory
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 31 × 54</span>
+#&gt;    id                       id_official id_sudd country_code country_name subnational_ent…
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>           
+#&gt; <span style='color: #BCBCBC;'> 1</span> 5bbbfb4f92a21351232e3f97 12707       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territ…
+#&gt; <span style='color: #BCBCBC;'> 2</span> 5bbbf9b192a21351232e3ac3 1219        <span style='color: #BB0000;'>NA</span>      AU           Australia    Christmas Island
+#&gt; <span style='color: #BCBCBC;'> 3</span> 5bbbf92f92a21351232e3a0d 12706       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territ…
+#&gt; <span style='color: #BCBCBC;'> 4</span> 5bbbf82092a21351232e380d 1710        <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territ…
+#&gt; <span style='color: #BCBCBC;'> 5</span> 5bbbf7ff92a21351232e3787 12705       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territ…
+#&gt; <span style='color: #BCBCBC;'> 6</span> 5bbbf70392a21351232e330d 12704       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territ…
+#&gt; <span style='color: #BCBCBC;'> 7</span> 5bbbf59192a21351232e2e13 12703       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territ…
+#&gt; <span style='color: #BCBCBC;'> 8</span> 5bbbf4d492a21351232e2c47 872         <span style='color: #BB0000;'>NA</span>      AU           Australia    Christmas Island
+#&gt; <span style='color: #BCBCBC;'> 9</span> 5bbbf4d492a21351232e2c45 871         <span style='color: #BB0000;'>NA</span>      AU           Australia    Christmas Island
+#&gt; <span style='color: #BCBCBC;'>10</span> 5bbbf29e92a21351232e2345 12694       <span style='color: #BB0000;'>NA</span>      AU           Australia    Northern Territ…
 #&gt; <span style='color: #949494;'># … with 21 more rows, and 48 more variables: municipality &lt;fct&gt;, level &lt;ord&gt;,</span>
 #&gt; <span style='color: #949494;'>#   date &lt;date&gt;, title_de &lt;chr&gt;, title_fr &lt;chr&gt;, title_en &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   committee_name &lt;chr&gt;, result &lt;fct&gt;, electorate_total &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;, votes_per_subterritory &lt;list&gt;,</span>
 #&gt; <span style='color: #949494;'>#   tags_tier_1 &lt;list&gt;, tags_tier_2 &lt;list&gt;, tags_tier_3 &lt;list&gt;, remarks &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   files &lt;list&gt;, url_sudd &lt;chr&gt;, url_swissvotes &lt;chr&gt;, is_draft &lt;lgl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   date_time_created &lt;dttm&gt;, type &lt;fct&gt;, inst_legal_basis_type &lt;ord&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_has_urgent_legal_basis &lt;lgl&gt;, inst_is_binding &lt;lgl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_is_counter_proposal &lt;lgl&gt;, inst_is_assembly &lt;lgl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_trigger_type &lt;fct&gt;, inst_trigger_actor &lt;fct&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_trigger_actor_level &lt;ord&gt;, inst_trigger_threshold &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_trigger_time_limit &lt;chr&gt;, inst_object_type &lt;fct&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_object_author &lt;fct&gt;, inst_object_legal_level &lt;fct&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_object_revision_extent &lt;fct&gt;, inst_object_revision_modes &lt;list&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_object_revision_divisibility &lt;fct&gt;, inst_topics_only &lt;list&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_topics_excluded &lt;list&gt;, inst_quorum_turnout &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_quorum_approval &lt;fct&gt;, inst_has_precondition &lt;lgl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_precondition_actor &lt;fct&gt;, inst_precondition_decision &lt;fct&gt;</span></div><div class='input'>
+#&gt; <span style='color: #949494;'>#   files &lt;list&gt;, url_sudd &lt;chr&gt;, url_swissvotes &lt;chr&gt;, is_draft &lt;lgl&gt;, …</span></div><div class='input'>
 <span class='co'># provide custom `query_filter` for more complex queries like regex matches</span>
 <span class='co'># cf. https://docs.mongodb.com/manual/reference/operator/query/regex/</span>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendums</span><span class='op'>(</span>query_filter <span class='op'>=</span> <span class='st'>'{"country_code":{"$regex":"A."}}'</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 225 x 54</span>
-#&gt;    id          id_official id_sudd country_code country_name   subnational_enti…
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>            
-#&gt; <span style='color: #BCBCBC;'> 1</span> 5d2dd694dc… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AS           American Samoa <span style='color: #BB0000;'>NA</span>               
-#&gt; <span style='color: #BCBCBC;'> 2</span> 5d2dbe4fdc… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AG           Antigua and B… <span style='color: #BB0000;'>NA</span>               
-#&gt; <span style='color: #BCBCBC;'> 3</span> 5d1cc881dc… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AU           Australia      <span style='color: #BB0000;'>NA</span>               
-#&gt; <span style='color: #BCBCBC;'> 4</span> 5d1a183bfe… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan     Nagorno-Karabakh 
-#&gt; <span style='color: #BCBCBC;'> 5</span> 5cc9a4cccb… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan     <span style='color: #BB0000;'>NA</span>               
-#&gt; <span style='color: #BCBCBC;'> 6</span> 5cc9a3b061… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan     <span style='color: #BB0000;'>NA</span>               
-#&gt; <span style='color: #BCBCBC;'> 7</span> 5cc9a2d161… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan     <span style='color: #BB0000;'>NA</span>               
-#&gt; <span style='color: #BCBCBC;'> 8</span> 5cc9a1e861… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan     <span style='color: #BB0000;'>NA</span>               
-#&gt; <span style='color: #BCBCBC;'> 9</span> 5cc9a05fcb… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan     <span style='color: #BB0000;'>NA</span>               
-#&gt; <span style='color: #BCBCBC;'>10</span> 5cc99f2bcb… <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan     <span style='color: #BB0000;'>NA</span>               
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 225 × 54</span>
+#&gt;    id                       id_official id_sudd country_code country_name subnational_ent…
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>           
+#&gt; <span style='color: #BCBCBC;'> 1</span> 5d2dd694dc0aeb467bfcc1e6 <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AS           American Sa… <span style='color: #BB0000;'>NA</span>              
+#&gt; <span style='color: #BCBCBC;'> 2</span> 5d2dbe4fdc0aeb467bfcc1d4 <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AG           Antigua and… <span style='color: #BB0000;'>NA</span>              
+#&gt; <span style='color: #BCBCBC;'> 3</span> 5d1cc881dc0aeb467bfcbfb9 <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AU           Australia    <span style='color: #BB0000;'>NA</span>              
+#&gt; <span style='color: #BCBCBC;'> 4</span> 5d1a183bfe65c2bfeba00bc3 <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan   Nagorno-Karabakh
+#&gt; <span style='color: #BCBCBC;'> 5</span> 5cc9a4cccb4865239961910c <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan   <span style='color: #BB0000;'>NA</span>              
+#&gt; <span style='color: #BCBCBC;'> 6</span> 5cc9a3b061af8403c235e09a <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan   <span style='color: #BB0000;'>NA</span>              
+#&gt; <span style='color: #BCBCBC;'> 7</span> 5cc9a2d161af8403c235e093 <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan   <span style='color: #BB0000;'>NA</span>              
+#&gt; <span style='color: #BCBCBC;'> 8</span> 5cc9a1e861af8403c235e08c <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan   <span style='color: #BB0000;'>NA</span>              
+#&gt; <span style='color: #BCBCBC;'> 9</span> 5cc9a05fcb48652399619105 <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan   <span style='color: #BB0000;'>NA</span>              
+#&gt; <span style='color: #BCBCBC;'>10</span> 5cc99f2bcb486523996190fe <span style='color: #BB0000;'>NA</span>          <span style='color: #BB0000;'>NA</span>      AZ           Azerbaijan   <span style='color: #BB0000;'>NA</span>              
 #&gt; <span style='color: #949494;'># … with 215 more rows, and 48 more variables: municipality &lt;fct&gt;, level &lt;ord&gt;,</span>
 #&gt; <span style='color: #949494;'>#   date &lt;date&gt;, title_de &lt;chr&gt;, title_fr &lt;chr&gt;, title_en &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   committee_name &lt;chr&gt;, result &lt;fct&gt;, electorate_total &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;, votes_per_subterritory &lt;list&gt;,</span>
 #&gt; <span style='color: #949494;'>#   tags_tier_1 &lt;list&gt;, tags_tier_2 &lt;list&gt;, tags_tier_3 &lt;list&gt;, remarks &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   files &lt;list&gt;, url_sudd &lt;chr&gt;, url_swissvotes &lt;chr&gt;, is_draft &lt;lgl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   date_time_created &lt;dttm&gt;, type &lt;fct&gt;, inst_legal_basis_type &lt;ord&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_has_urgent_legal_basis &lt;lgl&gt;, inst_is_binding &lt;lgl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_is_counter_proposal &lt;lgl&gt;, inst_is_assembly &lt;lgl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_trigger_type &lt;fct&gt;, inst_trigger_actor &lt;fct&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_trigger_actor_level &lt;ord&gt;, inst_trigger_threshold &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_trigger_time_limit &lt;chr&gt;, inst_object_type &lt;fct&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_object_author &lt;fct&gt;, inst_object_legal_level &lt;fct&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_object_revision_extent &lt;fct&gt;, inst_object_revision_modes &lt;list&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_object_revision_divisibility &lt;fct&gt;, inst_topics_only &lt;list&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_topics_excluded &lt;list&gt;, inst_quorum_turnout &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_quorum_approval &lt;fct&gt;, inst_has_precondition &lt;lgl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   inst_precondition_actor &lt;fct&gt;, inst_precondition_decision &lt;fct&gt;</span></div></pre>
+#&gt; <span style='color: #949494;'>#   files &lt;list&gt;, url_sudd &lt;chr&gt;, url_swissvotes &lt;chr&gt;, is_draft &lt;lgl&gt;, …</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

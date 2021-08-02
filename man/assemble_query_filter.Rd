@@ -54,3 +54,4 @@ A character scalar containing a valid \href{https://docs.mongodb.com/manual/core
 \description{
 Assemble MongoDB query filter document
 }
+\keyword{internal}

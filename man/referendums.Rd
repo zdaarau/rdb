@@ -53,9 +53,9 @@ coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
 maximum control over what data is included. This takes precedence over all the other parameters, i.e. if \code{query_filter} is provided, the parameters
 \code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date}, \code{is_draft}, \code{date_time_created_min} and \code{date_time_created_max})`` are ignored.}
 
-\item{tidy}{Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If \code{FALSE}, the raw referendum
-data as stored in the underlying MongoDB will be returned. Note that the latter doesn't conform to the \link{codebook} (i.a. different variable
-names).}
+\item{tidy}{Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If \code{FALSE}, the raw MongoDB
+referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the \link{codebook}
+(i.a. different variable names).}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
