@@ -263,6 +263,50 @@ assemble_query_filter <- function(country_code = NULL,
 }
 ```
 
+### `auth_session`
+
+```{r}
+#' Authenticate a user session for the [C2D API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
+#'
+#' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, named by `email`. By default, the `email` and
+#' `password` are read from the first element of the R option `c2d.credentials` (a named character vector where names are e-mail addresses and values are
+#' passwords).`
+#'
+#' @param email The e-mail address of the user for which a session should be created. A character scalar.
+#' @param password The password of the user for which a session should be created. A character scalar.
+#'
+#' @return The user session token as a character scalar, invisibly.
+#' @keywords internal
+auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
+                         password = getOption("c2d.credentials")[1L]) {
+  
+  tokens <- getOption("c2d.user_session_tokens")
+  token <- tokens[email]
+  
+  if (!checkmate::test_string(token, min.chars = 1L)) {
+    
+    pal::cli_process_expr(msg = "Authenticating new user session",
+                          expr = {
+                            
+                            token <-
+                              httr::RETRY(verb = "POST",
+                                          url = "https://services.c2d.ch/users/session",
+                                          times = 5L,
+                                          encode = "json",
+                                          body = list(email = checkmate::assert_string(email),
+                                                      password = checkmate::assert_string(password))) %>%
+                              httr::content(as = "parsed") %$%
+                              token %>%
+                              magrittr::set_names(email)
+                            
+                            options(c2d.user_session_tokens = c(tokens, token))
+                          })
+  }
+  
+  invisible(token)
+}
+```
+
 ### `httr_config`
 
 Until [recently](https://github.com/ccmdesign/c2d-app/issues/10), the C2D API server didn't provide the [intermediate *R3*
@@ -786,6 +830,76 @@ clean_tags <- function(tags) {
                                           "religion - churches" = "religion, churches",
                                           "swiss abroad" = "Swiss abroad",
                                           "territoral questions" = "territorial questions")
+}
+```
+
+#### `restore_tags`
+
+NOTE that this function doesn't restore *redundant* information (parent-tier tags). Once [issue \#41](https://github.com/ccmdesign/c2d-app/issues/41) is
+resolved, we can deprecate this anyway.
+
+```{r}
+restore_tags <- function(tags_tier_1,
+                         tags_tier_2,
+                         tags_tier_3) {
+  list(tags_tier_1,
+       tags_tier_2,
+       tags_tier_3) %>%
+    purrr::pmap(~ {
+      
+      ..1 %>%
+        unlist() %>%
+        as.character() %>%
+        checkmate::assert_character(any.missing = FALSE,
+                                    max.len = 3L)
+      ..2 %>%
+        unlist() %>%
+        as.character() %>%
+        checkmate::assert_character(any.missing = FALSE,
+                                    max.len = 3L)
+      ..3 %>%
+        unlist() %>%
+        as.character() %>%
+        checkmate::assert_character(any.missing = FALSE,
+                                    max.len = 3L,
+                                    .var.name = "tags_tier_3")
+      
+      tags_hierarchy <- hierarchize_tags(tibble::tibble(tags_tier_1 = list(..1),
+                                                        tags_tier_2 = list(..2),
+                                                        tags_tier_3 = list(..3)))
+      
+      tags <- tags_hierarchy$tag_tier_3 %>% setdiff(NA_character_)
+      
+      if (length(tags) < 3L) {
+        
+        tags <-
+          tags_hierarchy %>%
+          dplyr::filter(is.na(tag_tier_3)) %$%
+          tag_tier_2 %>%
+          setdiff(NA_character_) %>%
+          c(tags)
+      }
+      
+      if (length(tags) < 3L) {
+        
+        tags <-
+          tags_hierarchy %>%
+          dplyr::filter(is.na(tag_tier_3) & is.na(tag_tier_2)) %$%
+          tag_tier_1 %>%
+          setdiff(NA_character_) %>%
+          c(tags)
+      }
+      
+      tags %>% purrr::map_chr(~ {
+        substr(.x, 1L, 1L) %<>% toupper()
+        .x %>% dplyr::recode("Armed forces in general" = "Armed forces - general",
+                             "Citizens' initiatives" = "Citizen's initiatives",
+                             "Conscientious objection, civilian service" = "Conscientious objection, Civilian service",
+                             "Religion, churches" = "Religion - churches",
+                             "Social policy" = "Social Policy",
+                             "Territorial questions" = "Territoral questions")
+      })
+    })
 }
 ```
 
