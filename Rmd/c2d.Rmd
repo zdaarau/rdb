@@ -160,22 +160,6 @@ fs::path_package("rmarkdown/templates/html_vignette/resources/vignette.css",
 
 ## Functions
 
-### `httr_config`
-
-Until [recently](https://github.com/ccmdesign/c2d-app/issues/10), the C2D API server didn't provide the [intermediate *R3*
-certificate](https://crt.sh/?q=+730c1bdcd85f57ce5dc0bba733e5f1ba5a925b2a771d640a26f7a454224dad3b) (issued by Let's Encrypt) and since [curl doesn't support
-*Authority Information Access* yet](https://github.com/curl/curl/issues/2793) to automatically discover it, we had to manually specify it. Thus, the certificate
-was shipped with this package (found under `certs/3479778542.crt`). Because this isn't needed anymore, the cert as well as the code chunk below (`purl = FALSE`)
-are ignored from package builds but kept in case they are needed again at some point in the future.
-
-```{r, purl = FALSE}
-httr_config <- function() {
-  
-  httr::config(cainfo = fs::path_package(package = pkg,
-                                         "certs", "3479778542.crt"))
-}
-```
-
 ### `assemble_query_filter`
 
 NOTE: `date` is not stored as an actual [MongoDB `Date` type](https://docs.mongodb.com/manual/reference/bson-types/#std-label-document-bson-type-date) in the
@@ -279,6 +263,44 @@ assemble_query_filter <- function(country_code = NULL,
 }
 ```
 
+### `httr_config`
+
+Until [recently](https://github.com/ccmdesign/c2d-app/issues/10), the C2D API server didn't provide the [intermediate *R3*
+certificate](https://crt.sh/?q=+730c1bdcd85f57ce5dc0bba733e5f1ba5a925b2a771d640a26f7a454224dad3b) (issued by Let's Encrypt) and since [curl doesn't support
+*Authority Information Access* yet](https://github.com/curl/curl/issues/2793) to automatically discover it, we had to manually specify it. Thus, the certificate
+was shipped with this package (found under `certs/3479778542.crt`). Because this isn't needed anymore, the cert as well as the code chunk below (`purl = FALSE`)
+are ignored from package builds but kept in case they are needed again at some point in the future.
+
+```{r, purl = FALSE}
+httr_config <- function() {
+  
+  httr::config(cainfo = fs::path_package(package = pkg,
+                                         "certs", "3479778542.crt"))
+}
+```
+
+### `lower_non_abbrs`
+
+```{r}
+#' Lowercase non-abbreviations
+#'
+#' @param x A character vector.
+#'
+#' @return A character vector of the same lenght as `x`.
+#' @keywords internal
+lower_non_abbrs <- function(x) {
+  
+  x %>%
+    stringr::str_split(pattern = "\\s") %>%
+    purrr::map_chr(~ .x %>%
+                     dplyr::if_else(stringr::str_detect(string = .,
+                                                        pattern = "^[^[:lower:]]+$"),
+                                    .,
+                                    stringr::str_to_lower(.)) %>%
+                     paste0(collapse = " "))
+}
+```
+
 ### `read_toml`
 
 ```{r}
@@ -304,11 +326,11 @@ read_toml <- function(path) {
 ### `tidy_referendums`
 
 ```{r}
-#' Tidy "raw" MongoDB referendum data
+#' Tidy "raw" C2D API referendum data
 #'
-#' Converts from the "raw" MongoDB to the tidied `referendums()` schema.
+#' Converts the "raw" MongoDB data from the C2D API to the tidied `referendums()` schema.
 #'
-#' @param data The data from the C2D MongoDB as a list (converted from the JSON).
+#' @param data The MongoDB data as a list (converted from the JSON returned by the C2D API using [jsonlite::fromJSON()]).
 #' @param tidy Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If `FALSE`, the raw MongoDB
 #'   referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the [codebook][codebook]
 #'   (i.a. different variable names).
@@ -746,28 +768,6 @@ query_filter_in <- function(x) {
 }
 ```
 
-### `lower_non_abbrs`
-
-```{r}
-#' Lowercase non-abbreviations
-#'
-#' @param x A character vector.
-#'
-#' @return A character vector of the same lenght as `x`.
-#' @keywords internal
-lower_non_abbrs <- function(x) {
-  
-  x %>%
-    stringr::str_split(pattern = "\\s") %>%
-    purrr::map_chr(~ .x %>%
-                     dplyr::if_else(stringr::str_detect(string = .,
-                                                        pattern = "^[^[:lower:]]+$"),
-                                    .,
-                                    stringr::str_to_lower(.)) %>%
-                     paste0(collapse = " "))
-}
-```
-
 ### Tags-related
 
 #### `clean_tags`
@@ -841,7 +841,7 @@ required_fields <- c("_id",
 
 ### Variable renamings
 
-This maps the final variable names as found in the [C2D codebook](https://rpkg.dev/c2d/articles/codebook.html) to the field names of the back-ends MongoDB. The
+This maps the final variable names as found in the [C2D codebook](https://rpkg.dev/c2d/articles/codebook.html) to the field names of the back-end's MongoDB. The
 renamings should eventually all be upstreamed and this mapping shall be become superfluous.
 
 ```{r}
@@ -1396,16 +1396,15 @@ search_referendums <- function(term) {
 #'   purrr::map(c2d::hierarchize_tags)
 hierarchize_tags <- function(x) {
   
-  test_char <- checkmate::test_character(x,
-                                         any.missing = FALSE)
+  test_char <- checkmate::test_character(x, any.missing = FALSE)
   
   if (!test_char) {
     
-    tag_var_names <- paste0("tags_tier_", 1:3)
+    tag_v_names <- paste0("tags_tier_", 1:3)
     test_df <- checkmate::test_data_frame(x,
                                           min.rows = 1L,
                                           max.rows = 1L)
-    has_tag_vars <- all(tag_var_names %in% colnames(x))
+    has_tag_vars <- all(tag_v_names %in% colnames(x))
     
     if (!test_df || !has_tag_vars) {
       cli::cli_abort(paste0("{.arg x} must be either a character vector of tags or a single-row data frame containing at least the columns ",
@@ -1413,7 +1412,7 @@ hierarchize_tags <- function(x) {
     }
     
     x %<>%
-      .[, tag_var_names] %>%
+      .[, tag_v_names] %>%
       purrr::pmap(~ as.character(c(..1, ..2, ..3))) %>%
       purrr::flatten_chr()
   }
