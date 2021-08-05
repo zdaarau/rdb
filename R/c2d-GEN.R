@@ -1056,24 +1056,46 @@ hierarchize_tags <- function(x) {
                                      tier = 1L)
   inferred_tags_tier_2 <- infer_tags(tags = tags_tier_3,
                                      tier = 2L)
+  non_parent_tags_tier_1 <- tags_tier_1 %>% setdiff(inferred_tags_tier_1)
+  non_parent_tags_tier_2 <- tags_tier_2 %>% setdiff(inferred_tags_tier_2)
+  
+  # 0. initialize empty tibble
+  result <- tibble::tibble(tag_tier_1 = character(),
+                           tag_tier_2 = character(),
+                           tag_tier_3 = character())
   
   # 1. add third-tier tags
-  result <- tibble::tibble(tag_tier_1 = infer_tags(tags = tags_tier_3,
-                                                   tier = 1L),
-                           tag_tier_2 = infer_tags(tags = tags_tier_3,
-                                                   tier = 2L),
-                           tag_tier_3 = tags_tier_3)
+  result <-
+    tags_tier_3 %>%
+    purrr::map_dfr(~ tibble::tibble(tag_tier_1 = infer_tags(tags = .x,
+                                                            tier = 1L),
+                                    tag_tier_2 = infer_tags(tags = .x,
+                                                            tier = 2L),
+                                    tag_tier_3 = .x)) %>%
+    dplyr::bind_rows(result)
   
   # 2. add remaining second-tier tags
-  result %<>% dplyr::bind_rows(tibble::tibble(tag_tier_1 = infer_tags(tags = tags_tier_2,
-                                                                      tier = 1L),
-                                              tag_tier_2 = tags_tier_2 %>% setdiff(inferred_tags_tier_2),
-                                              tag_tier_3 = NA_character_))
+  if (length(non_parent_tags_tier_2)) {
+    
+    result <-
+      non_parent_tags_tier_2 %>%
+      purrr::map_dfr(~ tibble::tibble(tag_tier_1 = infer_tags(tags = .x,
+                                                              tier = 1L),
+                                      tag_tier_2 = .x,
+                                      tag_tier_3 = NA_character_)) %>%
+      dplyr::bind_rows(result)
+  }
+  
   # 3. add remaining top-tier tags
-  result %<>% dplyr::bind_rows(tibble::tibble(tag_tier_1 = tags_tier_1 %>% setdiff(inferred_tags_tier_1),
-                                              tag_tier_2 = NA_character_,
-                                              tag_tier_3 = NA_character_))
-  result
+  if (length(non_parent_tags_tier_1)) {
+    
+    result %<>% dplyr::bind_rows(tibble::tibble(tag_tier_1 = non_parent_tags_tier_1,
+                                                tag_tier_2 = NA_character_,
+                                                tag_tier_3 = NA_character_))
+  }
+  
+  # sort result
+  result %>% dplyr::arrange(tag_tier_1, tag_tier_2, tag_tier_3)
 }
 
 #' Infer higher-tier tags
