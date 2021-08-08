@@ -283,6 +283,11 @@ assert_cols_valid <- function(data,
   
   if (n_na_col_names) action("Detected {n_na_col_names} column(?s) in {.arg data} that contain forbidden {.val NA}s: {.var {na_col_names}}")
   
+  ## check `id`
+  if ("id" %in% colnames(data) && anyDuplicated(data$id)) {
+    action("Duplicated {.var id}s detected. IDs must be unique.")
+  }
+
   ## check `country_code`
   if ("country_code" %in% colnames(data)) {
     choices <- countrycode::codelist$iso2c %>% setdiff(NA_character_)
@@ -524,11 +529,6 @@ tidy_referendums <- function(data,
     
     cli::cli_abort("Mandatory fields detected that contain {.val NA} values. Please debug.")
   }
-  
-  # ## ensure `oid`s are unique
-  # if (anyDuplicated(data$`_id`)) {
-  #   cli::cli_abort("Duplicated {.var oid}s detected. Please debug.")
-  # }
   
   # tidy data
   if (tidy) {
