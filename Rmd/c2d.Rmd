@@ -39,7 +39,7 @@ the following "endpoints":
 
     -   In array fields:
 
-        -   (Named) `list()` in array fields
+        -   (Named) `list()`
 
 -   The returned JSON data has between 22 and 26 fields. Fields that are not always present include:
 
