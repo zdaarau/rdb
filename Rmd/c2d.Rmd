@@ -593,7 +593,6 @@ tidy_referendums <- function(data,
                                  "inst_trigger_actor_level",
                                  "inst_trigger_time_limit",
                                  "inst_quorum_approval",
-                                 "inst_precondition_actor",
                                  "inst_precondition_decision"))),
                       stringr::str_to_lower),
         ## lists
