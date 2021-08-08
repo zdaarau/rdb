@@ -460,11 +460,11 @@ tidy_referendums <- function(data,
       dplyr::full_join(y = tibble::tibble(archive = list(),
                                           subnational_entity_name = character(),
                                           municipality = character(),
-                                          id_official = character()),
+                                          id_sudd = character()),
                        by = intersect(c("archive",
                                         "subnational_entity_name",
                                         "municipality",
-                                        "id_official"),
+                                        "id_sudd"),
                                       colnames(.))) %>%
       
       # create/recode variables
@@ -558,21 +558,21 @@ tidy_referendums <- function(data,
                                          .x == "Does not exist" ~ FALSE,
                                          TRUE ~ NA)),
         ## nominal
-        ### split `id_official` into `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
+        ### extract `id_official` from `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
+        id_official =
+          id_sudd %>%
+          dplyr::if_else(stringr::str_detect(string = .,
+                                             pattern = "^\\D"),
+                         NA_character_,
+                         .),
         id_sudd =
-          id_official %>%
+          id_sudd %>%
           dplyr::if_else(stringr::str_detect(string = .,
                                              pattern = "^\\D"),
                          .,
                          NA_character_) %>%
           # everything beyond the 8th char seems to be manually added -> strip!
           stringr::str_sub(end = 8L),
-        id_official =
-          id_official %>%
-          dplyr::if_else(stringr::str_detect(string = .,
-                                             pattern = "^\\D"),
-                         NA_character_,
-                         .),
         ### split `tags` into separate per-tier vars
         tags_tier_1 = tags %>% purrr::map(infer_tags,
                                           tier = 1L),
@@ -961,7 +961,7 @@ renamings should eventually all be upstreamed and this mapping shall be become s
 
 ```{r}
 v_names <- list("id"                                = "_id",
-                "id_official"                       = "number",
+                "id_sudd"                           = "number",
                 "subnational_entity_name"           = "canton",
                 "subterritories_no"                 = "states_no",
                 "subterritories_yes"                = "states_yes",
