@@ -288,11 +288,11 @@
 -   Explore possibilities for automated vote entry creation. E.g. I write a scraper (in R) for the votes of Swiss canton X and convert the result into
     C2D-compatible JSON.
 
-    **Test credentials to fiddle with the `POST /referendums` endpoint would be good...** open questions:
+    open questions:
 
     1.  Is the edit history preserved (or at least backed-up)?
 
-    2.  Are edits traceable by author? And is it possible to easily undo all edit by a specific account?
+    2.  Are edits traceable by author? And is it possible to easily undo all edits by a specific account?
 
 -   Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:
 
