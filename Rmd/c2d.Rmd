@@ -263,6 +263,96 @@ assemble_query_filter <- function(country_code = NULL,
 }
 ```
 
+### `assert_cols_valid`
+
+```{r}
+assert_cols_valid <- function(data,
+                              action = cli::cli_abort) {
+  
+  non_na_col_names <- c("id",
+                        "country_code",
+                        "level",
+                        "date")
+  na_col_names <-
+    data %>%
+    dplyr::select(any_of(non_na_col_names)) %>%
+    dplyr::filter(dplyr::if_any(.fns = is.na)) %>%
+    dplyr::select(where(~ any(is.na(.x)))) %>%
+    colnames()
+  n_na_col_names <- length(na_col_names)
+  
+  if (n_na_col_names) action("Detected {n_na_col_names} column(?s) in {.arg data} that contain forbidden {.val NA}s: {.var {na_col_names}}")
+  
+  ## check `country_code`
+  if ("country_code" %in% colnames(data)) {
+    choices <- countrycode::codelist$iso2c %>% setdiff(NA_character_)
+    check <- checkmate::check_subset(levels(data$country_code),
+                                     choices = choices)
+    if (!isTRUE(check)) action("Failed to validate {.var levels(country_code)}. {check}")
+  }
+  
+  ## check `date`
+  if ("date" %in% colnames(data)) {
+    check <- checkmate::check_date(data$date,
+                                   any.missing = FALSE)
+    if (!isTRUE(check)) action("Failed to validate {.var date}. {check}")
+  }
+  
+  ## check `level`
+  if ("level" %in% colnames(data)) {
+    choices <- v_vals("level")
+    check <- checkmate::check_subset(levels(data$level),
+                                     choices = choices)
+    if (!isTRUE(check)) action("Failed to validate {.var levels(level}. {check}")
+  }
+  
+  ## check `subnational_entity_name`
+  ## TODO: check `subnational_entity_code` instead once it's available
+  if (any(data$level != "national")) {
+    
+    if (!("subnational_entity_name" %in% colnames(data))) {
+      action(paste0("Referendums of {.var level} below {.val national} present in {.arg data} but column {.var subnational_entity_name} is missing."))
+    }
+    
+    ix_missing_subnational_entities <-
+      data %>%
+      tibble::rowid_to_column() %>%
+      dplyr::filter(level != "national" & is.na(subnational_entity_name)) %$%
+      rowid
+    
+    n_missing_subnational_entities <- length(ix_missing_subnational_entities)
+    
+    if (n_missing_subnational_entities) {
+      action(paste0("{n_missing_subnational_entities} row(?s) in {.arg data} (?is/are) missing a {.var subnational_entity_name}. Affected (?is/are) ",
+                    "the row(?s) with ind(?ex/ices) {ix_missing_subnational_entities}."))
+    }
+  }
+  
+  ## check `municipality`
+  if (any(data$level == "local")) {
+    
+    if (!("municipality" %in% colnames(data))) {
+      action(paste0("Referendums of {.var level = \"local\"} present in {.arg data} but column {.var municipality} is missing."))
+    }
+    
+    ix_missing_municipalities <-
+      data %>%
+      tibble::rowid_to_column() %>%
+      dplyr::filter(level == "local" & is.na(municipality)) %$%
+      rowid
+    
+    n_missing_municipalities <- length(ix_missing_municipalities)
+    
+    if (n_missing_municipalities) {
+      action(paste0("{n_missing_municipalities} row(?s) in {.arg data} (?is/are) missing a {.var municipality}. Affected (?is/are) the row(?s) with ",
+                    "ind(?ex/ices) {ix_missing_subnational_entities}."))
+    }
+  }
+  
+  invisible(data)
+}
+```
+
 ### `auth_session`
 
 ```{r}
@@ -439,13 +529,6 @@ tidy_referendums <- function(data,
   # if (anyDuplicated(data$`_id`)) {
   #   cli::cli_abort("Duplicated {.var oid}s detected. Please debug.")
   # }
-  
-  ## ensure `country_codes`s are valid
-  invalid_country_codes <- data$country_code[!(data$country_code %in% countrycode::codelist$iso2c %>% setdiff(NA_character_))]
-  
-  if (length(invalid_country_codes)) {
-    cli::cli_abort("Unknown {.var country_code}s detected. Please debug.")
-  }
   
   # tidy data
   if (tidy) {
@@ -652,7 +735,7 @@ tidy_referendums <- function(data,
       # remove obsolete vars
       dplyr::select(-tags) %>%
       
-      # convert types
+      # convert to (ordered) factor where appropriate
       ## based on codebook
       dplyr::mutate(dplyr::across(.fns = ~ {
         
@@ -681,11 +764,9 @@ tidy_referendums <- function(data,
                                            "subnational_entity_name",
                                            "municipality")),
                                   as.factor)) %>%
-      
       # add variable labels
       labelled::set_variable_labels(.labels = var_lbls,
                                     .strict = FALSE) %>%
-      
       # reorder columns
       dplyr::relocate(id,
                       id_official,
@@ -1108,44 +1189,7 @@ usethis::use_data(data_codebook,
                   version = 3L)
 ```
 
-# `is_online`
-
-```{r}
-#' Test C2D API availability
-#'
-#' Checks if the C2D API server is online and operational.
-#'
-#' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
-#'
-#' @return A logical scalar.
-#' @export
-is_online <- function(quiet = FALSE) {
-  
-  checkmate::assert_flag(quiet)
-  result <- FALSE
-  response <- rlang::with_handlers(.expr = httr::RETRY(verb = "GET",
-                                                       url = "https://services.c2d.ch/health",
-                                                       times = 5L),
-                                   error = ~ paste0("Error: ", .x$message))
-  
-  if (class(response) == "response") {
-    
-    response %<>% httr::content(as = "parsed",
-                                encoding = "UTF-8")
-    
-    if (response == "OK") {
-      result <- TRUE
-      
-    } else if (quiet) {
-      cli::cli_warn("C2D API server responded with: {.val {response}}")
-    }
-  }
-  
-  result
-}
-```
-
-# Referendums
+# Referendum Data
 
 ## `referendums`
 
@@ -1233,67 +1277,6 @@ referendums <- function(use_cache = TRUE,
 }
 ```
 
-## Metadata
-
-### `data_codebook`
-
-```{r}
-#' C2D Codebook
-#'
-#' A tibble containing the complete metadata of all [referendums()] variables. The Codebook below is also available
-#' [online](https://rpkg.dev/c2d/articles/codebook.html).
-#'
-#' @includeRmd vignettes/codebook.Rmd
-#'
-#' @format `r pkgsnip::return_label("data")`
-#' @aliases codebook
-#' @seealso Metadata functions [v_vals()] and [val_lbls()].
-#' @export
-"data_codebook"
-```
-
-### `val_lbls`
-
-```{r}
-#' Get the set of possible *value labels* of a referendum data variable
-#'
-#' Returns a character vector of value labels of a specific [referendums()] column, in the same order as [v_vals()], or of length `0` if `v_name`'s values are
-#' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
-#'
-#' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
-#' @param incl_affixes Whether or not to add the corresponding `value_label_prefix` and `value_label_suffix` to the returned labels.
-#'
-#' @return A character vector. Of length `0` if `v_name`'s values are not restricted to a predefined set or no value labels are defined in the
-#'   [codebook][data_codebook].
-#' @seealso [`data_codebook`][data_codebook]
-#' @family metadata
-#' @export
-#'
-#' @examples
-#' c2d::val_lbls("result",
-#'               incl_affixes = FALSE)
-#' c2d::val_lbls("result")
-#' 
-#' # Convert the labels to sentence case with trailing dot
-#' c2d::val_lbls("result") |> pal::sentenceify()
-val_lbls <- function(v_name,
-                     incl_affixes = TRUE) {
-  v_name <- rlang::arg_match(arg = v_name,
-                             values = data_codebook$variable_name)
-  metadata <- data_codebook %>% dplyr::filter(variable_name == !!v_name)
-  result <- metadata$value_labels %>% purrr::flatten_chr()
-  
-  if (incl_affixes) {
-    if (!is.na(metadata$value_label_prefix)) result <- paste(metadata$value_label_prefix, result)
-    if (!is.na(metadata$value_label_suffix)) result <- paste(metadata$value_label_suffix, result)
-  }
-  
-  result
-}
-```
-
-### `v_vals`
-
 ```{r}
 #' Get the set of possible *values* of a referendum data variable
 #'
@@ -1323,58 +1306,6 @@ v_vals <- function(v_name) {
     dplyr::filter(variable_name == !!v_name) %$%
     variable_values %>%
     unlist()
-}
-```
-
-## `count_referendums`
-
-```{r}
-#' Count number of referendums
-#'
-#' Counts the number of referendums in the C2D Database.
-#'
-#' @inheritParams assemble_query_filter
-#'
-#' @return A named list with `level` as names and referendum counts as values.
-#' @export
-#'
-#' @examples
-#' # the whole database (excl. drafts)
-#' c2d::count_referendums()
-#' 
-#' # only Swiss and Austrian referendums
-#' c2d::count_referendums(country_code = c("CH", "AT"))
-#' 
-#' # only Swiss referendums created between 2020 and 2021
-#' c2d::count_referendums(country_code = "CH",
-#'                        date_time_created_min = "2020-01-01",
-#'                        date_time_created_max = "2021-01-01")
-count_referendums <- function(is_draft = FALSE,
-                              country_code = NULL,
-                              subnational_entity_name = NULL,
-                              municipality = NULL,
-                              level = NULL,
-                              type = NULL,
-                              date = NULL,
-                              date_time_created_min = NULL,
-                              date_time_created_max = NULL,
-                              query_filter = NULL) {
-  httr::RETRY(verb = "GET",
-              url = "https://services.c2d.ch/referendums/stats",
-              query = list(filter = assemble_query_filter(country_code = country_code,
-                                                          subnational_entity_name = subnational_entity_name,
-                                                          municipality = municipality,
-                                                          level = level,
-                                                          type = type,
-                                                          date = date,
-                                                          is_draft = is_draft,
-                                                          date_time_created_min = date_time_created_min,
-                                                          date_time_created_max = date_time_created_max,
-                                                          query_filter = query_filter)),
-              times = 5L) %>%
-    httr::content(as = "parsed") %$%
-    votes %>%
-    magrittr::set_names(names(.) %>% dplyr::recode("sub_national" = "subnational"))
 }
 ```
 
@@ -1446,9 +1377,184 @@ download_file_attachment <- function(s3_object_key,
 }
 ```
 
-## Manipulate data
+## `validate_referendums`
 
-TODO
+This function performs various data validation steps to ensure there are no errors in the database.
+
+```{r}
+#' Validate referendums
+#'
+#' @param data The referendum data to validate, as returned by [referendums()].
+#' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
+#' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
+#'
+#' @return `data`, invisibly.
+#' @export
+validate_referendums <- function(data,
+                                 check_applicability_constraint = TRUE,
+                                 check_id_sudd_prefix = TRUE) {
+  
+  checkmate::assert_data_frame(data,
+                               min.rows = 1L)
+  checkmate::assert_subset(colnames(data),
+                           choices = data_codebook$variable_name)
+  checkmate::assert_flag(check_applicability_constraint)
+  checkmate::assert_flag(check_id_sudd_prefix)
+  
+  # check columns
+  assert_cols_valid(data = data,
+                    action = cli::cli_alert_warning)
+  
+  # check applicability constraints
+  if (check_applicability_constraint) {
+    
+    v_names_violated <-
+      data_codebook %>%
+      dplyr::filter(variable_name %in% colnames(data)
+                    & !is.na(applicability_constraint)) %$%
+      purrr::map2_lgl(.x = magrittr::set_names(x = variable_name,
+                                               value = variable_name),
+                      .y = applicability_constraint,
+                      .f = ~ {
+                        
+                        data %>%
+                          dplyr::filter(!eval(parse(text = .y))) %$%
+                          eval(as.symbol(.x)) %>%
+                          {is.na(.) | purrr::map_lgl(., is.null)} %>%
+                          all()
+                      }) %>%
+    magrittr::extract(. %in% FALSE) %>%
+    names()
+    
+    n_v_names_violated <- length(v_names_violated)
+    
+    if (n_v_names_violated) {
+      
+      cli::cli_alert_warning("Applicability constraints are violated for {n_v_names_violated} variable{?s}:")
+      
+      paste0("{.var ", v_names_violated, "}") %>%
+        magrittr::set_names(rep("x",
+                                times = length(.))) %>%
+        cli::cli_bullets()
+      
+      first_v_name_violated <- v_names_violated[1L]
+      
+      cli::cli_text("To get the applicability constraint of e.g. {.var {first_v_name_violated}}, run:")
+      cat("\n")
+      cli::cli_code(c("data_codebook %>%",
+                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
+                      "  applicability_constraint"))
+      cat("\n")
+      cli::cli_text("To inspect the entries in violation of the above applicability constraint, run:")
+      cat("\n")
+      cli::cli_code(c("data_codebook %>%",
+                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
+                      "  dplyr::filter(.data = data,",
+                      "                !eval(parse(text = applicability_constraint))) %$%",
+                      glue::glue("  {first_v_name_violated}")))
+    }
+  }
+  
+  # check `id_sudd` prefix if requested
+  if (check_id_sudd_prefix) {
+    
+    if (!all(c("country_code", "id_sudd") %in% colnames(data))) {
+      cli::cli_abort("Columns {.var country_code} and {.var id_sudd} must be present in {.arg data}.")
+    }
+    
+    # define allowed exceptions
+    allowed_exceptions <- tibble::tribble(
+      ~country_code, ~id_sudd_prefix,
+      # Curaçao
+      "CW", "an",
+      # Szeklerland, cf. https://sudd.ch/event.php?id=hu042008
+      "RO", "hu"
+    )
+    
+    # assemble target country codes
+    country_codes <- data$country_code %>% as.list()
+    
+    for (country_code in allowed_exceptions$country_code) {
+      
+      additional_country_codes <-
+        allowed_exceptions %>%
+        dplyr::filter(country_code == !!country_code) %$%
+        id_sudd_prefix %>%
+        stringr::str_to_upper()
+      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code == .x) %>% which()
+      
+      for (i in i_country_codes) {
+        country_codes[[i]] <- unique(c(country_codes[[i]], additional_country_codes))
+      }
+    }
+    
+    # add dummy indicating if target country codes match
+    # TODO: instead of modifying input data, print cli msg with all relevant info!
+    data$matches_id_sudd_prefix <-
+      data$id_sudd %>%
+      stringr::str_extract(pattern = "^..") %>%
+      stringr::str_to_upper() %>%
+      purrr::map2_lgl(.y = country_codes,
+                      .f = ~ .x %in% .y)
+    
+    data$matches_id_sudd_prefix[is.na(data$id_sudd)] <- NA
+  }
+  
+  invisible(data)
+}
+```
+
+## `count_referendums`
+
+```{r}
+#' Count number of referendums
+#'
+#' Counts the number of referendums per [`level`](https://rpkg.dev/c2d/articles/codebook.html#level) in the C2D Database.
+#'
+#' @inheritParams assemble_query_filter
+#'
+#' @return A named list with `level` as names and referendum counts as values.
+#' @export
+#'
+#' @examples
+#' # the whole database (excl. drafts)
+#' c2d::count_referendums()
+#' 
+#' # only Swiss and Austrian referendums
+#' c2d::count_referendums(country_code = c("CH", "AT"))
+#' 
+#' # only Swiss referendums created between 2020 and 2021
+#' c2d::count_referendums(country_code = "CH",
+#'                        date_time_created_min = "2020-01-01",
+#'                        date_time_created_max = "2021-01-01")
+count_referendums <- function(is_draft = FALSE,
+                              country_code = NULL,
+                              subnational_entity_name = NULL,
+                              municipality = NULL,
+                              level = NULL,
+                              type = NULL,
+                              date = NULL,
+                              date_time_created_min = NULL,
+                              date_time_created_max = NULL,
+                              query_filter = NULL) {
+  httr::RETRY(verb = "GET",
+              url = "https://services.c2d.ch/referendums/stats",
+              query = list(filter = assemble_query_filter(country_code = country_code,
+                                                          subnational_entity_name = subnational_entity_name,
+                                                          municipality = municipality,
+                                                          level = level,
+                                                          type = type,
+                                                          date = date,
+                                                          is_draft = is_draft,
+                                                          date_time_created_min = date_time_created_min,
+                                                          date_time_created_max = date_time_created_max,
+                                                          query_filter = query_filter)),
+              times = 5L) %>%
+    httr::content(as = "parsed") %$%
+    votes %>%
+    magrittr::set_names(names(.) %>% dplyr::recode("sub_national" = "subnational"))
+}
+```
 
 ## `search_referendums`
 
@@ -1484,9 +1590,70 @@ search_referendums <- function(term) {
 }
 ```
 
-## Tags-related
+# Referendum metadata
 
-### `hierarchize_tags`
+## `data_codebook`
+
+```{r}
+#' C2D Codebook
+#'
+#' A tibble containing the complete metadata of all [referendums()] variables. The Codebook below is also available
+#' [online](https://rpkg.dev/c2d/articles/codebook.html).
+#'
+#' @includeRmd vignettes/codebook.Rmd
+#'
+#' @format `r pkgsnip::return_label("data")`
+#' @aliases codebook
+#' @seealso Metadata functions [v_vals()] and [val_lbls()].
+#' @export
+"data_codebook"
+```
+
+## `val_lbls`
+
+```{r}
+#' Get the set of possible *value labels* of a referendum data variable
+#'
+#' Returns a character vector of value labels of a specific [referendums()] column, in the same order as [v_vals()], or of length `0` if `v_name`'s values are
+#' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
+#'
+#' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
+#' @param incl_affixes Whether or not to add the corresponding `value_label_prefix` and `value_label_suffix` to the returned labels.
+#'
+#' @return A character vector. Of length `0` if `v_name`'s values are not restricted to a predefined set or no value labels are defined in the
+#'   [codebook][data_codebook].
+#' @seealso [`data_codebook`][data_codebook]
+#' @family metadata
+#' @export
+#'
+#' @examples
+#' c2d::val_lbls("result",
+#'               incl_affixes = FALSE)
+#' c2d::val_lbls("result")
+#' 
+#' # Convert the labels to sentence case with trailing dot
+#' c2d::val_lbls("result") |> pal::sentenceify()
+val_lbls <- function(v_name,
+                     incl_affixes = TRUE) {
+  v_name <- rlang::arg_match(arg = v_name,
+                             values = data_codebook$variable_name)
+  metadata <- data_codebook %>% dplyr::filter(variable_name == !!v_name)
+  result <- metadata$value_labels %>% purrr::flatten_chr()
+  
+  if (incl_affixes) {
+    if (!is.na(metadata$value_label_prefix)) result <- paste(metadata$value_label_prefix, result)
+    if (!is.na(metadata$value_label_suffix)) result <- paste(metadata$value_label_suffix, result)
+  }
+  
+  result
+}
+```
+
+## `v_vals`
+
+# Tags
+
+## `hierarchize_tags`
 
 ```{r}
 #' Hierarchize Tags
@@ -1587,7 +1754,7 @@ hierarchize_tags <- function(x) {
 }
 ```
 
-### `infer_tags`
+## `infer_tags`
 
 ```{r}
 #' Infer higher-tier tags
@@ -1637,125 +1804,41 @@ infer_tags <- function(tags,
 }
 ```
 
-## `validate_referendums`
+# API Status
 
-This function performs various data validation steps to ensure there are no errors in the database.
+## `is_online`
 
 ```{r}
-#' Validate referendums
+#' Test C2D API availability
 #'
-#' @param data The referendum data to validate, as returned by [referendums()].
-#' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
-#' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
+#' Checks if the C2D API server is online and operational.
 #'
-#' @return `data`, invisibly.
+#' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
+#'
+#' @return A logical scalar.
 #' @export
-validate_referendums <- function(data,
-                                 check_applicability_constraint = TRUE,
-                                 check_id_sudd_prefix = TRUE) {
+is_online <- function(quiet = FALSE) {
   
-  checkmate::assert_data_frame(data,
-                               min.rows = 1L)
-  checkmate::assert_subset(colnames(data),
-                           choices = data_codebook$variable_name)
-  checkmate::assert_flag(check_applicability_constraint)
-  checkmate::assert_flag(check_id_sudd_prefix)
+  checkmate::assert_flag(quiet)
+  result <- FALSE
+  response <- rlang::with_handlers(.expr = httr::RETRY(verb = "GET",
+                                                       url = "https://services.c2d.ch/health",
+                                                       times = 5L),
+                                   error = ~ paste0("Error: ", .x$message))
   
-  # check applicability constraints
-  if (check_applicability_constraint) {
+  if (class(response) == "response") {
     
-    v_names_violated <-
-      data_codebook %>%
-      dplyr::filter(variable_name %in% colnames(data)
-                    & !is.na(applicability_constraint)) %$%
-      purrr::map2_lgl(.x = magrittr::set_names(x = variable_name,
-                                               value = variable_name),
-                      .y = applicability_constraint,
-                      .f = ~ {
-                        
-                        data %>%
-                          dplyr::filter(!eval(parse(text = .y))) %$%
-                          eval(as.symbol(.x)) %>%
-                          {is.na(.) | purrr::map_lgl(., is.null)} %>%
-                          all()
-                      }) %>%
-    magrittr::extract(. %in% FALSE) %>%
-    names()
+    response %<>% httr::content(as = "parsed",
+                                encoding = "UTF-8")
     
-    n_v_names_violated <- length(v_names_violated)
-    
-    if (n_v_names_violated) {
+    if (response == "OK") {
+      result <- TRUE
       
-      cli::cli_alert_warning("Applicability constraints are violated for {n_v_names_violated} variable{?s}:")
-      
-      paste0("{.var ", v_names_violated, "}") %>%
-        magrittr::set_names(rep("x",
-                                times = length(.))) %>%
-        cli::cli_bullets()
-      
-      first_v_name_violated <- v_names_violated[1L]
-      
-      cli::cli_text("To get the applicability constraint of e.g. {.var {first_v_name_violated}}, run:")
-      cat("\n")
-      cli::cli_code(c("data_codebook %>%",
-                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
-                      "  applicability_constraint"))
-      cat("\n")
-      cli::cli_text("To inspect the entries in violation of the above applicability constraint, run:")
-      cat("\n")
-      cli::cli_code(c("data_codebook %>%",
-                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
-                      "  dplyr::filter(.data = data,",
-                      "                !eval(parse(text = applicability_constraint))) %$%",
-                      glue::glue("  {first_v_name_violated}")))
+    } else if (quiet) {
+      cli::cli_warn("C2D API server responded with: {.val {response}}")
     }
   }
   
-  # check `id_sudd` prefix if requested
-  if (check_id_sudd_prefix) {
-    
-    if (!all(c("country_code", "id_sudd") %in% colnames(data))) {
-      cli::cli_abort("Columns {.var country_code} and {.var id_sudd} must be present in {.arg data}.")
-    }
-    
-    # define allowed exceptions
-    allowed_exceptions <- tibble::tribble(
-      ~country_code, ~id_sudd_prefix,
-      # Curaçao
-      "CW", "an",
-      # Szeklerland, cf. https://sudd.ch/event.php?id=hu042008
-      "RO", "hu"
-    )
-    
-    # assemble target country codes
-    country_codes <- data$country_code %>% as.list()
-    
-    for (country_code in allowed_exceptions$country_code) {
-      
-      additional_country_codes <-
-        allowed_exceptions %>%
-        dplyr::filter(country_code == !!country_code) %$%
-        id_sudd_prefix %>%
-        stringr::str_to_upper()
-      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code == .x) %>% which()
-      
-      for (i in i_country_codes) {
-        country_codes[[i]] <- unique(c(country_codes[[i]], additional_country_codes))
-      }
-    }
-    
-    # add dummy indicating if target country codes match
-    # TODO: instead of modifying input data, print cli msg with all relevant info!
-    data$matches_id_sudd_prefix <-
-      data$id_sudd %>%
-      stringr::str_extract(pattern = "^..") %>%
-      stringr::str_to_upper() %>%
-      purrr::map2_lgl(.y = country_codes,
-                      .f = ~ .x %in% .y)
-    
-    data$matches_id_sudd_prefix[is.na(data$id_sudd)] <- NA
-  }
-  
-  invisible(data)
+  result
 }
 ```
