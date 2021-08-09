@@ -1304,14 +1304,48 @@ referendums <- function(use_cache = TRUE,
 }
 ```
 
+## `referendum`
+
 ```{r}
+#' Get a single referendum's data
 #'
+#' Downloads a single referendum's data from the C2D Database. See [`codebook`][codebook] for a detailed description of all variables.
 #'
+#' @param id The referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
+#' @inheritParams referendums
 #'
+#' @inherit referendums return
+#' @family referendum
 #' @export
 #'
 #' @examples
+#' c2d::referendum(id = "5bbbe26a92a21351232dd73f")
+referendum <- function(id,
+                       incl_archive = FALSE,
+                       tidy = TRUE) {
   
+  checkmate::assert_string(id,
+                           min.chars = 1L)
+  checkmate::assert_flag(incl_archive)
+  checkmate::assert_flag(tidy)
+  
+  # retrieve data
+  data <-
+    httr::RETRY(verb = "GET",
+                url = paste0("https://services.c2d.ch/referendums/", id),
+                times = 5L) %>%
+    # ensure we actually got a JSON response
+    assert_mime_type() %>%
+    # parse response
+    httr::content(as = "parsed") %>%
+    # tidy data
+    tidy_referendums(tidy = tidy)
+  
+  # exclude `archive` if requested¨
+  if (!incl_archive) data %<>% dplyr::select(-any_of("archive"))
+  
+  # return data
+  data
 }
 ```
 
