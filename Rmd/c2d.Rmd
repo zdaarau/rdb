@@ -1232,6 +1232,7 @@ usethis::use_data(data_codebook,
 #' @inheritParams tidy_referendums
 #'
 #' @return `r pkgsnip::return_label("data")`
+#' @family referendum
 #' @export
 #'
 #' @examples
@@ -1326,6 +1327,7 @@ referendums <- function(use_cache = TRUE,
 #' @param path The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.
 #'
 #' @return A [response object][httr::response], invisibly.
+#' @family referendum
 #' @export
 #'
 #' @examples
@@ -1394,6 +1396,7 @@ This function performs various data validation steps to ensure there are no erro
 #' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
 #'
 #' @return `data`, invisibly.
+#' @family referendum
 #' @export
 validate_referendums <- function(data,
                                  check_applicability_constraint = TRUE,
@@ -1519,6 +1522,7 @@ validate_referendums <- function(data,
 #' @inheritParams assemble_query_filter
 #'
 #' @return A named list with `level` as names and referendum counts as values.
+#' @family referendum
 #' @export
 #'
 #' @examples
@@ -1581,6 +1585,7 @@ title](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-refer
 #' @param term The Search term. A character scalar.
 #'
 #' @return A character vector of English referendum titles matching the search `term`.
+#' @family referendum
 #' @export
 #'
 #' @examples
@@ -1615,7 +1620,7 @@ search_referendums <- function(term) {
 #'
 #' @format `r pkgsnip::return_label("data")`
 #' @aliases codebook
-#' @seealso Metadata functions [v_vals()] and [val_lbls()].
+#' @family metadata
 #' @export
 "data_codebook"
 ```
@@ -1859,6 +1864,7 @@ infer_tags <- function(tags,
 #' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
 #'
 #' @return A logical scalar.
+#' @family api_status
 #' @export
 is_online <- function(quiet = FALSE) {
   
