@@ -487,6 +487,9 @@ read_toml <- function(path) {
 
 ### `tidy_referendums`
 
+TODO: Upstream renamings and recodings as far as possible and subsequently remove them from `tidy_referendums()`, `assemble_query_filter()` and all other
+affected places.
+
 ```{r}
 #' Tidy "raw" C2D API referendum data
 #'
@@ -494,8 +497,8 @@ read_toml <- function(path) {
 #'
 #' @param data The MongoDB data as a list (converted from the JSON returned by the C2D API using [jsonlite::fromJSON()]).
 #' @param tidy Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If `FALSE`, the raw MongoDB
-#'   referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the [codebook][codebook]
-#'   (i.a. different variable names).
+#'   referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the 
+#'   [codebook][data_codebook] (i.a. different variable names).
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @keywords internal
@@ -1043,7 +1046,7 @@ tags <- function(tiers = 1:3) {
 pkg <- utils::packageName()
 ```
 
-### Mandatory data fields
+### Mandatory C2D referendum database fields
 
 Field names as returned by the `referendums` API endpoint.
 
@@ -1213,13 +1216,9 @@ usethis::use_data(data_codebook,
                   version = 3L)
 ```
 
-# Referendum Data
+# Referendum data
 
 ## `referendums`
-
-TODO:
-
--   [ ] Upstream renamings and recodings as far as possible and subsequently remove them from `referendums()` and `assemble_query_filter()`.
 
 ```{r}
 #' Get referendum data
@@ -1305,34 +1304,13 @@ referendums <- function(use_cache = TRUE,
 ```
 
 ```{r}
-#' Get the set of possible *values* of a referendum data variable
 #'
-#' Returns a vector of the possible predefined values a specific column in [referendums()] can hold. If the variable values aren't restricted to a predefined
-#' set, `NULL` is returned.
 #'
-#' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
 #'
-#' @return
-#' If `v_name`'s values are restricted to a predefined set and
-#' - `v_name` is *not* of type list, a vector of the same type as `v_name`.
-#' - `v_name` is of type list, a vector of the same type as the elements of `v_name`.
-#'
-#' Else `NULL`.
-#' @seealso [`data_codebook`][data_codebook]
-#' @family metadata
 #' @export
 #'
 #' @examples
-#' v_vals("result")
-#' v_vals("id")
-v_vals <- function(v_name) {
   
-  v_name <- rlang::arg_match(arg = v_name,
-                             values = data_codebook$variable_name)
-  data_codebook %>%
-    dplyr::filter(variable_name == !!v_name) %$%
-    variable_values %>%
-    unlist()
 }
 ```
 
@@ -1683,6 +1661,38 @@ val_lbls <- function(v_name,
 ```
 
 ## `v_vals`
+
+```{r}
+#' Get the set of possible *values* of a referendum data variable
+#'
+#' Returns a vector of the possible predefined values a specific column in [referendums()] can hold. If the variable values aren't restricted to a predefined
+#' set, `NULL` is returned.
+#'
+#' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
+#'
+#' @return
+#' If `v_name`'s values are restricted to a predefined set and
+#' - `v_name` is *not* of type list, a vector of the same type as `v_name`.
+#' - `v_name` is of type list, a vector of the same type as the elements of `v_name`.
+#'
+#' Else `NULL`.
+#' @seealso [`data_codebook`][data_codebook]
+#' @family metadata
+#' @export
+#'
+#' @examples
+#' v_vals("result")
+#' v_vals("id")
+v_vals <- function(v_name) {
+  
+  v_name <- rlang::arg_match(arg = v_name,
+                             values = data_codebook$variable_name)
+  data_codebook %>%
+    dplyr::filter(variable_name == !!v_name) %$%
+    variable_values %>%
+    unlist()
+}
+```
 
 # Tags
 
