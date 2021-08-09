@@ -527,7 +527,6 @@ tidy_referendums <- function(data,
       l$categories <- NULL
       l$context <- NULL
       l$title <- NULL
-      l$`_id` %<>% purrr::flatten_chr()
       
       for (name in c("action",
                      "tags",
@@ -668,6 +667,8 @@ tidy_referendums <- function(data,
                                          .x == "Does not exist" ~ FALSE,
                                          TRUE ~ NA)),
         ## nominal
+        ### flatten `id`
+        id = purrr::flatten_chr(id),
         ### extract `id_official` from `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
         id_official =
           id_sudd %>%
