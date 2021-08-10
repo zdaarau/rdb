@@ -485,6 +485,20 @@ read_toml <- function(path) {
 }
 ```
 
+### `rename_from_list`
+
+NOTE that an alternative approach reducing `names_list` to the ones actually present and then `dplyr::rename(!!!names_list_present)` is very inefficient.
+
+```{r}
+rename_from_list <- function(x,
+                             names_list) {
+  
+  names_list_new <- names(x) %>% dplyr::recode(!!!names_list)
+  
+  x %>% magrittr::set_names(names_list_new)
+}
+```
+
 ### `tidy_referendums`
 
 TODO: Upstream renamings and recodings as far as possible and subsequently remove them from `tidy_referendums()`, `assemble_query_filter()` and all other
@@ -513,31 +527,31 @@ tidy_referendums <- function(data,
                              title_langs = names(l$title)) {
       
       for (name in category_names) {
-        l[[name]] <- l$categories[[name]]
+        l[[paste0("categories.", name)]] <- l$categories[[name]]
       }
       
       for (name in context_names) {
-        l[[name]] <- l$context[[name]]
+        l[[paste0("context.", name)]] <- l$context[[name]]
       }
       
       for (lang in title_langs) {
-        l[[paste0("title_", lang)]] <- l$title[[lang]]
+        l[[paste0("title.", lang)]] <- l$title[[lang]]
       }
       
       l$categories <- NULL
       l$context <- NULL
       l$title <- NULL
       
-      for (name in c("action",
-                     "tags",
-                     "special_topics",
-                     "excluded_topics")) {
+      for (name in c("tags",
+                     "categories.action",
+                     "categories.special_topics",
+                     "categories.excluded_topics")) {
         l[[name]] %<>% purrr::flatten_chr() %>% list()
       }
       
       for (name in c("archive",
                      "files",
-                     "votes_per_canton")) {
+                     "context.votes_per_canton")) {
         l[[name]] %<>% list()
       }
       
@@ -561,10 +575,7 @@ tidy_referendums <- function(data,
     
     data %<>%
       # rename variables (mind that the MongoDB-based API doesn't demand a schema)
-      dplyr::rename(!!!({
-        nms <- names(.)
-        v_names %>% purrr::keep(~ .x %in% nms)
-      })) %>%
+      rename_from_list(names_list = v_names) %>%
       # add vars which aren't always included
       dplyr::full_join(y = tibble::tibble(archive = list(),
                                           subnational_entity_name = character(),
@@ -747,10 +758,7 @@ tidy_referendums <- function(data,
                                                                        magrittr::divide_by(1000L) %>%
                                                                        lubridate::as_datetime()) %>%
                                                     # change subvariable names
-                                                    magrittr::set_names(names(.) %>% dplyr::recode("date" = "date_time_attached",
-                                                                                                   "object_key" = "s3_object_key",
-                                                                                                   "size" = "file_size",
-                                                                                                   "deleted" = "is_deleted")))),
+                                                    rename_from_list(names_list = sub_v_names$files))),
         
         # variable creations
         url_sudd = dplyr::if_else(!is.na(id_sudd),
@@ -1066,51 +1074,61 @@ required_fields <- c("_id",
 
 ### Variable renamings
 
-This maps the final variable names as found in the [C2D codebook](https://rpkg.dev/c2d/articles/codebook.html) to the field names of the back-end's MongoDB. The
+This maps the field names of the back-end's MongoDB to the final variable names as found in the [C2D codebook](https://rpkg.dev/c2d/articles/codebook.html). The
 renamings should eventually all be upstreamed and this mapping shall be become superfluous.
 
 ```{r}
-v_names <- list("id"                                = "_id",
-                "id_sudd"                           = "number",
-                "subnational_entity_name"           = "canton",
-                "subterritories_no"                 = "states_no",
-                "subterritories_yes"                = "states_yes",
-                "electorate_total"                  = "total_electorate",
-                "electorate_abroad"                 = "citizens_abroad",
-                "votes_per_subterritory"            = "votes_per_canton",
-                "lower_house_yes"                   = "national_council_yes",
-                "lower_house_no"                    = "national_council_no",
-                "lower_house_abstentions"           = "national_council_abstentions",
-                "upper_house_yes"                   = "states_council_yes",
-                "upper_house_no"                    = "states_council_no",
-                "upper_house_abstentions"           = "states_council_abstentions",
-                "position_government"               = "recommendation",
-                "is_draft"                          = "draft",
-                "date_time_created"                 = "created_on",
-                "type"                              = "institution",
-                "inst_legal_basis_type"             = "official_status",
-                "inst_has_urgent_legal_basis"       = "legal_act_type",
-                "inst_is_binding"                   = "vote_result_status",
-                "inst_is_counter_proposal"          = "counter_proposal",
-                "inst_is_assembly"                  = "vote_venue",
-                "inst_trigger_type"                 = "vote_trigger",
-                "inst_trigger_actor"                = "vote_trigger_actor",
-                "inst_trigger_actor_level"          = "vote_trigger_state_level",
-                "inst_trigger_threshold"            = "vote_trigger_number",
-                "inst_trigger_time_limit"           = "vote_trigger_time",
-                "inst_object_type"                  = "vote_object",
-                "inst_object_author"                = "author_of_the_vote_object",
-                "inst_object_legal_level"           = "hierarchy_of_the_legal_norm",
-                "inst_object_revision_extent"       = "degree_of_revision",
-                "inst_object_revision_modes"        = "action",
-                "inst_object_revision_divisibility" = "referendum_text_options",
-                "inst_quorum_turnout"               = "turnout_quorum",
-                "inst_quorum_approval"              = "decision_quorum",
-                "inst_has_precondition"             = "institutional_precondition",
-                "inst_precondition_actor"           = "institutional_precondition_decision_actor",
-                "inst_precondition_decision"        = "institutional_precondition_decision",
-                "inst_topics_only"                  = "special_topics",
-                "inst_topics_excluded"              = "excluded_topics")
+                # old name                                               new name
+v_names <- list("_id"                                                  = "id",
+                "number"                                               = "id_sudd",
+                "canton"                                               = "subnational_entity_name",
+                "title.de"                                             = "title_de",
+                "title.en"                                             = "title_en",
+                "title.fr"                                             = "title_fr",
+                "context.states_no"                                    = "subterritories_no",
+                "context.states_yes"                                   = "subterritories_yes",
+                "total_electorate"                                     = "electorate_total",
+                "citizens_abroad"                                      = "electorate_abroad",
+                "context.votes_per_canton"                             = "votes_per_subterritory",
+                "context.national_council_yes"                         = "lower_house_yes",
+                "context.national_council_no"                          = "lower_house_no",
+                "context.national_council_abstentions"                 = "lower_house_abstentions",
+                "context.states_council_yes"                           = "upper_house_yes",
+                "context.states_council_no"                            = "upper_house_no",
+                "context.states_council_abstentions"                   = "upper_house_abstentions",
+                "context.recommendation"                               = "position_government",
+                "draft"                                                = "is_draft",
+                "created_on"                                           = "date_time_created",
+                "institution"                                          = "type",
+                "categories.official_status"                           = "inst_legal_basis_type",
+                "categories.legal_act_type"                            = "inst_has_urgent_legal_basis",
+                "categories.vote_result_status"                        = "inst_is_binding",
+                "categories.counter_proposal"                          = "inst_is_counter_proposal",
+                "categories.vote_venue"                                = "inst_is_assembly",
+                "categories.vote_trigger"                              = "inst_trigger_type",
+                "categories.vote_trigger_actor"                        = "inst_trigger_actor",
+                "categories.vote_trigger_state_level"                  = "inst_trigger_actor_level",
+                "categories.vote_trigger_number"                       = "inst_trigger_threshold",
+                "categories.vote_trigger_time"                         = "inst_trigger_time_limit",
+                "categories.vote_object"                               = "inst_object_type",
+                "categories.author_of_the_vote_object"                 = "inst_object_author",
+                "categories.hierarchy_of_the_legal_norm"               = "inst_object_legal_level",
+                "categories.degree_of_revision"                        = "inst_object_revision_extent",
+                "categories.action"                                    = "inst_object_revision_modes",
+                "categories.referendum_text_options"                   = "inst_object_revision_divisibility",
+                "categories.turnout_quorum"                            = "inst_quorum_turnout",
+                "categories.decision_quorum"                           = "inst_quorum_approval",
+                "categories.institutional_precondition"                = "inst_has_precondition",
+                "categories.institutional_precondition_decision_actor" = "inst_precondition_actor",
+                "categories.institutional_precondition_decision"       = "inst_precondition_decision",
+                "categories.special_topics"                            = "inst_topics_only",
+                "categories.excluded_topics"                           = "inst_topics_excluded")
+
+                                 # old name     new name
+sub_v_names <- list(files = list("date"       = "date_time_attached",
+                                 "object_key" = "s3_object_key",
+                                 "size"       = "file_size",
+                                 "deleted"    = "is_deleted"))
 ```
 
 ## Data
@@ -1288,13 +1306,20 @@ referendums <- function(use_cache = TRUE,
                   times = 5L) %>%
       # ensure we actually got a JSON response
       assert_mime_type() %>%
-      # parse response
-      httr::content(as = "parsed") %$%
+      # extract JSON
+      httr::content(as = "text",
+                    encoding = "UTF-8") %>%
+      # convert JSON to list
+      # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result (depending on `query`)
+      jsonlite::fromJSON(simplifyVector = FALSE,
+                         simplifyDataFrame = FALSE,
+                         simplifyMatrix = FALSE,
+                         flatten = FALSE) %$%
       items %>%
       # tidy data
       tidy_referendums(tidy = tidy)
     
-    # exclude `archive` if requested¨
+    # exclude `archive` if requested
     if (!incl_archive) data %<>% dplyr::select(-any_of("archive"))
     
     # return data
@@ -1338,12 +1363,19 @@ referendum <- function(id,
                 times = 5L) %>%
     # ensure we actually got a JSON response
     assert_mime_type() %>%
-    # parse response
-    httr::content(as = "parsed") %>%
+    # extract JSON
+    httr::content(as = "text",
+                  encoding = "UTF-8") %>%
+    # convert JSON to list
+    # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result
+    jsonlite::fromJSON(simplifyVector = FALSE,
+                       simplifyDataFrame = FALSE,
+                       simplifyMatrix = FALSE,
+                       flatten = FALSE) %>%
     # tidy data
     tidy_referendums(tidy = tidy)
   
-  # exclude `archive` if requested¨
+  # exclude `archive` if requested
   if (!incl_archive) data %<>% dplyr::select(-any_of("archive"))
   
   # return data
