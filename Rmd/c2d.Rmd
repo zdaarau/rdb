@@ -501,8 +501,10 @@ rename_from_list <- function(x,
 
 ### `tidy_referendums`
 
-TODO: Upstream renamings and recodings as far as possible and subsequently remove them from `tidy_referendums()`, `assemble_query_filter()` and all other
-affected places.
+TODO:
+
+-   Upstream renamings and recodings as far as possible and subsequently remove them from `tidy_referendums()`, `assemble_query_filter()` and all other affected
+    places.
 
 ```{r}
 #' Tidy "raw" C2D API referendum data
@@ -577,25 +579,16 @@ tidy_referendums <- function(data,
       # rename variables (mind that the MongoDB-based API doesn't demand a schema)
       rename_from_list(names_list = v_names) %>%
       # add vars which aren't always included
-      dplyr::full_join(y = tibble::tibble(archive = list(),
-                                          subnational_entity_name = character(),
+      dplyr::full_join(y = tibble::tibble(subnational_entity_name = character(),
                                           municipality = character(),
                                           id_sudd = character()),
-                       by = intersect(c("archive",
-                                        "subnational_entity_name",
+                       by = intersect(c("subnational_entity_name",
                                         "municipality",
                                         "id_sudd"),
                                       colnames(.))) %>%
       
       # create/recode variables
       dplyr::mutate(
-        # replace empty lists with `NULL` in *nested* list columns
-        dplyr::across(.cols = where(is.list),
-                      .fns = purrr::map,
-                      .f = ~ {
-                        if (length(.x) || !is.list(.x)) .x else NULL
-                      }),
-        
         # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
         dplyr::across(any_of(c("subterritories_no",
                                "subterritories_yes",
@@ -747,20 +740,17 @@ tidy_referendums <- function(data,
         date = lubridate::as_date(date),
         date_time_created = date_time_created %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime(),
         ## undefined
-        files = files %>% purrr::map(~ .x %>%
-                                       # harmonize depth (i.e. add list level if necessary)
-                                       purrr::when(length(.) == 0L || purrr::vec_depth(.) > 3L ~ .,
-                                                   ~ list(.)) %>%
-                                       purrr::map(~ .x %>%
-                                                    # unnest and restore `date`
-                                                    purrr::assign_in(where = "date",
-                                                                     value =
-                                                                       .$date %>%
-                                                                       purrr::flatten_dbl() %>%
-                                                                       magrittr::divide_by(1000L) %>%
-                                                                       lubridate::as_datetime()) %>%
-                                                    # change subvariable names
-                                                    rename_from_list(names_list = sub_v_names$files))),
+        files = files %>% purrr::map(~ .x %>% purrr::map(~ .x %>%
+                                                           # unnest and restore `date`
+                                                           purrr::assign_in(where = "date",
+                                                                            value =
+                                                                              .$date %>%
+                                                                              purrr::flatten_dbl() %>%
+                                                                              magrittr::divide_by(1000L) %>%
+                                                                              lubridate::as_datetime()) %>%
+                                                           # change subvariable names
+                                                           rename_from_list(names_list = sub_v_names$files))),
+        votes_per_subterritory = votes_per_subterritory,
         
         # variable creations
         url_sudd = dplyr::if_else(!is.na(id_sudd),
@@ -900,6 +890,16 @@ tidy_referendums <- function(data,
     # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
   }
   
+  # convert nested list cols to tibbles
+  data %>% dplyr::mutate(dplyr::across(c(files,
+                                         any_of(c("context.votes_per_canton",
+                                                  "votes_per_subterritory"))),
+                                       ~ .x %>% purrr::map(~ { if (length(.x)) .x %>% purrr::map_dfr(tibble::as_tibble) else NULL })),
+                         dplyr::across(archive,
+                                       ~ .x %>% purrr::map(~ { if (length(.x)) tibble::as_tibble(.x) else NULL })))
+}
+```
+
   data
 }
 ```
