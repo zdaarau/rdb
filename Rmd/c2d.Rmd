@@ -504,6 +504,18 @@ rename_from_list <- function(x,
 }
 ```
 
+### `tidy_date`
+
+```{r}
+tidy_date <- function(x) {
+  
+  x %>%
+    unlist(use.names = FALSE) %>%
+    magrittr::divide_by(1000L) %>%
+    lubridate::as_datetime()
+}
+```
+
 ### `tidy_referendums`
 
 TODO:
@@ -743,16 +755,12 @@ tidy_referendums <- function(data,
         ## ordinal
         ## interval
         date = lubridate::as_date(date),
-        date_time_created = date_time_created %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime(),
+        date_time_created = tidy_date(date_time_created),
         ## undefined
         files = files %>% purrr::map(~ .x %>% purrr::map(~ .x %>%
                                                            # unnest and restore `date`
                                                            purrr::assign_in(where = "date",
-                                                                            value =
-                                                                              .$date %>%
-                                                                              purrr::flatten_dbl() %>%
-                                                                              magrittr::divide_by(1000L) %>%
-                                                                              lubridate::as_datetime()) %>%
+                                                                            value = tidy_date(.$date)) %>%
                                                            # change subvariable names
                                                            rename_from_list(names_list = sub_v_names$files))),
         votes_per_subterritory = votes_per_subterritory,
