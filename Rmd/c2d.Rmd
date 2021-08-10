@@ -1769,7 +1769,7 @@ v_vals <- function(v_name) {
 }
 ```
 
-# Tags
+# [Tags](https://rpkg.dev/c2d/articles/codebook.html#tags)
 
 ## `hierarchize_tags`
 
