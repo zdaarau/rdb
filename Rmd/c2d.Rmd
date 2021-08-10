@@ -492,10 +492,15 @@ NOTE that an alternative approach reducing `names_list` to the ones actually pre
 ```{r}
 rename_from_list <- function(x,
                              names_list) {
-  
-  names_list_new <- names(x) %>% dplyr::recode(!!!names_list)
-  
-  x %>% magrittr::set_names(names_list_new)
+  if (length(x)) {
+    
+    names_list_new <- names(x) %>% dplyr::recode(!!!names_list)
+    
+    x %>% magrittr::set_names(names_list_new)
+    
+  } else {
+    x
+  }
 }
 ```
 
