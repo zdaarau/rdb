@@ -181,6 +181,12 @@
 
 -   C2D admin front-end: Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
 
+-   MongoDB: optimize order of subvariables (`files` and `context.votes_per_canton`); doing this post-hoc in R is slow/inefficient, so getting the JSON in the
+    desired order directly from the API would be cool...
+
+    but is this actually possible? generally, the order of variables in the returned JSON seems random: compare e.g. `date` of
+    [here](https://services.c2d.ch/referendums/6102ae4ec72633da60229941) vs. [here](https://services.c2d.ch/referendums/604b33cb4132d76d38bfe97b)
+
 ### Content
 
 -   Bei verschiedenen Abstimmungen meldet sudd.ch
