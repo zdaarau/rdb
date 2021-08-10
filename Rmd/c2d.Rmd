@@ -589,10 +589,12 @@ tidy_referendums <- function(data,
       
       # create/recode variables
       dplyr::mutate(
-        # replace empty lists with `NULL` in list columns
-        dplyr::across(where(is.list),
-                      ~ dplyr::case_when(.x %>% purrr::map_lgl(~ length(.x) == 0L) ~ list(NULL),
-                                         TRUE ~ .x)),
+        # replace empty lists with `NULL` in *nested* list columns
+        dplyr::across(.cols = where(is.list),
+                      .fns = purrr::map,
+                      .f = ~ {
+                        if (length(.x) || !is.list(.x)) .x else NULL
+                      }),
         
         # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
         dplyr::across(any_of(c("subterritories_no",
