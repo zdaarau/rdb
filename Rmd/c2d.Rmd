@@ -83,8 +83,12 @@ Cf. <https://github.com/tidyverse/magrittr/issues/29#issuecomment-74313262>
 
 ```{r}
 utils::globalVariables(names = c(".",
+                                 # tidyselect fns
                                  "all_of",
                                  "any_of",
+                                 "matches",
+                                 "where",
+                                 # other
                                  "applicability_constraint",
                                  "archive",
                                  "committee_name",
@@ -108,6 +112,7 @@ utils::globalVariables(names = c(".",
                                  "rowid",
                                  "subnational_entity_name",
                                  "sudd_prefix",
+                                 "tag_tier_1",
                                  "tag_tier_2",
                                  "tag_tier_3",
                                  "tags_tier_1",
@@ -123,7 +128,7 @@ utils::globalVariables(names = c(".",
                                  "variable_name",
                                  "variable_values",
                                  "votes",
-                                 "where"))
+                                 "votes_per_subterritory"))
 ```
 
 ## Package load/unload
@@ -380,6 +385,18 @@ assert_mime_type <- function(response,
 }
 ```
 
+### `flatten_array_as_is`
+
+A helper function to convert an R list to JSON using `jsonlite::toJSON(auto_unbox = TRUE)`.
+
+```{r}
+flatten_array_as_is <- function(x) {
+  
+  unlist(x) %>% purrr::when(is.null(.) ~ .,
+                            ~ I(.))
+}
+```
+
 ### `auth_session`
 
 ```{r}
@@ -586,7 +603,7 @@ tidy_referendums <- function(data,
   # check data integrity
   ## ensure mandatory fields are never `NA`
   if (data %>%
-      dplyr::select(all_of(required_fields)) %>%
+      dplyr::select(all_of(referendum_fields$required)) %>%
       dplyr::filter(dplyr::if_any(.fns = is.na)) %>%
       nrow()) {
     
@@ -917,6 +934,307 @@ tidy_referendums <- function(data,
 }
 ```
 
+### `untidy_date`
+
+```{r}
+untidy_date <- function(x) {
+  
+  as.numeric(x) %>%
+    magrittr::multiply_by(1000) %>%
+    as.list() %>%
+    magrittr::set_names(rep("$date",
+                            times = length(.)))
+}
+```
+
+### `untidy_referendums`
+
+```{r}
+#' Untidy into "raw" C2D API referendum data
+#'
+#' Converts from the tidied [referendums()] to the "raw" MongoDB schema used by the C2D API. Basically reverts [tidy_referendums()].
+#'
+#' @param data The data to untidy as returned by [referendums()].
+#'
+#' @return
+#' If `as_tibble = FALSE`, a list with one element per referendum, suitable to convert [jsonlite::toJSON()] and then feed to the C2D API.
+#'
+#' Otherwise a [tibble][tibble::tbl_df] of the same format as returned by [`referendums(tidy = FALSE)`][referendums].
+#' @keywords internal
+untidy_referendums <- function(data,
+                               as_tibble = FALSE) {
+  
+  checkmate::assert_flag(as_tibble)
+  v_names_inverse <- names(v_names) %>% magrittr::set_names(purrr::flatten_chr(v_names))
+  sub_v_names_files_inverse <- names(sub_v_names$files) %>% magrittr::set_names(purrr::flatten_chr(sub_v_names$files))
+  
+  # restore `number`
+  if (all(c("id_official", "id_sudd") %in% colnames(data))) {
+    data %<>% dplyr::mutate(id_sudd = dplyr::if_else(is.na(id_sudd),
+                                                     id_official,
+                                                     id_sudd))
+  }
+  
+  data %<>%
+    dplyr::mutate(
+      # restore strings
+      dplyr::across(c(any_of("date"),
+                      where(is.factor)),
+                    as.character),
+      dplyr::across(where(is.list),
+                    ~ {
+                      if (is.factor(.x[[1L]])) {
+                        .x %>% purrr::map(as.character)
+                      } else {
+                        .x
+                      }
+                    }),
+      # restore dates
+      dplyr::across(any_of("date_time_created"),
+                    untidy_date),
+      # restore individual variables
+      ## `files`
+      dplyr::across(.cols = any_of("files"),
+                    .fns = purrr::map,
+                    .f = ~ {
+                      
+                      if ("date_time_attached" %in% colnames(.x)) {
+                        
+                        .x$date_time_attached %<>% untidy_date()
+                      }
+                      
+                      .x %<>% rename_from_list(names_list = sub_v_names_files_inverse)
+                    }),
+      ## `inst_topics_excluded`
+      dplyr::across(.cols = any_of("inst_topics_excluded"),
+                    .fns = purrr::map,
+                    .f = dplyr::recode,
+                    "budgets" = "budget"),
+      ## `inst_topics_only`
+      dplyr::across(.cols = any_of("inst_topics_only"),
+                    .fns = purrr::map,
+                    .f = dplyr::recode,
+                    "infrastructural acts" = "infrastructural act",
+                    "competence shifts" = "competence shift",
+                    "financial acts" = "financial act",
+                    "financial acts (expenses)" = "financial act (expenses)",
+                    "financial acts (taxes)" = "financial act (taxes)",
+                    "financial acts (obligations)" = "financial act (obligations)",
+                    "total revisions of the constitution" = "total revision of the constitution"),
+      ## `inst_object_revision_divisibility`
+      dplyr::across(any_of("inst_object_revision_divisibility"),
+                    dplyr::recode,
+                    "as a whole" = "Whole text only",
+                    "split up" = "Splitting up possible",
+                    "as variants" = "Variants possible",
+                    "both split up and as variants" = "Variants / splitting up possible"),
+      ## `inst_object_type`
+      dplyr::across(any_of("inst_object_type"),
+                    dplyr::recode,
+                    "legal text (formulated proposal)" = "legal text (ausformulierter vorschlag)",
+                    "legal text (general proposal)" = "legal text (allg. anregung)"),
+      ## `inst_trigger_actor` / `inst_object_author`
+      dplyr::across(any_of(c("inst_trigger_actor",
+                             "inst_object_author")),
+                    dplyr::recode,
+                    "other institution" = "institution"),
+      ## `inst_precondition_actor`
+      dplyr::across(any_of("inst_precondition_actor"),
+                    dplyr::recode,
+                    "parliament and president" = "parliament and President",
+                    "parliament and government" = "parliament and Government"),
+      ## `level`
+      dplyr::across(any_of("level"),
+                    stringr::str_replace,
+                    pattern = "sub-national",
+                    replacement = "subnational"),
+      ## `type`
+      dplyr::across(any_of("type"),
+                    dplyr::recode,
+                    "citizens' assembly" = "citizen assembly",
+                    .missing = "not provided"),
+      ## `id`
+      dplyr::across(any_of("id"),
+                    ~ as.list(.x) %>% magrittr::set_names(rep("$oid", times = length(.)))),
+      ## binary (dummies)
+      dplyr::across(any_of("position_government"),
+                    dplyr::recode,
+                    "yes" = "Acceptance",
+                    "no" = "Rejection"),
+      dplyr::across(any_of("inst_has_urgent_legal_basis"),
+                    dplyr::if_else,
+                    true = "Urgent",
+                    false = "Normal"),
+      dplyr::across(any_of("inst_is_binding"),
+                    dplyr::if_else,
+                    true = "Binding",
+                    false = "Non-binding"),
+      dplyr::across(any_of("inst_is_counter_proposal"),
+                    dplyr::if_else,
+                    true = "Yes",
+                    false = "No"),
+      dplyr::across(any_of("inst_is_assembly"),
+                    dplyr::if_else,
+                    true = "Assembly",
+                    false = "Ballot"),
+      dplyr::across(any_of("inst_has_precondition"),
+                    dplyr::if_else,
+                    true = "Exists",
+                    false = "Does not exist"),
+      # uppercase first letter of various vars
+      dplyr::across(.cols = any_of(c("level",
+                                     "result",
+                                     "type",
+                                     "inst_legal_basis_type",
+                                     "inst_object_type",
+                                     "inst_object_legal_level",
+                                     "inst_object_revision_extent",
+                                     "inst_trigger_type",
+                                     "inst_trigger_actor_level",
+                                     "inst_trigger_time_limit",
+                                     "inst_quorum_approval",
+                                     "inst_precondition_decision",
+                                     # vars containing uppercase abbreviations
+                                     "inst_object_author",
+                                     "inst_trigger_actor",
+                                     "inst_precondition_actor")),
+                    .fns = pal::sentenceify,
+                    punctuation_mark = ""),
+      dplyr::across(.cols = any_of(c("inst_object_revision_modes",
+                                     "inst_topics_only",
+                                     "inst_topics_excluded")),
+                    .fns = purrr::map,
+                    .f = pal::sentenceify,
+                    punctuation_mark = ""),
+      # restore NA values (always assumed to mean 'not provided', never 'unknown')
+      dplyr::across(any_of("result"),
+                    tidyr::replace_na,
+                    replace = "Not provided"),
+      dplyr::across(any_of(c("subterritories_yes", "subterritories_no")),
+                    tidyr::replace_na,
+                    replace = -2.0),
+      dplyr::across(where(is.character),
+                    tidyr::replace_na,
+                    replace = ""),
+      dplyr::across(where(is.integer),
+                    tidyr::replace_na,
+                    replace = -2L)
+    ) %>%
+    # restore variable names
+    # TODO: find out why this (and only this) call of `rename_from_list()` causes the warning:
+    #       "Unquoting language objects with `!!!` is deprecated as of rlang 0.4.0."
+    rename_from_list(names_list = v_names_inverse)
+  
+  # restore `tags`
+  tags_v_names <- paste0("tags_tier_", 1:3)
+  tags_vx_present <- tags_v_names %in% colnames(data)
+  
+  if (any(tags_vx_present)) {
+    
+    if (!all(tags_vx_present)) {
+      tags_vx_missing <- tags_v_names %>% setdiff(tags_vx_present)
+      cli::cli_abort("There are only part of all {.var tags_tier_#} variables present. ",
+                     "{qty(tags_vx_missing)} The following variable(?s) are missing: {.var {tags_vx_missing}}")
+    }
+    
+    data %<>%
+      dplyr::mutate(tags = restore_tags(tags_tier_1,
+                                        tags_tier_2,
+                                        tags_tier_3)) %>%
+      dplyr::select(-any_of(tags_v_names))
+  }
+  
+  data %<>%
+    # remove unknown columns
+    dplyr::select(any_of(referendum_fields$all_flat)) %>%
+    # remove variable labels
+    labelled::remove_var_label()
+  
+  if (!as_tibble) {
+    
+    # remove nested field prefixes
+    data %<>% dplyr::rename_with(.cols = matches("^(categories|context|title)\\."),
+                                 .fn = ~ stringr::str_remove(string = .x,
+                                                             pattern = "^\\w+?\\."))
+    
+    # restore nested structure
+    categories_fields_present <-
+      names(v_names) %>%
+      stringr::str_subset(pattern = "^categories\\.") %>%
+      stringr::str_remove(pattern = "^categories\\.") %>%
+      intersect(colnames(data))
+    
+    context_fields_present <-
+      names(v_names) %>%
+      stringr::str_subset(pattern = "^context\\.") %>%
+      stringr::str_remove(pattern = "^context\\.") %>%
+      intersect(colnames(data))
+    
+    title_fields_present <-
+      names(v_names) %>%
+      stringr::str_subset(pattern = "^title\\.") %>%
+      stringr::str_remove(pattern = "^title\\.") %>%
+      intersect(colnames(data))
+    
+    if (length(categories_fields_present)) {
+      data %<>% tidyr::nest(categories = all_of(categories_fields_present))
+    }
+    if (length(context_fields_present)) {
+      data %<>% tidyr::nest(context = all_of(context_fields_present))
+    }
+    if (length(title_fields_present)) {
+      data %<>% tidyr::nest(title = all_of(title_fields_present))
+    }
+    
+    data %<>%
+      # convert to list
+      dplyr::group_split(dplyr::row_number(),
+                         .keep = FALSE) %>%
+      purrr::map(as.list) %>%
+      # tweak list structure
+      purrr::modify_depth(.depth = 1L,
+                          .f = ~
+                            .x %>%
+                            # flatten unnecessarily nested elements
+                            purrr::modify_at(.at = "tags",
+                                             .f = flatten_array_as_is) %>%
+                            # convert nested tibbles to lists
+                            purrr::modify_at(.at = "files",
+                                             .f = ~
+                                               .x[[1L]] %>%
+                                               purrr::when(is.null(.) ~ list(),
+                                                           ~ dplyr::group_split(.tbl = .,
+                                                                                dplyr::row_number(),
+                                                                                .keep = FALSE) %>%
+                                                             purrr::map(as.list))) %>%
+                            purrr::modify_at(.at = c("archive",
+                                                     "categories",
+                                                     "context",
+                                                     "title"),
+                                             .f = ~
+                                               .x %>%
+                                               purrr::map(as.list) %>%
+                                               unlist(recursive = FALSE)) %>%
+                            # reduce nesting of nested tibble
+                            purrr::when(is.null(purrr::pluck(., "context", "votes_per_canton")) ~ .,
+                                        ~ purrr::modify_in(.x = .,
+                                                           .where = c("context", "votes_per_canton"),
+                                                           .f = dplyr::first)) %>%
+                            # reduce nesting of array fields
+                            purrr::when(is.null(purrr::pluck(., "categories", "action")) ~ .,
+                                        ~ purrr::modify_in(.x = .,
+                                                           .where = c("categories", "action"),
+                                                           .f = flatten_array_as_is)) %>%
+                            purrr::when(is.null(purrr::pluck(., "categories", "excluded_topics")) ~ .,
+                                        ~ purrr::modify_in(.x = .,
+                                                           .where = c("categories", "excluded_topics"),
+                                                           .f = flatten_array_as_is)) %>%
+                            purrr::when(is.null(purrr::pluck(., "categories", "special_topics")) ~ .,
+                                        ~ purrr::modify_in(.x = .,
+                                                           .where = c("categories", "special_topics"),
+                                                           .f = flatten_array_as_is)))
+  }
+  
   data
 }
 ```
@@ -1075,20 +1393,97 @@ tags <- function(tiers = 1:3) {
 pkg <- utils::packageName()
 ```
 
-### Mandatory C2D referendum database fields
+### C2D referendum database fields
 
 Field names as returned by the `referendums` API endpoint.
 
 ```{r}
-required_fields <- c("_id",
-                     "country_name",
-                     "created_on",
-                     "level",
-                     # "title_en", # contains NAs from before relaunch
-                     # "type", # contains NAs from before relaunch
-                     "total_electorate",
-                     "votes_no",
-                     "votes_yes")
+referendum_fields <- list()
+```
+
+#### All
+
+```{r}
+referendum_fields$all <- c("_id",
+                           "archive",
+                           "canton",
+                           "categories",
+                           "citizens_abroad",
+                           "committee_name",
+                           "context",
+                           "country_code",
+                           "country_name",
+                           "created_on",
+                           "date",
+                           "draft",
+                           "files",
+                           "institution",
+                           "level",
+                           "municipality",
+                           "number",
+                           "remarks",
+                           "result",
+                           "tags",
+                           "title",
+                           "total_electorate",
+                           "votes_empty",
+                           "votes_invalid",
+                           "votes_no",
+                           "votes_yes")
+
+referendum_fields$all_flat <-
+  referendum_fields$all %>%
+  setdiff(c("categories", "context", "title")) %>%
+  union(c("categories.action",
+          "categories.author_of_the_vote_object",
+          "categories.counter_proposal",
+          "categories.decision_quorum",
+          "categories.degree_of_revision",
+          "categories.excluded_topics",
+          "categories.hierarchy_of_the_legal_norm",
+          "categories.institutional_precondition",
+          "categories.institutional_precondition_decision",
+          "categories.institutional_precondition_decision_actor",
+          "categories.legal_act_type",
+          "categories.official_status",
+          "categories.referendum_text_options",
+          "categories.special_topics",
+          "categories.turnout_quorum",
+          "categories.vote_object",
+          "categories.vote_result_status",
+          "categories.vote_trigger",
+          "categories.vote_trigger_actor",
+          "categories.vote_trigger_number",
+          "categories.vote_trigger_state_level",
+          "categories.vote_trigger_time",
+          "categories.vote_venue",
+          "context.national_council_abstentions",
+          "context.national_council_no",
+          "context.national_council_yes",
+          "context.recommendation",
+          "context.states_council_abstentions",
+          "context.states_council_no",
+          "context.states_council_yes",
+          "context.states_no",
+          "context.states_yes",
+          "context.votes_per_canton",
+          "title.de",
+          "title.en",
+          "title.fr"))
+```
+
+#### Mandatory
+
+```{r}
+referendum_fields$required <- c("_id",
+                                "country_name",
+                                "created_on",
+                                "level",
+                                # "title_en", # contains NAs from before relaunch
+                                # "type", # contains NAs from before relaunch
+                                "total_electorate",
+                                "votes_no",
+                                "votes_yes")
 ```
 
 ### Variable renamings
@@ -1468,6 +1863,198 @@ download_file_attachment <- function(s3_object_key,
                 new_path = final_path)
   
   invisible(response)
+}
+```
+
+## `add_referendums`
+
+TODO:
+
+-   Determine mandatory fields (any at all?)
+-   Check if order of JSON fields matters (shouldn't!).
+
+``` {.curl}
+curl 'https://services.c2d.ch/referendums' \
+     --request POST \
+     -H 'Content-Type: application/json' \
+     -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YzhiYTE3ZDYxYWY4NDYyMmRkZThjNjEiLCJleHAiOjE2Mjg2MTU5NjN9.lH9x7m82HQG69biek5IRafiYUnA99nLn2WClp_YKIFk' \
+     --data-raw $'{"draft":true,"title":{"en":"test salim 2","de":"","fr":""},"date":"2222-07-17","level":"Sub-national","country_name":"Switzerland","country_code":"CH","institution":"Citizens\' initiative","categories":{"vote_trigger":"Automatic","legal_act_type":"Normal","vote_trigger_actor":"Constitution","vote_trigger_state_level":"Equal","vote_trigger_number":"","vote_trigger_time":"","vote_object":"Legal text (ausformulierter vorschlag)","author_of_the_vote_object":"Parliament","counter_proposal":"No","action":["Abrogate","Introduce","Revise"],"vote_venue":"Ballot","official_status":"Official","vote_result_status":"","hierarchy_of_the_legal_norm":"Constitution","degree_of_revision":"Partial","turnout_quorum":"","decision_quorum":"Simple majority","referendum_text_options":"Whole text only","institutional_precondition":"Exists","institutional_precondition_decision":"Yes","institutional_precondition_decision_actor":"","special_topics":[],"excluded_topics":["Jus cogens"]},"votes_no":-1,"votes_yes":-1,"votes_empty":-1,"votes_invalid":-1,"total_electorate":-1,"citizens_abroad":-1,"result":"Unknown","tags":[],"files":[],"committee_name":"","remarks":"","canton":"Aargau"}'
+```
+
+```{r}
+#' Add new referendums to the C2D database
+#'
+#' Adds new referendum entries to the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
+#'
+#' @details
+#' Note that the following variables are not supported, i.e. simply dropped from `data`: `files`
+#'
+#' @param data The new referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
+#'   identifying the referendums plus additional [valid columns][codebook] containing the values for the corresponding database fields.
+#' @param email The e-mail address of the C2D API user account to be used for authentication. A character scalar.
+#' @param password The password of the C2D API user account to be used for authentication. A character scalar.
+#'
+#' @return `data`, invisibly.
+#' @family referendum
+#' @export
+add_referendums <- function(data,
+                            email = names(getOption("c2d.credentials")[1L]),
+                            password = getOption("c2d.credentials")[1L]) {
+  # ensure `data` is valid
+  checkmate::assert_data_frame(data,
+                               all.missing = FALSE,
+                               min.rows = 1L)
+  
+  ## ensure forbidden columns are absent
+  if ("id" %in% colnames(data)) {
+    cli::cli_abort(paste0("{.arg data} mustn't contain an {.var id} column. It is automatically set by the C2D API back-end. Did you mean to {.fun ",
+                          "edit_referendums} instead?"))
+  }
+  if ("created_on" %in% colnames(data)) {
+    cli::cli_abort("{.arg data} mustn't contain a {.var created_on} column. This date is automatically set by the C2D API back-end.")
+  }
+  
+  ## ensure mandatory columns are present
+  c("is_draft",
+    "country_code",
+    "level",
+    "date") %>%
+    purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
+  
+  ## ensure columns are valid
+  assert_cols_valid(data)
+  
+  # convert data to MongoDB schema
+  json_items <-
+    data %>%
+    # drop forbidden variables
+    dplyr::select(-any_of("files")) %>%
+    # restore MongoDB fields
+    untidy_referendums() %>%
+    # convert to JSON
+    purrr::map(jsonlite::toJSON,
+               auto_unbox = TRUE,
+               digits = NA)
+  
+  # add data to the MongoDB via HTTP POST on `/referendums` API endpoint
+  responses <-
+    json_items %>%
+    purrr::map(~ httr::RETRY(verb = "POST",
+                             url = "https://services.c2d.ch/referendums",
+                             config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
+                                                                                                     password = password)),
+                                                        Connection = "keep-alive"),
+                             body = .x,
+                             times = 5L,
+                             httr::content_type_json()) %>%
+                 httr::content(as = "parsed"))
+  
+  # throw warnings for unsuccessful API calls
+  purrr::walk2(.x = seq_along(responses),
+               .y = responses,
+               .f = ~ if (!isTRUE(.y$ok)) {
+                 cli::cli_warn("Failed to add the {.x}. referendum. The API server responded with error {.val {.y$error$id}}.")
+               })
+  
+  invisible(data)
+}
+```
+
+## `edit_referendums`
+
+**Notes:**
+
+-   For edits, the only mandatory JSON field is `draft`. Only the fields that are supposed to change need to be supplied. Nested fields like `categories` can be
+    partially overwritten, too.
+
+-   The order of JSON fields doesn't matter.
+
+-   The API performs input validation on certain fields and if it fails, it responds with a message like:
+
+    ``` {.json}
+    {"error": {"id": "validation_failed", "value": {"categories.author_of_the_vote_object": "invalid"}}}
+    ```
+
+``` {.curl}
+curl 'https://services.c2d.ch/referendums/610005e2c72633da60229938' \
+     --request PUT \
+     --header 'Content-Type: application/json' \
+     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YzhiYTE3ZDYxYWY4NDYyMmRkZThjNjEiLCJleHAiOjE2MzAxODY0ODB9.lpKWUPyYh7yGWN1AKBWkjhrsQIVeIH71DUOA4hpJhR8' \
+     --header 'Connection: keep-alive' \
+     --data-raw $'{"draft":true,"title":{"de":"salims cat test"},"categories":{"excluded_topics":[]}}'
+```
+
+```{r}
+#' Edit existing referendums in the C2D database
+#'
+#' Edits existing referendum entries in the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
+#'
+#' @inherit add_referendums details
+#' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
+#'   identifying the referendums plus a [valid column][codebook] containing the new values for each database field that should be updated.
+#' @inheritParams add_referendums
+#'
+#' @inherit add_referendums return
+#' @family referendum
+#' @export
+edit_referendums <- function(data,
+                             email = names(getOption("c2d.credentials")[1L]),
+                             password = getOption("c2d.credentials")[1L]) {
+  # ensure `data` is valid
+  checkmate::assert_data_frame(data,
+                               all.missing = FALSE,
+                               min.rows = 1L)
+  
+  ## ensure forbidden columns are absent
+  if ("created_on" %in% colnames(data)) {
+    cli::cli_abort(paste0("{.arg data} mustn't contain a {.var created_on} column. This date is automatically set by the C2D API back-end and not supposed to ",
+                          "be changed."))
+  }
+  
+  ## ensure mandatory columns are present
+  c("id",
+    "is_draft") %>%
+    purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
+  
+  ## ensure columns are valid
+  assert_cols_valid(data)
+  
+  # convert data to MongoDB schema
+  ids <- data$id
+  
+  json_items <-
+    data %>%
+    # drop forbidden variables
+    dplyr::select(-any_of("_id", "files")) %>%
+    # restore MongoDB fields
+    untidy_referendums() %>%
+    # convert to JSON
+    purrr::map(jsonlite::toJSON,
+               auto_unbox = TRUE,
+               digits = NA)
+  
+  # edit data in the MongoDB via HTTP PUT on `/referendums` API endpoint
+  responses <- purrr::map2(.x = ids,
+                           .y = json_items,
+                           .f = ~
+                             httr::RETRY(verb = "PUT",
+                                         url = paste0("https://services.c2d.ch/referendums/",.x),
+                                         config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
+                                                                                                                 password = password)),
+                                                                    Connection = "keep-alive"),
+                                         body = .y,
+                                         times = 5L,
+                                         httr::content_type_json()) %>%
+                             httr::content(as = "parsed"))
+  
+  # throw warnings for unsuccessful API calls
+  purrr::walk2(.x = ids,
+               .y = responses,
+               .f = ~ if (!isTRUE(.y$ok)) {
+                 cli::cli_warn("Failed to edit referendum with {.var id} {.val {.x}}. The API server responded with error {.val {.y$error$id}}.")
+               })
+  
+  invisible(data)
 }
 ```
 
