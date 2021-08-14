@@ -22,8 +22,8 @@ library(magrittr)
 
 pal::assert_pkg("salim")
 
-# determine if knit to GFM which doesn't support extended Pandoc MD syntax (like footnotes)
-is_gfm <- knitr::pandoc_to("gfm")
+# determine if we knit to GFM which doesn't support extended Pandoc MD syntax (like footnotes)
+is_gfm <- knitr::pandoc_to() %>% stringr::str_detect(pattern = "^gfm(-|$)")
 
 # define functions
 ## flatten list column values
