@@ -496,9 +496,9 @@ rename_from_list <- function(x,
                              names_list) {
   if (length(x)) {
     
-    names_list_new <- names(x) %>% dplyr::recode(!!!names_list)
+    names_new <- names(x) %>% dplyr::recode(!!!names_list)
     
-    x %>% magrittr::set_names(names_list_new)
+    x %>% magrittr::set_names(names_new)
     
   } else {
     x
@@ -528,7 +528,9 @@ TODO:
 ```{r}
 #' Tidy "raw" C2D API referendum data
 #'
-#' Converts the "raw" MongoDB data from the C2D API to the tidied `referendums()` schema.
+#' Converts the "raw" MongoDB data from the C2D API to the tidied [referendums()] schema.
+#'
+#' You can reverse this function again using [untidy_referendums()].
 #'
 #' @param data The MongoDB data as a list (converted from the JSON returned by the C2D API using [jsonlite::fromJSON()]).
 #' @param tidy Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If `FALSE`, the raw MongoDB
