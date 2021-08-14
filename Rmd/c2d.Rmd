@@ -8,10 +8,7 @@ editor_options:
 The C2D Database offers a [privately documented](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md) API available under `services.c2d.ch` with
 the following "endpoints":
 
--   `referendums`: get referendum data
-
-    Data on individual referendums can be retrieved under `referendums/ID` where `ID` stands for the referendum's unique identifier `oid` (which corresponds to
-    the column `id` in the data returned by the `referendums()` function of this package).
+-   `referendums`: get data on multiple referendums
 
     It supports the following URL parameters:
 
@@ -40,6 +37,11 @@ the following "endpoints":
     -   In array fields:
 
         -   (Named) `list()`
+
+-   `referendums/ID`: get data on an individual referendum
+
+    `ID` stands for the referendum's unique identifier `oid` (which corresponds to the column `id` in the data returned by the `referendums()` function of this
+    package).
 
 -   The returned JSON data has between 22 and 26 fields. Fields that are not always present include:
 
