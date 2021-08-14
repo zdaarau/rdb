@@ -275,12 +275,6 @@ assert_mime_type <- function(response,
   invisible(response)
 }
 
-flatten_array_as_is <- function(x) {
-  
-  unlist(x) %>% purrr::when(is.null(.) ~ .,
-                            ~ I(.))
-}
-
 #' Authenticate a user session for the [C2D API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
 #'
 #' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, named by `email`. By default, the `email` and
@@ -322,6 +316,12 @@ auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
   }
   
   invisible(token)
+}
+
+flatten_array_as_is <- function(x) {
+  
+  unlist(x) %>% purrr::when(is.null(.) ~ .,
+                            ~ I(.))
 }
 
 

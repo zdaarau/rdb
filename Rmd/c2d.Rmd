@@ -385,18 +385,6 @@ assert_mime_type <- function(response,
 }
 ```
 
-### `flatten_array_as_is`
-
-A helper function to convert an R list to JSON using `jsonlite::toJSON(auto_unbox = TRUE)`.
-
-```{r}
-flatten_array_as_is <- function(x) {
-  
-  unlist(x) %>% purrr::when(is.null(.) ~ .,
-                            ~ I(.))
-}
-```
-
 ### `auth_session`
 
 ```{r}
@@ -441,6 +429,18 @@ auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
   }
   
   invisible(token)
+}
+```
+
+### `flatten_array_as_is`
+
+A helper function to convert an R list to JSON using `jsonlite::toJSON(auto_unbox = TRUE)`.
+
+```{r}
+flatten_array_as_is <- function(x) {
+  
+  unlist(x) %>% purrr::when(is.null(.) ~ .,
+                            ~ I(.))
 }
 ```
 
