@@ -22,8 +22,7 @@ c2d::hierarchize_tags("territorial questions")
 
 # hierarchize the tags of all Austrian referendums
 c2d::referendums(country_code = "AT") |>
-  dplyr::group_by(id) |>
-  dplyr::group_split() |>
+  dplyr::group_split(id) |>
   purrr::map(c2d::hierarchize_tags)
 }
 \seealso{

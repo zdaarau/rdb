@@ -22,3 +22,14 @@ titles.
 \examples{
 c2d::search_referendums("freedom")
 }
+\seealso{
+Other referendum data functions:
+\code{\link{add_referendums}()},
+\code{\link{count_referendums}()},
+\code{\link{download_file_attachment}()},
+\code{\link{edit_referendums}()},
+\code{\link{referendums}()},
+\code{\link{referendum}()},
+\code{\link{validate_referendums}()}
+}
+\concept{referendum}

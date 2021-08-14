@@ -45,8 +45,8 @@
   
 
 <meta property="og:title" content="Count number of referendums — count_referendums" />
-<meta name="description" content="Counts the number of referendums in the C2D Database.">
-<meta property="og:description" content="Counts the number of referendums in the C2D Database." />
+<meta name="description" content="Counts the number of referendums per level in the C2D Database.">
+<meta property="og:description" content="Counts the number of referendums per level in the C2D Database." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9011</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9012</span>
       </span>
     </div>
 
@@ -124,7 +124,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Counts the number of referendums in the C2D Database.</p>
+    <p>Counts the number of referendums per <a href='https://rpkg.dev/c2d/articles/codebook.html#level'><code>level</code></a> in the C2D Database.</p>
     </div>
 
     <pre class="usage"><span class='fu'>count_referendums</span><span class='op'>(</span>
@@ -193,6 +193,16 @@ maximum control over what data is included. This takes precedence over all the o
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A named list with <code>level</code> as names and referendum counts as values.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other referendum data functions:
+<code><a href='add_referendums.html'>add_referendums</a>()</code>,
+<code><a href='download_file_attachment.html'>download_file_attachment</a>()</code>,
+<code><a href='edit_referendums.html'>edit_referendums</a>()</code>,
+<code><a href='referendums.html'>referendums</a>()</code>,
+<code><a href='referendum.html'>referendum</a>()</code>,
+<code><a href='search_referendums.html'>search_referendums</a>()</code>,
+<code><a href='validate_referendums.html'>validate_referendums</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># the whole database (excl. drafts)</span>
@@ -201,7 +211,7 @@ maximum control over what data is included. This takes precedence over all the o
 #&gt; [1] 45
 #&gt; 
 #&gt; $national
-#&gt; [1] 3015
+#&gt; [1] 3016
 #&gt; 
 #&gt; $subnational
 #&gt; [1] 14499

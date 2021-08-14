@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Validate referendums — validate_referendums • c2d</title>
+<title>Get a single referendum's data — referendum • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Validate referendums — validate_referendums" />
-<meta name="description" content="Validate referendums">
-<meta property="og:description" content="Validate referendums" />
+<meta property="og:title" content="Get a single referendum's data — referendum" />
+<meta name="description" content="Downloads a single referendum's data from the C2D Database. See codebook for a detailed description of all variables.">
+<meta property="og:description" content="Downloads a single referendum's data from the C2D Database. See codebook for a detailed description of all variables." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -118,41 +118,39 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Validate referendums</h1>
+    <h1>Get a single referendum's data</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d-GEN.R'><code>R/c2d-GEN.R</code></a></small>
-    <div class="hidden name"><code>validate_referendums.Rd</code></div>
+    <div class="hidden name"><code>referendum.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Validate referendums</p>
+    <p>Downloads a single referendum's data from the C2D Database. See <code><a href='data_codebook.html'>codebook</a></code> for a detailed description of all variables.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>validate_referendums</span><span class='op'>(</span>
-  <span class='va'>data</span>,
-  check_applicability_constraint <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  check_id_sudd_prefix <span class='op'>=</span> <span class='cn'>TRUE</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>referendum</span><span class='op'>(</span><span class='va'>id</span>, incl_archive <span class='op'>=</span> <span class='cn'>FALSE</span>, tidy <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>The referendum data to validate, as returned by <code><a href='referendums.html'>referendums()</a></code>.</p></td>
+      <th>id</th>
+      <td><p>The referendum's unique <a href='https://rpkg.dev/c2d/articles/codebook.html#id'>identifier</a>.</p></td>
     </tr>
     <tr>
-      <th>check_applicability_constraint</th>
-      <td><p>Whether or not to check that no applicability constraints as defined in the <a href='data_codebook.html'>codebook</a> are violated.</p></td>
+      <th>incl_archive</th>
+      <td><p>Whether or not to include an <code>archive</code> column containing data from an earlier, obsolete state of the C2D database.</p></td>
     </tr>
     <tr>
-      <th>check_id_sudd_prefix</th>
-      <td><p>Whether or not to check that all <a href='https://rpkg.dev/c2d/articles/codebook.html#id-sudd'><code>id_sudd</code></a> prefixes are valid.</p></td>
+      <th>tidy</th>
+      <td><p>Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If <code>FALSE</code>, the raw MongoDB
+referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the
+<a href='data_codebook.html'>codebook</a> (i.a. different variable names).</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>data</code>, invisibly.</p>
+    <p>A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other referendum data functions:
@@ -161,9 +159,22 @@
 <code><a href='download_file_attachment.html'>download_file_attachment</a>()</code>,
 <code><a href='edit_referendums.html'>edit_referendums</a>()</code>,
 <code><a href='referendums.html'>referendums</a>()</code>,
-<code><a href='referendum.html'>referendum</a>()</code>,
-<code><a href='search_referendums.html'>search_referendums</a>()</code></p></div>
+<code><a href='search_referendums.html'>search_referendums</a>()</code>,
+<code><a href='validate_referendums.html'>validate_referendums</a>()</code></p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendum</span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"5bbbe26a92a21351232dd73f"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 1 × 63</span>
+#&gt;   id                       id_official id_sudd country_code country_name subnational_ent…
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>           
+#&gt; <span style='color: #BCBCBC;'>1</span> 5bbbe26a92a21351232dd73f 5           <span style='color: #BB0000;'>NA</span>      CH           Switzerland  <span style='color: #BB0000;'>NA</span>              
+#&gt; <span style='color: #949494;'># … with 57 more variables: municipality &lt;fct&gt;, level &lt;ord&gt;, date &lt;date&gt;,</span>
+#&gt; <span style='color: #949494;'>#   title_de &lt;chr&gt;, title_fr &lt;chr&gt;, title_en &lt;chr&gt;, committee_name &lt;chr&gt;,</span>
+#&gt; <span style='color: #949494;'>#   result &lt;fct&gt;, subterritories_yes &lt;dbl&gt;, subterritories_no &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_per_subterritory &lt;list&gt;, lower_house_yes &lt;int&gt;, lower_house_no &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   lower_house_abstentions &lt;int&gt;, upper_house_yes &lt;int&gt;, …</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

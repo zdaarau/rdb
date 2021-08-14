@@ -15,3 +15,4 @@ A logical scalar.
 \description{
 Checks if the C2D API server is online and operational.
 }
+\concept{api_status}

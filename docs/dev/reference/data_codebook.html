@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9011</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9012</span>
       </span>
     </div>
 
@@ -208,7 +208,7 @@ identifying the country in which the referendum took place.</p><h5 class='hasAnc
 referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>level</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'local'</span>, <span class='st'>'subnational'</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>level</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'local'</span>, <span class='st'>'subnational'</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -225,7 +225,7 @@ referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint'><a
 <p>The municipality in which the referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>level</span> <span class='op'>==</span> <span class='st'>'local'</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>level</span> <span class='op'>==</span> <span class='st'>'local'</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -341,7 +341,7 @@ referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint'><a
 approved the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>level</span> <span class='op'>!=</span> <span class='st'>'local'</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>level</span> <span class='op'>!=</span> <span class='st'>'local'</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -359,7 +359,7 @@ approved the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'>
 rejected the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>level</span> <span class='op'>!=</span> <span class='st'>'local'</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>level</span> <span class='op'>!=</span> <span class='st'>'local'</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -446,7 +446,7 @@ per administrative subdivision one level below <code>level</code>; currently onl
 filled for Swiss referendums on the national level.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>level</span> <span class='op'>!=</span> <span class='st'>'local'</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>level</span> <span class='op'>!=</span> <span class='st'>'local'</span>
 </pre><p></div></p>
 
 
@@ -913,7 +913,7 @@ implies presence of its parent top-tier topic.</p>
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>tags_tier_1</span>, .y <span class='op'>=</span> <span class='va'>tags_tier_2</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_tags.html'>infer_tags</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span> <span class='op'>%in%</span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>tags_tier_1</span>, .y <span class='op'>=</span> <span class='va'>tags_tier_2</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_tags.html'>infer_tags</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span> <span class='op'>%in%</span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1047,7 +1047,7 @@ presence of its parent second-tier topic and grandparent top-tier topic.</p>
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>tags_tier_2</span>, .y <span class='op'>=</span> <span class='va'>tags_tier_3</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_tags.html'>infer_tags</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span> <span class='op'>%in%</span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>tags_tier_1</span>, .y <span class='op'>=</span> <span class='va'>tags_tier_3</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_tags.html'>infer_tags</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span> <span class='op'>%in%</span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>tags_tier_2</span>, .y <span class='op'>=</span> <span class='va'>tags_tier_3</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_tags.html'>infer_tags</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span> <span class='op'>%in%</span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>tags_tier_1</span>, .y <span class='op'>=</span> <span class='va'>tags_tier_3</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_tags.html'>infer_tags</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span> <span class='op'>%in%</span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1229,7 +1229,7 @@ urgently, i.e. in an abridged procedure.</p><h5 class='hasAnchor' id='possible-
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>inst_trigger_actor</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'government'</span>, <span class='st'>'president'</span>, <span class='st'>'monarch'</span>, <span class='st'>'parliament'</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>inst_trigger_actor</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'government'</span>, <span class='st'>'president'</span>, <span class='st'>'monarch'</span>, <span class='st'>'parliament'</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1388,7 +1388,7 @@ required to be able to vote; usually voting means raising one’s hand).</p><h5 
 reached in order to trigger the referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>inst_trigger_actor</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'citizens'</span>, <span class='st'>'parliament'</span>, <span class='st'>'territorial unit'</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>inst_trigger_actor</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'citizens'</span>, <span class='st'>'parliament'</span>, <span class='st'>'territorial unit'</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1407,7 +1407,7 @@ number of signatures) has to be reached in order to trigger the
 referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>inst_trigger_actor</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'citizens'</span>, <span class='st'>'territorial unit'</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>inst_trigger_actor</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'citizens'</span>, <span class='st'>'territorial unit'</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1465,7 +1465,7 @@ referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constra
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>inst_object_type</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'question'</span>, <span class='st'>'legal text (general proposal)'</span>, <span class='st'>'legal text (formulated proposal)'</span>, <span class='st'>'principle'</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>inst_object_type</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'question'</span>, <span class='st'>'legal text (general proposal)'</span>, <span class='st'>'legal text (formulated proposal)'</span>, <span class='st'>'principle'</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1495,7 +1495,7 @@ referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constra
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>inst_object_type</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'legal text (general proposal)'</span>, <span class='st'>'legal text (formulated proposal)'</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>inst_object_type</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'legal text (general proposal)'</span>, <span class='st'>'legal text (formulated proposal)'</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1524,7 +1524,7 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>inst_object_type</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'legal text (general proposal)'</span>, <span class='st'>'legal text (formulated proposal)'</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>inst_object_type</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'legal text (general proposal)'</span>, <span class='st'>'legal text (formulated proposal)'</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1576,7 +1576,7 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>inst_object_type</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'question'</span>, <span class='st'>'legal text (general proposal)'</span>, <span class='st'>'legal text (formulated proposal)'</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>inst_object_type</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'question'</span>, <span class='st'>'legal text (general proposal)'</span>, <span class='st'>'legal text (formulated proposal)'</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1611,7 +1611,7 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>inst_topics_excluded</span> <span class='op'>%&gt;%</span> <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_lgl</a></span><span class='op'>(</span><span class='fu'>rlang</span><span class='fu'>::</span><span class='va'><a href='https://rlang.r-lib.org/reference/is_empty.html'>is_empty</a></span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>inst_topics_excluded</span> <span class='op'>%&gt;%</span> <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_lgl</a></span><span class='op'>(</span><span class='fu'>rlang</span><span class='fu'>::</span><span class='va'><a href='https://rlang.r-lib.org/reference/is_empty.html'>is_empty</a></span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1644,7 +1644,7 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='va'>inst_topics_only</span> <span class='op'>%&gt;%</span> <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_lgl</a></span><span class='op'>(</span><span class='fu'>rlang</span><span class='fu'>::</span><span class='va'><a href='https://rlang.r-lib.org/reference/is_empty.html'>is_empty</a></span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='va'>inst_topics_only</span> <span class='op'>%&gt;%</span> <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_lgl</a></span><span class='op'>(</span><span class='fu'>rlang</span><span class='fu'>::</span><span class='va'><a href='https://rlang.r-lib.org/reference/is_empty.html'>is_empty</a></span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1734,7 +1734,7 @@ referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-v
 <h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
-<p>This variable is only applicable under the following condition:<div class="sourceCode r"></p><pre><span class='fu'><a href='https://rdrr.io/r/base/Logic.html'>isTRUE</a></span><span class='op'>(</span><span class='va'>inst_has_precondition</span><span class='op'>)</span>
+<p>This variable is only applicable under the following condition:<div class="r"></p><pre><span class='fu'><a href='https://rdrr.io/r/base/Logic.html'>isTRUE</a></span><span class='op'>(</span><span class='va'>inst_has_precondition</span><span class='op'>)</span>
 </pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
@@ -1770,7 +1770,9 @@ referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-v
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Metadata functions <code><a href='v_vals.html'>v_vals()</a></code> and <code><a href='val_lbls.html'>val_lbls()</a></code>.</p></div>
+    <div class='dont-index'><p>Other referendum metadata functions:
+<code><a href='v_vals.html'>v_vals</a>()</code>,
+<code><a href='val_lbls.html'>val_lbls</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -4,7 +4,13 @@
     <loc>https://rpkg.dev/c2d/index.html</loc>
   </url>
   <url>
+    <loc>https://rpkg.dev/c2d/reference/add_referendums.html</loc>
+  </url>
+  <url>
     <loc>https://rpkg.dev/c2d/reference/assemble_query_filter.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/auth_session.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/c2d-package.html</loc>
@@ -17,6 +23,9 @@
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/download_file_attachment.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/edit_referendums.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/hierarchize_tags.html</loc>
@@ -32,6 +41,9 @@
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/read_toml.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/referendum.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/referendums.html</loc>

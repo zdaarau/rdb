@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tidy "raw" MongoDB referendum data — tidy_referendums • c2d</title>
+<title>Tidy "raw" C2D API referendum data — tidy_referendums • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Tidy "raw" MongoDB referendum data — tidy_referendums" />
-<meta name="description" content="Converts from the &quot;raw&quot; MongoDB to the tidied referendums() schema.">
-<meta property="og:description" content="Converts from the &quot;raw&quot; MongoDB to the tidied referendums() schema." />
+<meta property="og:title" content="Tidy "raw" C2D API referendum data — tidy_referendums" />
+<meta name="description" content="Converts the &quot;raw&quot; MongoDB data from the C2D API to the tidied referendums() schema.">
+<meta property="og:description" content="Converts the &quot;raw&quot; MongoDB data from the C2D API to the tidied referendums() schema." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9011</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9012</span>
       </span>
     </div>
 
@@ -118,13 +118,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Tidy "raw" MongoDB referendum data</h1>
+    <h1>Tidy "raw" C2D API referendum data</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d-GEN.R'><code>R/c2d-GEN.R</code></a></small>
     <div class="hidden name"><code>tidy_referendums.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Converts from the "raw" MongoDB to the tidied <code><a href='referendums.html'>referendums()</a></code> schema.</p>
+    <p>Converts the "raw" MongoDB data from the C2D API to the tidied <code><a href='referendums.html'>referendums()</a></code> schema.</p>
     </div>
 
     <pre class="usage"><span class='fu'>tidy_referendums</span><span class='op'>(</span><span class='va'>data</span>, tidy <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
@@ -134,19 +134,22 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>The data from the C2D MongoDB as a list (converted from the JSON).</p></td>
+      <td><p>The MongoDB data as a list (converted from the JSON returned by the C2D API using <code><a href='https://rdrr.io/pkg/jsonlite/man/fromJSON.html'>jsonlite::fromJSON()</a></code>).</p></td>
     </tr>
     <tr>
       <th>tidy</th>
       <td><p>Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If <code>FALSE</code>, the raw MongoDB
-referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the <a href='data_codebook.html'>codebook</a>
-(i.a. different variable names).</p></td>
+referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the
+<a href='data_codebook.html'>codebook</a> (i.a. different variable names).</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a>.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>You can reverse this function again using <code><a href='untidy_referendums.html'>untidy_referendums()</a></code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

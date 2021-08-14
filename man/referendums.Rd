@@ -54,8 +54,8 @@ maximum control over what data is included. This takes precedence over all the o
 \code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date}, \code{is_draft}, \code{date_time_created_min} and \code{date_time_created_max})`` are ignored.}
 
 \item{tidy}{Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If \code{FALSE}, the raw MongoDB
-referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the \link{codebook}
-(i.a. different variable names).}
+referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the
+\link[=data_codebook]{codebook} (i.a. different variable names).}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
@@ -76,3 +76,14 @@ c2d::referendums(country_code = c("AT", "AU"),
 # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
 c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')
 }
+\seealso{
+Other referendum data functions:
+\code{\link{add_referendums}()},
+\code{\link{count_referendums}()},
+\code{\link{download_file_attachment}()},
+\code{\link{edit_referendums}()},
+\code{\link{referendum}()},
+\code{\link{search_referendums}()},
+\code{\link{validate_referendums}()}
+}
+\concept{referendum}

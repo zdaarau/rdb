@@ -2,21 +2,24 @@
 % Please edit documentation in R/c2d-GEN.R
 \name{tidy_referendums}
 \alias{tidy_referendums}
-\title{Tidy "raw" MongoDB referendum data}
+\title{Tidy "raw" C2D API referendum data}
 \usage{
 tidy_referendums(data, tidy = TRUE)
 }
 \arguments{
-\item{data}{The data from the C2D MongoDB as a list (converted from the JSON).}
+\item{data}{The MongoDB data as a list (converted from the JSON returned by the C2D API using \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}}).}
 
 \item{tidy}{Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If \code{FALSE}, the raw MongoDB
-referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the \link{codebook}
-(i.a. different variable names).}
+referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the
+\link[=data_codebook]{codebook} (i.a. different variable names).}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Converts from the "raw" MongoDB to the tidied \code{referendums()} schema.
+Converts the "raw" MongoDB data from the C2D API to the tidied \code{\link[=referendums]{referendums()}} schema.
+}
+\details{
+You can reverse this function again using \code{\link[=untidy_referendums]{untidy_referendums()}}.
 }
 \keyword{internal}

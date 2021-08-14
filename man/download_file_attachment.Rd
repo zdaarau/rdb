@@ -30,3 +30,14 @@ c2d::referendums()$files |>
   # ...and download the corresponding files to the current working dir
   purrr::walk(c2d::download_file_attachment)}
 }
+\seealso{
+Other referendum data functions:
+\code{\link{add_referendums}()},
+\code{\link{count_referendums}()},
+\code{\link{edit_referendums}()},
+\code{\link{referendums}()},
+\code{\link{referendum}()},
+\code{\link{search_referendums}()},
+\code{\link{validate_referendums}()}
+}
+\concept{referendum}

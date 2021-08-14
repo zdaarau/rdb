@@ -30,7 +30,8 @@ c2d::val_lbls("result") |> pal::sentenceify()
 \seealso{
 \code{\link{data_codebook}}
 
-Other metadata functions:
+Other referendum metadata functions:
+\code{\link{data_codebook}},
 \code{\link{v_vals}()}
 }
 \concept{metadata}

@@ -23,3 +23,14 @@ validate_referendums(
 \description{
 Validate referendums
 }
+\seealso{
+Other referendum data functions:
+\code{\link{add_referendums}()},
+\code{\link{count_referendums}()},
+\code{\link{download_file_attachment}()},
+\code{\link{edit_referendums}()},
+\code{\link{referendums}()},
+\code{\link{referendum}()},
+\code{\link{search_referendums}()}
+}
+\concept{referendum}

@@ -47,7 +47,7 @@ maximum control over what data is included. This takes precedence over all the o
 A named list with \code{level} as names and referendum counts as values.
 }
 \description{
-Counts the number of referendums in the C2D Database.
+Counts the number of referendums per \href{https://rpkg.dev/c2d/articles/codebook.html#level}{\code{level}} in the C2D Database.
 }
 \examples{
 # the whole database (excl. drafts)
@@ -61,3 +61,14 @@ c2d::count_referendums(country_code = "CH",
                        date_time_created_min = "2020-01-01",
                        date_time_created_max = "2021-01-01")
 }
+\seealso{
+Other referendum data functions:
+\code{\link{add_referendums}()},
+\code{\link{download_file_attachment}()},
+\code{\link{edit_referendums}()},
+\code{\link{referendums}()},
+\code{\link{referendum}()},
+\code{\link{search_referendums}()},
+\code{\link{validate_referendums}()}
+}
+\concept{referendum}

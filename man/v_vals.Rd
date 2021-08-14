@@ -29,7 +29,8 @@ v_vals("id")
 \seealso{
 \code{\link{data_codebook}}
 
-Other metadata functions:
+Other referendum metadata functions:
+\code{\link{data_codebook}},
 \code{\link{val_lbls}()}
 }
 \concept{metadata}

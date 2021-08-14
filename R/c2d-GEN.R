@@ -13,17 +13,52 @@
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 utils::globalVariables(names = c(".",
+                                 # tidyselect fns
+                                 "all_of",
+                                 "any_of",
+                                 "matches",
+                                 "where",
+                                 # other
                                  "applicability_constraint",
+                                 "archive",
+                                 "committee_name",
                                  "content-disposition",
+                                 "country_code",
+                                 "country_name",
+                                 "date_time_created",
+                                 "electorate_abroad",
+                                 "electorate_total",
+                                 "files",
+                                 "id",
+                                 "id_official",
+                                 "id_sudd",
                                  "id_sudd_prefix",
+                                 "is_draft",
                                  "items",
+                                 "level",
+                                 "municipality",
+                                 "remarks",
+                                 "result",
+                                 "rowid",
+                                 "subnational_entity_name",
                                  "sudd_prefix",
+                                 "tag_tier_1",
                                  "tag_tier_2",
                                  "tag_tier_3",
+                                 "tags_tier_1",
+                                 "tags_tier_2",
+                                 "tags_tier_3",
+                                 "title_de",
+                                 "title_fr",
+                                 "title_en",
+                                 "type",
+                                 "url_sudd",
+                                 "url_swissvotes",
                                  "value_labels",
                                  "variable_name",
                                  "variable_values",
-                                 "votes"))
+                                 "votes",
+                                 "votes_per_subterritory"))
 
 .onLoad <- function(libname, pkgname) {
   pkgpins::clear(pkg = pkgname,
@@ -59,6 +94,7 @@ utils::globalVariables(names = c(".",
 #'
 #' @return A character scalar containing a valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents),
 #'   [Base64](https://en.wikipedia.org/wiki/Base64)-encoded if `base64_encode = TRUE`.
+#' @keywords internal
 assemble_query_filter <- function(country_code = NULL,
                                   subnational_entity_name = NULL,
                                   municipality = NULL,
@@ -132,6 +168,908 @@ assemble_query_filter <- function(country_code = NULL,
                                ~ .)
 }
 
+assert_cols_valid <- function(data,
+                              action = cli::cli_abort) {
+  
+  non_na_col_names <- c("id",
+                        "country_code",
+                        "level",
+                        "date")
+  na_col_names <-
+    data %>%
+    dplyr::select(any_of(non_na_col_names)) %>%
+    dplyr::filter(dplyr::if_any(.fns = is.na)) %>%
+    dplyr::select(where(~ any(is.na(.x)))) %>%
+    colnames()
+  n_na_col_names <- length(na_col_names)
+  
+  if (n_na_col_names) action("Detected {n_na_col_names} column(?s) in {.arg data} that contain forbidden {.val NA}s: {.var {na_col_names}}")
+  
+  ## check `id`
+  if ("id" %in% colnames(data) && anyDuplicated(data$id)) {
+    action("Duplicated {.var id}s detected. IDs must be unique.")
+  }
+
+  ## check `country_code`
+  if ("country_code" %in% colnames(data)) {
+    choices <- countrycode::codelist$iso2c %>% setdiff(NA_character_)
+    check <- checkmate::check_subset(levels(data$country_code),
+                                     choices = choices)
+    if (!isTRUE(check)) action("Failed to validate {.var levels(country_code)}. {check}")
+  }
+  
+  ## check `date`
+  if ("date" %in% colnames(data)) {
+    check <- checkmate::check_date(data$date,
+                                   any.missing = FALSE)
+    if (!isTRUE(check)) action("Failed to validate {.var date}. {check}")
+  }
+  
+  ## check `level`
+  if ("level" %in% colnames(data)) {
+    choices <- v_vals("level")
+    check <- checkmate::check_subset(levels(data$level),
+                                     choices = choices)
+    if (!isTRUE(check)) action("Failed to validate {.var levels(level}. {check}")
+  }
+  
+  ## check `subnational_entity_name`
+  ## TODO: check `subnational_entity_code` instead once it's available
+  if (any(data$level != "national")) {
+    
+    if (!("subnational_entity_name" %in% colnames(data))) {
+      action(paste0("Referendums of {.var level} below {.val national} present in {.arg data} but column {.var subnational_entity_name} is missing."))
+    }
+    
+    ix_missing_subnational_entities <-
+      data %>%
+      tibble::rowid_to_column() %>%
+      dplyr::filter(level != "national" & is.na(subnational_entity_name)) %$%
+      rowid
+    
+    n_missing_subnational_entities <- length(ix_missing_subnational_entities)
+    
+    if (n_missing_subnational_entities) {
+      action(paste0("{n_missing_subnational_entities} row(?s) in {.arg data} (?is/are) missing a {.var subnational_entity_name}. Affected (?is/are) ",
+                    "the row(?s) with ind(?ex/ices) {ix_missing_subnational_entities}."))
+    }
+  }
+  
+  ## check `municipality`
+  if (any(data$level == "local")) {
+    
+    if (!("municipality" %in% colnames(data))) {
+      action(paste0("Referendums of {.var level = \"local\"} present in {.arg data} but column {.var municipality} is missing."))
+    }
+    
+    ix_missing_municipalities <-
+      data %>%
+      tibble::rowid_to_column() %>%
+      dplyr::filter(level == "local" & is.na(municipality)) %$%
+      rowid
+    
+    n_missing_municipalities <- length(ix_missing_municipalities)
+    
+    if (n_missing_municipalities) {
+      action(paste0("{n_missing_municipalities} row(?s) in {.arg data} (?is/are) missing a {.var municipality}. Affected (?is/are) the row(?s) with ",
+                    "ind(?ex/ices) {ix_missing_subnational_entities}."))
+    }
+  }
+  
+  invisible(data)
+}
+
+assert_mime_type <- function(response,
+                             mime_type = "application/json") {
+  
+  checkmate::assert_class(response,
+                          "response")
+  checkmate::assert_string(mime_type)
+  mime_type_actual <- httr::http_type(response)
+  
+  if (mime_type_actual != mime_type) {
+    cli::cli_abort(paste0("The response's MIME type is {.val {mime_type_actual}} but expected was {.val {mime_type}}. This indicates either some network issue",
+                          " or a change in the C2D API."))
+  }
+  
+  invisible(response)
+}
+
+flatten_array_as_is <- function(x) {
+  
+  unlist(x) %>% purrr::when(is.null(.) ~ .,
+                            ~ I(.))
+}
+
+#' Authenticate a user session for the [C2D API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
+#'
+#' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, named by `email`. By default, the `email` and
+#' `password` are read from the first element of the R option `c2d.credentials` (a named character vector where names are e-mail addresses and values are
+#' passwords).`
+#'
+#' @param email The e-mail address of the user for which a session should be created. A character scalar.
+#' @param password The password of the user for which a session should be created. A character scalar.
+#'
+#' @return The user session token as a character scalar, invisibly.
+#' @keywords internal
+auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
+                         password = getOption("c2d.credentials")[1L]) {
+  
+  tokens <- getOption("c2d.user_session_tokens")
+  token <- tokens[email]
+  
+  if (!checkmate::test_string(token, min.chars = 1L)) {
+    
+    pal::cli_process_expr(msg = "Authenticating new user session",
+                          expr = {
+                            
+                            token <-
+                              httr::RETRY(verb = "POST",
+                                          url = "https://services.c2d.ch/users/session",
+                                          times = 5L,
+                                          encode = "json",
+                                          body = list(email = checkmate::assert_string(email),
+                                                      password = checkmate::assert_string(password))) %>%
+                              # ensure we actually got a JSON response
+                              assert_mime_type() %>%
+                              # parse response
+                              httr::content(as = "parsed") %$%
+                              token %>%
+                              magrittr::set_names(email)
+                            
+                            options(c2d.user_session_tokens = c(tokens, token))
+                          })
+  }
+  
+  invisible(token)
+}
+
+
+
+#' Lowercase non-abbreviations
+#'
+#' @param x A character vector.
+#'
+#' @return A character vector of the same lenght as `x`.
+#' @keywords internal
+lower_non_abbrs <- function(x) {
+  
+  x %>%
+    stringr::str_split(pattern = "\\s") %>%
+    purrr::map_chr(~ .x %>%
+                     dplyr::if_else(stringr::str_detect(string = .,
+                                                        pattern = "^[^[:lower:]]+$"),
+                                    .,
+                                    stringr::str_to_lower(.)) %>%
+                     paste0(collapse = " "))
+}
+
+#' Read in a TOML file
+#'
+#' @param path Path to the TOML file. A [path][fs::fs_path] or something coercible to.
+#'
+#' @return The TOML file's content as a [strict list][xfun::strict_list].
+#' @keywords internal
+read_toml <- function(path) {
+  
+  pal::assert_pkg("RcppTOML")
+  pal::assert_pkg("xfun")
+  
+  path %>%
+    purrr::when(length(.) > 0L ~ RcppTOML::parseTOML(input = .,
+                                                     escape = FALSE),
+                ~ NULL) %>%
+    xfun::as_strict_list()
+}
+
+rename_from_list <- function(x,
+                             names_list) {
+  if (length(x)) {
+    
+    names_new <- names(x) %>% dplyr::recode(!!!names_list)
+    
+    x %>% magrittr::set_names(names_new)
+    
+  } else {
+    x
+  }
+}
+
+tidy_date <- function(x) {
+  
+  x %>%
+    unlist(use.names = FALSE) %>%
+    magrittr::divide_by(1000L) %>%
+    lubridate::as_datetime()
+}
+
+#' Tidy "raw" C2D API referendum data
+#'
+#' Converts the "raw" MongoDB data from the C2D API to the tidied [referendums()] schema.
+#'
+#' You can reverse this function again using [untidy_referendums()].
+#'
+#' @param data The MongoDB data as a list (converted from the JSON returned by the C2D API using [jsonlite::fromJSON()]).
+#' @param tidy Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If `FALSE`, the raw MongoDB
+#'   referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the 
+#'   [codebook][data_codebook] (i.a. different variable names).
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @keywords internal
+tidy_referendums <- function(data,
+                             tidy = TRUE) {
+  data %<>%
+    # unnest columns and ensure list type for multi-value columns
+    # NOTE that `tidyr::unnest()` is unbearably slow, so we use a custom function
+    purrr::map(.f = function(l,
+                             category_names = names(l$categories),
+                             context_names = names(l$context),
+                             title_langs = names(l$title)) {
+      
+      for (name in category_names) {
+        l[[paste0("categories.", name)]] <- l$categories[[name]]
+      }
+      
+      for (name in context_names) {
+        l[[paste0("context.", name)]] <- l$context[[name]]
+      }
+      
+      for (lang in title_langs) {
+        l[[paste0("title.", lang)]] <- l$title[[lang]]
+      }
+      
+      l$categories <- NULL
+      l$context <- NULL
+      l$title <- NULL
+      
+      for (name in c("tags",
+                     "categories.action",
+                     "categories.special_topics",
+                     "categories.excluded_topics")) {
+        l[[name]] %<>% purrr::flatten_chr() %>% list()
+      }
+      
+      for (name in c("archive",
+                     "files",
+                     "context.votes_per_canton")) {
+        l[[name]] %<>% list()
+      }
+      
+      l
+    }) %>%
+    # convert to tibble
+    purrr::map_dfr(tibble::as_tibble_row)
+  
+  # check data integrity
+  ## ensure mandatory fields are never `NA`
+  if (data %>%
+      dplyr::select(all_of(referendum_fields$required)) %>%
+      dplyr::filter(dplyr::if_any(.fns = is.na)) %>%
+      nrow()) {
+    
+    cli::cli_abort("Mandatory fields detected that contain {.val NA} values. Please debug.")
+  }
+  
+  # tidy data
+  if (tidy) {
+    
+    data %<>%
+      # rename variables (mind that the MongoDB-based API doesn't demand a schema)
+      rename_from_list(names_list = v_names) %>%
+      # add vars which aren't always included
+      dplyr::full_join(y = tibble::tibble(subnational_entity_name = character(),
+                                          municipality = character(),
+                                          id_sudd = character()),
+                       by = intersect(c("subnational_entity_name",
+                                        "municipality",
+                                        "id_sudd"),
+                                      colnames(.))) %>%
+      
+      # create/recode variables
+      dplyr::mutate(
+        # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
+        dplyr::across(any_of(c("subterritories_no",
+                               "subterritories_yes",
+                               "date_time_created")),
+                      as.double),
+        
+        # use explicit NA values
+        dplyr::across(where(is.integer),
+                      ~ dplyr::if_else(.x %in% c(-1L, -2L),
+                                       NA_integer_,
+                                       .x)),
+        dplyr::across(where(is.character),
+                      ~ dplyr::if_else(.x %in% c("", "-1", "-2"),
+                                       NA_character_,
+                                       .x)),
+        dplyr::across(any_of(c("subterritories_yes", "subterritories_no")),
+                      ~ dplyr::if_else(.x %in% c(-1.0, -2.0),
+                                       NA_real_,
+                                       .x)),
+        result = result %>% dplyr::if_else(. %in% c("Unknown", "Not provided"),
+                                           NA_character_,
+                                           .),
+        
+        # convert all values to lowercase
+        ## vectors
+        dplyr::across(c(level,
+                        result,
+                        type,
+                        any_of(c("inst_legal_basis_type",
+                                 "inst_object_type",
+                                 "inst_object_legal_level",
+                                 "inst_object_revision_extent",
+                                 "inst_trigger_type",
+                                 "inst_trigger_actor_level",
+                                 "inst_trigger_time_limit",
+                                 "inst_quorum_approval",
+                                 "inst_precondition_decision"))),
+                      stringr::str_to_lower),
+        ## lists
+        dplyr::across(.cols = any_of(c("inst_object_revision_modes",
+                                       "inst_topics_only",
+                                       "inst_topics_excluded")),
+                      .fns = purrr::map,
+                      .f = stringr::str_to_lower),
+        
+        # only convert non-abbreviations to lowercase
+        ## vectors
+        dplyr::across(.cols = any_of(c("inst_object_author",
+                                       "inst_trigger_actor",
+                                       "inst_precondition_actor")),
+                      .fns = purrr::map_chr,
+                      .f = lower_non_abbrs),
+        ## lists
+        dplyr::across(.cols = tags,
+                      .fns = purrr::map,
+                      .f = clean_tags),
+        
+        # specific recodings
+        ## binary (dummies)
+        dplyr::across(any_of("position_government"),
+                      ~ dplyr::case_when(.x == "Acceptance" ~ "yes",
+                                         .x == "Rejection" ~ "no",
+                                         TRUE ~ NA_character_)),
+        dplyr::across(any_of("inst_has_urgent_legal_basis"),
+                      ~ dplyr::case_when(.x == "Urgent" ~ TRUE,
+                                         .x == "Normal" ~ FALSE,
+                                         TRUE ~ NA)),
+        dplyr::across(any_of("inst_is_binding"),
+                      ~ dplyr::case_when(.x == "Binding" ~ TRUE,
+                                         .x == "Non-binding" ~ FALSE,
+                                         TRUE ~ NA)),
+        dplyr::across(any_of("inst_is_counter_proposal"),
+                      ~ dplyr::case_when(.x == "Yes" ~ TRUE,
+                                         .x == "No" ~ FALSE,
+                                         TRUE ~ NA)),
+        dplyr::across(any_of("inst_is_assembly"),
+                      ~ dplyr::case_when(.x == "Assembly" ~ TRUE,
+                                         .x == "Ballot" ~ FALSE,
+                                         TRUE ~ NA)),
+        dplyr::across(any_of("inst_has_precondition"),
+                      ~ dplyr::case_when(.x == "Exists" ~ TRUE,
+                                         .x == "Does not exist" ~ FALSE,
+                                         TRUE ~ NA)),
+        ## nominal
+        ### flatten `id`
+        id = purrr::flatten_chr(id),
+        ### extract `id_official` from `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
+        id_official =
+          id_sudd %>%
+          dplyr::if_else(stringr::str_detect(string = .,
+                                             pattern = "^\\D"),
+                         NA_character_,
+                         .),
+        id_sudd =
+          id_sudd %>%
+          dplyr::if_else(stringr::str_detect(string = .,
+                                             pattern = "^\\D"),
+                         .,
+                         NA_character_) %>%
+          # everything beyond the 8th char seems to be manually added -> strip!
+          stringr::str_sub(end = 8L),
+        ### split `tags` into separate per-tier vars
+        tags_tier_1 = tags %>% purrr::map(infer_tags,
+                                          tier = 1L),
+        tags_tier_2 = tags %>% purrr::map(infer_tags,
+                                          tier = 2L),
+        tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags_tier_3_cleaned]),
+        ### various cleanups
+        level = stringr::str_replace(string = level,
+                                     pattern = "sub-national",
+                                     replacement = "subnational"),
+        type = type %>% dplyr::recode("citizen assembly" = "citizens' assembly",
+                                      "not provided" = NA_character_),
+        dplyr::across(any_of(c("inst_trigger_actor",
+                               "inst_object_author")),
+                      dplyr::recode,
+                      "institution" = "other institution"),
+        dplyr::across(any_of("inst_object_type"),
+                      dplyr::recode,
+                      "legal text (ausformulierter vorschlag)" = "legal text (formulated proposal)",
+                      "legal text (allg. anregung)" = "legal text (general proposal)"),
+        dplyr::across(any_of("inst_object_revision_divisibility"),
+                      dplyr::recode,
+                      "Whole text only" = "as a whole",
+                      "Splitting up possible" = "split up",
+                      "Variants possible" = "as variants",
+                      "Variants / splitting up possible" = "both split up and as variants"),
+        dplyr::across(.cols = any_of("inst_topics_only"),
+                      .fns = purrr::map,
+                      .f = dplyr::recode,
+                      "infrastructural act" = "infrastructural acts",
+                      "competence shift" = "competence shifts",
+                      "financial act" = "financial acts",
+                      "financial act (expenses)" = "financial acts (expenses)",
+                      "financial act (taxes)" = "financial acts (taxes)",
+                      "financial act (obligations)" = "financial acts (obligations)",
+                      "total revision of the constitution" = "total revisions of the constitution"),
+        dplyr::across(.cols = any_of("inst_topics_excluded"),
+                      .fns = purrr::map,
+                      .f = dplyr::recode,
+                      "budget" = "budgets",
+                      "parliamentary competence" = "everything within parliamentary competence"),
+        dplyr::across(any_of("inst_quorum_turnout"),
+                      stringr::str_replace_all,
+                      pattern = c("^(\\s+)?>(\\s+)?" = ">\u202f",
+                                  "(\\s+)?%(\\s+)?$" = "\u202f%")),
+        ## ordinal
+        ## interval
+        date = lubridate::as_date(date),
+        date_time_created = tidy_date(date_time_created),
+        ## undefined
+        files = files %>% purrr::map(~ .x %>% purrr::map(~ .x %>%
+                                                           # unnest and restore `date`
+                                                           purrr::assign_in(where = "date",
+                                                                            value = tidy_date(.$date)) %>%
+                                                           # change subvariable names
+                                                           rename_from_list(names_list = sub_v_names$files))),
+        votes_per_subterritory = votes_per_subterritory,
+        
+        # variable creations
+        url_sudd = dplyr::if_else(!is.na(id_sudd),
+                                  paste0("https://sudd.ch/event.php?id=", id_sudd),
+                                  NA_character_),
+        url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
+                                        paste0("https://swissvotes.ch/vote/", id_official),
+                                        NA_character_)
+      ) %>%
+      
+      # remove obsolete vars
+      dplyr::select(-tags) %>%
+      
+      # convert to (ordered) factor where appropriate
+      ## based on codebook
+      dplyr::mutate(dplyr::across(.fns = ~ {
+        
+        metadata <- data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
+        if (nrow(metadata) != 1L) cli::cli_abort("Missing codebook metadata! Please debug")
+        
+        if (!is.logical(.x) && !is.null(metadata$variable_values[[1L]])) {
+          
+          lvls <- purrr::flatten_chr(metadata$variable_values)
+          is_ordered <- metadata$value_scale %in% c("ordinal_ascending", "ordinal_descending")
+          
+          if (is.list(.x)) {
+            .x %>% purrr::map(.f = factor,
+                              levels = lvls,
+                              ordered = is_ordered)
+          } else {
+            factor(x = .x,
+                   levels = lvls,
+                   ordered = is_ordered)
+          }
+        } else .x
+      })) %>%
+      ## nominal vars without variable_values in codebook
+      dplyr::mutate(dplyr::across(any_of(c("country_code",
+                                           "country_name",
+                                           "subnational_entity_name",
+                                           "municipality")),
+                                  as.factor)) %>%
+      # add variable labels
+      labelled::set_variable_labels(.labels = var_lbls,
+                                    .strict = FALSE) %>%
+      # reorder columns
+      dplyr::relocate(id,
+                      id_official,
+                      id_sudd,
+                      country_code,
+                      country_name,
+                      subnational_entity_name,
+                      municipality,
+                      level,
+                      date,
+                      title_de,
+                      title_fr,
+                      title_en,
+                      committee_name,
+                      result,
+                      any_of("subterritories_yes"),
+                      any_of("subterritories_no"),
+                      electorate_total,
+                      electorate_abroad,
+                      any_of("votes_yes"),
+                      any_of("votes_no"),
+                      any_of("votes_empty"),
+                      any_of("votes_invalid"),
+                      any_of("votes_per_subterritory"),
+                      any_of("lower_house_yes"),
+                      any_of("lower_house_no"),
+                      any_of("lower_house_abstentions"),
+                      any_of("upper_house_yes"),
+                      any_of("upper_house_no"),
+                      any_of("upper_house_abstentions"),
+                      any_of("position_government"),
+                      tags_tier_1,
+                      tags_tier_2,
+                      tags_tier_3,
+                      remarks,
+                      files,
+                      url_sudd,
+                      url_swissvotes,
+                      is_draft,
+                      date_time_created,
+                      archive,
+                      type,
+                      any_of("inst_legal_basis_type"),
+                      any_of("inst_has_urgent_legal_basis"),
+                      any_of("inst_is_binding"),
+                      any_of("inst_is_counter_proposal"),
+                      any_of("inst_is_assembly"),
+                      any_of("inst_trigger_type"),
+                      any_of("inst_trigger_actor"),
+                      any_of("inst_trigger_actor_level"),
+                      any_of("inst_trigger_threshold"),
+                      any_of("inst_trigger_time_limit"),
+                      any_of("inst_object_type"),
+                      any_of("inst_object_author"),
+                      any_of("inst_object_legal_level"),
+                      any_of("inst_object_revision_extent"),
+                      any_of("inst_object_revision_modes"),
+                      any_of("inst_object_revision_divisibility"),
+                      any_of("inst_topics_only"),
+                      any_of("inst_topics_excluded"),
+                      any_of("inst_quorum_turnout"),
+                      any_of("inst_quorum_approval"),
+                      any_of("inst_has_precondition"),
+                      any_of("inst_precondition_actor"),
+                      any_of("inst_precondition_decision"))
+    
+    # correct known errors
+    ## `id_sudd`
+    data$id_sudd[data$country_code == "AZ" & data$id_sudd == "az021009"] <- "az022009"
+    data$id_sudd[data$country_code == "BS" & data$id_sudd == "bs021002"] <- "bs022002"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011972"] <- "mg011972"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011975"] <- "mg011975"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011992"] <- "mg011992"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011995"] <- "mg011995"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011998"] <- "mg011998"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md012007"] <- "mg012007"
+    data$id_sudd[data$country_code == "MG" & data$id_sudd == "md012010"] <- "mg012010"
+    data$id_sudd[data$country_code == "MH" & data$id_sudd == "mh00578"] <- "mh011979"
+    data$id_sudd[data$country_code == "MW" & data$id_sudd == "mw012003"] <- "mw011993"
+    data$id_sudd[data$country_code == "EC" & data$id_sudd == "ec031993"] <- "ec031994"
+    data$id_sudd[data$country_code == "EC" & data$id_sudd == "ec021006"] <- "ec022006"
+    data$id_sudd[data$country_code == "GQ" & data$id_sudd == "gq012968"] <- "gq011968"
+    data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt011998"] <- "gt011999"
+    data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt021998"] <- "gt021999"
+    data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt031998"] <- "gt031999"
+    data$id_sudd[data$country_code == "LI" & data$id_sudd == "li021920"] <- "li021930"
+    data$id_sudd[data$country_code == "LT" & data$id_sudd == "lt031993"] <- "lt031994"
+    data$id_sudd[data$country_code == "NF" & data$id_sudd == "nf011980"] <- "nf011979"
+    data$id_sudd[data$country_code == "TV" & data$id_sudd == "tv011994"] <- "tv011974"
+    data$id_sudd[data$country_code == "UY" & data$id_sudd == "uy011918"] <- "uy011917"
+    data$id_sudd[data$country_code == "YE" & data$id_sudd == "ye012991"] <- "ye011991"
+    # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+  }
+  
+  # convert nested list cols to tibbles
+  data %>% dplyr::mutate(dplyr::across(c(files,
+                                         any_of(c("context.votes_per_canton",
+                                                  "votes_per_subterritory"))),
+                                       ~ .x %>% purrr::map(~ { if (length(.x)) .x %>% purrr::map_dfr(tibble::as_tibble) else NULL })),
+                         dplyr::across(archive,
+                                       ~ .x %>% purrr::map(~ { if (length(.x)) tibble::as_tibble(.x) else NULL })))
+}
+
+untidy_date <- function(x) {
+  
+  as.numeric(x) %>%
+    magrittr::multiply_by(1000) %>%
+    as.list() %>%
+    magrittr::set_names(rep("$date",
+                            times = length(.)))
+}
+
+#' Untidy into "raw" C2D API referendum data
+#'
+#' Converts from the tidied [referendums()] to the "raw" MongoDB schema used by the C2D API. Basically reverts [tidy_referendums()].
+#'
+#' @param data The data to untidy as returned by [referendums()].
+#'
+#' @return
+#' If `as_tibble = FALSE`, a list with one element per referendum, suitable to convert [jsonlite::toJSON()] and then feed to the C2D API.
+#'
+#' Otherwise a [tibble][tibble::tbl_df] of the same format as returned by [`referendums(tidy = FALSE)`][referendums].
+#' @keywords internal
+untidy_referendums <- function(data,
+                               as_tibble = FALSE) {
+  
+  checkmate::assert_flag(as_tibble)
+  v_names_inverse <- names(v_names) %>% magrittr::set_names(purrr::flatten_chr(v_names))
+  sub_v_names_files_inverse <- names(sub_v_names$files) %>% magrittr::set_names(purrr::flatten_chr(sub_v_names$files))
+  
+  # restore `number`
+  if (all(c("id_official", "id_sudd") %in% colnames(data))) {
+    data %<>% dplyr::mutate(id_sudd = dplyr::if_else(is.na(id_sudd),
+                                                     id_official,
+                                                     id_sudd))
+  }
+  
+  data %<>%
+    dplyr::mutate(
+      # restore strings
+      dplyr::across(c(any_of("date"),
+                      where(is.factor)),
+                    as.character),
+      dplyr::across(where(is.list),
+                    ~ {
+                      if (is.factor(.x[[1L]])) {
+                        .x %>% purrr::map(as.character)
+                      } else {
+                        .x
+                      }
+                    }),
+      # restore dates
+      dplyr::across(any_of("date_time_created"),
+                    untidy_date),
+      # restore individual variables
+      ## `files`
+      dplyr::across(.cols = any_of("files"),
+                    .fns = purrr::map,
+                    .f = ~ {
+                      
+                      if ("date_time_attached" %in% colnames(.x)) {
+                        
+                        .x$date_time_attached %<>% untidy_date()
+                      }
+                      
+                      .x %<>% rename_from_list(names_list = sub_v_names_files_inverse)
+                    }),
+      ## `inst_topics_excluded`
+      dplyr::across(.cols = any_of("inst_topics_excluded"),
+                    .fns = purrr::map,
+                    .f = dplyr::recode,
+                    "budgets" = "budget"),
+      ## `inst_topics_only`
+      dplyr::across(.cols = any_of("inst_topics_only"),
+                    .fns = purrr::map,
+                    .f = dplyr::recode,
+                    "infrastructural acts" = "infrastructural act",
+                    "competence shifts" = "competence shift",
+                    "financial acts" = "financial act",
+                    "financial acts (expenses)" = "financial act (expenses)",
+                    "financial acts (taxes)" = "financial act (taxes)",
+                    "financial acts (obligations)" = "financial act (obligations)",
+                    "total revisions of the constitution" = "total revision of the constitution"),
+      ## `inst_object_revision_divisibility`
+      dplyr::across(any_of("inst_object_revision_divisibility"),
+                    dplyr::recode,
+                    "as a whole" = "Whole text only",
+                    "split up" = "Splitting up possible",
+                    "as variants" = "Variants possible",
+                    "both split up and as variants" = "Variants / splitting up possible"),
+      ## `inst_object_type`
+      dplyr::across(any_of("inst_object_type"),
+                    dplyr::recode,
+                    "legal text (formulated proposal)" = "legal text (ausformulierter vorschlag)",
+                    "legal text (general proposal)" = "legal text (allg. anregung)"),
+      ## `inst_trigger_actor` / `inst_object_author`
+      dplyr::across(any_of(c("inst_trigger_actor",
+                             "inst_object_author")),
+                    dplyr::recode,
+                    "other institution" = "institution"),
+      ## `inst_precondition_actor`
+      dplyr::across(any_of("inst_precondition_actor"),
+                    dplyr::recode,
+                    "parliament and president" = "parliament and President",
+                    "parliament and government" = "parliament and Government"),
+      ## `level`
+      dplyr::across(any_of("level"),
+                    stringr::str_replace,
+                    pattern = "sub-national",
+                    replacement = "subnational"),
+      ## `type`
+      dplyr::across(any_of("type"),
+                    dplyr::recode,
+                    "citizens' assembly" = "citizen assembly",
+                    .missing = "not provided"),
+      ## `id`
+      dplyr::across(any_of("id"),
+                    ~ as.list(.x) %>% magrittr::set_names(rep("$oid", times = length(.)))),
+      ## binary (dummies)
+      dplyr::across(any_of("position_government"),
+                    dplyr::recode,
+                    "yes" = "Acceptance",
+                    "no" = "Rejection"),
+      dplyr::across(any_of("inst_has_urgent_legal_basis"),
+                    dplyr::if_else,
+                    true = "Urgent",
+                    false = "Normal"),
+      dplyr::across(any_of("inst_is_binding"),
+                    dplyr::if_else,
+                    true = "Binding",
+                    false = "Non-binding"),
+      dplyr::across(any_of("inst_is_counter_proposal"),
+                    dplyr::if_else,
+                    true = "Yes",
+                    false = "No"),
+      dplyr::across(any_of("inst_is_assembly"),
+                    dplyr::if_else,
+                    true = "Assembly",
+                    false = "Ballot"),
+      dplyr::across(any_of("inst_has_precondition"),
+                    dplyr::if_else,
+                    true = "Exists",
+                    false = "Does not exist"),
+      # uppercase first letter of various vars
+      dplyr::across(.cols = any_of(c("level",
+                                     "result",
+                                     "type",
+                                     "inst_legal_basis_type",
+                                     "inst_object_type",
+                                     "inst_object_legal_level",
+                                     "inst_object_revision_extent",
+                                     "inst_trigger_type",
+                                     "inst_trigger_actor_level",
+                                     "inst_trigger_time_limit",
+                                     "inst_quorum_approval",
+                                     "inst_precondition_decision",
+                                     # vars containing uppercase abbreviations
+                                     "inst_object_author",
+                                     "inst_trigger_actor",
+                                     "inst_precondition_actor")),
+                    .fns = pal::sentenceify,
+                    punctuation_mark = ""),
+      dplyr::across(.cols = any_of(c("inst_object_revision_modes",
+                                     "inst_topics_only",
+                                     "inst_topics_excluded")),
+                    .fns = purrr::map,
+                    .f = pal::sentenceify,
+                    punctuation_mark = ""),
+      # restore NA values (always assumed to mean 'not provided', never 'unknown')
+      dplyr::across(any_of("result"),
+                    tidyr::replace_na,
+                    replace = "Not provided"),
+      dplyr::across(any_of(c("subterritories_yes", "subterritories_no")),
+                    tidyr::replace_na,
+                    replace = -2.0),
+      dplyr::across(where(is.character),
+                    tidyr::replace_na,
+                    replace = ""),
+      dplyr::across(where(is.integer),
+                    tidyr::replace_na,
+                    replace = -2L)
+    ) %>%
+    # restore variable names
+    # TODO: find out why this (and only this) call of `rename_from_list()` causes the warning:
+    #       "Unquoting language objects with `!!!` is deprecated as of rlang 0.4.0."
+    rename_from_list(names_list = v_names_inverse)
+  
+  # restore `tags`
+  tags_v_names <- paste0("tags_tier_", 1:3)
+  tags_vx_present <- tags_v_names %in% colnames(data)
+  
+  if (any(tags_vx_present)) {
+    
+    if (!all(tags_vx_present)) {
+      tags_vx_missing <- tags_v_names %>% setdiff(tags_vx_present)
+      cli::cli_abort("There are only part of all {.var tags_tier_#} variables present. ",
+                     "{qty(tags_vx_missing)} The following variable(?s) are missing: {.var {tags_vx_missing}}")
+    }
+    
+    data %<>%
+      dplyr::mutate(tags = restore_tags(tags_tier_1,
+                                        tags_tier_2,
+                                        tags_tier_3)) %>%
+      dplyr::select(-any_of(tags_v_names))
+  }
+  
+  data %<>%
+    # remove unknown columns
+    dplyr::select(any_of(referendum_fields$all_flat)) %>%
+    # remove variable labels
+    labelled::remove_var_label()
+  
+  if (!as_tibble) {
+    
+    # remove nested field prefixes
+    data %<>% dplyr::rename_with(.cols = matches("^(categories|context|title)\\."),
+                                 .fn = ~ stringr::str_remove(string = .x,
+                                                             pattern = "^\\w+?\\."))
+    
+    # restore nested structure
+    categories_fields_present <-
+      names(v_names) %>%
+      stringr::str_subset(pattern = "^categories\\.") %>%
+      stringr::str_remove(pattern = "^categories\\.") %>%
+      intersect(colnames(data))
+    
+    context_fields_present <-
+      names(v_names) %>%
+      stringr::str_subset(pattern = "^context\\.") %>%
+      stringr::str_remove(pattern = "^context\\.") %>%
+      intersect(colnames(data))
+    
+    title_fields_present <-
+      names(v_names) %>%
+      stringr::str_subset(pattern = "^title\\.") %>%
+      stringr::str_remove(pattern = "^title\\.") %>%
+      intersect(colnames(data))
+    
+    if (length(categories_fields_present)) {
+      data %<>% tidyr::nest(categories = all_of(categories_fields_present))
+    }
+    if (length(context_fields_present)) {
+      data %<>% tidyr::nest(context = all_of(context_fields_present))
+    }
+    if (length(title_fields_present)) {
+      data %<>% tidyr::nest(title = all_of(title_fields_present))
+    }
+    
+    data %<>%
+      # convert to list
+      dplyr::group_split(dplyr::row_number(),
+                         .keep = FALSE) %>%
+      purrr::map(as.list) %>%
+      # tweak list structure
+      purrr::modify_depth(.depth = 1L,
+                          .f = ~
+                            .x %>%
+                            # flatten unnecessarily nested elements
+                            purrr::modify_at(.at = "tags",
+                                             .f = flatten_array_as_is) %>%
+                            # convert nested tibbles to lists
+                            purrr::modify_at(.at = "files",
+                                             .f = ~
+                                               .x[[1L]] %>%
+                                               purrr::when(is.null(.) ~ list(),
+                                                           ~ dplyr::group_split(.tbl = .,
+                                                                                dplyr::row_number(),
+                                                                                .keep = FALSE) %>%
+                                                             purrr::map(as.list))) %>%
+                            purrr::modify_at(.at = c("archive",
+                                                     "categories",
+                                                     "context",
+                                                     "title"),
+                                             .f = ~
+                                               .x %>%
+                                               purrr::map(as.list) %>%
+                                               unlist(recursive = FALSE)) %>%
+                            # reduce nesting of nested tibble
+                            purrr::when(is.null(purrr::pluck(., "context", "votes_per_canton")) ~ .,
+                                        ~ purrr::modify_in(.x = .,
+                                                           .where = c("context", "votes_per_canton"),
+                                                           .f = dplyr::first)) %>%
+                            # reduce nesting of array fields
+                            purrr::when(is.null(purrr::pluck(., "categories", "action")) ~ .,
+                                        ~ purrr::modify_in(.x = .,
+                                                           .where = c("categories", "action"),
+                                                           .f = flatten_array_as_is)) %>%
+                            purrr::when(is.null(purrr::pluck(., "categories", "excluded_topics")) ~ .,
+                                        ~ purrr::modify_in(.x = .,
+                                                           .where = c("categories", "excluded_topics"),
+                                                           .f = flatten_array_as_is)) %>%
+                            purrr::when(is.null(purrr::pluck(., "categories", "special_topics")) ~ .,
+                                        ~ purrr::modify_in(.x = .,
+                                                           .where = c("categories", "special_topics"),
+                                                           .f = flatten_array_as_is)))
+  }
+  
+  data
+}
+
 query_filter_date <- function(min,
                               max) {
   
@@ -147,18 +1085,6 @@ query_filter_in <- function(x) {
                     ~ list(`$in` = .))
 }
 
-lower_non_abbrs <- function(x) {
-  
-  x %>%
-    stringr::str_split(pattern = "\\s") %>%
-    purrr::map_chr(~ .x %>%
-                     dplyr::if_else(stringr::str_detect(string = .,
-                                                        pattern = "^[^[:lower:]]+$"),
-                                    .,
-                                    stringr::str_to_lower(.)) %>%
-                     paste0(collapse = " "))
-}
-
 clean_tags <- function(tags) {
   
   lower_non_abbrs(tags) %>% dplyr::recode("armed forces - general" = "armed forces in general",
@@ -168,6 +1094,69 @@ clean_tags <- function(tags) {
                                           "religion - churches" = "religion, churches",
                                           "swiss abroad" = "Swiss abroad",
                                           "territoral questions" = "territorial questions")
+}
+
+restore_tags <- function(tags_tier_1,
+                         tags_tier_2,
+                         tags_tier_3) {
+  list(tags_tier_1,
+       tags_tier_2,
+       tags_tier_3) %>%
+    purrr::pmap(~ {
+      
+      ..1 %>%
+        unlist() %>%
+        as.character() %>%
+        checkmate::assert_character(any.missing = FALSE,
+                                    max.len = 3L)
+      ..2 %>%
+        unlist() %>%
+        as.character() %>%
+        checkmate::assert_character(any.missing = FALSE,
+                                    max.len = 3L)
+      ..3 %>%
+        unlist() %>%
+        as.character() %>%
+        checkmate::assert_character(any.missing = FALSE,
+                                    max.len = 3L,
+                                    .var.name = "tags_tier_3")
+      
+      tags_hierarchy <- hierarchize_tags(tibble::tibble(tags_tier_1 = list(..1),
+                                                        tags_tier_2 = list(..2),
+                                                        tags_tier_3 = list(..3)))
+      
+      tags <- tags_hierarchy$tag_tier_3 %>% setdiff(NA_character_)
+      
+      if (length(tags) < 3L) {
+        
+        tags <-
+          tags_hierarchy %>%
+          dplyr::filter(is.na(tag_tier_3)) %$%
+          tag_tier_2 %>%
+          setdiff(NA_character_) %>%
+          c(tags)
+      }
+      
+      if (length(tags) < 3L) {
+        
+        tags <-
+          tags_hierarchy %>%
+          dplyr::filter(is.na(tag_tier_3) & is.na(tag_tier_2)) %$%
+          tag_tier_1 %>%
+          setdiff(NA_character_) %>%
+          c(tags)
+      }
+      
+      tags %>% purrr::map_chr(~ {
+        substr(.x, 1L, 1L) %<>% toupper()
+        .x %>% dplyr::recode("Armed forces in general" = "Armed forces - general",
+                             "Citizens' initiatives" = "Citizen's initiatives",
+                             "Conscientious objection, civilian service" = "Conscientious objection, Civilian service",
+                             "Religion, churches" = "Religion - churches",
+                             "Social policy" = "Social Policy",
+                             "Territorial questions" = "Territoral questions")
+      })
+    })
 }
 
 tags <- function(tiers = 1:3) {
@@ -194,29 +1183,138 @@ tags <- function(tiers = 1:3) {
   tag_set %>% setdiff(NA_character_) %>% unique()
 }
 
-read_toml <- function(path) {
-  
-  pal::assert_pkg("RcppTOML")
-  pal::assert_pkg("xfun")
-  
-  path %>%
-    purrr::when(length(.) > 0L ~ RcppTOML::parseTOML(input = .,
-                                                     escape = FALSE),
-                ~ NULL) %>%
-    xfun::as_strict_list()
-}
-
 pkg <- utils::packageName()
 
-required_fields <- c("_id",
-                     "country_name",
-                     "created_on",
-                     "level",
-                     # "title_en", # contains NAs from before relaunch
-                     # "type", # contains NAs from before relaunch
-                     "total_electorate",
-                     "votes_no",
-                     "votes_yes")
+referendum_fields <- list()
+
+referendum_fields$all <- c("_id",
+                           "archive",
+                           "canton",
+                           "categories",
+                           "citizens_abroad",
+                           "committee_name",
+                           "context",
+                           "country_code",
+                           "country_name",
+                           "created_on",
+                           "date",
+                           "draft",
+                           "files",
+                           "institution",
+                           "level",
+                           "municipality",
+                           "number",
+                           "remarks",
+                           "result",
+                           "tags",
+                           "title",
+                           "total_electorate",
+                           "votes_empty",
+                           "votes_invalid",
+                           "votes_no",
+                           "votes_yes")
+
+referendum_fields$all_flat <-
+  referendum_fields$all %>%
+  setdiff(c("categories", "context", "title")) %>%
+  union(c("categories.action",
+          "categories.author_of_the_vote_object",
+          "categories.counter_proposal",
+          "categories.decision_quorum",
+          "categories.degree_of_revision",
+          "categories.excluded_topics",
+          "categories.hierarchy_of_the_legal_norm",
+          "categories.institutional_precondition",
+          "categories.institutional_precondition_decision",
+          "categories.institutional_precondition_decision_actor",
+          "categories.legal_act_type",
+          "categories.official_status",
+          "categories.referendum_text_options",
+          "categories.special_topics",
+          "categories.turnout_quorum",
+          "categories.vote_object",
+          "categories.vote_result_status",
+          "categories.vote_trigger",
+          "categories.vote_trigger_actor",
+          "categories.vote_trigger_number",
+          "categories.vote_trigger_state_level",
+          "categories.vote_trigger_time",
+          "categories.vote_venue",
+          "context.national_council_abstentions",
+          "context.national_council_no",
+          "context.national_council_yes",
+          "context.recommendation",
+          "context.states_council_abstentions",
+          "context.states_council_no",
+          "context.states_council_yes",
+          "context.states_no",
+          "context.states_yes",
+          "context.votes_per_canton",
+          "title.de",
+          "title.en",
+          "title.fr"))
+
+referendum_fields$required <- c("_id",
+                                "country_name",
+                                "created_on",
+                                "level",
+                                # "title_en", # contains NAs from before relaunch
+                                # "type", # contains NAs from before relaunch
+                                "total_electorate",
+                                "votes_no",
+                                "votes_yes")
+
+                # old name                                               new name
+v_names <- list("_id"                                                  = "id",
+                "number"                                               = "id_sudd",
+                "canton"                                               = "subnational_entity_name",
+                "title.de"                                             = "title_de",
+                "title.en"                                             = "title_en",
+                "title.fr"                                             = "title_fr",
+                "context.states_no"                                    = "subterritories_no",
+                "context.states_yes"                                   = "subterritories_yes",
+                "total_electorate"                                     = "electorate_total",
+                "citizens_abroad"                                      = "electorate_abroad",
+                "context.votes_per_canton"                             = "votes_per_subterritory",
+                "context.national_council_yes"                         = "lower_house_yes",
+                "context.national_council_no"                          = "lower_house_no",
+                "context.national_council_abstentions"                 = "lower_house_abstentions",
+                "context.states_council_yes"                           = "upper_house_yes",
+                "context.states_council_no"                            = "upper_house_no",
+                "context.states_council_abstentions"                   = "upper_house_abstentions",
+                "context.recommendation"                               = "position_government",
+                "draft"                                                = "is_draft",
+                "created_on"                                           = "date_time_created",
+                "institution"                                          = "type",
+                "categories.official_status"                           = "inst_legal_basis_type",
+                "categories.legal_act_type"                            = "inst_has_urgent_legal_basis",
+                "categories.vote_result_status"                        = "inst_is_binding",
+                "categories.counter_proposal"                          = "inst_is_counter_proposal",
+                "categories.vote_venue"                                = "inst_is_assembly",
+                "categories.vote_trigger"                              = "inst_trigger_type",
+                "categories.vote_trigger_actor"                        = "inst_trigger_actor",
+                "categories.vote_trigger_state_level"                  = "inst_trigger_actor_level",
+                "categories.vote_trigger_number"                       = "inst_trigger_threshold",
+                "categories.vote_trigger_time"                         = "inst_trigger_time_limit",
+                "categories.vote_object"                               = "inst_object_type",
+                "categories.author_of_the_vote_object"                 = "inst_object_author",
+                "categories.hierarchy_of_the_legal_norm"               = "inst_object_legal_level",
+                "categories.degree_of_revision"                        = "inst_object_revision_extent",
+                "categories.action"                                    = "inst_object_revision_modes",
+                "categories.referendum_text_options"                   = "inst_object_revision_divisibility",
+                "categories.turnout_quorum"                            = "inst_quorum_turnout",
+                "categories.decision_quorum"                           = "inst_quorum_approval",
+                "categories.institutional_precondition"                = "inst_has_precondition",
+                "categories.institutional_precondition_decision_actor" = "inst_precondition_actor",
+                "categories.institutional_precondition_decision"       = "inst_precondition_decision",
+                "categories.special_topics"                            = "inst_topics_only",
+                "categories.excluded_topics"                           = "inst_topics_excluded")
+
+                                 # old name     new name
+sub_v_names <- list(files = list("date"       = "date_time_attached",
+                                 "object_key" = "s3_object_key",
+                                 "size"       = "file_size",
+                                 "deleted"    = "is_deleted"))
 
 
 
@@ -225,41 +1323,6 @@ required_fields <- c("_id",
 
 
 
-
-
-
-#' Test C2D API availability
-#'
-#' Checks if the C2D API server is online and operational.
-#'
-#' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
-#'
-#' @return A logical scalar.
-#' @export
-is_online <- function(quiet = FALSE) {
-  
-  checkmate::assert_flag(quiet)
-  result <- FALSE
-  response <- rlang::with_handlers(.expr = httr::RETRY(verb = "GET",
-                                                       url = "https://services.c2d.ch/health",
-                                                       times = 5L),
-                                   error = ~ paste0("Error: ", .x$message))
-  
-  if (class(response) == "response") {
-    
-    response %<>% httr::content(as = "parsed",
-                                encoding = "UTF-8")
-    
-    if (response == "OK") {
-      result <- TRUE
-      
-    } else if (quiet) {
-      cli::cli_warn("C2D API server responded with: {.val {response}}")
-    }
-  }
-  
-  result
-}
 
 #' Get referendum data
 #'
@@ -268,12 +1331,11 @@ is_online <- function(quiet = FALSE) {
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
 #' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the C2D database.
-#' @param tidy Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If `FALSE`, the raw referendum
-#'   data as stored in the underlying MongoDB will be returned. Note that the latter doesn't conform to the [codebook][codebook] (i.a. different variable
-#'   names).
 #' @inheritParams assemble_query_filter
+#' @inheritParams tidy_referendums
 #'
 #' @return `r pkgsnip::return_label("data")`
+#' @family referendum
 #' @export
 #'
 #' @examples
@@ -325,454 +1387,23 @@ referendums <- function(use_cache = TRUE,
                                                               date_time_created_max = date_time_created_max,
                                                               query_filter = query_filter)),
                   times = 5L) %>%
-      httr::content(as = "parsed") %$%
+      # ensure we actually got a JSON response
+      assert_mime_type() %>%
+      # extract JSON
+      httr::content(as = "text",
+                    encoding = "UTF-8") %>%
+      # convert JSON to list
+      # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result (depending on `query`)
+      jsonlite::fromJSON(simplifyVector = FALSE,
+                         simplifyDataFrame = FALSE,
+                         simplifyMatrix = FALSE,
+                         flatten = FALSE) %$%
       items %>%
-      # unnest columns and ensure list type for multi-value columns
-      purrr::map(.f = function(l,
-                               category_names = names(l$categories),
-                               context_names = names(l$context),
-                               title_langs = names(l$title)) {
-        
-        for (name in category_names) {
-          l[[name]] <- l$categories[[name]]
-        }
-        
-        for (name in context_names) {
-          l[[name]] <- l$context[[name]]
-        }
-        
-        for (lang in title_langs) {
-          l[[paste0("title_", lang)]] <- l$title[[lang]]
-        }
-        
-        l$categories <- NULL
-        l$context <- NULL
-        l$title <- NULL
-        l$`_id` %<>% purrr::flatten_chr()
-        
-        for (name in c("action",
-                       "tags",
-                       "special_topics",
-                       "excluded_topics")) {
-          l[[name]] %<>% purrr::flatten_chr() %>% list()
-        }
-        
-        for (name in c("archive",
-                       "files",
-                       "votes_per_canton")) {
-          l[[name]] %<>% list()
-        }
-        
-        l
-      }) %>%
-      # convert to tibble
-      purrr::map_dfr(tibble::as_tibble_row)
+      # tidy data
+      tidy_referendums(tidy = tidy)
     
-    # check data integrity
-    ## ensure mandatory fields are never `NA`
-    if (data %>%
-        dplyr::select(all_of(required_fields)) %>%
-        dplyr::filter(dplyr::if_any(.fns = is.na)) %>%
-        nrow()) {
-      
-      cli::cli_abort("Mandatory fields detected that contain {.val NA} values. Please debug.")
-    }
-    
-    # ## ensure `oid`s are unique
-    # if (anyDuplicated(data$`_id`)) {
-    #   cli::cli_abort("Duplicated {.var oid}s detected. Please debug.")
-    # }
-    
-    ## ensure `country_codes`s are valid
-    invalid_country_codes <- data$country_code[!(data$country_code %in% countrycode::codelist$iso2c %>% setdiff(NA_character_))]
-    
-    if (length(invalid_country_codes)) {
-      cli::cli_abort("Unknown {.var country_code}s detected. Please debug.")
-    }
-    
-    # tidy data
-    if (tidy) {
-      
-      data %<>%
-        # rename variables (since the MongoDB-based API doesn't demand a schema, we can't use `dplyr::rename()`)
-        magrittr::set_names(names(.) %>% dplyr::recode("_id"                                       = "id",
-                                                       "number"                                    = "id_official",
-                                                       "canton"                                    = "subnational_entity_name",
-                                                       "states_no"                                 = "subterritories_no",
-                                                       "states_yes"                                = "subterritories_yes",
-                                                       "total_electorate"                          = "electorate_total",
-                                                       "citizens_abroad"                           = "electorate_abroad",
-                                                       "votes_per_canton"                          = "votes_per_subterritory",
-                                                       "national_council_yes"                      = "lower_house_yes",
-                                                       "national_council_no"                       = "lower_house_no",
-                                                       "national_council_abstentions"              = "lower_house_abstentions",
-                                                       "states_council_yes"                        = "upper_house_yes",
-                                                       "states_council_no"                         = "upper_house_no",
-                                                       "states_council_abstentions"                = "upper_house_abstentions",
-                                                       "recommendation"                            = "position_government",
-                                                       "draft"                                     = "is_draft",
-                                                       "created_on"                                = "date_time_created",
-                                                       "institution"                               = "type",
-                                                       "official_status"                           = "inst_legal_basis_type",
-                                                       "legal_act_type"                            = "inst_has_urgent_legal_basis",
-                                                       "vote_result_status"                        = "inst_is_binding",
-                                                       "counter_proposal"                          = "inst_is_counter_proposal",
-                                                       "vote_venue"                                = "inst_is_assembly",
-                                                       "vote_trigger"                              = "inst_trigger_type",
-                                                       "vote_trigger_actor"                        = "inst_trigger_actor",
-                                                       "vote_trigger_state_level"                  = "inst_trigger_actor_level",
-                                                       "vote_trigger_number"                       = "inst_trigger_threshold",
-                                                       "vote_trigger_time"                         = "inst_trigger_time_limit",
-                                                       "vote_object"                               = "inst_object_type",
-                                                       "author_of_the_vote_object"                 = "inst_object_author",
-                                                       "hierarchy_of_the_legal_norm"               = "inst_object_legal_level",
-                                                       "degree_of_revision"                        = "inst_object_revision_extent",
-                                                       "action"                                    = "inst_object_revision_modes",
-                                                       "referendum_text_options"                   = "inst_object_revision_divisibility",
-                                                       "turnout_quorum"                            = "inst_quorum_turnout",
-                                                       "decision_quorum"                           = "inst_quorum_approval",
-                                                       "institutional_precondition"                = "inst_has_precondition",
-                                                       "institutional_precondition_decision_actor" = "inst_precondition_actor",
-                                                       "institutional_precondition_decision"       = "inst_precondition_decision",
-                                                       "special_topics"                            = "inst_topics_only",
-                                                       "excluded_topics"                           = "inst_topics_excluded")) %>%
-        # add vars which aren't always included
-        dplyr::full_join(y = tibble::tibble(archive = list(),
-                                            subnational_entity_name = character(),
-                                            municipality = character(),
-                                            id_official = character()),
-                         by = intersect(c("archive",
-                                          "subnational_entity_name",
-                                          "municipality",
-                                          "id_official"),
-                                        colnames(.))) %>%
-        
-        # create/recode variables
-        dplyr::mutate(
-          # replace empty lists with `NULL` in list columns
-          dplyr::across(where(is.list),
-                        ~ dplyr::case_when(.x %>% purrr::map_lgl(~ length(.x) == 0L) ~ list(NULL),
-                                           TRUE ~ .x)),
-          
-          # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
-          dplyr::across(any_of(c("subterritories_no",
-                                 "subterritories_yes",
-                                 "date_time_created")),
-                        as.double),
-          
-          # use explicit NA values
-          dplyr::across(where(is.integer),
-                        ~ dplyr::if_else(.x %in% c(-1L, -2L),
-                                         NA_integer_,
-                                         .x)),
-          dplyr::across(where(is.character),
-                        ~ dplyr::if_else(.x %in% c("", "-1", "-2"),
-                                         NA_character_,
-                                         .x)),
-          dplyr::across(any_of(c("subterritories_yes", "subterritories_no")),
-                        ~ dplyr::if_else(.x %in% c(-1.0, -2.0),
-                                         NA_real_,
-                                         .x)),
-          result = result %>% dplyr::if_else(. %in% c("Unknown", "Not provided"),
-                                             NA_character_,
-                                             .),
-          
-          # convert all values to lowercase
-          ## vectors
-          dplyr::across(c(level,
-                          result,
-                          type,
-                          any_of(c("inst_legal_basis_type",
-                                   "inst_object_type",
-                                   "inst_object_legal_level",
-                                   "inst_object_revision_extent",
-                                   "inst_trigger_type",
-                                   "inst_trigger_actor_level",
-                                   "inst_trigger_time_limit",
-                                   "inst_quorum_approval",
-                                   "inst_precondition_actor",
-                                   "inst_precondition_decision"))),
-                        stringr::str_to_lower),
-          ## lists
-          dplyr::across(.cols = any_of(c("inst_topics_only",
-                                         "inst_topics_excluded")),
-                        .fns = purrr::map,
-                        .f = stringr::str_to_lower),
-          
-          # only convert non-abbreviations to lowercase
-          ## vectors
-          dplyr::across(.cols = any_of(c("inst_object_author",
-                                         "inst_trigger_actor",
-                                         "inst_precondition_actor")),
-                        .fns = purrr::map_chr,
-                        .f = lower_non_abbrs),
-          ## lists
-          dplyr::across(.cols = tags,
-                        .fns = purrr::map,
-                        .f = clean_tags),
-          
-          # specific recodings
-          ## binary (dummies)
-          dplyr::across(any_of("position_government"),
-                        ~ dplyr::case_when(.x == "Acceptance" ~ "yes",
-                                           .x == "Rejection" ~ "no",
-                                           TRUE ~ NA_character_)),
-          dplyr::across(any_of("inst_has_urgent_legal_basis"),
-                        ~ dplyr::case_when(.x == "Urgent" ~ TRUE,
-                                           .x == "Normal" ~ FALSE,
-                                           TRUE ~ NA)),
-          dplyr::across(any_of("inst_is_binding"),
-                        ~ dplyr::case_when(.x == "Binding" ~ TRUE,
-                                           .x == "Non-binding" ~ FALSE,
-                                           TRUE ~ NA)),
-          dplyr::across(any_of("inst_is_counter_proposal"),
-                        ~ dplyr::case_when(.x == "Yes" ~ TRUE,
-                                           .x == "No" ~ FALSE,
-                                           TRUE ~ NA)),
-          dplyr::across(any_of("inst_is_assembly"),
-                        ~ dplyr::case_when(.x == "Assembly" ~ TRUE,
-                                           .x == "Ballot" ~ FALSE,
-                                           TRUE ~ NA)),
-          dplyr::across(any_of("inst_has_precondition"),
-                        ~ dplyr::case_when(.x == "Exists" ~ TRUE,
-                                           .x == "Does not exist" ~ FALSE,
-                                           TRUE ~ NA)),
-          ## nominal
-          ### split `id_official` into `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
-          id_sudd =
-            id_official %>%
-            dplyr::if_else(stringr::str_detect(string = .,
-                                               pattern = "^\\D"),
-                           .,
-                           NA_character_) %>%
-            # everything beyond the 8th char seems to be manually added -> strip!
-            stringr::str_sub(end = 8L),
-          id_official =
-            id_official %>%
-            dplyr::if_else(stringr::str_detect(string = .,
-                                               pattern = "^\\D"),
-                           NA_character_,
-                           .),
-          ### split `tags` into separate per-tier vars
-          tags_tier_1 = tags %>% purrr::map(infer_tags,
-                                            tier = 1L),
-          tags_tier_2 = tags %>% purrr::map(infer_tags,
-                                            tier = 2L),
-          tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags_tier_3_cleaned]),
-          ### various cleanups
-          level = stringr::str_replace(string = level,
-                                       pattern = "sub-national",
-                                       replacement = "subnational"),
-          type = type %>% dplyr::recode("citizen assembly" = "citizens' assembly",
-                                        "not provided" = NA_character_),
-          dplyr::across(any_of("inst_trigger_actor"),
-                        dplyr::recode,
-                        "institution" = "other institution"),
-          dplyr::across(any_of("inst_object_type"),
-                        dplyr::recode,
-                        "legal text (ausformulierter vorschlag)" = "legal text (formulated proposal)",
-                        "legal text (allg. anregung)" = "legal text (general proposal)"),
-          dplyr::across(any_of("inst_object_revision_divisibility"),
-                        dplyr::recode,
-                        "Whole text only" = "as a whole",
-                        "Splitting up possible" = "split up",
-                        "Variants possible" = "as variants",
-                        "Variants / splitting up possible" = "both split up and as variants"),
-          dplyr::across(.cols = any_of("inst_topics_only"),
-                        .fns = purrr::map,
-                        .f = dplyr::recode,
-                        "infrastructural act" = "infrastructural acts",
-                        "competence shift" = "competence shifts",
-                        "financial act" = "financial acts",
-                        "financial act (expenses)" = "financial acts (expenses)",
-                        "financial act (taxes)" = "financial acts (taxes)",
-                        "financial act (obligations)" = "financial acts (obligations)",
-                        "total revision of the constitution" = "total revisions of the constitution"),
-          dplyr::across(.cols = any_of("inst_topics_excluded"),
-                        .fns = purrr::map,
-                        .f = dplyr::recode,
-                        "budget" = "budgets"),
-          dplyr::across(any_of("inst_quorum_turnout"),
-                        stringr::str_replace_all,
-                        pattern = c("^(\\s+)?>(\\s+)?" = ">\u202f",
-                                    "(\\s+)?%(\\s+)?$" = "\u202f%")),
-          ## ordinal
-          ## interval
-          date = lubridate::as_date(date),
-          date_time_created = date_time_created %>% magrittr::divide_by(1000L) %>% lubridate::as_datetime(),
-          ## undefined
-          files = files %>% purrr::map(~ .x %>%
-                                         # harmonize depth (i.e. add list level if necessary)
-                                         purrr::when(length(.) == 0L || purrr::vec_depth(.) > 3L ~ .,
-                                                     ~ list(.)) %>%
-                                         purrr::map(~ .x %>%
-                                                      # unnest and restore `date`
-                                                      purrr::assign_in(where = "date",
-                                                                       value =
-                                                                         .$date %>%
-                                                                         purrr::flatten_dbl() %>%
-                                                                         magrittr::divide_by(1000L) %>%
-                                                                         lubridate::as_datetime()) %>%
-                                                      # change subvariable names
-                                                      magrittr::set_names(names(.) %>% dplyr::recode("date" = "date_time_attached",
-                                                                                                     "object_key" = "s3_object_key",
-                                                                                                     "size" = "file_size",
-                                                                                                     "deleted" = "is_deleted")))),
-          
-          # variable creations
-          url_sudd = dplyr::if_else(!is.na(id_sudd),
-                                    paste0("https://sudd.ch/event.php?id=", id_sudd),
-                                    NA_character_),
-          url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
-                                          paste0("https://swissvotes.ch/vote/", id_official),
-                                          NA_character_)
-        ) %>%
-        
-        # remove obsolete vars
-        dplyr::select(-tags) %>%
-        
-        # convert types
-        ## based on codebook
-        dplyr::mutate(dplyr::across(.fns = ~ {
-          
-          metadata <- data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
-          if (nrow(metadata) != 1L) cli::cli_abort("Missing codebook metadata! Please debug")
-          
-          if (!is.logical(.x) && !is.null(metadata$variable_values[[1L]])) {
-            
-            lvls <- purrr::flatten_chr(metadata$variable_values)
-            is_ordered <- metadata$value_scale %in% c("ordinal_ascending", "ordinal_descending")
-            
-            if (is.list(.x)) {
-              .x %>% purrr::map(.f = factor,
-                                levels = lvls,
-                                ordered = is_ordered)
-            } else {
-              factor(x = .x,
-                     levels = lvls,
-                     ordered = is_ordered)
-            }
-          } else .x
-        })) %>%
-        ## nominal vars without variable_values in codebook
-        dplyr::mutate(dplyr::across(any_of(c("country_code",
-                                             "country_name",
-                                             "subnational_entity_name",
-                                             "municipality")),
-                                    as.factor)) %>%
-        
-        # add variable labels
-        labelled::set_variable_labels(.labels = var_lbls,
-                                      .strict = FALSE) %>%
-        
-        # reorder columns
-        dplyr::relocate(id,
-                        id_official,
-                        id_sudd,
-                        country_code,
-                        country_name,
-                        subnational_entity_name,
-                        municipality,
-                        level,
-                        date,
-                        title_de,
-                        title_fr,
-                        title_en,
-                        committee_name,
-                        result,
-                        any_of("subterritories_yes"),
-                        any_of("subterritories_no"),
-                        electorate_total,
-                        electorate_abroad,
-                        any_of("votes_yes"),
-                        any_of("votes_no"),
-                        any_of("votes_empty"),
-                        any_of("votes_invalid"),
-                        any_of("votes_per_subterritory"),
-                        any_of("lower_house_yes"),
-                        any_of("lower_house_no"),
-                        any_of("lower_house_abstentions"),
-                        any_of("upper_house_yes"),
-                        any_of("upper_house_no"),
-                        any_of("upper_house_abstentions"),
-                        any_of("position_government"),
-                        tags_tier_1,
-                        tags_tier_2,
-                        tags_tier_3,
-                        remarks,
-                        files,
-                        url_sudd,
-                        url_swissvotes,
-                        is_draft,
-                        date_time_created,
-                        archive,
-                        type,
-                        any_of("inst_legal_basis_type"),
-                        any_of("inst_has_urgent_legal_basis"),
-                        any_of("inst_is_binding"),
-                        any_of("inst_is_counter_proposal"),
-                        any_of("inst_is_assembly"),
-                        any_of("inst_trigger_type"),
-                        any_of("inst_trigger_actor"),
-                        any_of("inst_trigger_actor_level"),
-                        any_of("inst_trigger_threshold"),
-                        any_of("inst_trigger_time_limit"),
-                        any_of("inst_object_type"),
-                        any_of("inst_object_author"),
-                        any_of("inst_object_legal_level"),
-                        any_of("inst_object_revision_extent"),
-                        any_of("inst_object_revision_modes"),
-                        any_of("inst_object_revision_divisibility"),
-                        any_of("inst_topics_only"),
-                        any_of("inst_topics_excluded"),
-                        any_of("inst_quorum_turnout"),
-                        any_of("inst_quorum_approval"),
-                        any_of("inst_has_precondition"),
-                        any_of("inst_precondition_actor"),
-                        any_of("inst_precondition_decision")) %>%
-        
-        # exclude `archive` if requested
-        purrr::when(incl_archive ~ .,
-                    ~ dplyr::select(.data = ., -archive))
-      
-      # correct known errors
-      ## `id_sudd`
-      data$id_sudd[data$country_code == "AZ" & data$id_sudd == "az021009"] <- "az022009"
-      data$id_sudd[data$country_code == "BS" & data$id_sudd == "bs021002"] <- "bs022002"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011972"] <- "mg011972"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011975"] <- "mg011975"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011992"] <- "mg011992"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011995"] <- "mg011995"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011998"] <- "mg011998"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md012007"] <- "mg012007"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md012010"] <- "mg012010"
-      data$id_sudd[data$country_code == "MH" & data$id_sudd == "mh00578"] <- "mh011979"
-      data$id_sudd[data$country_code == "MW" & data$id_sudd == "mw012003"] <- "mw011993"
-      data$id_sudd[data$country_code == "EC" & data$id_sudd == "ec031993"] <- "ec031994"
-      data$id_sudd[data$country_code == "EC" & data$id_sudd == "ec021006"] <- "ec022006"
-      data$id_sudd[data$country_code == "GQ" & data$id_sudd == "gq012968"] <- "gq011968"
-      data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt011998"] <- "gt011999"
-      data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt021998"] <- "gt021999"
-      data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt031998"] <- "gt031999"
-      data$id_sudd[data$country_code == "LI" & data$id_sudd == "li021920"] <- "li021930"
-      data$id_sudd[data$country_code == "LT" & data$id_sudd == "lt031993"] <- "lt031994"
-      data$id_sudd[data$country_code == "NF" & data$id_sudd == "nf011980"] <- "nf011979"
-      data$id_sudd[data$country_code == "TV" & data$id_sudd == "tv011994"] <- "tv011974"
-      data$id_sudd[data$country_code == "UY" & data$id_sudd == "uy011918"] <- "uy011917"
-      data$id_sudd[data$country_code == "YE" & data$id_sudd == "ye012991"] <- "ye011991"
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
-    }
+    # exclude `archive` if requested
+    if (!incl_archive) data %<>% dplyr::select(-any_of("archive"))
     
     # return data
     data
@@ -780,6 +1411,473 @@ referendums <- function(use_cache = TRUE,
   .use_cache = use_cache,
   .cache_lifespan = cache_lifespan,
   .pkg = pkg)
+}
+
+#' Get a single referendum's data
+#'
+#' Downloads a single referendum's data from the C2D Database. See [`codebook`][codebook] for a detailed description of all variables.
+#'
+#' @param id The referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
+#' @inheritParams referendums
+#'
+#' @inherit referendums return
+#' @family referendum
+#' @export
+#'
+#' @examples
+#' c2d::referendum(id = "5bbbe26a92a21351232dd73f")
+referendum <- function(id,
+                       incl_archive = FALSE,
+                       tidy = TRUE) {
+  
+  checkmate::assert_string(id,
+                           min.chars = 1L)
+  checkmate::assert_flag(incl_archive)
+  checkmate::assert_flag(tidy)
+  
+  # retrieve data
+  data <-
+    httr::RETRY(verb = "GET",
+                url = paste0("https://services.c2d.ch/referendums/", id),
+                times = 5L) %>%
+    # ensure we actually got a JSON response
+    assert_mime_type() %>%
+    # extract JSON
+    httr::content(as = "text",
+                  encoding = "UTF-8") %>%
+    # convert JSON to list
+    # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result
+    jsonlite::fromJSON(simplifyVector = FALSE,
+                       simplifyDataFrame = FALSE,
+                       simplifyMatrix = FALSE,
+                       flatten = FALSE) %>%
+    # tidy data
+    tidy_referendums(tidy = tidy)
+  
+  # exclude `archive` if requested
+  if (!incl_archive) data %<>% dplyr::select(-any_of("archive"))
+  
+  # return data
+  data
+}
+
+#' Download file attachment
+#'
+#' Downloads a file attachment from the C2D database. The necessary `s3_object_key`s identifying individual files are found in the `files` list column returned
+#' by [referendums()].
+#'
+#' @param s3_object_key The key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design). A character scalar.
+#' @param path The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.
+#'
+#' @return A [response object][httr::response], invisibly.
+#' @family referendum
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # get all file object keys...
+#' c2d::referendums()$files |>
+#'   purrr::map_depth(2L, purrr::pluck, "s3_object_key") |>
+#'   purrr::flatten() |>
+#'   purrr::flatten_chr() |>
+#'   # ...select first three keys...
+#'   magrittr::extract(1:3) |>
+#'   # ...and download the corresponding files to the current working dir
+#'   purrr::walk(c2d::download_file_attachment)}
+download_file_attachment <- function(s3_object_key,
+                                     path = ".") {
+  
+  checkmate::assert_string(s3_object_key)
+  checkmate::assert_atomic(path)
+  
+  if (fs::dir_exists(path)) {
+    checkmate::assert_directory(path,
+                                access = "rw")
+    use_original_filename <- TRUE
+  } else {
+    checkmate::assert_path_for_output(path,
+                                      overwrite = TRUE)
+    use_original_filename <- FALSE
+  }
+  
+  temp_path <- fs::file_temp()
+  
+  response <- httr::RETRY(verb = "GET",
+                          url = paste0("https://services.c2d.ch/s3_objects/", s3_object_key),
+                          httr::write_disk(path = temp_path),
+                          times = 5L)
+  
+  if (use_original_filename) {
+    
+    final_path <-
+      response %>%
+      httr::headers() %$%
+      `content-disposition` %>%
+      stringr::str_extract(pattern = "(?<=filename=\").+?(?=\")") %>%
+      fs::path(path, .)
+    
+  } else {
+    final_path <- path
+  }
+  
+  fs::file_move(path = temp_path,
+                new_path = final_path)
+  
+  invisible(response)
+}
+
+#' Add new referendums to the C2D database
+#'
+#' Adds new referendum entries to the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
+#'
+#' @details
+#' Note that the following variables are not supported, i.e. simply dropped from `data`: `files`
+#'
+#' @param data The new referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
+#'   identifying the referendums plus additional [valid columns][codebook] containing the values for the corresponding database fields.
+#' @param email The e-mail address of the C2D API user account to be used for authentication. A character scalar.
+#' @param password The password of the C2D API user account to be used for authentication. A character scalar.
+#'
+#' @return `data`, invisibly.
+#' @family referendum
+#' @export
+add_referendums <- function(data,
+                            email = names(getOption("c2d.credentials")[1L]),
+                            password = getOption("c2d.credentials")[1L]) {
+  # ensure `data` is valid
+  checkmate::assert_data_frame(data,
+                               all.missing = FALSE,
+                               min.rows = 1L)
+  
+  ## ensure forbidden columns are absent
+  if ("id" %in% colnames(data)) {
+    cli::cli_abort(paste0("{.arg data} mustn't contain an {.var id} column. It is automatically set by the C2D API back-end. Did you mean to {.fun ",
+                          "edit_referendums} instead?"))
+  }
+  if ("created_on" %in% colnames(data)) {
+    cli::cli_abort("{.arg data} mustn't contain a {.var created_on} column. This date is automatically set by the C2D API back-end.")
+  }
+  
+  ## ensure mandatory columns are present
+  c("is_draft",
+    "country_code",
+    "level",
+    "date") %>%
+    purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
+  
+  ## ensure columns are valid
+  assert_cols_valid(data)
+  
+  # convert data to MongoDB schema
+  json_items <-
+    data %>%
+    # drop forbidden variables
+    dplyr::select(-any_of("files")) %>%
+    # restore MongoDB fields
+    untidy_referendums() %>%
+    # convert to JSON
+    purrr::map(jsonlite::toJSON,
+               auto_unbox = TRUE,
+               digits = NA)
+  
+  # add data to the MongoDB via HTTP POST on `/referendums` API endpoint
+  responses <-
+    json_items %>%
+    purrr::map(~ httr::RETRY(verb = "POST",
+                             url = "https://services.c2d.ch/referendums",
+                             config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
+                                                                                                     password = password)),
+                                                        Connection = "keep-alive"),
+                             body = .x,
+                             times = 5L,
+                             httr::content_type_json()) %>%
+                 httr::content(as = "parsed"))
+  
+  # throw warnings for unsuccessful API calls
+  purrr::walk2(.x = seq_along(responses),
+               .y = responses,
+               .f = ~ if (!isTRUE(.y$ok)) {
+                 cli::cli_warn("Failed to add the {.x}. referendum. The API server responded with error {.val {.y$error$id}}.")
+               })
+  
+  invisible(data)
+}
+
+#' Edit existing referendums in the C2D database
+#'
+#' Edits existing referendum entries in the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
+#'
+#' @inherit add_referendums details
+#' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
+#'   identifying the referendums plus a [valid column][codebook] containing the new values for each database field that should be updated.
+#' @inheritParams add_referendums
+#'
+#' @inherit add_referendums return
+#' @family referendum
+#' @export
+edit_referendums <- function(data,
+                             email = names(getOption("c2d.credentials")[1L]),
+                             password = getOption("c2d.credentials")[1L]) {
+  # ensure `data` is valid
+  checkmate::assert_data_frame(data,
+                               all.missing = FALSE,
+                               min.rows = 1L)
+  
+  ## ensure forbidden columns are absent
+  if ("created_on" %in% colnames(data)) {
+    cli::cli_abort(paste0("{.arg data} mustn't contain a {.var created_on} column. This date is automatically set by the C2D API back-end and not supposed to ",
+                          "be changed."))
+  }
+  
+  ## ensure mandatory columns are present
+  c("id",
+    "is_draft") %>%
+    purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
+  
+  ## ensure columns are valid
+  assert_cols_valid(data)
+  
+  # convert data to MongoDB schema
+  ids <- data$id
+  
+  json_items <-
+    data %>%
+    # drop forbidden variables
+    dplyr::select(-any_of("_id", "files")) %>%
+    # restore MongoDB fields
+    untidy_referendums() %>%
+    # convert to JSON
+    purrr::map(jsonlite::toJSON,
+               auto_unbox = TRUE,
+               digits = NA)
+  
+  # edit data in the MongoDB via HTTP PUT on `/referendums` API endpoint
+  responses <- purrr::map2(.x = ids,
+                           .y = json_items,
+                           .f = ~
+                             httr::RETRY(verb = "PUT",
+                                         url = paste0("https://services.c2d.ch/referendums/",.x),
+                                         config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
+                                                                                                                 password = password)),
+                                                                    Connection = "keep-alive"),
+                                         body = .y,
+                                         times = 5L,
+                                         httr::content_type_json()) %>%
+                             httr::content(as = "parsed"))
+  
+  # throw warnings for unsuccessful API calls
+  purrr::walk2(.x = ids,
+               .y = responses,
+               .f = ~ if (!isTRUE(.y$ok)) {
+                 cli::cli_warn("Failed to edit referendum with {.var id} {.val {.x}}. The API server responded with error {.val {.y$error$id}}.")
+               })
+  
+  invisible(data)
+}
+
+#' Validate referendums
+#'
+#' @param data The referendum data to validate, as returned by [referendums()].
+#' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
+#' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
+#'
+#' @return `data`, invisibly.
+#' @family referendum
+#' @export
+validate_referendums <- function(data,
+                                 check_applicability_constraint = TRUE,
+                                 check_id_sudd_prefix = TRUE) {
+  
+  checkmate::assert_data_frame(data,
+                               min.rows = 1L)
+  checkmate::assert_subset(colnames(data),
+                           choices = data_codebook$variable_name)
+  checkmate::assert_flag(check_applicability_constraint)
+  checkmate::assert_flag(check_id_sudd_prefix)
+  
+  # check columns
+  assert_cols_valid(data = data,
+                    action = cli::cli_alert_warning)
+  
+  # check applicability constraints
+  if (check_applicability_constraint) {
+    
+    v_names_violated <-
+      data_codebook %>%
+      dplyr::filter(variable_name %in% colnames(data)
+                    & !is.na(applicability_constraint)) %$%
+      purrr::map2_lgl(.x = magrittr::set_names(x = variable_name,
+                                               value = variable_name),
+                      .y = applicability_constraint,
+                      .f = ~ {
+                        
+                        data %>%
+                          dplyr::filter(!eval(parse(text = .y))) %$%
+                          eval(as.symbol(.x)) %>%
+                          {is.na(.) | purrr::map_lgl(., is.null)} %>%
+                          all()
+                      }) %>%
+    magrittr::extract(. %in% FALSE) %>%
+    names()
+    
+    n_v_names_violated <- length(v_names_violated)
+    
+    if (n_v_names_violated) {
+      
+      cli::cli_alert_warning("Applicability constraints are violated for {n_v_names_violated} variable{?s}:")
+      
+      paste0("{.var ", v_names_violated, "}") %>%
+        magrittr::set_names(rep("x",
+                                times = length(.))) %>%
+        cli::cli_bullets()
+      
+      first_v_name_violated <- v_names_violated[1L]
+      
+      cli::cli_text("To get the applicability constraint of e.g. {.var {first_v_name_violated}}, run:")
+      cat("\n")
+      cli::cli_code(c("data_codebook %>%",
+                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
+                      "  applicability_constraint"))
+      cat("\n")
+      cli::cli_text("To inspect the entries in violation of the above applicability constraint, run:")
+      cat("\n")
+      cli::cli_code(c("data_codebook %>%",
+                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
+                      "  dplyr::filter(.data = data,",
+                      "                !eval(parse(text = applicability_constraint))) %$%",
+                      glue::glue("  {first_v_name_violated}")))
+    }
+  }
+  
+  # check `id_sudd` prefix if requested
+  if (check_id_sudd_prefix) {
+    
+    if (!all(c("country_code", "id_sudd") %in% colnames(data))) {
+      cli::cli_abort("Columns {.var country_code} and {.var id_sudd} must be present in {.arg data}.")
+    }
+    
+    # define allowed exceptions
+    allowed_exceptions <- tibble::tribble(
+      ~country_code, ~id_sudd_prefix,
+      # Curaçao
+      "CW", "an",
+      # Szeklerland, cf. https://sudd.ch/event.php?id=hu042008
+      "RO", "hu"
+    )
+    
+    # assemble target country codes
+    country_codes <- data$country_code %>% as.list()
+    
+    for (country_code in allowed_exceptions$country_code) {
+      
+      additional_country_codes <-
+        allowed_exceptions %>%
+        dplyr::filter(country_code == !!country_code) %$%
+        id_sudd_prefix %>%
+        stringr::str_to_upper()
+      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code == .x) %>% which()
+      
+      for (i in i_country_codes) {
+        country_codes[[i]] <- unique(c(country_codes[[i]], additional_country_codes))
+      }
+    }
+    
+    # add dummy indicating if target country codes match
+    # TODO: instead of modifying input data, print cli msg with all relevant info!
+    data$matches_id_sudd_prefix <-
+      data$id_sudd %>%
+      stringr::str_extract(pattern = "^..") %>%
+      stringr::str_to_upper() %>%
+      purrr::map2_lgl(.y = country_codes,
+                      .f = ~ .x %in% .y)
+    
+    data$matches_id_sudd_prefix[is.na(data$id_sudd)] <- NA
+  }
+  
+  invisible(data)
+}
+
+#' Count number of referendums
+#'
+#' Counts the number of referendums per [`level`](https://rpkg.dev/c2d/articles/codebook.html#level) in the C2D Database.
+#'
+#' @inheritParams assemble_query_filter
+#'
+#' @return A named list with `level` as names and referendum counts as values.
+#' @family referendum
+#' @export
+#'
+#' @examples
+#' # the whole database (excl. drafts)
+#' c2d::count_referendums()
+#' 
+#' # only Swiss and Austrian referendums
+#' c2d::count_referendums(country_code = c("CH", "AT"))
+#' 
+#' # only Swiss referendums created between 2020 and 2021
+#' c2d::count_referendums(country_code = "CH",
+#'                        date_time_created_min = "2020-01-01",
+#'                        date_time_created_max = "2021-01-01")
+count_referendums <- function(is_draft = FALSE,
+                              country_code = NULL,
+                              subnational_entity_name = NULL,
+                              municipality = NULL,
+                              level = NULL,
+                              type = NULL,
+                              date = NULL,
+                              date_time_created_min = NULL,
+                              date_time_created_max = NULL,
+                              query_filter = NULL) {
+  httr::RETRY(verb = "GET",
+              url = "https://services.c2d.ch/referendums/stats",
+              query = list(filter = assemble_query_filter(country_code = country_code,
+                                                          subnational_entity_name = subnational_entity_name,
+                                                          municipality = municipality,
+                                                          level = level,
+                                                          type = type,
+                                                          date = date,
+                                                          is_draft = is_draft,
+                                                          date_time_created_min = date_time_created_min,
+                                                          date_time_created_max = date_time_created_max,
+                                                          query_filter = query_filter)),
+              times = 5L) %>%
+    # ensure we actually got a JSON response
+    assert_mime_type() %>%
+    # parse response
+    httr::content(as = "parsed") %$%
+    votes %>%
+    magrittr::set_names(names(.) %>% dplyr::recode("sub_national" = "subnational"))
+}
+
+#' Search in English referendum titles
+#'
+#' Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no [fuzzy
+#' search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are returned).
+#'
+#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
+#' titles.
+#'
+#' @param term The Search term. A character scalar.
+#'
+#' @return A character vector of English referendum titles matching the search `term`.
+#' @family referendum
+#' @export
+#'
+#' @examples
+#' c2d::search_referendums("freedom")
+search_referendums <- function(term) {
+  
+  httr::RETRY(verb = "GET",
+              url = "https://services.c2d.ch/referendums",
+              query = list(mode = "search",
+                           term = checkmate::assert_string(term)),
+              times = 5L) %>%
+    # ensure we actually got a JSON response
+    assert_mime_type() %>%
+    # parse response
+    httr::content(as = "parsed") %$%
+    items %>%
+    purrr::flatten_chr() 
 }
 
 #' C2D Codebook
@@ -791,7 +1889,7 @@ referendums <- function(use_cache = TRUE,
 #'
 #' @format `r pkgsnip::return_label("data")`
 #' @aliases codebook
-#' @seealso Metadata functions [v_vals()] and [val_lbls()].
+#' @family metadata
 #' @export
 "data_codebook"
 
@@ -861,145 +1959,6 @@ v_vals <- function(v_name) {
     unlist()
 }
 
-#' Count number of referendums
-#'
-#' Counts the number of referendums in the C2D Database.
-#'
-#' @inheritParams assemble_query_filter
-#'
-#' @return A named list with `level` as names and referendum counts as values.
-#' @export
-#'
-#' @examples
-#' # the whole database (excl. drafts)
-#' c2d::count_referendums()
-#' 
-#' # only Swiss and Austrian referendums
-#' c2d::count_referendums(country_code = c("CH", "AT"))
-#' 
-#' # only Swiss referendums created between 2020 and 2021
-#' c2d::count_referendums(country_code = "CH",
-#'                        date_time_created_min = "2020-01-01",
-#'                        date_time_created_max = "2021-01-01")
-count_referendums <- function(is_draft = FALSE,
-                              country_code = NULL,
-                              subnational_entity_name = NULL,
-                              municipality = NULL,
-                              level = NULL,
-                              type = NULL,
-                              date = NULL,
-                              date_time_created_min = NULL,
-                              date_time_created_max = NULL,
-                              query_filter = NULL) {
-  httr::RETRY(verb = "GET",
-              url = "https://services.c2d.ch/referendums/stats",
-              query = list(filter = assemble_query_filter(country_code = country_code,
-                                                          subnational_entity_name = subnational_entity_name,
-                                                          municipality = municipality,
-                                                          level = level,
-                                                          type = type,
-                                                          date = date,
-                                                          is_draft = is_draft,
-                                                          date_time_created_min = date_time_created_min,
-                                                          date_time_created_max = date_time_created_max,
-                                                          query_filter = query_filter)),
-              times = 5L) %>%
-    httr::content(as = "parsed") %$%
-    votes %>%
-    magrittr::set_names(names(.) %>% dplyr::recode("sub_national" = "subnational"))
-}
-
-#' Download file attachment
-#'
-#' Downloads a file attachment from the C2D database. The necessary `s3_object_key`s identifying individual files are found in the `files` list column returned
-#' by [referendums()].
-#'
-#' @param s3_object_key The key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design). A character scalar.
-#' @param path The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.
-#'
-#' @return A [response object][httr::response], invisibly.
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' # get all file object keys...
-#' c2d::referendums()$files |>
-#'   purrr::map_depth(2L, purrr::pluck, "s3_object_key") |>
-#'   purrr::flatten() |>
-#'   purrr::flatten_chr() |>
-#'   # ...select first three keys...
-#'   magrittr::extract(1:3) |>
-#'   # ...and download the corresponding files to the current working dir
-#'   purrr::walk(c2d::download_file_attachment)}
-download_file_attachment <- function(s3_object_key,
-                                     path = ".") {
-  
-  checkmate::assert_string(s3_object_key)
-  checkmate::assert_atomic(path)
-  
-  if (fs::dir_exists(path)) {
-    checkmate::assert_directory(path,
-                                access = "rw")
-    use_original_filename <- TRUE
-  } else {
-    checkmate::assert_path_for_output(path,
-                                      overwrite = TRUE)
-    use_original_filename <- FALSE
-  }
-  
-  temp_path <- fs::file_temp()
-  
-  response <- httr::RETRY(verb = "GET",
-                          url = paste0("https://services.c2d.ch/s3_objects/", s3_object_key),
-                          httr::write_disk(path = temp_path),
-                          times = 5L)
-  
-  if (use_original_filename) {
-    
-    final_path <-
-      response %>%
-      httr::headers() %$%
-      `content-disposition` %>%
-      stringr::str_extract(pattern = "(?<=filename=\").+?(?=\")") %>%
-      fs::path(path, .)
-    
-  } else {
-    final_path <- path
-  }
-  
-  fs::file_move(path = temp_path,
-                new_path = final_path)
-  
-  invisible(response)
-}
-
-#' Search in English referendum titles
-#'
-#' Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no [fuzzy
-#' search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are returned).
-#'
-#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
-#' titles.
-#'
-#' @param term The Search term. A character scalar.
-#'
-#' @return A character vector of English referendum titles matching the search `term`.
-#' @export
-#'
-#' @examples
-#' c2d::search_referendums("freedom")
-search_referendums <- function(term) {
-  
-  httr::RETRY(verb = "GET",
-              url = "https://services.c2d.ch/referendums",
-              query = list(mode = "search",
-                           term = checkmate::assert_string(term)),
-              times = 5L) %>%
-    httr::content(as = "parsed") %$%
-    items %>%
-    purrr::flatten_chr() 
-}
-
 #' Hierarchize Tags
 #'
 #' Reconstructs the hierarchical relations between the three tag variables `tags_tier_1`, `tags_tier_2` and `tags_tier_3`. Can also be used to simply determine
@@ -1017,21 +1976,19 @@ search_referendums <- function(term) {
 #'
 #' # hierarchize the tags of all Austrian referendums
 #' c2d::referendums(country_code = "AT") |>
-#'   dplyr::group_by(id) |>
-#'   dplyr::group_split() |>
+#'   dplyr::group_split(id) |>
 #'   purrr::map(c2d::hierarchize_tags)
 hierarchize_tags <- function(x) {
   
-  test_char <- checkmate::test_character(x,
-                                         any.missing = FALSE)
+  test_char <- checkmate::test_character(x, any.missing = FALSE)
   
   if (!test_char) {
     
-    tag_var_names <- paste0("tags_tier_", 1:3)
+    tag_v_names <- paste0("tags_tier_", 1:3)
     test_df <- checkmate::test_data_frame(x,
                                           min.rows = 1L,
                                           max.rows = 1L)
-    has_tag_vars <- all(tag_var_names %in% colnames(x))
+    has_tag_vars <- all(tag_v_names %in% colnames(x))
     
     if (!test_df || !has_tag_vars) {
       cli::cli_abort(paste0("{.arg x} must be either a character vector of tags or a single-row data frame containing at least the columns ",
@@ -1039,7 +1996,7 @@ hierarchize_tags <- function(x) {
     }
     
     x %<>%
-      .[, tag_var_names] %>%
+      .[, tag_v_names] %>%
       purrr::pmap(~ as.character(c(..1, ..2, ..3))) %>%
       purrr::flatten_chr()
   }
@@ -1144,119 +2101,36 @@ infer_tags <- function(tags,
   unique(result)
 }
 
-#' Validate referendums
+#' Test C2D API availability
 #'
-#' @param data The referendum data to validate, as returned by [referendums()].
-#' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
-#' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
+#' Checks if the C2D API server is online and operational.
 #'
-#' @return `data`, invisibly.
+#' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
+#'
+#' @return A logical scalar.
+#' @family api_status
 #' @export
-validate_referendums <- function(data,
-                                 check_applicability_constraint = TRUE,
-                                 check_id_sudd_prefix = TRUE) {
+is_online <- function(quiet = FALSE) {
   
-  checkmate::assert_data_frame(data,
-                               min.rows = 1L)
-  checkmate::assert_subset(colnames(data),
-                           choices = data_codebook$variable_name)
-  checkmate::assert_flag(check_applicability_constraint)
-  checkmate::assert_flag(check_id_sudd_prefix)
+  checkmate::assert_flag(quiet)
+  result <- FALSE
+  response <-
+    rlang::with_handlers(.expr = httr::RETRY(verb = "GET",
+                                             url = "https://services.c2d.ch/health",
+                                             times = 5L),
+                         error = ~ paste0("Error: ", .x$message)) %>%
+    # ensure we actually got a plaintext response
+    assert_mime_type(mime_type = "text/plain") %>%
+    # parse response
+    httr::content(as = "text",
+                  encoding = "UTF-8")
   
-  # check applicability constraints
-  if (check_applicability_constraint) {
+  if (response == "OK") {
+    result <- TRUE
     
-    v_names_violated <-
-      data_codebook %>%
-      dplyr::filter(variable_name %in% colnames(data)
-                    & !is.na(applicability_constraint)) %$%
-      purrr::map2_lgl(.x = magrittr::set_names(x = variable_name,
-                                               value = variable_name),
-                      .y = applicability_constraint,
-                      .f = ~ {
-                        
-                        data %>%
-                          dplyr::filter(!eval(parse(text = .y))) %$%
-                          eval(as.symbol(.x)) %>%
-                          {is.na(.) | purrr::map_lgl(., is.null)} %>%
-                          all()
-                      }) %>%
-    magrittr::extract(. %in% FALSE) %>%
-    names()
-    
-    n_v_names_violated <- length(v_names_violated)
-    
-    if (n_v_names_violated) {
-      
-      cli::cli_alert_warning("Applicability constraints are violated for {n_v_names_violated} variable{?s}:")
-      
-      paste0("{.var ", v_names_violated, "}") %>%
-        magrittr::set_names(rep("x",
-                                times = length(.))) %>%
-        cli::cli_bullets()
-      
-      first_v_name_violated <- v_names_violated[1L]
-      
-      cli::cli_text("To get the applicability constraint of e.g. {.var {first_v_name_violated}}, run:")
-      cat("\n")
-      cli::cli_code(c("data_codebook %>%",
-                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
-                      "  applicability_constraint"))
-      cat("\n")
-      cli::cli_text("To inspect the entries in violation of the above applicability constraint, run:")
-      cat("\n")
-      cli::cli_code(c("data_codebook %>%",
-                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
-                      "  dplyr::filter(.data = data,",
-                      "                !eval(parse(text = applicability_constraint))) %$%",
-                      glue::glue("  {first_v_name_violated}")))
-    }
+  } else if (!quiet) {
+    cli::cli_warn("C2D API server responded with: {.val {response}}")
   }
   
-  # check `id_sudd` prefix if requested
-  if (check_id_sudd_prefix) {
-    
-    if (!all(c("country_code", "id_sudd") %in% colnames(data))) {
-      cli::cli_abort("Columns {.var country_code} and {.var id_sudd} must be present in {.arg data}.")
-    }
-    
-    # define allowed exceptions
-    allowed_exceptions <- tibble::tribble(
-      ~country_code, ~id_sudd_prefix,
-      # Curaçao
-      "CW", "an",
-      # Szeklerland, cf. https://sudd.ch/event.php?id=hu042008
-      "RO", "hu"
-    )
-    
-    # assemble target country codes
-    country_codes <- data$country_code %>% as.list()
-    
-    for (country_code in allowed_exceptions$country_code) {
-      
-      additional_country_codes <-
-        allowed_exceptions %>%
-        dplyr::filter(country_code == !!country_code) %$%
-        id_sudd_prefix %>%
-        stringr::str_to_upper()
-      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code == .x) %>% which()
-      
-      for (i in i_country_codes) {
-        country_codes[[i]] <- unique(c(country_codes[[i]], additional_country_codes))
-      }
-    }
-    
-    # add dummy indicating if target country codes match
-    # TODO: instead of modifying input data, print cli msg with all relevant info!
-    data$matches_id_sudd_prefix <-
-      data$id_sudd %>%
-      stringr::str_extract(pattern = "^..") %>%
-      stringr::str_to_upper() %>%
-      purrr::map2_lgl(.y = country_codes,
-                      .f = ~ .x %in% .y)
-    
-    data$matches_id_sudd_prefix[is.na(data$id_sudd)] <- NA
-  }
-  
-  invisible(data)
+  result
 }
