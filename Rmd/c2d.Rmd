@@ -320,7 +320,7 @@ assert_cols_valid <- function(data,
   
   ## check `subnational_entity_name`
   ## TODO: check `subnational_entity_code` instead once it's available
-  if (any(data$level != "national")) {
+  if (any(data[["level"]] != "national")) {
     
     if (!("subnational_entity_name" %in% colnames(data))) {
       action(paste0("Referendums of {.var level} below {.val national} present in {.arg data} but column {.var subnational_entity_name} is missing."))
@@ -341,7 +341,7 @@ assert_cols_valid <- function(data,
   }
   
   ## check `municipality`
-  if (any(data$level == "local")) {
+  if (any(data[["level"]] == "local")) {
     
     if (!("municipality" %in% colnames(data))) {
       action(paste0("Referendums of {.var level = \"local\"} present in {.arg data} but column {.var municipality} is missing."))
