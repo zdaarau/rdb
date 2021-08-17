@@ -2025,7 +2025,7 @@ edit_referendums <- function(data,
   json_items <-
     data %>%
     # drop forbidden variables
-    dplyr::select(-any_of("_id", "files")) %>%
+    dplyr::select(-any_of(c("id", "files"))) %>%
     # restore MongoDB fields
     untidy_referendums() %>%
     # convert to JSON
