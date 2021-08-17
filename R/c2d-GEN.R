@@ -318,6 +318,23 @@ auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
   invisible(token)
 }
 
+drop_disabled_vx <- function(data,
+                             to_drop) {
+  
+  to_drop_present <- intersect(to_drop, colnames(data))
+  n_to_drop_present <- length(to_drop_present)
+  
+  if (n_to_drop_present) {
+    
+    cli::cli_alert_warning(paste0("The {qty(n_to_drop_present)} column{?s} {.var {to_drop_present}} in {.arg data} are ignored because setting/altering the ",
+                                  "corresponding values is disabled."))
+    
+    data %<>% dplyr::select(-any_of(to_drop))
+  }
+  
+  data
+}
+
 flatten_array_as_is <- function(x) {
   
   unlist(x) %>% purrr::when(is.null(.) ~ .,
@@ -1568,11 +1585,12 @@ add_referendums <- function(data,
   ## ensure columns are valid
   assert_cols_valid(data)
   
+  # drop disabled variables
+  data %<>% drop_disabled_vx("files")
+  
   # convert data to MongoDB schema
   json_items <-
     data %>%
-    # drop forbidden variables
-    dplyr::select(-any_of("files")) %>%
     # restore MongoDB fields
     untidy_referendums() %>%
     # convert to JSON
@@ -1637,13 +1655,16 @@ edit_referendums <- function(data,
   ## ensure columns are valid
   assert_cols_valid(data)
   
+  # drop disabled variables
+  data %<>% drop_disabled_vx("files")
+  
   # convert data to MongoDB schema
   ids <- data$id
   
   json_items <-
     data %>%
-    # drop forbidden variables
-    dplyr::select(-any_of(c("id", "files"))) %>%
+    # drop `id`
+    dplyr::select(-id) %>%
     # restore MongoDB fields
     untidy_referendums() %>%
     # convert to JSON
