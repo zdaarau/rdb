@@ -467,7 +467,7 @@ flatten_array_as_is <- function(x) {
 
 ### `httr_config`
 
-Until [recently](https://github.com/ccmdesign/c2d-app/issues/10), the C2D API server didn't provide the [intermediate *R3*
+[Before 2021-05-25](https://github.com/ccmdesign/c2d-app/issues/10), the C2D API server didn't provide the [intermediate *R3*
 certificate](https://crt.sh/?q=+730c1bdcd85f57ce5dc0bba733e5f1ba5a925b2a771d640a26f7a454224dad3b) (issued by Let's Encrypt) and since [curl doesn't support
 *Authority Information Access* yet](https://github.com/curl/curl/issues/2793) to automatically discover it, we had to manually specify it. Thus, the certificate
 was shipped with this package (found under `certs/3479778542.crt`). Because this isn't needed anymore, the cert as well as the code chunk below (`purl = FALSE`)
