@@ -45,8 +45,8 @@
   
 
 <meta property="og:title" content="Authenticate a user session for the C2D API — auth_session" />
-<meta name="description" content="Creates a new user session token if necessary. The token is stored in the R option c2d.user_session_tokens, named by email. By default, the email and password are read from the first element of the R option c2d.credentials (a named character vector where names are e-mail addresses and values are passwords).`">
-<meta property="og:description" content="Creates a new user session token if necessary. The token is stored in the R option c2d.user_session_tokens, named by email. By default, the email and password are read from the first element of the R option c2d.credentials (a named character vector where names are e-mail addresses and values are passwords).`" />
+<meta name="description" content="Creates a new user session token if necessary. The token is stored in the R option c2d.user_session_tokens, a tibble with the columns email, token and date_time_last_active.">
+<meta property="og:description" content="Creates a new user session token if necessary. The token is stored in the R option c2d.user_session_tokens, a tibble with the columns email, token and date_time_last_active." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -124,9 +124,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Creates a new user session token if necessary. The token is stored in the R option <code>c2d.user_session_tokens</code>, named by <code>email</code>. By default, the <code>email</code> and
-<code>password</code> are read from the first element of the R option <code>c2d.credentials</code> (a named character vector where names are e-mail addresses and values are
-passwords).`</p>
+    <p>Creates a new user session token if necessary. The token is stored in the R option <code>c2d.user_session_tokens</code>, a <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> with the columns
+<code>email</code>, <code>token</code> and <code>date_time_last_active</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>auth_session</span><span class='op'>(</span>
@@ -150,6 +149,10 @@ passwords).`</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>The user session token as a character scalar, invisibly.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>By default, the <code>email</code> and <code>password</code> are read from the first element of the R option <code>c2d.credentials</code> (a named character vector where names are e-mail
+addresses and values are passwords).</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

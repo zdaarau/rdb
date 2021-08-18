@@ -18,8 +18,11 @@ auth_session(
 The user session token as a character scalar, invisibly.
 }
 \description{
-Creates a new user session token if necessary. The token is stored in the R option \code{c2d.user_session_tokens}, named by \code{email}. By default, the \code{email} and
-\code{password} are read from the first element of the R option \code{c2d.credentials} (a named character vector where names are e-mail addresses and values are
-passwords).`
+Creates a new user session token if necessary. The token is stored in the R option \code{c2d.user_session_tokens}, a \link[tibble:tbl_df-class]{tibble} with the columns
+\code{email}, \code{token} and \code{date_time_last_active}.
+}
+\details{
+By default, the \code{email} and \code{password} are read from the first element of the R option \code{c2d.credentials} (a named character vector where names are e-mail
+addresses and values are passwords).
 }
 \keyword{internal}

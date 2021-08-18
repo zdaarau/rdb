@@ -367,12 +367,16 @@ assert_cols_valid <- function(data,
 
 ### `auth_session`
 
+TODO: Tweak token expiration time [once we know it](https://github.com/ccmdesign/c2d-app/issues/47).
+
 ```{r}
 #' Authenticate a user session for the [C2D API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
 #'
-#' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, named by `email`. By default, the `email` and
-#' `password` are read from the first element of the R option `c2d.credentials` (a named character vector where names are e-mail addresses and values are
-#' passwords).`
+#' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, a [tibble][tibble::tbl_df] with the columns
+#' `email`, `token` and `date_time_last_active`.
+#' 
+#' By default, the `email` and `password` are read from the first element of the R option `c2d.credentials` (a named character vector where names are e-mail
+#' addresses and values are passwords).
 #'
 #' @param email The e-mail address of the user for which a session should be created. A character scalar.
 #' @param password The password of the user for which a session should be created. A character scalar.
@@ -382,10 +386,32 @@ assert_cols_valid <- function(data,
 auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
                          password = getOption("c2d.credentials")[1L]) {
   
-  tokens <- getOption("c2d.user_session_tokens")
-  token <- tokens[email]
+  # get existing tokens or initialize empty tibble
+  tokens <-
+    getOption("c2d.user_session_tokens") %>%
+    purrr::when(all(c("email", "token", "date_time_last_active") %in% colnames(.)) ~ .,
+                ~ tibble::tibble(email = character(),
+                                 token = character(),
+                                 date_time_last_active = lubridate::as_datetime(NULL)))
   
-  if (!checkmate::test_string(token, min.chars = 1L)) {
+  # extract latest token
+  token <- tokens %>% dplyr::filter(email == !!email)
+  if (nrow(token)) token %<>% dplyr::filter(date_time_last_active == max(date_time_last_active))
+  
+  # ensure token is not expired (checked if older than 1 day), else set to `NULL`
+  if (nrow(token) &&
+      checkmate::test_string(token$token, min.chars = 1L) &&
+      ((token$date_time_last_active > (lubridate::now() - lubridate::duration(1L, units = "days"))) || !is_session_expired(token$token))) {
+    
+    token <- token$token
+    
+  } else {
+    
+    token <- NULL
+  }
+  
+  # create new session if necessary
+  if (is.null(token)) {
     
     pal::cli_process_expr(msg = "Authenticating new user session",
                           expr = {
@@ -402,13 +428,18 @@ auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
                                                     msg_suffix = mime_error_suffix) %>%
                               # parse response
                               httr::content(as = "parsed") %$%
-                              token %>%
-                              magrittr::set_names(email)
-                            
-                            options(c2d.user_session_tokens = c(tokens, token))
+                              token
                           })
   }
   
+  # update `c2d.user_session_tokens` option
+  options(c2d.user_session_tokens =
+            tokens %>%
+            dplyr::filter(token != !!token) %>%
+            tibble::add_row(email = email,
+                            token = token,
+                            date_time_last_active = lubridate::now()))
+  # return token
   invisible(token)
 }
 ```
@@ -459,6 +490,27 @@ httr_config <- function() {
   
   httr::config(cainfo = fs::path_package(package = pkg,
                                          "certs", "3479778542.crt"))
+}
+```
+
+### `is_session_expired`
+
+```{r}
+is_session_expired <- function(token) {
+  
+  response <-
+    httr::RETRY(verb = "GET",
+              url = "https://services.c2d.ch/users/profile",
+              config = httr::add_headers(Authorization = paste("Bearer", token),
+                                         Connection = "keep-alive"),
+              times = 5L) %>%
+    # ensure we actually got a JSON response
+    pal::assert_mime_type(mime_type = "application/json",
+                          msg_suffix = mime_error_suffix) %>%
+    # parse response
+    httr::content(as = "parsed")
+  
+  is.null(response[["profile"]])
 }
 ```
 
