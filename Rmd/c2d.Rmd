@@ -2008,15 +2008,20 @@ add_referendums <- function(data,
                                                                                                      password = password)),
                                                         Connection = "keep-alive"),
                              body = .x,
-                             times = 5L,
+                             times = 3L,
                              httr::content_type_json()) %>%
-                 httr::content(as = "parsed"))
+                 # ensure we actually got a JSON response
+                 pal::assert_mime_type(mime_type = "application/json",
+                                       msg_suffix = mime_error_suffix) %>%
+                 # extract JSON string
+                 httr::content(as = "text",
+                               encoding = "UTF-8"))
   
   # throw warnings for unsuccessful API calls
   purrr::walk2(.x = seq_along(responses),
                .y = responses,
-               .f = ~ if (!isTRUE(.y$ok)) {
-                 cli::cli_warn("Failed to add the {.x}. referendum. The API server responded with error {.val {.y$error$id}}.")
+               .f = ~ if (!isTRUE(jsonlite::fromJSON(.y)$ok)) {
+                 cli::cli_warn("Failed to add the {.x}. referendum. The API server responded with error {.field {.y}}.")
                })
   
   invisible(data)
@@ -2109,15 +2114,20 @@ edit_referendums <- function(data,
                                                                                                                  password = password)),
                                                                     Connection = "keep-alive"),
                                          body = .y,
-                                         times = 5L,
+                                         times = 3L,
                                          httr::content_type_json()) %>%
-                             httr::content(as = "parsed"))
+                             # ensure we actually got a JSON response
+                             pal::assert_mime_type(mime_type = "application/json",
+                                                   msg_suffix = mime_error_suffix) %>%
+                             # extract JSON string
+                             httr::content(as = "text",
+                                           encoding = "UTF-8"))
   
   # throw warnings for unsuccessful API calls
   purrr::walk2(.x = ids,
                .y = responses,
-               .f = ~ if (!isTRUE(.y$ok)) {
-                 cli::cli_warn("Failed to edit referendum with {.var id} {.val {.x}}. The API server responded with error {.val {.y$error$id}}.")
+               .f = ~ if (!isTRUE(jsonlite::fromJSON(.y)$ok)) {
+                 cli::cli_warn("Failed to edit referendum with {.var id} {.val {.x}}. The API server responded with {.field {.y}}.")
                })
   
   invisible(data)
