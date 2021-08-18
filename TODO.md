@@ -111,17 +111,6 @@
 
     -\> see [issue \#41](https://github.com/ccmdesign/c2d-app/issues/41)
 
--   Standardize `country_name`; currently it's not consistent, e.g. for `country_code == "GB"` sometimes `country_name = "United Kingdom"`, sometimes
-    `"United Kingdom of Great Britain and Northern Ireland"` is used.
-
-    See [`countrycode::codelist`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) for possible standards; [ISO 3166 English short
-    country names](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) (`countrycode::codelist$iso.name.en`) seem most promising.
-
-    Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future
-    coding inconsistencies.
-
-    -\> see [issue \#42](https://github.com/ccmdesign/c2d-app/issues/43)
-
 -   Standardize `subnational_entity_name`; [ISO 3166-2 country subdivision names](https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en) (definition in
     chap. 3.29) seem suitable (mapping codes \<-\> names in R via `ISOcodes::ISO_3166_2`; note that for some subdivisions, different names exist for multiple
     languages, e.g. some [Swiss cantons](https://www.iso.org/obp/ui/#iso:code:3166:CH); `ISOcodes::ISO_3166_2` only tracks one name (the most "native" one per
@@ -130,6 +119,18 @@
     -\> see [issue \#44](https://github.com/ccmdesign/c2d-app/issues/44)
 
 ## Internal (at least for now)
+
+-   Rethink standardization of `country_name`. Current problem: standardization happens only when creating/editing entries. Thus, it's not consistent, e.g. for
+    `country_code == "GB"` there are entries from before the relaunch with `country_name = "United Kingdom"`, and there are newer entries with the auto-deduced
+    `country_name = "United Kingdom of Great Britain and Northern Ireland"`.
+
+    See [`countrycode::codelist`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) for possible standards; [ISO 3166 English short
+    country names](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) (`countrycode::codelist$iso.name.en`) seem most promising.
+
+    Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future
+    coding inconsistencies.
+
+    -\> see [issue \#43](https://github.com/ccmdesign/c2d-app/issues/43) for a closed (and partially invalid) first problem report (need to submit a new one).
 
 -   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
     one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
