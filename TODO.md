@@ -181,6 +181,12 @@
 
 -   C2D admin front-end: Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
 
+-   MongoDB/API: Track atomic edit history, traceable by author, and make it visually inspectable (some kind off diff viewer would be cool). On top of this,
+    some method to easily undo specific or all edits by a specific user account should be added.
+
+    See [issue \#34](https://github.com/ccmdesign/c2d-app/issues/34) (point 3) for a tentative request and [@liviass
+    answer](<https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636>) about an already existing events collection (with no API endpoint so far).
+
 -   MongoDB: optimize order of subvariables (`files` and `context.votes_per_canton`); doing this post-hoc in R is slow/inefficient, so getting the JSON in the
     desired order directly from the API would be cool...
 
@@ -291,14 +297,7 @@
 
 -   Implement fn to delete referendums once [issue \#45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
 
--   Explore possibilities for automated vote entry creation. E.g. I write a scraper (in R) for the votes of Swiss canton X and convert the result into
-    C2D-compatible JSON.
-
-    open questions:
-
-    1.  Is the edit history preserved (or at least backed-up)?
-
-    2.  Are edits traceable by author? And is it possible to easily undo all edits by a specific account?
+-   Automated vote entry creation by feeding scraped data to `c2d::add_referendums()`.
 
 -   Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:
 
@@ -310,7 +309,7 @@
 
 ### Miscellaneous
 
--   Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons [generiert werdden](https://realfavicongenerator.net/)!)
+-   Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons [generiert werden](https://realfavicongenerator.net/)!)
 
 -   Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort "aufzunehmen", könnte passen) und vergleichen mit [Zenodo](https://zenodo.org/) (siehe
     FA-Notizen).

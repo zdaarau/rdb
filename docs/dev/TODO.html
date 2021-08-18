@@ -277,6 +277,10 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li><p>C2D website: The listing of referendums should be overhauled. It currently lacks important information, e.g. <code>level</code>.</p></li>
 <li><p>C2D admin front-end: Louis’ Dokument <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx</code></p></li>
 <li>
+<p>MongoDB/API: Track atomic edit history, traceable by author, and make it visually inspectable (some kind off diff viewer would be cool). On top of this, some method to easily undo specific or all edits by a specific user account should be added.</p>
+<p>See <a href="https://github.com/ccmdesign/c2d-app/issues/34" class="external-link">issue #34</a> (point 3) for a tentative request and <a href="https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636" class="external-link">@liviass answer</a> about an already existing events collection (with no API endpoint so far).</p>
+</li>
+<li>
 <p>MongoDB: optimize order of subvariables (<code>files</code> and <code>context.votes_per_canton</code>); doing this post-hoc in R is slow/inefficient, so getting the JSON in the desired order directly from the API would be cool…</p>
 <p>but is this actually possible? generally, the order of variables in the returned JSON seems random: compare e.g. <code>date</code> of <a href="https://services.c2d.ch/referendums/6102ae4ec72633da60229941" class="external-link">here</a> vs. <a href="https://services.c2d.ch/referendums/604b33cb4132d76d38bfe97b" class="external-link">here</a></p>
 </li>
@@ -362,14 +366,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <ul>
 <li><p>Implement fn for back-end data manipulation leveraging the <code>POST</code> functionality of the <a href="https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes" class="external-link"><code>/referendums</code> API endpoint</a>, allowing to change an arbitrary number of entries at a time.</p></li>
 <li><p>Implement fn to delete referendums once <a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a> is resolved.</p></li>
-<li>
-<p>Explore possibilities for automated vote entry creation. E.g. I write a scraper (in R) for the votes of Swiss canton X and convert the result into C2D-compatible JSON.</p>
-<p>open questions:</p>
-<ol style="list-style-type: decimal">
-<li><p>Is the edit history preserved (or at least backed-up)?</p></li>
-<li><p>Are edits traceable by author? And is it possible to easily undo all edits by a specific account?</p></li>
-</ol>
-</li>
+<li><p>Automated vote entry creation by feeding scraped data to <code><a href="reference/add_referendums.html">c2d::add_referendums()</a></code>.</p></li>
 <li>
 <p>Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:</p>
 <div class="figure">
@@ -383,7 +380,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <h3 class="hasAnchor">
 <a href="#miscellaneous" class="anchor"></a>Miscellaneous</h3>
 <ul>
-<li><p>Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons <a href="https://realfavicongenerator.net/" class="external-link">generiert werdden</a>!)</p></li>
+<li><p>Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons <a href="https://realfavicongenerator.net/" class="external-link">generiert werden</a>!)</p></li>
 <li>
 <p>Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort “aufzunehmen”, könnte passen) und vergleichen mit <a href="https://zenodo.org/" class="external-link">Zenodo</a> (siehe FA-Notizen).</p>
 <p>Abklären:</p>
