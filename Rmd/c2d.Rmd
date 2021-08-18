@@ -2037,20 +2037,22 @@ add_referendums <- function(data,
 
 -   The order of JSON fields doesn't matter.
 
--   The API performs input validation on certain fields and if it fails, it responds with a message like:
+-   The API performs input validation on certain fields, and if it fails, it responds with a message like:
 
     ``` {.json}
     {"error": {"id": "validation_failed", "value": {"categories.author_of_the_vote_object": "invalid"}}}
     ```
 
-``` {.curl}
-curl 'https://services.c2d.ch/referendums/610005e2c72633da60229938' \
-     --request PUT \
-     --header 'Content-Type: application/json' \
-     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YzhiYTE3ZDYxYWY4NDYyMmRkZThjNjEiLCJleHAiOjE2MzAxODY0ODB9.lpKWUPyYh7yGWN1AKBWkjhrsQIVeIH71DUOA4hpJhR8' \
-     --header 'Connection: keep-alive' \
-     --data-raw $'{"draft":true,"title":{"de":"salims cat test"},"categories":{"excluded_topics":[]}}'
-```
+-   A sample cURL request to change a test entry looks as follows:
+
+    ``` {.sh}
+    curl 'https://services.c2d.ch/referendums/610005e2c72633da60229938' \
+         --request PUT \
+         --header 'Content-Type: application/json' \
+         --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YzhiYTE3ZDYxYWY4NDYyMmRkZThjNjEiLCJleHAiOjE2MzAxODY0ODB9.lpKWUPyYh7yGWN1AKBWkjhrsQIVeIH71DUOA4hpJhR8' \
+         --header 'Connection: keep-alive' \
+         --data-raw $'{"draft":true,"title":{"de":"salims cat test"}}'
+    ```
 
 ```{r}
 #' Edit existing referendums in the C2D database
