@@ -1942,16 +1942,55 @@ download_file_attachment <- function(s3_object_key,
 
 TODO:
 
--   Determine mandatory fields (any at all?)
--   Check if order of JSON fields matters (shouldn't!).
+-   Properly handle `context.*` fields, see notes below.
 
-``` {.curl}
-curl 'https://services.c2d.ch/referendums' \
-     --request POST \
-     -H 'Content-Type: application/json' \
-     -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YzhiYTE3ZDYxYWY4NDYyMmRkZThjNjEiLCJleHAiOjE2Mjg2MTU5NjN9.lH9x7m82HQG69biek5IRafiYUnA99nLn2WClp_YKIFk' \
-     --data-raw $'{"draft":true,"title":{"en":"test salim 2","de":"","fr":""},"date":"2222-07-17","level":"Sub-national","country_name":"Switzerland","country_code":"CH","institution":"Citizens\' initiative","categories":{"vote_trigger":"Automatic","legal_act_type":"Normal","vote_trigger_actor":"Constitution","vote_trigger_state_level":"Equal","vote_trigger_number":"","vote_trigger_time":"","vote_object":"Legal text (ausformulierter vorschlag)","author_of_the_vote_object":"Parliament","counter_proposal":"No","action":["Abrogate","Introduce","Revise"],"vote_venue":"Ballot","official_status":"Official","vote_result_status":"","hierarchy_of_the_legal_norm":"Constitution","degree_of_revision":"Partial","turnout_quorum":"","decision_quorum":"Simple majority","referendum_text_options":"Whole text only","institutional_precondition":"Exists","institutional_precondition_decision":"Yes","institutional_precondition_decision_actor":"","special_topics":[],"excluded_topics":["Jus cogens"]},"votes_no":-1,"votes_yes":-1,"votes_empty":-1,"votes_invalid":-1,"total_electorate":-1,"citizens_abroad":-1,"result":"Unknown","tags":[],"files":[],"committee_name":"","remarks":"","canton":"Aargau"}'
-```
+**Notes:**
+
+-   For additions, the following JSON fields are mandatory:
+
+    | field                    | notes                                                                                                             |
+    |--------------------------|-------------------------------------------------------------------------------------------------------------------|
+    | `country_code`           | must be a valid choice                                                                                            |
+    | `canton`                 | only mandatory if `"level":"Sub-national"`                                                                        |
+    | `municipality`           | only mandatory if `"level":"Local"`                                                                               |
+    | `level`                  | must be a valid choice                                                                                            |
+    | `date`                   | must be a valid date (ISO 8601 date string)                                                                       |
+    | `institution`            | must be a valid choice                                                                                            |
+    | `title.en`               | must contain at least one non-whitespace character                                                                |
+    | `result`                 | must be a valid choice ("Yes", "No" or "Unknown")                                                                 |
+    | `total_electorate`       | must be a valid integer                                                                                           |
+    | `context.recommendation` | only mandatory if `"country_code":"CH","level":"National"`; must be a valid choice                                |
+    | `citizens_abroad`        | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
+    | `votes_yes`              | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
+    | `votes_no`               | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
+    | `votes_empty`            | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
+    | `votes_invalid`          | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
+
+-   If `draft` is not provided, it defaults to `true`.
+
+-   `country_name` is ignored and automatically derived from `country_code`.
+
+-   Nested fields like `categories` can be partially provided.
+
+-   The `context.*` fields are ignored unless `"country_code":"CH","level":"National"`, cf. [issue \#52](https://github.com/ccmdesign/c2d-app/issues/52).
+
+-   The order of the JSON fields doesn't matter.
+
+-   The API performs input validation on certain fields, and if it fails, it responds with a message like:
+
+    ``` {.json}
+    {"error": {"id": "validation_failed", "value": {"categories.author_of_the_vote_object": "invalid"}}}
+    ```
+
+-   A minimal sample cURL request to add a test entry looks as follows:
+
+    ``` {.curl}
+    curl 'https://services.c2d.ch/referendums' \
+         --request POST \
+         --header 'Content-Type: application/json' \
+         --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YzhiYTE3ZDYxYWY4NDYyMmRkZThjNjEiLCJleHAiOjE2MzAxODY0ODB9.lpKWUPyYh7yGWN1AKBWkjhrsQIVeIH71DUOA4hpJhR8' \
+         --data-raw $'{"title":{"en":"test test test"},"date":"2222-02-22","level":"National","country_code":"AT","institution":"Citizens\' initiative","votes_no":-1,"votes_yes":-1,"votes_empty":-1,"votes_invalid":-1,"total_electorate":-1,"citizens_abroad":-1,"result":"Unknown"}'
+    ```
 
 ```{r}
 #' Add new referendums to the C2D database
@@ -2057,7 +2096,9 @@ add_referendums <- function(data,
 -   For edits, the only mandatory JSON field is `draft`. Only the fields that are supposed to change need to be supplied. Nested fields like `categories` can be
     partially overwritten, too.
 
--   The order of JSON fields doesn't matter.
+    `country_name` is ignored and automatically derived from `country_code`.
+
+-   The order of the JSON fields doesn't matter.
 
 -   The API performs input validation on certain fields, and if it fails, it responds with a message like:
 
@@ -2065,7 +2106,7 @@ add_referendums <- function(data,
     {"error": {"id": "validation_failed", "value": {"categories.author_of_the_vote_object": "invalid"}}}
     ```
 
--   A sample cURL request to change a test entry looks as follows:
+-   A minimal sample cURL request to change a test entry looks as follows:
 
     ``` {.sh}
     curl 'https://services.c2d.ch/referendums/610005e2c72633da60229938' \
