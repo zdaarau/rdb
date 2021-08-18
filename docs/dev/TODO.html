@@ -228,12 +228,6 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/41" class="external-link">issue #41</a></p>
 </li>
 <li>
-<p>Standardize <code>country_name</code>; currently it’s not consistent, e.g. for <code>country_code == "GB"</code> sometimes <code>country_name = "United Kingdom"</code>, sometimes <code>"United Kingdom of Great Britain and Northern Ireland"</code> is used.</p>
-<p>See <a href="https://vincentarelbundock.github.io/countrycode/reference/codelist.html" class="external-link"><code>countrycode::codelist</code></a> for possible standards; <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" class="external-link">ISO 3166 English short country names</a> (<code>countrycode::codelist$iso.name.en</code>) seem most promising.</p>
-<p>Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future coding inconsistencies.</p>
-<p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/43" class="external-link">issue #42</a></p>
-</li>
-<li>
 <p>Standardize <code>subnational_entity_name</code>; <a href="https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en" class="external-link">ISO 3166-2 country subdivision names</a> (definition in chap. 3.29) seem suitable (mapping codes &lt;-&gt; names in R via <code><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISOcodes::ISO_3166_2</a></code>; note that for some subdivisions, different names exist for multiple languages, e.g. some <a href="https://www.iso.org/obp/ui/#iso:code:3166:CH" class="external-link">Swiss cantons</a>; <code><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISOcodes::ISO_3166_2</a></code> only tracks one name (the most “native” one per subdivision, I guess))</p>
 <p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/44" class="external-link">issue #44</a></p>
 </li>
@@ -243,6 +237,12 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <h2 class="hasAnchor">
 <a href="#internal-at-least-for-now" class="anchor"></a>Internal (at least for now)</h2>
 <ul>
+<li>
+<p>Rethink standardization of <code>country_name</code>. Current problem: standardization happens only when creating/editing entries. Thus, it’s not consistent, e.g. for <code>country_code == "GB"</code> there are entries from before the relaunch with <code>country_name = "United Kingdom"</code>, and there are newer entries with the auto-deduced <code>country_name = "United Kingdom of Great Britain and Northern Ireland"</code>.</p>
+<p>See <a href="https://vincentarelbundock.github.io/countrycode/reference/codelist.html" class="external-link"><code>countrycode::codelist</code></a> for possible standards; <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" class="external-link">ISO 3166 English short country names</a> (<code>countrycode::codelist$iso.name.en</code>) seem most promising.</p>
+<p>Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future coding inconsistencies.</p>
+<p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/43" class="external-link">issue #43</a> for a closed (and partially invalid) first problem report (need to submit a new one).</p>
+</li>
 <li>
 <p>According to Uwe, we only capture “official”/“authorized” votings, but there are already inofficial ones present in the database like <a href="https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37" class="external-link">this one</a> for which sudd.ch <a href="https://sudd.ch/event.php?id=hu042008" class="external-link">reports</a>:</p>
 <blockquote>

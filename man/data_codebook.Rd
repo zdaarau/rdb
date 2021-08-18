@@ -86,7 +86,7 @@ The English name of the subnational political entity in which the
 referendum took place.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level \%in\% c('local', 'subnational')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level \%in\% c('local', 'subnational')
 }\if{html}{\out{</div>}}
 }
 
@@ -103,7 +103,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The municipality in which the referendum took place.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level == 'local'
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level == 'local'
 }\if{html}{\out{</div>}}
 }
 
@@ -215,7 +215,7 @@ The number of administrative subdivisions one level below \code{level} that
 approved the referendum.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level != 'local'
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
 }\if{html}{\out{</div>}}
 }
 
@@ -233,7 +233,7 @@ The number of administrative subdivisions one level below \code{level} that
 rejected the referendum.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level != 'local'
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
 }\if{html}{\out{</div>}}
 }
 
@@ -320,7 +320,7 @@ per administrative subdivision one level below \code{level}; currently only
 filled for Swiss referendums on the national level.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{level != 'local'
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
 }\if{html}{\out{</div>}}
 }
 
@@ -821,7 +821,7 @@ implies presence of its parent top-tier topic.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_2, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) \%in\% .x))
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_2, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) \%in\% .x))
 }\if{html}{\out{</div>}}
 }
 
@@ -953,7 +953,7 @@ presence of its parent second-tier topic and grandparent top-tier topic.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{purrr::map2_lgl(.x = tags_tier_2, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 2L) \%in\% .x)) & purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) \%in\% .x))
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = tags_tier_2, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 2L) \%in\% .x)) & purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) \%in\% .x))
 }\if{html}{\out{</div>}}
 }
 
@@ -1127,7 +1127,7 @@ urgently, i.e. in an abridged procedure.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_trigger_actor \%in\% c('government', 'president', 'monarch', 'parliament')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_trigger_actor \%in\% c('government', 'president', 'monarch', 'parliament')
 }\if{html}{\out{</div>}}
 }
 
@@ -1274,7 +1274,7 @@ The threshold of support among \code{inst_trigger_actor} that has to be
 reached in order to trigger the referendum \code{type}.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_trigger_actor \%in\% c('citizens', 'parliament', 'territorial unit')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_trigger_actor \%in\% c('citizens', 'parliament', 'territorial unit')
 }\if{html}{\out{</div>}}
 }
 
@@ -1293,7 +1293,7 @@ number of signatures) has to be reached in order to trigger the
 referendum \code{type}.
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_trigger_actor \%in\% c('citizens', 'territorial unit')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_trigger_actor \%in\% c('citizens', 'territorial unit')
 }\if{html}{\out{</div>}}
 }
 
@@ -1347,7 +1347,7 @@ The actor that defines the text/content of \code{inst_object_type}.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)', 'principle')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)', 'principle')
 }\if{html}{\out{</div>}}
 }
 
@@ -1375,7 +1375,7 @@ The legal level of \code{inst_object_type}.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
 }\if{html}{\out{</div>}}
 }
 
@@ -1402,7 +1402,7 @@ within one referendum.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_object_type \%in\% c('legal text (general proposal)', 'legal text (formulated proposal)')
 }\if{html}{\out{</div>}}
 }
 
@@ -1451,7 +1451,7 @@ The divisibility of \code{inst_object_type}.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')
 }\if{html}{\out{</div>}}
 }
 
@@ -1485,7 +1485,7 @@ The legal topic(s) to which the referendum \code{type} is limited.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_topics_excluded \%>\% purrr::map_lgl(rlang::is_empty)
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_topics_excluded \%>\% purrr::map_lgl(rlang::is_empty)
 }\if{html}{\out{</div>}}
 }
 
@@ -1517,7 +1517,7 @@ The legal topic(s) that are excluded from the referendum \code{type}.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{inst_topics_only \%>\% purrr::map_lgl(rlang::is_empty)
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_topics_only \%>\% purrr::map_lgl(rlang::is_empty)
 }\if{html}{\out{</div>}}
 }
 
@@ -1601,7 +1601,7 @@ referendum \code{type} to be held.
 
 \subsection{Applicability constraint}{
 
-This variable is only applicable under the following condition:\if{html}{\out{<div class="r">}}\preformatted{isTRUE(inst_has_precondition)
+This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{isTRUE(inst_has_precondition)
 }\if{html}{\out{</div>}}
 }
 
