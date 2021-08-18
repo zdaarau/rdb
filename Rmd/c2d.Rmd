@@ -1531,16 +1531,23 @@ referendum_fields$all_flat <-
 
 #### Mandatory
 
+The following fields are mandatory when adding/editing referendums via the [admin portal](https://admin.c2d.ch/), but not *strictly* mandatory schema-wise:
+
+| field             | remarks                                                                                                               |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `institution`     | mandatory by the API for new entries, but still contains `NA`s from before relaunch                                   |
+| `title.en`        | mandatory by the API for new entries, but still contains `NA`s from before relaunch                                   |
+| `citizens_abroad` | not mandatory by the API, but omitting it [leads to serious problems](https://github.com/ccmdesign/c2d-app/issues/50) |
+| `votes_no`        | not mandatory by the API, but omitting it [leads to serious problems](https://github.com/ccmdesign/c2d-app/issues/50) |
+| `votes_yes`       | not mandatory by the API, but omitting it [leads to serious problems](https://github.com/ccmdesign/c2d-app/issues/50) |
+
 ```{r}
 referendum_fields$required <- c("_id",
+                                "country_code",
                                 "country_name",
                                 "created_on",
                                 "level",
-                                # "title_en", # contains NAs from before relaunch
-                                # "type", # contains NAs from before relaunch
-                                "total_electorate",
-                                "votes_no",
-                                "votes_yes")
+                                "total_electorate")
 ```
 
 ### Messages

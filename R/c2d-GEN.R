@@ -1306,14 +1306,11 @@ referendum_fields$all_flat <-
           "title.fr"))
 
 referendum_fields$required <- c("_id",
+                                "country_code",
                                 "country_name",
                                 "created_on",
                                 "level",
-                                # "title_en", # contains NAs from before relaunch
-                                # "type", # contains NAs from before relaunch
-                                "total_electorate",
-                                "votes_no",
-                                "votes_yes")
+                                "total_electorate")
 
 mime_error_suffix <- "This indicates either some network issue or a change in the C2D API."
 
