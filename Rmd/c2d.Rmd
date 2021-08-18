@@ -2083,6 +2083,9 @@ edit_referendums <- function(data,
     cli::cli_abort(paste0("{.arg data} mustn't contain a {.var created_on} column. This date is automatically set by the C2D API back-end and not supposed to ",
                           "be changed."))
   }
+  if ("country_name" %in% colnames(data)) {
+    cli::cli_abort("{.arg data} mustn't contain a {.var country_name} column. It is automatically set by the C2D API back-end based on {.var country_code}.")
+  }
   
   ## ensure mandatory columns are present
   c("id",
