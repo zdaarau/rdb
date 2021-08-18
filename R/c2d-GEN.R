@@ -259,22 +259,6 @@ assert_cols_valid <- function(data,
   invisible(data)
 }
 
-assert_mime_type <- function(response,
-                             mime_type = "application/json") {
-  
-  checkmate::assert_class(response,
-                          "response")
-  checkmate::assert_string(mime_type)
-  mime_type_actual <- httr::http_type(response)
-  
-  if (mime_type_actual != mime_type) {
-    cli::cli_abort(paste0("The response's MIME type is {.val {mime_type_actual}} but expected was {.val {mime_type}}. This indicates either some network issue",
-                          " or a change in the C2D API."))
-  }
-  
-  invisible(response)
-}
-
 #' Authenticate a user session for the [C2D API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
 #'
 #' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, named by `email`. By default, the `email` and
@@ -305,7 +289,8 @@ auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
                                           body = list(email = checkmate::assert_string(email),
                                                       password = checkmate::assert_string(password))) %>%
                               # ensure we actually got a JSON response
-                              assert_mime_type() %>%
+                              pal::assert_mime_type(mime_type = "application/json",
+                                                    msg_suffix = mime_error_suffix) %>%
                               # parse response
                               httr::content(as = "parsed") %$%
                               token %>%
@@ -1281,6 +1266,8 @@ referendum_fields$required <- c("_id",
                                 "votes_no",
                                 "votes_yes")
 
+mime_error_suffix <- "This indicates either some network issue or a change in the C2D API."
+
                 # old name                                               new name
 v_names <- list("_id"                                                  = "id",
                 "number"                                               = "id_sudd",
@@ -1405,7 +1392,8 @@ referendums <- function(use_cache = TRUE,
                                                               query_filter = query_filter)),
                   times = 5L) %>%
       # ensure we actually got a JSON response
-      assert_mime_type() %>%
+      pal::assert_mime_type(mime_type = "application/json",
+                            msg_suffix = mime_error_suffix) %>%
       # extract JSON
       httr::content(as = "text",
                     encoding = "UTF-8") %>%
@@ -1458,7 +1446,8 @@ referendum <- function(id,
                 url = paste0("https://services.c2d.ch/referendums/", id),
                 times = 5L) %>%
     # ensure we actually got a JSON response
-    assert_mime_type() %>%
+    pal::assert_mime_type(mime_type = "application/json",
+                          msg_suffix = mime_error_suffix) %>%
     # extract JSON
     httr::content(as = "text",
                   encoding = "UTF-8") %>%
@@ -1863,7 +1852,8 @@ count_referendums <- function(is_draft = FALSE,
                                                           query_filter = query_filter)),
               times = 5L) %>%
     # ensure we actually got a JSON response
-    assert_mime_type() %>%
+    pal::assert_mime_type(mime_type = "application/json",
+                          msg_suffix = mime_error_suffix) %>%
     # parse response
     httr::content(as = "parsed") %$%
     votes %>%
@@ -1894,7 +1884,8 @@ search_referendums <- function(term) {
                            term = checkmate::assert_string(term)),
               times = 5L) %>%
     # ensure we actually got a JSON response
-    assert_mime_type() %>%
+    pal::assert_mime_type(mime_type = "application/json",
+                          msg_suffix = mime_error_suffix) %>%
     # parse response
     httr::content(as = "parsed") %$%
     items %>%
@@ -2141,7 +2132,8 @@ is_online <- function(quiet = FALSE) {
                                              times = 5L),
                          error = ~ paste0("Error: ", .x$message)) %>%
     # ensure we actually got a plaintext response
-    assert_mime_type(mime_type = "text/plain") %>%
+    pal::assert_mime_type(mime_type = "text/plain",
+                          msg_suffix = mime_error_suffix) %>%
     # parse response
     httr::content(as = "text",
                   encoding = "UTF-8")
