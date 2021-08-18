@@ -1612,12 +1612,24 @@ add_referendums <- function(data,
   if ("created_on" %in% colnames(data)) {
     cli::cli_abort("{.arg data} mustn't contain a {.var created_on} column. This date is automatically set by the C2D API back-end.")
   }
+  if ("country_name" %in% colnames(data)) {
+    cli::cli_abort("{.arg data} mustn't contain a {.var country_name} column. It is automatically set by the C2D API back-end based on {.var country_code}.")
+  }
   
   ## ensure mandatory columns are present
-  c("is_draft",
-    "country_code",
+  c("country_code",
     "level",
-    "date") %>%
+    "date",
+    "title_en",
+    "result",
+    "electorate_total",
+    "electorate_abroad",
+    "votes_yes",
+    "votes_no",
+    "votes_empty",
+    "votes_invalid",
+    "is_draft",
+    "type") %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
   ## ensure columns are valid
