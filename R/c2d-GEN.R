@@ -1376,7 +1376,7 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
 
 #' Get referendum data
 #'
-#' Downloads the referendum data from the C2D Database. See [`codebook`][codebook] for a detailed description of all variables.
+#' Downloads the referendum data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
 #'
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
@@ -1466,7 +1466,7 @@ referendums <- function(use_cache = TRUE,
 
 #' Get a single referendum's data
 #'
-#' Downloads a single referendum's data from the C2D Database. See [`codebook`][codebook] for a detailed description of all variables.
+#' Downloads a single referendum's data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
 #'
 #' @param id The referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
 #' @inheritParams referendums

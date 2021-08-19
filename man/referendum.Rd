@@ -19,7 +19,7 @@ referendum data will only be modified just enough to be able to return it as a t
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Downloads a single referendum's data from the C2D Database. See \code{\link{codebook}} for a detailed description of all variables.
+Downloads a single referendum's data from the C2D Database. See the \code{\link{codebook}} for a detailed description of all variables.
 }
 \examples{
 c2d::referendum(id = "5bbbe26a92a21351232dd73f")
