@@ -278,8 +278,8 @@ assert_cols_valid <- function(data,
   
   non_na_col_names <- c("id",
                         "country_code",
-                        "level",
-                        "date")
+                        "date",
+                        "level")
   na_col_names <-
     data %>%
     dplyr::select(any_of(non_na_col_names)) %>%
@@ -288,7 +288,7 @@ assert_cols_valid <- function(data,
     colnames()
   n_na_col_names <- length(na_col_names)
   
-  if (n_na_col_names) action("Detected {n_na_col_names} column(?s) in {.arg data} that contain forbidden {.val NA}s: {.var {na_col_names}}")
+  if (n_na_col_names) action("Detected {n_na_col_names} column{?s} in {.arg data} that contain forbidden {.val NA}s: {.var {na_col_names}}")
   
   ## check `id`
   if ("id" %in% colnames(data) && anyDuplicated(data$id)) {
@@ -297,14 +297,27 @@ assert_cols_valid <- function(data,
 
   ## check `country_code`
   if ("country_code" %in% colnames(data)) {
+    
     choices <- countrycode::codelist$iso2c %>% setdiff(NA_character_)
     check <- checkmate::check_subset(levels(data$country_code),
                                      choices = choices)
     if (!isTRUE(check)) action("Failed to validate {.var levels(country_code)}. {check}")
+    
+    ## ensure `position_government` is present when `country_code = "CH" & level = "national"`
+    if ((data %>%
+         dplyr::filter(country_code == "CH" & level == "national") %>%
+         nrow() %>%
+         magrittr::is_greater_than(0L))
+        && !("position_government" %in% colnames(data))) {
+      
+      action(paste0("Referendums with {.code country_code = \"CH\" & level = \"national\"} present in {.arg data} but column {.var ",
+                    "position_government} is missing."))
+    }
   }
   
   ## check `date`
   if ("date" %in% colnames(data)) {
+    
     check <- checkmate::check_date(data$date,
                                    any.missing = FALSE)
     if (!isTRUE(check)) action("Failed to validate {.var date}. {check}")
@@ -312,6 +325,7 @@ assert_cols_valid <- function(data,
   
   ## check `level`
   if ("level" %in% colnames(data)) {
+    
     choices <- v_vals("level")
     check <- checkmate::check_subset(levels(data$level),
                                      choices = choices)
@@ -335,8 +349,8 @@ assert_cols_valid <- function(data,
     n_missing_subnational_entities <- length(ix_missing_subnational_entities)
     
     if (n_missing_subnational_entities) {
-      action(paste0("{n_missing_subnational_entities} row(?s) in {.arg data} (?is/are) missing a {.var subnational_entity_name}. Affected (?is/are) ",
-                    "the row(?s) with ind(?ex/ices) {ix_missing_subnational_entities}."))
+      action(paste0("{n_missing_subnational_entities} row{?s} in {.arg data} {?is/are} missing a {.var subnational_entity_name}. Affected {?is/are} ",
+                    "the row{?s} with ind{?ex/ices} {.val {ix_missing_subnational_entities}}."))
     }
   }
   
@@ -356,10 +370,55 @@ assert_cols_valid <- function(data,
     n_missing_municipalities <- length(ix_missing_municipalities)
     
     if (n_missing_municipalities) {
-      action(paste0("{n_missing_municipalities} row(?s) in {.arg data} (?is/are) missing a {.var municipality}. Affected (?is/are) the row(?s) with ",
-                    "ind(?ex/ices) {ix_missing_subnational_entities}."))
+      action(paste0("{n_missing_municipalities} row{?s} in {.arg data} {?is/are} missing a {.var municipality}. Affected {?is/are} the row{?s} with ",
+                    "ind{?ex/ices} {.val {ix_missing_subnational_entities}}."))
     }
   }
+  
+  ## check variables that are only meant to be set for Swiss national referendums
+  ## TODO: Remove this as soon as [issue #52](https://github.com/ccmdesign/c2d-app/issues/52) is resolved.
+  ### `votes_per_subterritory`
+  if (all(c("votes_per_subterritory", "level", "country_code") %in% colnames(data))) {
+    
+    ix_illegal_votes_per_subterritory <-
+      data %>%
+      tibble::rowid_to_column() %>%
+      dplyr::filter((level != "national" | country_code != "CH") & !(votes_per_subterritory %>% purrr::map_lgl(is.null))) %$%
+      rowid
+    
+    n_illegal_votes_per_subterritory <- length(ix_illegal_votes_per_subterritory)
+    
+    if (n_illegal_votes_per_subterritory) {
+      action(paste0("{n_illegal_votes_per_subterritory} row{?s} in {.arg data} {?has/have} a {.var position_government} set although they are not Swiss ",
+                    "national referendums. Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal_votes_per_subterritory}}."))
+    }
+  }
+  ### non-list vx
+  c("lower_house_yes",
+    "lower_house_no",
+    "lower_house_abstentions",
+    "upper_house_yes",
+    "upper_house_no",
+    "upper_house_abstentions",
+    "position_government") %>%
+    purrr::walk(function(v_name) {
+      
+      if (all(c(v_name, "level", "country_code") %in% colnames(data))) {
+        
+        ix_illegal <-
+          data %>%
+          tibble::rowid_to_column() %>%
+          dplyr::filter((level != "national" | country_code != "CH") & !is.na(!!as.symbol(v_name))) %$%
+          rowid
+        
+        n_illegal <- length(ix_illegal)
+        
+        if (n_illegal) {
+          action(paste0("{n_illegal} row{?s} in {.arg data} {?has/have} a {.var {v_name}} set although {cli::qty(n_illegal)}{?it is not a/they are not} Swiss",
+                        " national referendum{?s}. Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal}}."))
+        }
+      }
+    })
   
   invisible(data)
 }
@@ -455,8 +514,8 @@ drop_disabled_vx <- function(data,
   
   if (n_to_drop_present) {
     
-    cli::cli_alert_warning(paste0("The {qty(n_to_drop_present)} column{?s} {.var {to_drop_present}} in {.arg data} are ignored because setting/altering the ",
-                                  "corresponding values is disabled."))
+    cli::cli_alert_warning(paste0("The {cli::qty(n_to_drop_present)} column{?s} {.var {to_drop_present}} in {.arg data} are ignored because setting/altering ",
+                                  "the corresponding values is disabled."))
     
     data %<>% dplyr::select(-any_of(to_drop))
   }
@@ -1191,7 +1250,7 @@ untidy_referendums <- function(data,
     if (!all(tags_vx_present)) {
       tags_vx_missing <- tags_v_names %>% setdiff(tags_vx_present)
       cli::cli_abort("There are only part of all {.var tags_tier_#} variables present. ",
-                     "{qty(tags_vx_missing)} The following variable(?s) are missing: {.var {tags_vx_missing}}")
+                     "{cli::qty(tags_vx_missing)} The following variable{?s} are missing: {.var {tags_vx_missing}}")
     }
     
     data %<>%
