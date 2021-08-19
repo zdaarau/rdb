@@ -23,8 +23,8 @@ the following "endpoints":
 
     -   In integer fields:
 
-        -   `-1L` (means "information not available or nonexistent")
-        -   `-2L` ([means "information not given"](https://github.com/ccmdesign/c2d-app/issues/13#issuecomment-802466615))
+        -   `-1L` (means "information not available or nonexistent", an *explicit* `NA`)
+        -   `-2L` ([means "information not given"](https://github.com/ccmdesign/c2d-app/issues/13#issuecomment-802466615), an *implicit* `NA`)
 
     -   In character fields:
 
