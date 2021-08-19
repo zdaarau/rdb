@@ -1999,10 +1999,6 @@ download_file_attachment <- function(s3_object_key,
 
 ## `add_referendums`
 
-TODO:
-
--   Properly handle `context.*` fields, see notes below.
-
 **Notes:**
 
 -   For additions, the following JSON fields are mandatory:
@@ -2017,8 +2013,8 @@ TODO:
     | `institution`            | must be a valid choice                                                                                            |
     | `title.en`               | must contain at least one non-whitespace character                                                                |
     | `result`                 | must be a valid choice ("Yes", "No" or "Unknown")                                                                 |
-    | `total_electorate`       | must be a valid integer                                                                                           |
     | `context.recommendation` | only mandatory if `"country_code":"CH","level":"National"`; must be a valid choice                                |
+    | `total_electorate`       | must be a valid integer                                                                                           |
     | `citizens_abroad`        | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
     | `votes_yes`              | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
     | `votes_no`               | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
@@ -2156,6 +2152,8 @@ add_referendums <- function(data,
     partially overwritten, too.
 
     `country_name` is ignored and automatically derived from `country_code`.
+
+-   The `context.*` fields are ignored unless `"country_code":"CH","level":"National"`, cf. [issue \#52](https://github.com/ccmdesign/c2d-app/issues/52).
 
 -   The order of the JSON fields doesn't matter.
 
