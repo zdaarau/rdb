@@ -1657,7 +1657,6 @@ add_referendums <- function(data,
                             password = getOption("c2d.credentials")[1L]) {
   # ensure `data` is valid
   checkmate::assert_data_frame(data,
-                               all.missing = FALSE,
                                min.rows = 1L)
   
   ## ensure forbidden columns are absent
@@ -1749,7 +1748,6 @@ edit_referendums <- function(data,
                              password = getOption("c2d.credentials")[1L]) {
   # ensure `data` is valid
   checkmate::assert_data_frame(data,
-                               all.missing = FALSE,
                                min.rows = 1L)
   
   ## ensure forbidden columns are absent
