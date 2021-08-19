@@ -127,8 +127,7 @@
     See [`countrycode::codelist`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) for possible standards; [ISO 3166 English short
     country names](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) (`countrycode::codelist$iso.name.en`) seem most promising.
 
-    Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future
-    coding inconsistencies.
+    Ideally, this would be done in the API back-end so `country_name` is determined at request time if possible.
 
     -\> see [issue \#43](https://github.com/ccmdesign/c2d-app/issues/43) for a closed (and partially invalid) first problem report (need to submit a new one).
 
@@ -168,10 +167,6 @@
     Therefore, we should define a better/stricter policy how titles are captured (and identify existing entries violating this policy, so they can be
     corrected).
 
--   Currently, `inst_trigger_threshold` is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should
-    define, in what way the same information could be captured in a more systematic way (splitting it into two vars `inst_trigger_threshold_relative` and
-    `inst_trigger_threshold_absolute` might make sense), introduce the new variable and then convert the old values to the new format.
-
 -   C2D website: Möglichkeit zum Report falscher/fehlender Daten schaffen! Bevor CCM Design damit beauftragt wird, sollten wir definieren, wie ungefähr das
     aussehen soll. Bspw. einfach via HTML-Formular mit geeigneten Feldern (je nach Seite, von dem es aufgerufen wird, bereits vorbefüllt (`country_code`,
     `level`, `id` etc.))?
@@ -208,7 +203,9 @@
 
     Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!
 
--   Sobald via Admin-Interface [nach Draft-Status gefiltert werden kann](https://github.com/ccmdesign/c2d-app/issues/27), sollten die existierenden 12 Drafts
+    TODO: Via R alle betroffenen Referenden in unserer Datenbank ausfindig machen.
+
+-   Sobald via Admin-Interface [nach Draft-Status gefiltert werden kann](https://github.com/ccmdesign/c2d-app/issues/27), sollten die existierenden Drafts
     geprüft werden -\> entweder vervollständigen und freischalten oder löschen!
 
 -   Clean `id_official`; there are likely erroneous entries or ones that don't designate an `id_official` but another kind of ID; entries to double-check:
@@ -228,7 +225,7 @@
     bei letzteren sollte
 
     -   der passende [`country_code_historical` für "Yugoslavia"](https://en.wikipedia.org/wiki/ISO_3166-3#Current_codes) gesetzt werden
-    -   der `country_code = "CS"` für den Folgestaat "Serbia and Montenegro" gesetzt werden
+    -   der `country_code = "CS"` für den Folgestaat "Serbia and Montenegro" gesetzt werden (oder besser leer lassen? TBD!)
     -   `is_past_jurisdiction = TRUE` gesetzt werden
     -   den gegenwärtigen Wert in `municipality` stattdessen in `subnational_entity_name` eintragen
 
@@ -262,7 +259,8 @@
     E.g. is `inst_trigger_type` missing for referendums with IDs `5cb82f07cb48652399618eb1` and `6080ef7d4132d76d38bfe9e0` although `inst_trigger_actor` is
     present!
 
-    If the "completely dependent" property of these variables really holds, we should auto-fill them and avoid the possibility of manual changes.
+    If the "completely dependent" property of these variables really holds, we should auto-fill them in the back-end and avoid the possibility of manual
+    changes.
 
 -   Systematically check if all votes in the `sudd.ch` database are included in the C2D database -\> parse `https://sudd.ch/list.php?mode=allrefs` (the
     `id_sudd` is part of the link in the last column)
@@ -292,15 +290,11 @@
 
 ### c2d R package
 
--   Implement fn for back-end data manipulation leveraging the `POST` functionality of the [`/referendums` API
-    endpoint](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes), allowing to change an arbitrary number of entries at a
-    time.
-
 -   Implement fn to delete referendums once [issue \#45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
 
 -   Automated vote entry creation by feeding scraped data to `c2d::add_referendums()`.
 
--   Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:
+-   Funktion schreiben zum Hinzufügen der von Uwe favorisierten Weltregionen:
 
     ![scan](https://i.imgur.com/88H2TZz.jpeg)
 
@@ -331,19 +325,83 @@
     werden. Dies weil die Datenbank unter diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat. Allerdings taugt "C2D" beim besten Willen nicht
     als Akronym für eine Datenbank...
 
-    Ich würde daher stattdessen eine zügige Umbenennung in **D3** für ***D**atabase on **D**irect **D**emocracy* nahelegen! Die Domain `d3.vote` wäre noch zu
-    haben (1. Jahr USD 650.-, danach USD 65.-/Jahr). Die alte Domain könnten wir einige Jahre weiter halten und einfach auf die neue umleiten. Im
-    Politik-Bereich ist `D3` bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch die
-    JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
+    Ich würde daher stattdessen eine zügige Umbenennung in
+
+    -   **D3** für ***D**atabase on **D**irect **D**emocracy* nahelegen! Die Domain `d3.vote` wäre noch zu haben (1. Jahr USD 650.-, danach USD 65.-/Jahr). Im
+        Politik-Bereich ist `D3` bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch
+        die JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
+
+    -   oder -- falls *Direct Democracy* vermieden werden soll im Namen (bspw. wegen [starker Vereinnahmung durch politische
+        Bewegungen](https://en.wikipedia.org/wiki/Direct_democracy_(disambiguation))) -- **RDB** für ***R**eferendum **D**ata**b**ase*. Die Domain `rdb.vote`
+        wäre noch zu haben (USD 95.34/Jahr). Im Politik-Bereich ist `RDB` bislang kaum besetzt; alles ziemlich unverfänglich, wofür RDB [international
+        steht](https://en.wikipedia.org/wiki/RDB); auch im [deutschsprachigen Raum](https://de.wikipedia.org/wiki/RDB) gibt es keine problematische Konkurrenz
+        (am ehesten noch [diese Rechtsdatenbank](https://rdb.manz.at/)).
+
+    Die alte Domain `c2d.ch` könnten wir einige Jahre weiter halten und einfach auf die neue umleiten.
 
 ### Open questions / suggestions
+
+#### Mit Irina besprechen
 
 -   Kann mir jemand die genaue Bedeutung von `inst_object_revision_extent` sowie den `*precondition*`-Variablen erklären (insb. aus `inst_precondition_decision`
     werde ich nicht schlau...)?
 
+-   Stimmen die Definitionen im Codebook so? Insb.:
+
+    -   `committee_name`
+    -   `type` und alle `inst_*`-Variablen
+
 -   `inst_quorum_turnout` sollte standardisiert werden -\> was wäre eine geeignete, abschliessende Menge an Werten?
 
--   Ist `position_government` (ehemals `recommendation`) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal, dies, manchmal jenes?
+-   Was ist der Nutzen/zusätzliche Informationsgehalt von `inst_is_counter_proposal` sowie `inst_is_assembly`? Ob ein Referendum ein `"counter proposal"` bzw.
+    ein `"citizens' assembly"` ist, wird ja bereits in `type` erfasst.
+
+    Diesbezüglich gilt anzumerken, dass in der Datenbank
+
+    -   21 Fälle enthalten sind, bei denen `inst_is_counter_proposal == TRUE`, aber `type != "counter proposal"`.
+    -   3 Fälle enthalten sind, bei denen `inst_is_assembly == TRUE`, aber `type != "citizens' assembly"`.
+
+    Sind das einfach Kodierungsfehler?
+
+-   Woher genau stammt die Tag-Hierarchy? Ist sie "custom"?
+
+    Falls ja, sollten wir
+
+    -   den `tag_tier_3` "homosexuals" wohl etwas breiter fassen, bspw. "sexual orientation / gender identity".
+    -   den `tag_tier_3` "compensation for loss of earnings for persons on military service or civil protection duty" kürzen!
+
+-   `inst_object_legal_level` sollte m. E. in Relation zu `level` stehen, tut es aber nicht. Dementsprechend kann `inst_object_legal_level` mehrdeutig sein
+    (Beispiel: Ist `inst_object_legal_level = "law"` lokales, kantonales oder nationales Recht bei Referendum auf CH-Gemeindeebene?)
+
+    Wir sollten das daher ändern (sprich auf *eindeutige* Weise erfassen. Vorschläge?
+
+    Würde dieses Problem behoben, könnte `inst_object_legal_level` vermutlich auch als `ordinal_ascending` klassifiziert werden.
+
+-   Ist `position_government` (ehemals `recommendation`) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal dies, manchmal jenes?
+
+    Zudem: Die Variable kennt gegenwärtig eig. 3 Ausprägungen, ich behandle den Wert `"None"` allerdings als `NA`, weil das gegenwärtige
+    [Admin-Portal](https://admin.c2d.ch/) keine `NA`s zulässt, sprich die Coder bei Unbekanntheit des Wertes gezwungen sind, `"None"` anzugeben. Wie siehst du
+    das?
+
+-   Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.
+
+    Bspw. werden
+
+    -   alle Abstimmungen, die die [Republik Kosovo](https://de.wikipedia.org/wiki/Kosovo) betreffen, unter dem `country_name` *Serbia* geführt...
+    -   für die Abstimmungen in Taiwan uneinheitliche `country_name`'s verwendet, für die Abstimmungen am 2018-11-24 *Taiwan, Province of China*, für die
+        anderen einfach *Taiwan*...
+
+    Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen. Wie siehst du das?
+
+-   Zufällig irgendeine Idee, was `id_official = "0"` (ehemals `number`) zu bedeuten hat?
+
+-   Currently, `inst_trigger_threshold` is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should
+    define, in what way the same information could be captured in a more systematic way (splitting it into two vars `inst_trigger_threshold_relative` and
+    `inst_trigger_threshold_absolute` might make sense), introduce the new variable and then convert the old values to the new format.
+
+    Was meint Irina?
+
+#### Sonstige
 
 -   Are `id_sudd`s stable over time?
 
@@ -354,43 +412,6 @@
     -   plus the 4-digit `year` the referendum took place
 
     Maybe contact the creator [Beat Müller](mailto:beat@sudd.ch) and ask?
-
--   Stimmen die Definitionen im Codebook so? Insb.:
-
-    -   `committee_name`
-    -   `type` und alle `inst_*`-Variablen
-
--   Was ist der Nutzen/zusätzliche Informationsgehalt von `inst_is_counter_proposal` sowie `inst_is_assembly`? Ob ein Referendum ein `"counter proposal"` bzw.
-    ein `"citizens' assembly"` ist, wird ja bereits in `type` erfasst.
-
-    Diesbezüglich gilt anzumerken, dass in der Datenbank
-
-    -   21 Fälle enthalten sind, bei denen `inst_is_counter_proposal == TRUE`, aber `type != "counter proposal"`.
-    -   3 Fälle enthalten sind, bei denen `inst_is_assembly == TRUE`, aber `type != "citizens' assembly"`.
-
-    Einfach Kodierungsfehler?
-
--   `inst_object_legal_level` sollte m.E. in Relation zu `level` stehen, tut es aber nicht. Dementsprechend kann `inst_object_legal_level` mehrdeutig sein (ist
-    `inst_object_legal_level = "law"` lokales, kantonales oder nationales Recht bei Referendum auf CH-Gemeindeebene?)
-
-    Würde dieses Problem behoben, könnte `inst_object_legal_level` vermutlich auch als `ordinal_ascending` klassifiziert werden.
-
--   Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.
-
-    Bspw. werden
-
-    -   alle Abstimmungen, die die [Republik Kosovo](https://de.wikipedia.org/wiki/Kosovo) betreffen, unter dem `country_name` *Serbia* geführt...
-    -   für die Abstimmungen in Taiwan uneinheitliche `country_name`'s verwendet, für die Abstimmungen am 2018-11-24 *Taiwan, Province of China*, für die
-        anderen einfach *Taiwan*...
-
-    Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen.
-
--   Woher genau stammt die Tag-Hierarchy? Ist sie "custom"?
-
-    Falls ja, sollten wir
-
-    -   den `tag_tier_3` "homosexuals" wohl etwas breiter fassen, bspw. "sexual orientation / gender identity".
-    -   den `tag_tier_3` "compensation for loss of earnings for persons on military service or civil protection duty" kürzen!
 
 -   Bei der Abstimmung *Norfolk Island 1980-07-10* meint sudd.ch, sie habe stattdessen [1979-07-10
     stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.
