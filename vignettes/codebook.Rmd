@@ -98,14 +98,25 @@ v_sections <- function(data,
         "",
         "The tags (political topics) are organized on a three-tier hierarchy as follows:",
         "",
-        c2d:::data_tags %>% purrr::pmap_chr(~ paste0("- [", c2d:::clean_tags(..1), "]{.color-azure}",
-                                                     ..2 %>%
-                                                       purrr::pmap_chr(~ paste0("\n  - [", c2d:::clean_tags(..1), "]{.color-violet}",
-                                                                                ..2 %>%
-                                                                                  purrr::map_chr(~ paste0("\n    - [", c2d:::clean_tags(.x),
-                                                                                                          "]{.color-rose}")) %>%
-                                                                                  paste0(collapse = ""))) %>%
-                                                       paste0(collapse = ""))),
+        unique(c2d:::data_tags$tag_tier_1) %>% purrr::map_chr(function(tag_tier_1) {
+          
+          paste0("- [", tag_tier_1, "]{.color-azure}",
+                 c2d:::data_tags %>%
+                   dplyr::filter(tag_tier_1 == !!tag_tier_1) %$%
+                   tag_tier_2 %>%
+                   unique() %>%
+                   purrr::map_chr(function(tag_tier_2) {
+                     
+                     paste0("\n  - [", tag_tier_2, "]{.color-violet}",
+                            c2d:::data_tags %>%
+                              dplyr::filter(tag_tier_2 == !!tag_tier_2) %$%
+                              tag_tier_3 %>%
+                              setdiff(NA_character_) %>%
+                              purrr::map_chr(~ paste0("\n    - [", .x, "]{.color-rose}")) %>%
+                              paste0(collapse = ""))
+                   }) %>%
+                   paste0(collapse = ""))
+        }),
         "",
         paste0("<sup>[`tags_tier_1`](#tags_tier_1){.color-azure} are colored in [azure]{.color-azure}, [`tags_tier_2`](#tags_tier_2){.color-violet} in ",
                "[violet]{.color-violet} and [`tags_tier_3`](#tags_tier_3){.color-rose} in [rose]{.color-rose}.</sup>")[!strip_extended_pandoc],

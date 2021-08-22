@@ -621,17 +621,12 @@ tidy_referendums <- function(data,
                         .fns = purrr::map,
                         .f = stringr::str_to_lower),
           
-          # only convert non-abbreviations to lowercase
-          ## vectors
+          # convert non-abbreviations only to lowercase
           dplyr::across(.cols = any_of(c("inst_object_author",
                                          "inst_trigger_actor",
                                          "inst_precondition_actor")),
                         .fns = purrr::map_chr,
                         .f = lower_non_abbrs),
-          ## lists
-          dplyr::across(.cols = tags,
-                        .fns = purrr::map,
-                        .f = clean_tags),
           
           # specific recodings
           ## binary (dummies)
@@ -682,7 +677,7 @@ tidy_referendums <- function(data,
                                             tier = 1L),
           tags_tier_2 = tags %>% purrr::map(infer_tags,
                                             tier = 2L),
-          tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags_tier_3_cleaned]),
+          tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags(tiers = 3L)]),
           ### various cleanups
           level = stringr::str_replace(string = level,
                                        pattern = "sub-national",
@@ -1195,17 +1190,6 @@ query_filter_in <- function(x) {
                     ~ list(`$in` = .))
 }
 
-clean_tags <- function(tags) {
-  
-  lower_non_abbrs(tags) %>% dplyr::recode("armed forces - general" = "armed forces in general",
-                                          "citizen's initiatives" = "citizens' initiatives",
-                                          "european policy" = "European policy",
-                                          "other european organisations" = "other European organisations",
-                                          "religion - churches" = "religion, churches",
-                                          "swiss abroad" = "Swiss abroad",
-                                          "territoral questions" = "territorial questions")
-}
-
 restore_tags <- function(tags_tier_1,
                          tags_tier_2,
                          tags_tier_3) {
@@ -1257,15 +1241,7 @@ restore_tags <- function(tags_tier_1,
           c(tags)
       }
       
-      tags %>% purrr::map_chr(~ {
-        substr(.x, 1L, 1L) %<>% toupper()
-        .x %>% dplyr::recode("Armed forces in general" = "Armed forces - general",
-                             "Citizens' initiatives" = "Citizen's initiatives",
-                             "Conscientious objection, civilian service" = "Conscientious objection, Civilian service",
-                             "Religion, churches" = "Religion - churches",
-                             "Social policy" = "Social Policy",
-                             "Territorial questions" = "Territoral questions")
-      })
+      tags
     })
 }
 
@@ -1279,15 +1255,15 @@ tags <- function(tiers = 1:3) {
   tag_set <- character()
   
   if (1L %in% tiers) {
-    tag_set %<>% c(data_tags_tidy$tag_tier_1)
+    tag_set %<>% c(data_tags$tag_tier_1)
   }
   
   if (2L %in% tiers) {
-    tag_set %<>% c(data_tags_tidy$tag_tier_2)
+    tag_set %<>% c(data_tags$tag_tier_2)
   }
   
   if (3L %in% tiers) {
-    tag_set %<>% c(data_tags_tidy$tag_tier_3)
+    tag_set %<>% c(data_tags$tag_tier_3)
   }
   
   tag_set %>% setdiff(NA_character_) %>% unique()
@@ -2142,13 +2118,13 @@ hierarchize_tags <- function(x) {
   }
   
   checkmate::assert_subset(x,
-                           choices = tags_cleaned,
+                           choices = tags(),
                            empty.ok = TRUE,
                            .var.name = "tags")
   
-  tags_tier_1 <- x[x %in% tags_tier_1_cleaned]
-  tags_tier_2 <- x[x %in% tags_tier_2_cleaned]
-  tags_tier_3 <- x[x %in% tags_tier_3_cleaned]
+  tags_tier_1 <- x[x %in% tags(tiers = 1L)]
+  tags_tier_2 <- x[x %in% tags(tiers = 2L)]
+  tags_tier_3 <- x[x %in% tags(tiers = 3L)]
   inferred_tags_tier_1 <- infer_tags(tags = c(tags_tier_2, tags_tier_3),
                                      tier = 1L)
   inferred_tags_tier_2 <- infer_tags(tags = tags_tier_3,
@@ -2226,17 +2202,17 @@ infer_tags <- function(tags,
   if (is.factor(tags)) tags <- as.character(tags)
   
   checkmate::assert_subset(tags,
-                           choices = tags_cleaned)
+                           choices = tags())
   checkmate::assert_int(tier,
                         lower = 1L,
                         upper = 2L)
   
   # inferred from lower-tier tags
-  result <- data_tags_tidy_cleaned[data_tags_tidy_cleaned$tag_tier_2 %in% tags | data_tags_tidy_cleaned$tag_tier_3 %in% tags, ]
+  result <- data_tags[data_tags$tag_tier_2 %in% tags | data_tags$tag_tier_3 %in% tags, ]
   result %<>% .[[paste0("tag_tier_", tier)]]
   
   # plus top-tier tags
-  if (tier == 1L) result %<>% c(tags[tags %in% tags_tier_1_cleaned])
+  if (tier == 1L) result %<>% c(tags[tags %in% tags(tiers = 1L)])
   
   unique(result)
 }

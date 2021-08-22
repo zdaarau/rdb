@@ -787,17 +787,12 @@ tidy_referendums <- function(data,
                         .fns = purrr::map,
                         .f = stringr::str_to_lower),
           
-          # only convert non-abbreviations to lowercase
-          ## vectors
+          # convert non-abbreviations only to lowercase
           dplyr::across(.cols = any_of(c("inst_object_author",
                                          "inst_trigger_actor",
                                          "inst_precondition_actor")),
                         .fns = purrr::map_chr,
                         .f = lower_non_abbrs),
-          ## lists
-          dplyr::across(.cols = tags,
-                        .fns = purrr::map,
-                        .f = clean_tags),
           
           # specific recodings
           ## binary (dummies)
@@ -848,7 +843,7 @@ tidy_referendums <- function(data,
                                             tier = 1L),
           tags_tier_2 = tags %>% purrr::map(infer_tags,
                                             tier = 2L),
-          tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags_tier_3_cleaned]),
+          tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags(tiers = 3L)]),
           ### various cleanups
           level = stringr::str_replace(string = level,
                                        pattern = "sub-national",
@@ -1386,25 +1381,6 @@ query_filter_in <- function(x) {
 
 ### Tags-related
 
-#### `clean_tags`
-
-TODO:
-
--   PR to implement this in the back-end/MongoDB [was submitted](https://github.com/ccmdesign/c2d-app/pull/40); once merged, remove from this pkg!
-
-```{r}
-clean_tags <- function(tags) {
-  
-  lower_non_abbrs(tags) %>% dplyr::recode("armed forces - general" = "armed forces in general",
-                                          "citizen's initiatives" = "citizens' initiatives",
-                                          "european policy" = "European policy",
-                                          "other european organisations" = "other European organisations",
-                                          "religion - churches" = "religion, churches",
-                                          "swiss abroad" = "Swiss abroad",
-                                          "territoral questions" = "territorial questions")
-}
-```
-
 #### `restore_tags`
 
 NOTE that this function doesn't restore *redundant* information (parent-tier tags). Once [issue \#41](https://github.com/ccmdesign/c2d-app/issues/41) is
@@ -1462,15 +1438,7 @@ restore_tags <- function(tags_tier_1,
           c(tags)
       }
       
-      tags %>% purrr::map_chr(~ {
-        substr(.x, 1L, 1L) %<>% toupper()
-        .x %>% dplyr::recode("Armed forces in general" = "Armed forces - general",
-                             "Citizens' initiatives" = "Citizen's initiatives",
-                             "Conscientious objection, civilian service" = "Conscientious objection, Civilian service",
-                             "Religion, churches" = "Religion - churches",
-                             "Social policy" = "Social Policy",
-                             "Territorial questions" = "Territoral questions")
-      })
+      tags
     })
 }
 ```
@@ -1488,15 +1456,15 @@ tags <- function(tiers = 1:3) {
   tag_set <- character()
   
   if (1L %in% tiers) {
-    tag_set %<>% c(data_tags_tidy$tag_tier_1)
+    tag_set %<>% c(data_tags$tag_tier_1)
   }
   
   if (2L %in% tiers) {
-    tag_set %<>% c(data_tags_tidy$tag_tier_2)
+    tag_set %<>% c(data_tags$tag_tier_2)
   }
   
   if (3L %in% tiers) {
-    tag_set %<>% c(data_tags_tidy$tag_tier_3)
+    tag_set %<>% c(data_tags$tag_tier_3)
   }
   
   tag_set %>% setdiff(NA_character_) %>% unique()
@@ -1716,40 +1684,30 @@ data_codebook <- {
 ### Tags
 
 ```{r, purl = FALSE}
-# download file from private CCM Design repo
 data_tags <-
+  # download file from private CCM Design repo
   pal::gh_text_file(owner = "ccmdesign",
                     name = "c2d-app",
                     rev = "master",
                     path = "ch.c2d/web/themes.json") %>%
   jsonlite::fromJSON(flatten = FALSE) %>%
-  tibble::as_tibble()
-
-# create tidy data version
-data_tags_tidy <-
-  data_tags %>%
+  tibble::as_tibble() %>%
+  # create tidy data version
   dplyr::rename(tag_tier_1 = name,
                 tag_tier_2 = children) %>%
-  tidyr::unnest_longer(col = tag_tier_2)
-
-data_tags_tidy <-
-  dplyr::bind_cols(tag_tier_1 = data_tags_tidy$tag_tier_1,
-                   data_tags_tidy$tag_tier_2) %>%
+  tidyr::unnest_longer(col = tag_tier_2) %$%
+  dplyr::bind_cols(tag_tier_1 = tag_tier_1,
+                   tag_tier_2) %>%
   dplyr::rename(tag_tier_2 = name,
                 tag_tier_3 = children) %>%
   # ensure consistent col subtypes
-  dplyr::mutate(tag_tier_3 = tag_tier_3 %>% purrr::map(~ {if(is.list(.x)) character() else .x})) %>%
+  dplyr::mutate(tag_tier_3 = tag_tier_3 %>% purrr::map(~ { if (is.list(.x)) character() else .x })) %>%
   tidyr::unnest_longer(col = tag_tier_3)
 ```
 
 ### Constants pre-computed for performance purposes
 
 ```{r, purl = FALSE}
-data_tags_tidy_cleaned <- data_tags_tidy %>% dplyr::mutate(dplyr::across(.fns = clean_tags))
-tags_cleaned <- clean_tags(tags())
-tags_tier_1_cleaned <- clean_tags(tags(tiers = 1L))
-tags_tier_2_cleaned <- clean_tags(tags(tiers = 2L))
-tags_tier_3_cleaned <- clean_tags(tags(tiers = 3L))
 # NOTE: `var_lbls` is assigned here because when inlined, it somehow breaks `devtools::run_examples()` during pkg check ("C stack usage (...) is too close to
 #       the limit"); maybe too large fn stack? (modifying `pal::strip_md()` to minimize the fn stack was tried but didn't help)
 var_lbls <-
@@ -1766,12 +1724,6 @@ Note that `data_codebook` is saved as internal data and later exported because e
 ```{r, purl = FALSE}
 usethis::use_data(data_codebook,
                   data_tags,
-                  data_tags_tidy,
-                  data_tags_tidy_cleaned,
-                  tags_cleaned,
-                  tags_tier_1_cleaned,
-                  tags_tier_2_cleaned,
-                  tags_tier_3_cleaned,
                   var_lbls,
                   internal = TRUE,
                   overwrite = TRUE,
@@ -2622,13 +2574,13 @@ hierarchize_tags <- function(x) {
   }
   
   checkmate::assert_subset(x,
-                           choices = tags_cleaned,
+                           choices = tags(),
                            empty.ok = TRUE,
                            .var.name = "tags")
   
-  tags_tier_1 <- x[x %in% tags_tier_1_cleaned]
-  tags_tier_2 <- x[x %in% tags_tier_2_cleaned]
-  tags_tier_3 <- x[x %in% tags_tier_3_cleaned]
+  tags_tier_1 <- x[x %in% tags(tiers = 1L)]
+  tags_tier_2 <- x[x %in% tags(tiers = 2L)]
+  tags_tier_3 <- x[x %in% tags(tiers = 3L)]
   inferred_tags_tier_1 <- infer_tags(tags = c(tags_tier_2, tags_tier_3),
                                      tier = 1L)
   inferred_tags_tier_2 <- infer_tags(tags = tags_tier_3,
@@ -2710,23 +2662,23 @@ infer_tags <- function(tags,
   if (is.factor(tags)) tags <- as.character(tags)
   
   checkmate::assert_subset(tags,
-                           choices = tags_cleaned)
+                           choices = tags())
   checkmate::assert_int(tier,
                         lower = 1L,
                         upper = 2L)
   
   # inferred from lower-tier tags
-  result <- data_tags_tidy_cleaned[data_tags_tidy_cleaned$tag_tier_2 %in% tags | data_tags_tidy_cleaned$tag_tier_3 %in% tags, ]
+  result <- data_tags[data_tags$tag_tier_2 %in% tags | data_tags$tag_tier_3 %in% tags, ]
   result %<>% .[[paste0("tag_tier_", tier)]]
   
   # plus top-tier tags
-  if (tier == 1L) result %<>% c(tags[tags %in% tags_tier_1_cleaned])
+  if (tier == 1L) result %<>% c(tags[tags %in% tags(tiers = 1L)])
   
   unique(result)
 }
 ```
 
-# API Status
+# C2D API Status
 
 ## `is_online`
 
