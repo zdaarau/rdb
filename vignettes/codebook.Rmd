@@ -1,5 +1,7 @@
 ---
 title: "C2D Codebook"
+editor_options:
+  chunk_output_type: console
 output:
   rmarkdown::html_vignette:
     css: custom.css
