@@ -505,6 +505,9 @@ tidy_date <- function(x) {
 #' @keywords internal
 tidy_referendums <- function(data,
                              tidy = TRUE) {
+  
+  checkmate::assert_flag(tidy)
+  
   data %<>%
     # unnest columns and ensure list type for multi-value columns
     # NOTE that `tidyr::unnest()` is unbearably slow, so we use a custom function
@@ -1453,7 +1456,6 @@ referendums <- function(use_cache = TRUE,
   pkgpins::with_cache(.fn = ~ {
     
     checkmate::assert_flag(incl_archive)
-    checkmate::assert_flag(tidy)
     
     # retrieve data
     data <-
