@@ -2270,3 +2270,162 @@ is_online <- function(quiet = FALSE) {
   
   result
 }
+
+#' Get a single referendum's data from [sudd.ch](https://sudd.ch/)
+#'
+#' Downloads a single referendum's data from [sudd.ch](https://sudd.ch/).
+#'
+#' @param id_sudd The referendum's identifier assigned by [sudd.ch](https://sudd.ch/).
+#'
+#' @return `r pkgsnip::return_label("data")` The column names are aligned with those of [referendums()] as closely as possible.
+#' @family sudd
+#' @export
+#'
+#' @examples
+#' c2d::referendum(id = "5bbc045192a21351232e596f")$id_sudd |> c2d::sudd_referendum()
+sudd_referendum <- function(id_sudd) {
+  
+  checkmate::assert_string(id_sudd)
+  pal::assert_pkg("xml2")
+  pal::assert_pkg(pkg = "rvest",
+                  min_version = "1.0.0")
+  
+  xml2::read_html(paste0("https://sudd.ch/event.php?id=", id_sudd)) %>%
+    rvest::html_element(css = "main table") %>%
+    rvest::html_elements("tr") %>%
+    purrr::map_dfc(~ {
+      
+        cells <- .x %>% rvest::html_elements(css = "td")
+        col_text <- rvest::html_text2(cells[[2L]])
+        col_name <-
+          rvest::html_text(cells[[1L]]) %>%
+          dplyr::recode("Gebiet"                               = "country_name_de",
+                        "\u2517\u2501 Stellung"                = "territory_type_de",
+                        "Datum"                                = "date",
+                        "Vorlage"                              = "title_de",
+                        "\u2517\u2501 Fragemuster"             = "question_type_de",
+                        "\u2517\u2501 Abstimmungstyp"          = "types",
+                        "Ergebnis"                             = "result_de",
+                        "\u2517\u2501 Mehrheiten"              = "adoption_requirements_de",
+                        "Stimmberechtigte"                     = "electorate_total",
+                        "\u2517\u2501 Davon im Ausland"        = "electorate_abroad",
+                        "Stimmausweise"                        = "polling_cards",
+                        "Stimmbeteiligung"                     = "votes_total",
+                        "Stimmen ausser Betracht"              = "votes_invalid",
+                        "\u2517\u2501 Leere Stimmen"           = "votes_empty",
+                        "\u2517\u2501 Ungültige Stimmen"       = "votes_void",
+                        "Gültige (= massgebende) Stimmen"      = "votes_valid",
+                        "\u2517\u2501 Ja-Stimmen"              = "votes_yes",
+                        "\u2517\u2501 Nein-Stimmen"            = "votes_no",
+                        "\u2517\u2501 Stimmen ausser Betracht" = "votes_invalid",
+                        "Stände (Kantone)"                     = "states",
+                        "\u2517\u2501 Annehmende Stände"       = "states_yes",
+                        "\u2517\u2501 Verwerfende Stände"      = "states_no",
+                        "Medien"                               = "vote_channel_de",
+                        "Bemerkungen"                          = "remarks",
+                        "Gleichzeitig mit"                     = "ids_sudd_simultaneous",
+                        "Quellen"                              = "sources",
+                        "Vollständigkeit"                      = "result_status_de",
+                        "Letzte Änderung"                      = "date_time_last_edited")
+        
+        # extract hyperlinks if necessary
+        if (col_name %in% c("vote_channel_de",
+                            "ids_sudd_simultaneous",
+                            "sources")) {
+          urls <-
+            cells[[2L]] %>%
+            rvest::html_elements(css = "a") %>%
+            purrr::map_chr(~ .x %>%
+                             rvest::html_attr(name = "href") %>%
+                             # complete relative URLs
+                             httr::parse_url() %>%
+                             purrr::modify_in(.where = "scheme",
+                                              .f = ~ .x %||% "https") %>%
+                             purrr::modify_in(.where = "hostname",
+                                              .f = ~ .x %||% "sudd.ch") %>%
+                             httr::build_url())
+        }
+        
+        tibble::tibble(!!col_name :=
+                         col_name %>%
+                         purrr::when(
+                           # character scalars
+                           . %in% c("country_name_de",
+                                    "territory_type_de",
+                                    "title_de",
+                                    "question_type_de",
+                                    "result_de",
+                                    "vote_channel_de",
+                                    "remarks",
+                                    "result_status_de") ~
+                             col_text,
+                           
+                           # integer scalars
+                           . %in% c("electorate_total",
+                                    "electorate_abroad",
+                                    "polling_cards",
+                                    "votes_total",
+                                    "votes_invalid",
+                                    "votes_empty",
+                                    "votes_void",
+                                    "votes_valid",
+                                    "votes_yes",
+                                    "votes_no") ~
+                             cells[[2L]] %>%
+                             rvest::html_elements(css = "data") %>%
+                             rvest::html_attr("value") %>%
+                             # fall back to parsing text if no semantic data could be extracted
+                             purrr::when(length(.) == 0L ~ col_text %>% stringr::str_remove_all(pattern = "[^\\d]"),
+                                         ~ .) %>%
+                             as.integer(),
+                           
+                           . %in% c("states",
+                                    "states_yes",
+                                    "states_no") ~
+                             cells[[2L]] %>%
+                             rvest::html_elements(css = "data") %>%
+                             rvest::html_attr("value") %>%
+                             # fall back to bare text if no semantic data could be extracted
+                             purrr::when(length(.) == 0L ~ col_text,
+                                         ~ .) %>%
+                             as.numeric(),
+                           
+                           # date scalars
+                           . %in% c("date",
+                                    "date_time_last_edited") ~
+                             cells[[2L]] %>%
+                             rvest::html_element(css = "time") %>%
+                             rvest::html_attr(name = "datetime") %>%
+                             lubridate::as_date(),
+                           
+                           # lists (multi-value cols)
+                           . == "types" ~
+                             col_text %>% stringr::str_split(pattern = "\\s*\u2192\\s*"),
+                           . == "adoption_requirements_de" ~
+                             col_text %>% stringr::str_split(pattern = ",\\s*"),
+                           . == "ids_sudd_simultaneous" ~
+                             urls %>%
+                             stringr::str_extract(pattern = "(?<=[\\?&]id=)[\\w\\d]+") %>%
+                             list(),
+                           . == "sources" ~
+                             list(list(text = col_text,
+                                       urls = urls,
+                                       html =
+                                         cells[[2L]] %>%
+                                         xml2::xml_contents() %>%
+                                         as.character() %>%
+                                         paste0(collapse = ""))),
+                           
+                           ~ "PARSING ERROR; PLEASE DEBUG"
+                         )) %>%
+          purrr::when(col_name == "vote_channel_de" ~ tibble::add_column(.data = .,
+                                                                         vote_channel_url = checkmate::assert_string(urls),
+                                                                         .after = "vote_channel_de"),
+                      ~ .)
+    }) %>%
+    tibble::add_column(country_code =
+                         id_sudd %>%
+                         stringr::str_sub(end = 2L) %>%
+                         stringr::str_to_upper(),
+                       .before = 1L)
+}
