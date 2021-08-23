@@ -2553,6 +2553,10 @@ v_vals <- function(v_name) {
 
 # [Tags](https://rpkg.dev/c2d/articles/codebook.html#tags)
 
+The tags classification was developped together with [Swissvotes](https://swissvotes.ch/), the [Institute of Federalism of the University of
+Fribourg](https://www.unifr.ch/federalism/en/) and the [Section Politics of the Federal Statistical
+Office](https://www.bfs.admin.ch/bfs/en/home/statistics/politics.html). Any modifications should be coordinated with these parties.
+
 ## `hierarchize_tags`
 
 ```{r}
