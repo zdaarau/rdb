@@ -2330,6 +2330,7 @@ sudd_referendum <- function(id_sudd) {
         
         # extract hyperlinks if necessary
         if (col_name %in% c("vote_channel_de",
+                            "remarks",
                             "ids_sudd_simultaneous",
                             "sources")) {
           urls <-
@@ -2356,7 +2357,6 @@ sudd_referendum <- function(id_sudd) {
                                     "question_type_de",
                                     "result_de",
                                     "vote_channel_de",
-                                    "remarks",
                                     "result_status_de") ~
                              col_text,
                            
@@ -2399,6 +2399,15 @@ sudd_referendum <- function(id_sudd) {
                              lubridate::as_date(),
                            
                            # lists (multi-value cols)
+                           . %in% c("remarks",
+                                    "sources") ~
+                             list(list(text = col_text,
+                                       urls = urls,
+                                       html =
+                                         cells[[2L]] %>%
+                                         xml2::xml_contents() %>%
+                                         as.character() %>%
+                                         paste0(collapse = ""))),
                            . == "types" ~
                              col_text %>% stringr::str_split(pattern = "\\s*\u2192\\s*"),
                            . == "adoption_requirements_de" ~
@@ -2407,14 +2416,6 @@ sudd_referendum <- function(id_sudd) {
                              urls %>%
                              stringr::str_extract(pattern = "(?<=[\\?&]id=)[\\w\\d]+") %>%
                              list(),
-                           . == "sources" ~
-                             list(list(text = col_text,
-                                       urls = urls,
-                                       html =
-                                         cells[[2L]] %>%
-                                         xml2::xml_contents() %>%
-                                         as.character() %>%
-                                         paste0(collapse = ""))),
                            
                            ~ "PARSING ERROR; PLEASE DEBUG"
                          )) %>%
