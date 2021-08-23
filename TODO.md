@@ -364,6 +364,10 @@
 
     Was meint Irina?
 
+-   sudd.ch: Uwe meint, Ziel müsste sein, von der Abhängigkeit von sudd.ch wegzukommen. Als wie realistisch siehst du das?
+
+    Sonst zu sudd.ch?
+
 #### Sonstige
 
 -   Are `id_sudd`s stable over time?
