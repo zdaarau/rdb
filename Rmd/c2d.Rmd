@@ -717,19 +717,9 @@ tidy_referendums <- function(data,
     # convert to tibble
     purrr::map_dfr(tibble::as_tibble_row)
   
+  # tidy data
   if (nrow(data)) {
     
-    # check data integrity
-    ## ensure mandatory fields are never `NA`
-    if (data %>%
-        dplyr::select(all_of(referendum_fields$required)) %>%
-        dplyr::filter(dplyr::if_any(.fns = is.na)) %>%
-        nrow()) {
-      
-      cli::cli_abort("Mandatory fields detected that contain {.val NA} values. Please debug.")
-    }
-    
-    # tidy data
     if (tidy) {
       
       data %<>%
