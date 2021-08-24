@@ -6,7 +6,7 @@ editor_options:
 # NOTES
 
 The C2D Database offers a [privately documented](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md) API available under `services.c2d.ch` with
-the following "endpoints":
+the following HTTP GET "endpoints":
 
 -   `referendums`: get data on multiple referendums
 
@@ -96,6 +96,7 @@ utils::globalVariables(names = c(".",
                                  "country_code",
                                  "country_name",
                                  "date_time_created",
+                                 "date_time_last_active",
                                  "electorate_abroad",
                                  "electorate_total",
                                  "files",
@@ -2750,21 +2751,53 @@ is_online <- function(quiet = FALSE) {
 
 # [sudd.ch](https://sudd.ch/) scraping
 
-## `sudd_referendum`
+## `sudd_referendums`
+
+TODO:
+
+-   Parse `country_name_de` into `country_name_de`, `subnational_entity_name_de`, `municipality_name_de`; see <https://sudd.ch/list.php?mode=allareas> for how
+    territories are clustered.
+
+-   Test with all `c2d::referendums()$id_sudd`
 
 ```{r}
-#' Get a single referendum's data from [sudd.ch](https://sudd.ch/)
+#' Get referendum data from [sudd.ch](https://sudd.ch/)
 #'
-#' Downloads a single referendum's data from [sudd.ch](https://sudd.ch/).
+#' Downloads referendum data from [sudd.ch](https://sudd.ch/).
 #'
-#' @param id_sudd The referendum's identifier assigned by [sudd.ch](https://sudd.ch/).
+#' **sudd** stands for _**Su**chmaschine für **d**irekte **D**emokratie_ (German) and is operated by [Beat Müller](mailto:beat@sudd.ch). Its database content is
+#' licensed under [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA
+#' 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+#'
+#' @param ids_sudd The referendum identifiers assigned by [sudd.ch](https://sudd.ch/). Either as a character vector or a data frame containing a column
+#'   `id_sudd`. `NA`s are ignored.
 #'
 #' @return `r pkgsnip::return_label("data")` The column names are aligned with those of [referendums()] as closely as possible.
 #' @family sudd
 #' @export
 #'
 #' @examples
-#' c2d::referendum(id = "5bbc045192a21351232e596f")$id_sudd |> c2d::sudd_referendum()
+#' c2d::referendum(id = "5bbc045192a21351232e596f")$id_sudd |> c2d::sudd_referendums()
+#' 
+#' c2d::referendums(country_code = "AT") |> c2d::sudd_referendums()
+sudd_referendums <- function(ids_sudd) {
+ 
+  if (!rlang::is_atomic(ids_sudd)) {
+    
+    if (!("id_sudd" %in% colnames(ids_sudd))) {
+      cli::cli_abort(paste0("{.arg ids_sudd} must be either a character vector of valid sudd.ch referendum identifiers or a data frame with a column of such ",
+                            "named {.var id_sudd}."))
+    }
+    
+    ids_sudd <- ids_sudd$id_sudd
+  }
+  
+  ids_sudd %>%
+    magrittr::extract(!is.na(.)) %>%
+    purrr::map_dfr(sudd_referendum)
+}
+
+# get a single referendum's data from sudd.ch
 sudd_referendum <- function(id_sudd) {
   
   checkmate::assert_string(id_sudd)
@@ -2774,7 +2807,7 @@ sudd_referendum <- function(id_sudd) {
   
   xml2::read_html(paste0("https://sudd.ch/event.php?id=", id_sudd)) %>%
     rvest::html_element(css = "main table") %>%
-    rvest::html_elements("tr") %>%
+    rvest::html_children() %>%
     purrr::map_dfc(~ {
       
         cells <- .x %>% rvest::html_elements(css = "td")
@@ -2795,20 +2828,20 @@ sudd_referendum <- function(id_sudd) {
                         "Stimmbeteiligung"                     = "votes_total",
                         "Stimmen ausser Betracht"              = "votes_invalid",
                         "\u2517\u2501 Leere Stimmen"           = "votes_empty",
-                        "\u2517\u2501 Ungültige Stimmen"       = "votes_void",
-                        "Gültige (= massgebende) Stimmen"      = "votes_valid",
+                        "\u2517\u2501 Ung\u00fcltige Stimmen"  = "votes_void",
+                        "G\u00fcltige (= massgebende) Stimmen" = "votes_valid",
                         "\u2517\u2501 Ja-Stimmen"              = "votes_yes",
                         "\u2517\u2501 Nein-Stimmen"            = "votes_no",
                         "\u2517\u2501 Stimmen ausser Betracht" = "votes_invalid",
-                        "Stände (Kantone)"                     = "states",
-                        "\u2517\u2501 Annehmende Stände"       = "states_yes",
-                        "\u2517\u2501 Verwerfende Stände"      = "states_no",
+                        "St\u00e4nde (Kantone)"                = "states",
+                        "\u2517\u2501 Annehmende St\u00e4nde"  = "states_yes",
+                        "\u2517\u2501 Verwerfende St\u00e4nde" = "states_no",
                         "Medien"                               = "vote_channel_de",
                         "Bemerkungen"                          = "remarks",
                         "Gleichzeitig mit"                     = "ids_sudd_simultaneous",
                         "Quellen"                              = "sources",
-                        "Vollständigkeit"                      = "result_status_de",
-                        "Letzte Änderung"                      = "date_time_last_edited")
+                        "Vollst\u00e4ndigkeit"                 = "result_status_de",
+                        "Letzte \u00c4nderung"                 = "date_time_last_edited")
         
         # extract hyperlinks if necessary
         if (col_name %in% c("vote_channel_de",
@@ -2906,10 +2939,40 @@ sudd_referendum <- function(id_sudd) {
                                                                          .after = "vote_channel_de"),
                       ~ .)
     }) %>%
+    # extract `country_code` from `id_sudd`
     tibble::add_column(country_code =
                          id_sudd %>%
                          stringr::str_sub(end = 2L) %>%
                          stringr::str_to_upper(),
-                       .before = 1L)
+                       .before = 1L) %>%
+    # reorder columns
+    dplyr::relocate(country_code,
+                    any_of("country_name_de"),
+                    any_of("territory_type_de"),
+                    any_of("date"),
+                    any_of("title_de"),
+                    any_of("question_type_de"),
+                    any_of("types"),
+                    any_of("result_de"),
+                    any_of("adoption_requirements_de"),
+                    any_of("electorate_total"),
+                    any_of("electorate_abroad"),
+                    any_of("polling_cards"),
+                    any_of("votes_total"),
+                    any_of("votes_empty"),
+                    any_of("votes_void"),
+                    any_of("votes_invalid"),
+                    any_of("votes_valid"),
+                    any_of("votes_yes"),
+                    any_of("votes_no"),
+                    any_of("states"),
+                    any_of("states_yes"),
+                    any_of("states_no"),
+                    any_of("vote_channel_de"),
+                    any_of("result_status_de"),
+                    any_of("remarks"),
+                    any_of("sources"),
+                    any_of("ids_sudd_simultaneous"),
+                    any_of("date_time_last_edited"))
 }
 ```

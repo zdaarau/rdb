@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9013</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9014</span>
       </span>
     </div>
 
@@ -179,46 +179,6 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </ul>
 </li>
 <li>
-<p>The set of possible <code>tags</code> has some errors and inconsistencies that should be corrected:</p>
-<ul>
-<li>
-<p>Errors:</p>
-<ul>
-<li>
-<code>Territoral questions</code> -&gt; <code>Territorial questions</code>
-</li>
-<li>
-<code>Citizen's initiatives</code> -&gt; <code>Citizens' initiatives</code>
-</li>
-</ul>
-</li>
-<li><p>Inconsistencies: lowercase everything! It makes no sense to have “sentence case” for these tags; plus there’s at least one tag where the second word also begins in uppercase (<code>Social Policy</code>) which just seems random.</p></li>
-</ul>
-<p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/pull/40" class="external-link">PR #40</a></p>
-<p>Temp R snippets:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://rpkg.dev/pal/reference/gh_text_file.html" class="external-link">gh_text_file</a></span><span class="op">(</span>owner <span class="op">=</span> <span class="st">"ccmdesign"</span>,
-              name <span class="op">=</span> <span class="st">"c2d-app"</span>,
-              rev <span class="op">=</span> <span class="st">"master"</span>,
-              path <span class="op">=</span> <span class="st">"ch.c2d/web/themes.json"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-<span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html" class="external-link">str_split</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/flatten.html" class="external-link">flatten_chr</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-<span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract_all</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">'(?&lt;=")\\w[^"]+(?=")'</span><span class="op">)</span> <span class="op">%&gt;%</span>
-<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/flatten.html" class="external-link">flatten_chr</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"children"</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">old</span>
-
-<span class="fu">brio</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/brio/man/read_file.html" class="external-link">read_file</a></span><span class="op">(</span><span class="st">"/home/salim/Arbeit/ZDA/Git/ccmdesign/c2d-app/ch.c2d/web/themes.json"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-<span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_split.html" class="external-link">str_split</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/flatten.html" class="external-link">flatten_chr</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-<span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract_all</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">'(?&lt;=")\\w[^"]+(?=")'</span><span class="op">)</span> <span class="op">%&gt;%</span>
-<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/flatten.html" class="external-link">flatten_chr</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"children"</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">new</span>
-
-<span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_chr</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">old</span>, .y <span class="op">=</span> <span class="va">new</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'db.COLLECTION.updateMany(
-  {"tags" : "'</span>, <span class="va">.x</span>, <span class="st">'"},
-  {$set: { "tags.$" : "'</span>, <span class="va">.y</span>, <span class="st">'"}}
-);
-'</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://rpkg.dev/pal/reference/cat_lines.html" class="external-link">cat_lines</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-</li>
-<li>
 <p><code>tags</code>: Adapt back-end to apply the same 3-tier tags logic that the R package does:</p>
 <ul>
 <li>Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time (selecting a child tag should always result in implicit selection of its parent (e.g. in a different (e.g. faded) color)).</li>
@@ -240,7 +200,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li>
 <p>Rethink standardization of <code>country_name</code>. Current problem: standardization happens only when creating/editing entries. Thus, it’s not consistent, e.g. for <code>country_code == "GB"</code> there are entries from before the relaunch with <code>country_name = "United Kingdom"</code>, and there are newer entries with the auto-deduced <code>country_name = "United Kingdom of Great Britain and Northern Ireland"</code>.</p>
 <p>See <a href="https://vincentarelbundock.github.io/countrycode/reference/codelist.html" class="external-link"><code>countrycode::codelist</code></a> for possible standards; <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" class="external-link">ISO 3166 English short country names</a> (<code>countrycode::codelist$iso.name.en</code>) seem most promising.</p>
-<p>Ideally, this would be done in the CCM-Design back-end and also implemented as an exhaustive drop-down list in the C2D admin front-end to avoid future coding inconsistencies.</p>
+<p>Ideally, this would be done in the API back-end so <code>country_name</code> is determined at request time if possible.</p>
 <p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/43" class="external-link">issue #43</a> for a closed (and partially invalid) first problem report (need to submit a new one).</p>
 </li>
 <li>
@@ -271,7 +231,6 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </ul>
 <p>Therefore, we should define a better/stricter policy how titles are captured (and identify existing entries violating this policy, so they can be corrected).</p>
 </li>
-<li><p>Currently, <code>inst_trigger_threshold</code> is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should define, in what way the same information could be captured in a more systematic way (splitting it into two vars <code>inst_trigger_threshold_relative</code> and <code>inst_trigger_threshold_absolute</code> might make sense), introduce the new variable and then convert the old values to the new format.</p></li>
 <li><p>C2D website: Möglichkeit zum Report falscher/fehlender Daten schaffen! Bevor CCM Design damit beauftragt wird, sollten wir definieren, wie ungefähr das aussehen soll. Bspw. einfach via HTML-Formular mit geeigneten Feldern (je nach Seite, von dem es aufgerufen wird, bereits vorbefüllt (<code>country_code</code>, <code>level</code>, <code>id</code> etc.))?</p></li>
 <li><p>C2D website: The about text should be overhauled.</p></li>
 <li><p>C2D website: The listing of referendums should be overhauled. It currently lacks important information, e.g. <code>level</code>.</p></li>
@@ -302,11 +261,12 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li><a href="https://sudd.ch/event.php?lang=de&amp;id=pr041952" class="external-link">Puerto Rico 1952-11-04 (3. Abstimmungsvorlage “Abolition of certain social rights”)</a></li>
 </ul>
 <p>Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!</p>
+<p>TODO: Via R alle betroffenen Referenden in unserer Datenbank ausfindig machen.</p>
 </li>
-<li><p>Sobald via Admin-Interface <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link">nach Draft-Status gefiltert werden kann</a>, sollten die existierenden 12 Drafts geprüft werden -&gt; entweder vervollständigen und freischalten oder löschen!</p></li>
+<li><p>Sobald via Admin-Interface <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link">nach Draft-Status gefiltert werden kann</a>, sollten die existierenden Drafts geprüft werden -&gt; entweder vervollständigen und freischalten oder löschen!</p></li>
 <li>
 <p>Clean <code>id_official</code>; there are likely erroneous entries or ones that don’t designate an <code>id_official</code> but another kind of ID; entries to double-check:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/referendums.html">referendums</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span>string <span class="op">=</span> <span class="va">id_official</span>, pattern <span class="op">=</span> <span class="st">"\\D"</span><span class="op">)</span> <span class="op">|</span> <span class="op">!</span><span class="op">(</span><span class="va">country_code</span> <span class="op">==</span> <span class="st">"CH"</span> <span class="op">&amp;</span> <span class="va">level</span> <span class="op">==</span> <span class="st">"national"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">id_official</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Plus: What does <code>id_official = "0"</code> mean?</p>
 </li>
@@ -315,7 +275,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <p><strong><code>municipality</code></strong> scheint inkonsistent zugewiesen; enthält Werte, die klar eine Gemeinde bezeichnen (bspw. <code>"London"</code>), aber auch solche wie <a href="https://de.wikipedia.org/wiki/Republik_Serbische_Krajina" class="external-link"><code>"Republic of Serbian Krajina until 1991"</code></a> oder <a href="https://de.wikipedia.org/wiki/Sozialistische_F%C3%B6derative_Republik_Jugoslawien#Sozialistische_F%C3%B6derative_Republik_Jugoslawien_(1963%E2%80%931992)" class="external-link"><code>Republic of Serbian People (1963-1992)</code></a>… bei letzteren sollte</p>
 <ul>
 <li>der passende <a href="https://en.wikipedia.org/wiki/ISO_3166-3#Current_codes" class="external-link"><code>country_code_historical</code> für “Yugoslavia”</a> gesetzt werden</li>
-<li>der <code>country_code = "CS"</code> für den Folgestaat “Serbia and Montenegro” gesetzt werden</li>
+<li>der <code>country_code = "CS"</code> für den Folgestaat “Serbia and Montenegro” gesetzt werden (oder besser leer lassen? TBD!)</li>
 <li>
 <code>is_past_jurisdiction = TRUE</code> gesetzt werden</li>
 <li>den gegenwärtigen Wert in <code>municipality</code> stattdessen in <code>subnational_entity_name</code> eintragen</li>
@@ -341,20 +301,20 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li>
 <p>Systematically check if variables that are “completely dependent” on other variables (like <code>inst_trigger_actor</code> on <code>inst_trigger_type</code>) are correctly filled.</p>
 <p>E.g. is <code>inst_trigger_type</code> missing for referendums with IDs <code>5cb82f07cb48652399618eb1</code> and <code>6080ef7d4132d76d38bfe9e0</code> although <code>inst_trigger_actor</code> is present!</p>
-<p>If the “completely dependent” property of these variables really holds, we should auto-fill them and avoid the possibility of manual changes.</p>
+<p>If the “completely dependent” property of these variables really holds, we should auto-fill them in the back-end and avoid the possibility of manual changes.</p>
 </li>
 <li><p>Systematically check if all votes in the <code>sudd.ch</code> database are included in the C2D database -&gt; parse <code>https://sudd.ch/list.php?mode=allrefs</code> (the <code>id_sudd</code> is part of the link in the last column)</p></li>
 <li><p>According to the guidelines in <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx</code>, the PDF <code>files</code> of <code>country_code == "CH"</code> entries must be named consistently <code>Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag</code> (“Abstimmungsbroschüre”“) and <code>Results_CH/Kantonskürzel_Jahr_Monat_Tag</code> (results) -&gt; check if this is actually always the case!</p></li>
 <li>
 <p>check <code>country_code</code> for obsolete codes, i.e. check if</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ISOcodes<span class="sc">::</span>ISO_3166_3<span class="sc">$</span>Alpha_4 <span class="sc">%&gt;%</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exclude simple renamings where `country_code` didn't change</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  magrittr<span class="sc">::</span><span class="fu">extract</span>(stringr<span class="sc">::</span><span class="fu">str_sub</span>(<span class="at">string =</span> ., <span class="at">start =</span> 3L) <span class="sc">!=</span> <span class="st">"AA"</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract former `country_code`</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  strin<span class="st">`</span><span class="at">gr::str_sub(end = 2L) %&gt;%</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">  # check</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">  magrittr::is_in(data2$country_code) %&gt;%</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">  any()</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ISOcodes<span class="sc">::</span>ISO_3166_3<span class="sc">$</span>Alpha_4 <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exclude simple renamings where `country_code` didn't change</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  magrittr<span class="sc">::</span><span class="fu">extract</span>(stringr<span class="sc">::</span><span class="fu">str_sub</span>(<span class="at">string =</span> ., <span class="at">start =</span> 3L) <span class="sc">!=</span> <span class="st">"AA"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract former `country_code`</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  strin<span class="st">`</span><span class="at">gr::str_sub(end = 2L) %&gt;%</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">  # check</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">  magrittr::is_in(data2$country_code) %&gt;%</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">  any()</span></span></code></pre></div>
 <p>and if so, assign <code>country_code_historical</code>, set <code>is_past_jurisdiction = TRUE</code> and assign proper new <code>country_code</code> (<code>ISOcodes::ISO_3166_3$Alpha_4 %&gt;% stringr::str_sub(start = 3L)</code>; if it’s <code>"HH"</code>, a “manual” decision about which successor country we shall assign has to be hard-coded)`</p>
 </li>
 <li><p>check <code>electorate_abroad</code> for obvious errors (e.g. <code>id == "5f99b6c8d1291cc3961f1c2c"</code> is one)</p></li>
@@ -364,11 +324,10 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <h3 class="hasAnchor">
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h3>
 <ul>
-<li><p>Implement fn for back-end data manipulation leveraging the <code>POST</code> functionality of the <a href="https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes" class="external-link"><code>/referendums</code> API endpoint</a>, allowing to change an arbitrary number of entries at a time.</p></li>
 <li><p>Implement fn to delete referendums once <a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a> is resolved.</p></li>
 <li><p>Automated vote entry creation by feeding scraped data to <code><a href="reference/add_referendums.html">c2d::add_referendums()</a></code>.</p></li>
 <li>
-<p>Funktion schreiben zum hinzufügen der von Uwe favorisierten Weltregionen:</p>
+<p>Funktion schreiben zum Hinzufügen der von Uwe favorisierten Weltregionen:</p>
 <div class="figure">
 <img src="https://i.imgur.com/88H2TZz.jpeg" alt=""><p class="caption">scan</p>
 </div>
@@ -398,17 +357,82 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <ul>
 <li>
 <p>Bislang gilt: <em>C2D</em> wird als alleiniger Name für die Datenbank bestehen bleiben, sollte die C2D-Abteilung, wie von Andreas Glaser beabsichtigt, umbenannt werden. Dies weil die Datenbank unter diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat. Allerdings taugt “C2D” beim besten Willen nicht als Akronym für eine Datenbank…</p>
-<p>Ich würde daher stattdessen eine zügige Umbenennung in <strong>D3</strong> für <em><strong>D</strong>atabase on <strong>D</strong>irect <strong>D</strong>emocracy</em> nahelegen! Die Domain <code>d3.vote</code> wäre noch zu haben (1. Jahr USD 650.-, danach USD 65.-/Jahr). Die alte Domain könnten wir einige Jahre weiter halten und einfach auf die neue umleiten. Im Politik-Bereich ist <code>D3</code> bislang nicht besetzt; alles ziemlich unverfänglich, wofür <a href="https://en.wikipedia.org/wiki/D3" class="external-link">D3 steht</a> (am nächsten käme noch die JavaScript-Datenvisualisierungs-Library <a href="https://en.wikipedia.org/wiki/D3.js" class="external-link">D3.js</a>, short for <em>Data-Driven Documents</em>).</p>
+<p>Ich würde daher stattdessen eine zügige Umbenennung in</p>
+<ul>
+<li><p><strong>D3</strong> für <em><strong>D</strong>atabase on <strong>D</strong>irect <strong>D</strong>emocracy</em> nahelegen! Die Domain <code>d3.vote</code> wäre noch zu haben (1. Jahr USD 650.-, danach USD 65.-/Jahr). Im Politik-Bereich ist <code>D3</code> bislang nicht besetzt; alles ziemlich unverfänglich, wofür <a href="https://en.wikipedia.org/wiki/D3" class="external-link">D3 steht</a> (am nächsten käme noch die JavaScript-Datenvisualisierungs-Library <a href="https://en.wikipedia.org/wiki/D3.js" class="external-link">D3.js</a>, short for <em>Data-Driven Documents</em>).</p></li>
+<li><p>oder – falls <em>Direct Democracy</em> vermieden werden soll im Namen (bspw. wegen <a href="https://en.wikipedia.org/wiki/Direct_democracy_(disambiguation)" class="external-link">starker Vereinnahmung durch politische Bewegungen</a>) – <strong>RDB</strong> für <em><strong>R</strong>eferendum <strong>D</strong>ata<strong>b</strong>ase</em>. Die Domain <code>rdb.vote</code> wäre noch zu haben (USD 95.34/Jahr). Im Politik-Bereich ist <code>RDB</code> bislang kaum besetzt; alles ziemlich unverfänglich, wofür RDB <a href="https://en.wikipedia.org/wiki/RDB" class="external-link">international steht</a>; auch im <a href="https://de.wikipedia.org/wiki/RDB" class="external-link">deutschsprachigen Raum</a> gibt es keine problematische Konkurrenz (am ehesten noch <a href="https://rdb.manz.at/" class="external-link">diese Rechtsdatenbank</a>).</p></li>
+</ul>
+<p>Die alte Domain <code>c2d.ch</code> könnten wir einige Jahre weiter halten und einfach auf die neue umleiten.</p>
 </li>
 </ul>
 </div>
 <div id="open-questions--suggestions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#open-questions--suggestions" class="anchor"></a>Open questions / suggestions</h3>
+<div id="mit-irina-besprechen" class="section level4">
+<h4 class="hasAnchor">
+<a href="#mit-irina-besprechen" class="anchor"></a>Mit Irina besprechen</h4>
 <ul>
 <li><p>Kann mir jemand die genaue Bedeutung von <code>inst_object_revision_extent</code> sowie den <code>*precondition*</code>-Variablen erklären (insb. aus <code>inst_precondition_decision</code> werde ich nicht schlau…)?</p></li>
+<li>
+<p>Stimmen die Definitionen im Codebook so? Insb.:</p>
+<ul>
+<li><code>committee_name</code></li>
+<li>
+<code>type</code> und alle <code>inst_*</code>-Variablen</li>
+</ul>
+</li>
 <li><p><code>inst_quorum_turnout</code> sollte standardisiert werden -&gt; was wäre eine geeignete, abschliessende Menge an Werten?</p></li>
-<li><p>Ist <code>position_government</code> (ehemals <code>recommendation</code>) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal, dies, manchmal jenes?</p></li>
+<li>
+<p>Was ist der Nutzen/zusätzliche Informationsgehalt von <code>inst_is_counter_proposal</code> sowie <code>inst_is_assembly</code>? Ob ein Referendum ein <code>"counter proposal"</code> bzw. ein <code>"citizens' assembly"</code> ist, wird ja bereits in <code>type</code> erfasst.</p>
+<p>Diesbezüglich gilt anzumerken, dass in der Datenbank</p>
+<ul>
+<li>21 Fälle enthalten sind, bei denen <code>inst_is_counter_proposal == TRUE</code>, aber <code>type != "counter proposal"</code>.</li>
+<li>3 Fälle enthalten sind, bei denen <code>inst_is_assembly == TRUE</code>, aber <code>type != "citizens' assembly"</code>.</li>
+</ul>
+<p>Sind das einfach Kodierungsfehler?</p>
+</li>
+<li>
+<p>Woher genau stammt die Tag-Hierarchy? Ist sie “custom”?</p>
+<p>Falls ja, sollten wir</p>
+<ul>
+<li>den <code>tag_tier_3</code> “homosexuals” wohl etwas breiter fassen, bspw. “sexual orientation / gender identity”.</li>
+<li>den <code>tag_tier_3</code> “compensation for loss of earnings for persons on military service or civil protection duty” kürzen!</li>
+</ul>
+</li>
+<li>
+<p><code>inst_object_legal_level</code> sollte m. E. in Relation zu <code>level</code> stehen, tut es aber nicht. Dementsprechend kann <code>inst_object_legal_level</code> mehrdeutig sein (Beispiel: Ist <code>inst_object_legal_level = "law"</code> lokales, kantonales oder nationales Recht bei Referendum auf CH-Gemeindeebene?)</p>
+<p>Wir sollten das daher ändern (sprich auf <em>eindeutige</em> Weise erfassen. Vorschläge?</p>
+<p>Würde dieses Problem behoben, könnte <code>inst_object_legal_level</code> vermutlich auch als <code>ordinal_ascending</code> klassifiziert werden.</p>
+</li>
+<li>
+<p>Ist <code>position_government</code> (ehemals <code>recommendation</code>) immer die Empfehlung der Regierung? Oder immer des Parlamentes? Oder manchmal dies, manchmal jenes?</p>
+<p>Zudem: Die Variable kennt gegenwärtig eig. 3 Ausprägungen, ich behandle den Wert <code>"None"</code> allerdings als <code>NA</code>, weil das gegenwärtige <a href="https://admin.c2d.ch/" class="external-link">Admin-Portal</a> keine <code>NA</code>s zulässt, sprich die Coder bei Unbekanntheit des Wertes gezwungen sind, <code>"None"</code> anzugeben. Wie siehst du das?</p>
+</li>
+<li>
+<p>Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.</p>
+<p>Bspw. werden</p>
+<ul>
+<li>alle Abstimmungen, die die <a href="https://de.wikipedia.org/wiki/Kosovo" class="external-link">Republik Kosovo</a> betreffen, unter dem <code>country_name</code> <em>Serbia</em> geführt…</li>
+<li>für die Abstimmungen in Taiwan uneinheitliche <code>country_name</code>’s verwendet, für die Abstimmungen am 2018-11-24 <em>Taiwan, Province of China</em>, für die anderen einfach <em>Taiwan</em>…</li>
+</ul>
+<p>Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen. Wie siehst du das?</p>
+</li>
+<li><p>Zufällig irgendeine Idee, was <code>id_official = "0"</code> (ehemals <code>number</code>) zu bedeuten hat?</p></li>
+<li>
+<p>Currently, <code>inst_trigger_threshold</code> is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should define, in what way the same information could be captured in a more systematic way (splitting it into two vars <code>inst_trigger_threshold_relative</code> and <code>inst_trigger_threshold_absolute</code> might make sense), introduce the new variable and then convert the old values to the new format.</p>
+<p>Was meint Irina?</p>
+</li>
+<li>
+<p>sudd.ch: Uwe meint, Ziel müsste sein, von der Abhängigkeit von sudd.ch wegzukommen. Als wie realistisch siehst du das?</p>
+<p>Sonst zu sudd.ch?</p>
+</li>
+</ul>
+</div>
+<div id="sonstige" class="section level4">
+<h4 class="hasAnchor">
+<a href="#sonstige" class="anchor"></a>Sonstige</h4>
+<ul>
 <li>
 <p>Are <code>id_sudd</code>s stable over time?</p>
 <p>They currently seem to consist of</p>
@@ -420,44 +444,6 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </ul>
 <p>Maybe contact the creator <a href="mailto:beat@sudd.ch">Beat Müller</a> and ask?</p>
 </li>
-<li>
-<p>Stimmen die Definitionen im Codebook so? Insb.:</p>
-<ul>
-<li><code>committee_name</code></li>
-<li>
-<code>type</code> und alle <code>inst_*</code>-Variablen</li>
-</ul>
-</li>
-<li>
-<p>Was ist der Nutzen/zusätzliche Informationsgehalt von <code>inst_is_counter_proposal</code> sowie <code>inst_is_assembly</code>? Ob ein Referendum ein <code>"counter proposal"</code> bzw. ein <code>"citizens' assembly"</code> ist, wird ja bereits in <code>type</code> erfasst.</p>
-<p>Diesbezüglich gilt anzumerken, dass in der Datenbank</p>
-<ul>
-<li>21 Fälle enthalten sind, bei denen <code>inst_is_counter_proposal == TRUE</code>, aber <code>type != "counter proposal"</code>.</li>
-<li>3 Fälle enthalten sind, bei denen <code>inst_is_assembly == TRUE</code>, aber <code>type != "citizens' assembly"</code>.</li>
-</ul>
-<p>Einfach Kodierungsfehler?</p>
-</li>
-<li>
-<p><code>inst_object_legal_level</code> sollte m.E. in Relation zu <code>level</code> stehen, tut es aber nicht. Dementsprechend kann <code>inst_object_legal_level</code> mehrdeutig sein (ist <code>inst_object_legal_level = "law"</code> lokales, kantonales oder nationales Recht bei Referendum auf CH-Gemeindeebene?)</p>
-<p>Würde dieses Problem behoben, könnte <code>inst_object_legal_level</code> vermutlich auch als <code>ordinal_ascending</code> klassifiziert werden.</p>
-</li>
-<li>
-<p>Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.</p>
-<p>Bspw. werden</p>
-<ul>
-<li>alle Abstimmungen, die die <a href="https://de.wikipedia.org/wiki/Kosovo" class="external-link">Republik Kosovo</a> betreffen, unter dem <code>country_name</code> <em>Serbia</em> geführt…</li>
-<li>für die Abstimmungen in Taiwan uneinheitliche <code>country_name</code>’s verwendet, für die Abstimmungen am 2018-11-24 <em>Taiwan, Province of China</em>, für die anderen einfach <em>Taiwan</em>…</li>
-</ul>
-<p>Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen.</p>
-</li>
-<li>
-<p>Woher genau stammt die Tag-Hierarchy? Ist sie “custom”?</p>
-<p>Falls ja, sollten wir</p>
-<ul>
-<li>den <code>tag_tier_3</code> “homosexuals” wohl etwas breiter fassen, bspw. “sexual orientation / gender identity”.</li>
-<li>den <code>tag_tier_3</code> “compensation for loss of earnings for persons on military service or civil protection duty” kürzen!</li>
-</ul>
-</li>
 <li><p>Bei der Abstimmung <em>Norfolk Island 1980-07-10</em> meint sudd.ch, sie habe stattdessen <a href="https://sudd.ch/event.php?lang=de&amp;id=nf011979" class="external-link">1979-07-10 stattgefunden</a>. Falls sudd.ch Recht hat, sollte das korrigiert werden.</p></li>
 <li>
 <p>Die Abstimmungen <em>Netherlands 2005-04-08</em> und <em>2014-12-17</em> fanden genau genommen auf <a href="https://de.wikipedia.org/wiki/Sint_Eustatius" class="external-link">Sint Eustatius</a> statt, siehe sudd.ch-Einträge (<a href="https://sudd.ch/event.php?id=an022005" class="external-link">1</a>, <a href="https://sudd.ch/event.php?id=bq012014" class="external-link">2</a>); Sint Eustatius ist zwar eine <a href="https://de.wikipedia.org/wiki/Karibische_Niederlande" class="external-link">Besondere Gemeinde der Niederlande</a>, besitzt aber einen eigenen ISO-Ländercode (BQ-SE) etc.</p>
@@ -467,6 +453,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li><p>Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden, mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des <a href="https://politanch.github.io/swissdd/" class="external-link">swissdd</a>-R-Pakets könnte womöglich ganz aufschlussreich sein!</p></li>
 <li><p>C2D Website: Ditch the <code>by ccm.design</code> promo in the footer?</p></li>
 </ul>
+</div>
 </div>
 </div>
 </div>
