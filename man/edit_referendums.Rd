@@ -12,7 +12,8 @@ edit_referendums(
 }
 \arguments{
 \item{data}{The updated referendum data. A \link[tibble:tbl_df-class]{tibble} that must contain an \href{https://rpkg.dev/c2d/articles/codebook.html#id}{\code{id}} column
-identifying the referendums plus a \link[=codebook]{valid column} containing the new values for each database field that should be updated.}
+identifying the referendums to be edited, an \href{https://rpkg.dev/c2d/articles/codebook.html#is_draft}{\code{is_draft}} column setting their updated draft status,
+plus a \link[=codebook]{valid} column containing the new values for each additional database field that should be updated.}
 
 \item{email}{The e-mail address of the C2D API user account to be used for authentication. A character scalar.}
 

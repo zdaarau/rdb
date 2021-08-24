@@ -1577,21 +1577,63 @@ referendum_fields$all_flat <-
 
 The following fields are mandatory when adding/editing referendums via the [admin portal](https://admin.c2d.ch/), but not *strictly* mandatory schema-wise:
 
-| field             | remarks                                                                                                               |
-|-------------------|-----------------------------------------------------------------------------------------------------------------------|
-| `institution`     | mandatory by the API for new entries, but still contains `NA`s from before relaunch                                   |
-| `title.en`        | mandatory by the API for new entries, but still contains `NA`s from before relaunch                                   |
-| `citizens_abroad` | not mandatory by the API, but omitting it [leads to serious problems](https://github.com/ccmdesign/c2d-app/issues/50) |
-| `votes_no`        | not mandatory by the API, but omitting it [leads to serious problems](https://github.com/ccmdesign/c2d-app/issues/50) |
-| `votes_yes`       | not mandatory by the API, but omitting it [leads to serious problems](https://github.com/ccmdesign/c2d-app/issues/50) |
+| field                    | edits | additions | remarks                                                                                       |
+|--------------------------|-------|-----------|-----------------------------------------------------------------------------------------------|
+| `_id`                    | yes   | no        | must be provided in the URL, not the payload                                                  |
+| `country_code`           | no    | yes       | must be a valid choice; the back-end automatically derives `country_name` from `country_code` |
+| `canton`                 | no    | yes       | only mandatory if `"level":"Sub-national"`                                                    |
+| `municipality`           | no    | yes       | only mandatory if `"level":"Local"`                                                           |
+| `level`                  | no    | yes       | must be a valid choice                                                                        |
+| `date`                   | no    | yes       | must be a valid date (ISO 8601 date string)                                                   |
+| `title.en`               | no    | yes       | contains `NA`s from before relaunch                                                           |
+| `result`                 | no    | yes       | must be a valid choice ("Yes", "No" or "Unknown")                                             |
+| `context.recommendation` | no    | yes       | only mandatory if `"country_code":"CH","level":"National"`; must be a valid choice            |
+| `total_electorate`       | no    | yes       | must be a valid integer                                                                       |
+| `citizens_abroad`        | no    | no        | omitting it in additions leads to serious problems (cf. GH issue \#50)                        |
+| `votes_yes`              | no    | no        | omitting it in additions leads to serious problems (cf. GH issue \#50)                        |
+| `votes_no`               | no    | no        | omitting it in additions leads to serious problems (cf. GH issue \#50)                        |
+| `votes_empty`            | no    | no        | omitting it in additions leads to serious problems (cf. GH issue \#50)                        |
+| `votes_invalid`          | no    | no        | omitting it in additions leads to serious problems (cf. GH issue \#50)                        |
+| `draft`                  | yes   | no        | defaults to `true` if not provided for additions                                              |
+| `institution`            | no    | yes       | must be a valid choice                                                                        |
+
+Based on the above, we define the fields that must always be present in the JSON payload when adding/editing referendums as follows:
 
 ```{r}
-referendum_fields$required <- c("_id",
-                                "country_code",
-                                "country_name",
-                                "created_on",
-                                "level",
-                                "total_electorate")
+referendum_fields$required_for_edits <- c("draft")
+
+referendum_fields$required_for_additions <- c("country_code",
+                                              "level",
+                                              "date",
+                                              "title.en",
+                                              "result",
+                                              "total_electorate",
+                                              "citizens_abroad",
+                                              "votes_yes",
+                                              "votes_no",
+                                              "votes_empty",
+                                              "votes_invalid",
+                                              "draft",
+                                              "institution")
+```
+
+#### Never empty
+
+The following fields are expected to never be empty when returned by the API.
+
+```{r}
+referendum_fields$never_empty <- c("_id",
+                                   "country_code",
+                                   "country_name",
+                                   "created_on",
+                                   "level",
+                                   "total_electorate",
+                                   "citizens_abroad",
+                                   "votes_yes",
+                                   "votes_no",
+                                   "votes_empty",
+                                   "votes_invalid",
+                                   "draft")
 ```
 
 ### Messages
@@ -2023,8 +2065,14 @@ download_file_attachment <- function(s3_object_key,
 #' @details
 #' Note that the following variables are not supported, i.e. simply dropped from `data`: `files`
 #'
-#' @param data The new referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
-#'   identifying the referendums plus additional [valid columns][codebook] containing the values for the corresponding database fields.
+#' @param data The new referendum data. A [tibble][tibble::tbl_df] that in any case must contain the columns
+#'  ``r referendum_fields$required_for_additions %>% dplyr::recode(!!!v_names) %>% paste0("[`", ., "`](https://rpkg.dev/c2d/articles/codebook.html#", ., ")") %>% pal::as_md_list()``
+#'   
+#' plus the column [`subnational_entity_name`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) for referendums of
+#' [`level`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) below `"national"`, and the column
+#' [`municipality`](https://rpkg.dev/c2d/articles/codebook.html#municipality) for referendums of `level = "local"`,
+#'   
+#' plus any additional [valid][codebook] columns containing the values for the corresponding database fields.
 #' @param email The e-mail address of the C2D API user account to be used for authentication. A character scalar.
 #' @param password The password of the C2D API user account to be used for authentication. A character scalar.
 #'
@@ -2051,19 +2099,8 @@ add_referendums <- function(data,
   }
   
   ## ensure mandatory columns are present
-  c("country_code",
-    "level",
-    "date",
-    "title_en",
-    "result",
-    "electorate_total",
-    "electorate_abroad",
-    "votes_yes",
-    "votes_no",
-    "votes_empty",
-    "votes_invalid",
-    "is_draft",
-    "type") %>%
+  referendum_fields$required_for_additions %>%
+    dplyr::recode(!!!v_names) %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
   ## ensure columns are valid
@@ -2148,7 +2185,8 @@ add_referendums <- function(data,
 #'
 #' @inherit add_referendums details
 #' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
-#'   identifying the referendums plus a [valid column][codebook] containing the new values for each database field that should be updated.
+#'   identifying the referendums to be edited, an [`is_draft`](https://rpkg.dev/c2d/articles/codebook.html#is_draft) column setting their updated draft status,
+#'   plus a [valid][codebook] column containing the new values for each additional database field that should be updated.
 #' @inheritParams add_referendums
 #'
 #' @inherit add_referendums return
@@ -2171,8 +2209,9 @@ edit_referendums <- function(data,
   }
   
   ## ensure mandatory columns are present
-  c("id",
-    "is_draft") %>%
+  referendum_fields$required_for_edits %>%
+    dplyr::recode(!!!v_names) %>%
+    c("id") %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
   ## ensure columns are valid

@@ -138,8 +138,26 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>The new referendum data. A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> that must contain an <a href='https://rpkg.dev/c2d/articles/codebook.html#id'><code>id</code></a> column
-identifying the referendums plus additional <a href='data_codebook.html'>valid columns</a> containing the values for the corresponding database fields.</p></td>
+      <td><p>The new referendum data. A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> that in any case must contain the columns</p><ul>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#level'><code>level</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#date'><code>date</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#title_en'><code>title_en</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#result'><code>result</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#electorate_total'><code>electorate_total</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#electorate_abroad'><code>electorate_abroad</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_yes'><code>votes_yes</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_no'><code>votes_no</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_empty'><code>votes_empty</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_invalid'><code>votes_invalid</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#is_draft'><code>is_draft</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#type'><code>type</code></a> ``</p></li>
+</ul>
+
+<p>plus the column <a href='https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name'><code>subnational_entity_name</code></a> for referendums of
+<a href='https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name'><code>level</code></a> below <code>"national"</code>, and the column
+<a href='https://rpkg.dev/c2d/articles/codebook.html#municipality'><code>municipality</code></a> for referendums of <code>level = "local"</code>,</p>
+<p>plus any additional <a href='data_codebook.html'>valid</a> columns containing the values for the corresponding database fields.</p></td>
     </tr>
     <tr>
       <th>email</th>

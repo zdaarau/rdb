@@ -1351,12 +1351,34 @@ referendum_fields$all_flat <-
           "title.en",
           "title.fr"))
 
-referendum_fields$required <- c("_id",
-                                "country_code",
-                                "country_name",
-                                "created_on",
-                                "level",
-                                "total_electorate")
+referendum_fields$required_for_edits <- c("draft")
+
+referendum_fields$required_for_additions <- c("country_code",
+                                              "level",
+                                              "date",
+                                              "title.en",
+                                              "result",
+                                              "total_electorate",
+                                              "citizens_abroad",
+                                              "votes_yes",
+                                              "votes_no",
+                                              "votes_empty",
+                                              "votes_invalid",
+                                              "draft",
+                                              "institution")
+
+referendum_fields$never_empty <- c("_id",
+                                   "country_code",
+                                   "country_name",
+                                   "created_on",
+                                   "level",
+                                   "total_electorate",
+                                   "citizens_abroad",
+                                   "votes_yes",
+                                   "votes_no",
+                                   "votes_empty",
+                                   "votes_invalid",
+                                   "draft")
 
 mime_error_suffix <- "This indicates either some network issue or a change in the C2D API."
 
@@ -1630,8 +1652,14 @@ download_file_attachment <- function(s3_object_key,
 #' @details
 #' Note that the following variables are not supported, i.e. simply dropped from `data`: `files`
 #'
-#' @param data The new referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
-#'   identifying the referendums plus additional [valid columns][codebook] containing the values for the corresponding database fields.
+#' @param data The new referendum data. A [tibble][tibble::tbl_df] that in any case must contain the columns
+#'  ``r referendum_fields$required_for_additions %>% dplyr::recode(!!!v_names) %>% paste0("[`", ., "`](https://rpkg.dev/c2d/articles/codebook.html#", ., ")") %>% pal::as_md_list()``
+#'   
+#' plus the column [`subnational_entity_name`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) for referendums of
+#' [`level`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) below `"national"`, and the column
+#' [`municipality`](https://rpkg.dev/c2d/articles/codebook.html#municipality) for referendums of `level = "local"`,
+#'   
+#' plus any additional [valid][codebook] columns containing the values for the corresponding database fields.
 #' @param email The e-mail address of the C2D API user account to be used for authentication. A character scalar.
 #' @param password The password of the C2D API user account to be used for authentication. A character scalar.
 #'
@@ -1658,19 +1686,8 @@ add_referendums <- function(data,
   }
   
   ## ensure mandatory columns are present
-  c("country_code",
-    "level",
-    "date",
-    "title_en",
-    "result",
-    "electorate_total",
-    "electorate_abroad",
-    "votes_yes",
-    "votes_no",
-    "votes_empty",
-    "votes_invalid",
-    "is_draft",
-    "type") %>%
+  referendum_fields$required_for_additions %>%
+    dplyr::recode(!!!v_names) %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
   ## ensure columns are valid
@@ -1723,7 +1740,8 @@ add_referendums <- function(data,
 #'
 #' @inherit add_referendums details
 #' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
-#'   identifying the referendums plus a [valid column][codebook] containing the new values for each database field that should be updated.
+#'   identifying the referendums to be edited, an [`is_draft`](https://rpkg.dev/c2d/articles/codebook.html#is_draft) column setting their updated draft status,
+#'   plus a [valid][codebook] column containing the new values for each additional database field that should be updated.
 #' @inheritParams add_referendums
 #'
 #' @inherit add_referendums return
@@ -1746,8 +1764,9 @@ edit_referendums <- function(data,
   }
   
   ## ensure mandatory columns are present
-  c("id",
-    "is_draft") %>%
+  referendum_fields$required_for_edits %>%
+    dplyr::recode(!!!v_names) %>%
+    c("id") %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
   ## ensure columns are valid

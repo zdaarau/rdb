@@ -11,8 +11,28 @@ add_referendums(
 )
 }
 \arguments{
-\item{data}{The new referendum data. A \link[tibble:tbl_df-class]{tibble} that must contain an \href{https://rpkg.dev/c2d/articles/codebook.html#id}{\code{id}} column
-identifying the referendums plus additional \link[=codebook]{valid columns} containing the values for the corresponding database fields.}
+\item{data}{The new referendum data. A \link[tibble:tbl_df-class]{tibble} that in any case must contain the columns
+\itemize{
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#level}{\code{level}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#date}{\code{date}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#title_en}{\code{title_en}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#result}{\code{result}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#electorate_total}{\code{electorate_total}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#electorate_abroad}{\code{electorate_abroad}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_yes}{\code{votes_yes}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_no}{\code{votes_no}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_empty}{\code{votes_empty}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_invalid}{\code{votes_invalid}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#is_draft}{\code{is_draft}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#type}{\code{type}} ``
+}
+
+plus the column \href{https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name}{\code{subnational_entity_name}} for referendums of
+\href{https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name}{\code{level}} below \code{"national"}, and the column
+\href{https://rpkg.dev/c2d/articles/codebook.html#municipality}{\code{municipality}} for referendums of \code{level = "local"},
+
+plus any additional \link[=codebook]{valid} columns containing the values for the corresponding database fields.}
 
 \item{email}{The e-mail address of the C2D API user account to be used for authentication. A character scalar.}
 
