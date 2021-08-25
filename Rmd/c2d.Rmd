@@ -2834,7 +2834,11 @@ sudd_referendum <- function(id_sudd) {
   pal::assert_pkg(pkg = "rvest",
                   min_version = "1.0.0")
   
-  xml2::read_html(paste0("https://sudd.ch/event.php?id=", id_sudd)) %>%
+  httr::RETRY(verb = "GET",
+              url = "https://sudd.ch/event.php",
+              query = list(id = id_sudd),
+              times = 5L) %>%
+    xml2::read_html() %>%
     rvest::html_element(css = "main table") %>%
     rvest::html_children() %>%
     purrr::map_dfc(~ {
