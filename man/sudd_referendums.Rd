@@ -16,13 +16,20 @@ A \link[tibble:tbl_df-class]{tibble}. The column names are aligned with those of
 \description{
 Downloads referendum data from \href{https://sudd.ch/}{sudd.ch}.
 }
-\details{
+\section{About \href{https://sudd.ch/}{sudd.ch}}{
 \strong{sudd} stands for \emph{\strong{Su}chmaschine für \strong{d}irekte \strong{D}emokratie} (German) and is operated by \href{mailto:beat@sudd.ch}{Beat Müller}. Its database content is
 licensed under \href{https://creativecommons.org/licenses/by-nc-sa/4.0/}{Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)}.
 }
+
 \examples{
 c2d::referendum(id = "5bbc045192a21351232e596f")$id_sudd |> c2d::sudd_referendums()
 
 c2d::referendums(country_code = "AT") |> c2d::sudd_referendums()
+}
+\seealso{
+Other sudd.ch scraping functions:
+\code{\link{list_sudd_referendums}()},
+\code{\link{list_sudd_territories}()},
+\code{\link{list_sudd_titles}()}
 }
 \concept{sudd}
