@@ -364,21 +364,9 @@
 
     Was meint Irina?
 
--   sudd.ch: Uwe meint, Ziel müsste sein, von der Abhängigkeit von sudd.ch wegzukommen. Als wie realistisch siehst du das?
-
-    Sonst zu sudd.ch?
-
 #### Sonstige
 
--   Are `id_sudd`s stable over time?
-
-    They currently seem to consist of
-
-    -   the 2-character lowercase `country_code`
-    -   plus a sequential 2-digit referendum number starting with `01` for the first referendum in the given year
-    -   plus the 4-digit `year` the referendum took place
-
-    Maybe contact the creator [Beat Müller](mailto:beat@sudd.ch) and ask?
+-   Are `id_sudd`s stable over time? Maybe contact the creator [Beat Müller](mailto:beat@sudd.ch) and ask?
 
 -   Bei der Abstimmung *Norfolk Island 1980-07-10* meint sudd.ch, sie habe stattdessen [1979-07-10
     stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.
