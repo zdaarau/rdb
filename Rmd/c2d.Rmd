@@ -1516,9 +1516,15 @@ sudd_referendum <- function(id_sudd) {
                         "\u2517\u2501 Ja-Stimmen"              = "votes_yes",
                         "\u2517\u2501 Nein-Stimmen"            = "votes_no",
                         "\u2517\u2501 Stimmen ausser Betracht" = "votes_invalid",
-                        "St\u00e4nde (Kantone)"                = "states",
-                        "\u2517\u2501 Annehmende St\u00e4nde"  = "states_yes",
-                        "\u2517\u2501 Verwerfende St\u00e4nde" = "states_no",
+                        "Staaten"                              = "subterritories",
+                        "\u2517\u2501 Annehmende Staaten"      = "subterritories_yes",
+                        "\u2517\u2501 Verwerfende Staaten"     = "subterritories_no",
+                        "St\u00e4nde (Kantone)"                = "subterritories",
+                        "\u2517\u2501 Annehmende St\u00e4nde"  = "subterritories_yes",
+                        "\u2517\u2501 Verwerfende St\u00e4nde" = "subterritories_no",
+                        "Wahlkreise"                           = "subterritories",
+                        "\u2517\u2501 Annehmende Wahlkreise"   = "subterritories_yes",
+                        "\u2517\u2501 Verwerfende Wahlkreise"  = "subterritories_no",
                         "Medien"                               = "vote_channel_de",
                         "Bemerkungen"                          = "remarks",
                         "Gleichzeitig mit"                     = "ids_sudd_simultaneous",
@@ -1571,9 +1577,9 @@ sudd_referendum <- function(id_sudd) {
                                          ~ .) %>%
                              as.integer(),
                            
-                           . %in% c("states",
-                                    "states_yes",
-                                    "states_no") ~
+                           . %in% c("subterritories",
+                                    "subterritories_yes",
+                                    "subterritories_no") ~
                              cells[[2L]] %>%
                              rvest::html_elements(css = "data") %>%
                              rvest::html_attr("value") %>%
@@ -3445,9 +3451,9 @@ sudd_referendums <- function(ids_sudd) {
                     any_of("votes_valid"),
                     any_of("votes_yes"),
                     any_of("votes_no"),
-                    any_of("states"),
-                    any_of("states_yes"),
-                    any_of("states_no"),
+                    any_of("subterritories"),
+                    any_of("subterritories_yes"),
+                    any_of("subterritories_no"),
                     any_of("vote_channel_de"),
                     any_of("vote_channel_url"),
                     any_of("result_status_de"),
