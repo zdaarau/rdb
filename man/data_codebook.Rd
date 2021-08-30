@@ -211,8 +211,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{subterritories_yes}}{
 
-The number of administrative subdivisions one level below \code{level} that
-approved the referendum.
+The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one
+level below \code{level} that approved the referendum.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
@@ -229,8 +229,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{subterritories_no}}{
 
-The number of administrative subdivisions one level below \code{level} that
-rejected the referendum.
+The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one
+level below \code{level} that rejected the referendum.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
@@ -316,8 +316,9 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 \subsection{\code{votes_per_subterritory}}{
 
 The number of \code{votes_yes}, \code{votes_no}, \code{votes_empty} and \code{votes_invalid}
-per administrative subdivision one level below \code{level}; currently only
-filled for Swiss referendums on the national level.
+per \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative division} one
+level below \code{level}; currently only filled for Swiss referendums on the
+national level.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
