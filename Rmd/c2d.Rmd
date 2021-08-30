@@ -1503,44 +1503,53 @@ sudd_referendum <- function(id_sudd) {
         col_text <- rvest::html_text2(cells[[2L]])
         col_name <-
           rvest::html_text(cells[[1L]]) %>%
-          dplyr::recode("Gebiet"                               = "territory_name_de",
-                        "\u2517\u2501 Stellung"                = "territory_type_de",
-                        "Datum"                                = "date",
-                        "Vorlage"                              = "title_de",
-                        "\u2517\u2501 Fragemuster"             = "question_type_de",
-                        "\u2517\u2501 Abstimmungstyp"          = "types",
-                        "Ergebnis"                             = "result_de",
-                        "\u2517\u2501 Mehrheiten"              = "adoption_requirements_de",
-                        "Stimmberechtigte"                     = "electorate_total",
-                        "\u2517\u2501 Davon im Ausland"        = "electorate_abroad",
-                        "Stimmausweise"                        = "polling_cards",
-                        "Stimmbeteiligung"                     = "votes_total",
-                        "Stimmen ausser Betracht"              = "votes_invalid",
-                        "\u2517\u2501 Leere Stimmen"           = "votes_empty",
-                        "\u2517\u2501 Ung\u00fcltige Stimmen"  = "votes_void",
-                        "G\u00fcltige (= massgebende) Stimmen" = "votes_valid",
-                        "\u2517\u2501 Ja-Stimmen"              = "votes_yes",
-                        "\u2517\u2501 Nein-Stimmen"            = "votes_no",
-                        "\u2517\u2501 Stimmen ausser Betracht" = "votes_invalid",
-                        "Staaten"                              = "subterritories",
-                        "\u2517\u2501 Annehmende Staaten"      = "subterritories_yes",
-                        "\u2517\u2501 Verwerfende Staaten"     = "subterritories_no",
-                        "St\u00e4nde (Kantone)"                = "subterritories",
-                        "\u2517\u2501 Annehmende St\u00e4nde"  = "subterritories_yes",
-                        "\u2517\u2501 Verwerfende St\u00e4nde" = "subterritories_no",
-                        "Wahlkreise"                           = "subterritories",
-                        "\u2517\u2501 Annehmende Wahlkreise"   = "subterritories_yes",
-                        "\u2517\u2501 Verwerfende Wahlkreise"  = "subterritories_no",
-                        "Medien"                               = "vote_channel_de",
-                        "Bemerkungen"                          = "remarks",
-                        "Gleichzeitig mit"                     = "ids_sudd_simultaneous",
-                        "Quellen"                              = "sources",
-                        "Vollst\u00e4ndigkeit"                 = "result_status_de",
-                        "Letzte \u00c4nderung"                 = "date_last_edited")
+          dplyr::recode("Gebiet"                                         = "territory_name_de",
+                        "\u2517\u2501 Stellung"                          = "territory_type_de",
+                        "Datum"                                          = "date",
+                        "Vorlage"                                        = "title_de",
+                        "\u2517\u2501 Fragemuster"                       = "question_type_de",
+                        "\u2517\u2501 Abstimmungstyp"                    = "types",
+                        "Ergebnis"                                       = "result_de",
+                        "\u2517\u2501 Mehrheiten"                        = "adoption_requirements_de",
+                        "Stimmberechtigte"                               = "electorate_total",
+                        "\u2517\u2501 Davon im Ausland"                  = "electorate_abroad",
+                        "Stimmausweise"                                  = "polling_cards",
+                        "Stimmbeteiligung"                               = "votes_total",
+                        "Stimmen ausser Betracht"                        = "votes_invalid",
+                        "\u2517\u2501 Leere Stimmen"                     = "votes_empty",
+                        "\u2517\u2501 Ung\u00fcltige Stimmen"            = "votes_void",
+                        "G\u00fcltige (= massgebende) Stimmen"           = "votes_valid",
+                        "\u2517\u2501 Ja-Stimmen"                        = "votes_yes",
+                        "\u2517\u2501 Nein-Stimmen"                      = "votes_no",
+                        # `votes_option_*` vx are a "workaround" until we can properly capture more than yes/no answer options
+                        "\u2517\u2501 Anschluss an Frankreich"           = "votes_option_1",
+                        "\u2517\u2501 Verbleib im Kirchenstaat"          = "votes_option_2",
+                        "\u2517\u2501 Ge\u00e4ndertes Kommissionssystem" = "votes_option_1",
+                        "\u2517\u2501 Ministersystem"                    = "votes_option_2",
+                        "\u2517\u2501 Gemischte Wahl"                    = "votes_option_1",
+                        "\u2517\u2501 Reine Volkswahl"                   = "votes_option_2",
+                        "\u2517\u2501 Präsidialsystem"                   = "votes_option_1",
+                        "\u2517\u2501 Parlamentarisches System"          = "votes_option_2",
+                        "\u2517\u2501 Nein zu beiden Vorschlägen"        = "votes_option_none",
+                        "\u2517\u2501 Stimmen ausser Betracht"           = "votes_invalid",
+                        "Staaten"                                        = "subterritories",
+                        "\u2517\u2501 Annehmende Staaten"                = "subterritories_yes",
+                        "\u2517\u2501 Verwerfende Staaten"               = "subterritories_no",
+                        "St\u00e4nde (Kantone)"                          = "subterritories",
+                        "\u2517\u2501 Annehmende St\u00e4nde"            = "subterritories_yes",
+                        "\u2517\u2501 Verwerfende St\u00e4nde"           = "subterritories_no",
+                        "Wahlkreise"                                     = "subterritories",
+                        "\u2517\u2501 Annehmende Wahlkreise"             = "subterritories_yes",
+                        "\u2517\u2501 Verwerfende Wahlkreise"            = "subterritories_no",
+                        "Medien"                                         = "files",
+                        "Bemerkungen"                                    = "remarks",
+                        "Gleichzeitig mit"                               = "ids_sudd_simultaneous",
+                        "Quellen"                                        = "sources",
+                        "Vollst\u00e4ndigkeit"                           = "result_status_de",
+                        "Letzte \u00c4nderung"                           = "date_last_edited")
         
         # extract hyperlinks if necessary
-        if (col_name %in% c("vote_channel_de",
-                            "remarks",
+        if (col_name %in% c("remarks",
                             "ids_sudd_simultaneous",
                             "sources")) {
           urls <-
@@ -1560,7 +1569,6 @@ sudd_referendum <- function(id_sudd) {
                                     "title_de",
                                     "question_type_de",
                                     "result_de",
-                                    "vote_channel_de",
                                     "result_status_de") ~
                              col_text,
                            
@@ -1574,7 +1582,10 @@ sudd_referendum <- function(id_sudd) {
                                     "votes_void",
                                     "votes_valid",
                                     "votes_yes",
-                                    "votes_no") ~
+                                    "votes_no",
+                                    "votes_option_1",
+                                    "votes_option_2",
+                                    "votes_option_none") ~
                              cells[[2L]] %>%
                              rvest::html_elements(css = "data") %>%
                              rvest::html_attr("value") %>%
@@ -1620,6 +1631,14 @@ sudd_referendum <- function(id_sudd) {
                              col_text %>% stringr::str_split(pattern = "\\s*\u2192\\s*"),
                            . == "adoption_requirements_de" ~
                              col_text %>% stringr::str_split(pattern = ",\\s*"),
+                           . == "files" ~
+                             cells[[2L]] %>%
+                             rvest::html_elements(css = "a") %>%
+                             purrr::map_dfr(~ .x %>%
+                                              rvest::html_attr(name = "href") %>%
+                                              complete_sudd_url() %>%
+                                              tibble::tibble(description = rvest::html_text(.x),
+                                                             url = .)),
                            . == "ids_sudd_simultaneous" ~
                              urls %>%
                              stringr::str_extract(pattern = "(?<=[\\?&]id=)[\\w\\d]+") %>%
@@ -1634,11 +1653,6 @@ sudd_referendum <- function(id_sudd) {
                         dplyr::mutate(date = lubridate::make_date(year = year,
                                                                   month = month,
                                                                   day = day)),
-                      ~ .) %>%
-          # add `vote_channel_url`
-          purrr::when(col_name == "vote_channel_de" ~ tibble::add_column(.data = .,
-                                                                         vote_channel_url = checkmate::assert_string(urls),
-                                                                         .after = "vote_channel_de"),
                       ~ .)
     }) %>%
     # extract `country_code` from `id_sudd`
@@ -3396,7 +3410,25 @@ list_sudd_referendums <- function(mode = c("by_date",
 
 TODO:
 
--   Test with all `c2d::referendums()$id_sudd`
+-   Test with all sudd IDs; problematic IDs to check in detail:
+
+    -   duplicate column names:
+
+        -   `ch011929`
+        -   `ch031938`
+        -   `ch021951`
+        -   `ch011955`
+        -   `ch011972`
+        -   `ch061972`
+        -   `ch041974`
+        -   `ch011976`
+        -   `ch031977`
+        -   `ch061977`
+        -   `gr011862`
+        -   `li021925`
+        -   `li011927`
+        -   `li011970`
+        -   `pl011928`
 
 ```{r}
 #' Get referendum data from [sudd.ch](https://sudd.ch/)
@@ -3462,11 +3494,13 @@ sudd_referendums <- function(ids_sudd) {
                     any_of("votes_valid"),
                     any_of("votes_yes"),
                     any_of("votes_no"),
+                    any_of("votes_option_1"),
+                    any_of("votes_option_2"),
+                    any_of("votes_option_none"),
                     any_of("subterritories"),
                     any_of("subterritories_yes"),
                     any_of("subterritories_no"),
-                    any_of("vote_channel_de"),
-                    any_of("vote_channel_url"),
+                    any_of("files"),
                     any_of("result_status_de"),
                     any_of("remarks"),
                     any_of("sources"),

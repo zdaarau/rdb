@@ -103,8 +103,9 @@
     currently we only have an *institutional* variable `legal_basis_type` (formerly `official_status`) which measures a completely different thing. Maybe name
     this new variable simply `status`?
 
--   We need a proper way to capture referendums with more than yes-or-no answer options. This includes
+-   We need a proper way to capture referendums with other or more than yes-or-no answer options. This includes
 
+    -   other options than yes/no (e.g. [this one](https://sudd.ch/event.php?id=cl022020))
     -   multiple options (e.g. [like this one](https://sudd.ch/event.php?id=bq012014))
     -   preference / hierarchy information, i.e. whether or not multiple choices at the same time are allowed (i.e. whether or not options are mutually
         exclusive) -- and if so -- how ambiguities are resolved (e.g. by an additional preference list)
