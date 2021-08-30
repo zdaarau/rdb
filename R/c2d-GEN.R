@@ -1206,6 +1206,12 @@ complete_sudd_url <- function(x) {
                      .f = ~ .x %||% "https") %>%
     purrr::modify_in(.where = "hostname",
                      .f = ~ .x %||% "sudd.ch") %>%
+    # work around "Error: All components of query must be named"
+    purrr::modify_in(.where = "query",
+                     .f = ~ {
+                       .x[names(.x) == ""] <- NULL
+                       .x
+                     }) %>%
     httr::build_url()
 }
 
