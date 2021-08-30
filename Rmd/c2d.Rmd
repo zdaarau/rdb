@@ -66,12 +66,12 @@ the following HTTP GET "endpoints":
     GET https://services.c2d.ch/s3_objects/referendum_5f859fafd1291cc3961f1bc2_0002.pdf
     ```
 
--   `states`: get the first 10 sub-national states that match the query
+-   `states`: get the first 10 subnational entities that match the query
 
     It accepts the following URL parameters to customize the query:
 
     -   `country`: limits the results to a specific country code
-    -   `term`: limits the result to states matching this search term
+    -   `term`: limits the result to subnational entities matching this search term
 
 -   `health`: check API status
 
@@ -1446,6 +1446,12 @@ parse_sudd_date_de <- function(x) {
 #### `parse_sudd_country_code`
 
 Extracts the `country_code` from the `id_sudd`.
+
+An `id_sudd` is composed of
+
+-   the 2-character lowercase `country_code`
+-   plus a sequential 2-digit referendum number starting with `01` for the first referendum in the given year
+-   plus the 4-digit `year` the referendum took place.
 
 ```{r}
 parse_sudd_country_code <- function(id_sudd) {
