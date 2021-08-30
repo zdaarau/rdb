@@ -2639,6 +2639,10 @@ list_sudd_titles <- function() {
 #' c2d::list_sudd_referendums(mode = "filter",
 #'                            filter = list(year_min = 2020)) |>
 #'   c2d::sudd_referendums()
+#' 
+#' # get sudd.ch referendum data from five randomly picked referendums
+#' c2d::list_sudd_referendums(mode = "random") |>
+#'   c2d::sudd_referendums()
 list_sudd_referendums <- function(mode = c("by_date",
                                            "by_mod_date",
                                            "filter",
@@ -2742,11 +2746,14 @@ list_sudd_referendums <- function(mode = c("by_date",
                      territory_name_de = col_2 %>% purrr::map_chr(rvest::html_text),
                      !!!(col_3 %>% purrr::map_chr(rvest::html_text) %>% parse_sudd_date_de()),
                      title_de = col_4 %>% purrr::map_chr(rvest::html_text)) %>%
+      # add `date`
       dplyr::mutate(date = lubridate::make_date(year = year,
                                                 month = month,
                                                 day = day)) %>%
       dplyr::relocate(date,
-                      .before = year)
+                      .before = year) %>%
+      # add `country_name_de`
+      add_sudd_country_name_de()
     
     if (mode == "by_mod_date") {
       
@@ -2765,9 +2772,7 @@ list_sudd_referendums <- function(mode = c("by_date",
   result %>%
     # add `country_code`
     tibble::add_column(country_code = parse_sudd_country_code(.$id_sudd),
-                       .after = "id_sudd") %>%
-    # add `country_name_de`
-    add_sudd_country_name_de()
+                       .after = "id_sudd")
 }
 
 #' Get referendum data from [sudd.ch](https://sudd.ch/)

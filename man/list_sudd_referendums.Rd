@@ -57,6 +57,10 @@ c2d::list_sudd_referendums(mode = "filter",
 c2d::list_sudd_referendums(mode = "filter",
                            filter = list(year_min = 2020)) |>
   c2d::sudd_referendums()
+
+# get sudd.ch referendum data from five randomly picked referendums
+c2d::list_sudd_referendums(mode = "random") |>
+  c2d::sudd_referendums()
 }
 \seealso{
 Other sudd.ch scraping functions:
