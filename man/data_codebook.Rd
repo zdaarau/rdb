@@ -82,8 +82,8 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{subnational_entity_name}}{
 
-The English name of the subnational political entity in which the
-referendum took place.
+The English name of the \href{https://en.wikipedia.org/wiki/Administrative_division}{subnational political entity} in which
+the referendum took place.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level \%in\% c('local', 'subnational')

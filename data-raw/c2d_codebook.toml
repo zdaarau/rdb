@@ -24,7 +24,7 @@ variable_label = "the English name of the country in which the referendum took p
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "subnational_entity_name"
-variable_label = "the English name of the subnational political entity in which the referendum took place"
+variable_label = "the English name of the [subnational political entity](https://en.wikipedia.org/wiki/Administrative_division) in which the referendum took place"
 applicability_constraint = "level %in% c('local', 'subnational')"
 value_scale = "nominal"
 [[01_main.item]]
