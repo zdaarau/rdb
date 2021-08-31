@@ -115,7 +115,7 @@ assemble_query_filter <- function(country_code = NULL,
       list(country_code =
              country_code %>%
              purrr::map_chr(checkmate::assert_choice,
-                            choices = countrycode::codelist$iso2c %>% setdiff(NA_character_),
+                            choices = vals_country_code,
                             null.ok = TRUE,
                             .var.name = "country_code") %>%
              query_filter_in(),
@@ -188,14 +188,31 @@ assert_cols_valid <- function(data,
   if ("id" %in% colnames(data) && anyDuplicated(data$id)) {
     action("Duplicated {.var id}s detected. IDs must be unique.")
   }
+  
+  ## check `date`
+  if ("date" %in% colnames(data)) {
+    
+    check <- checkmate::check_date(data$date,
+                                   any.missing = FALSE)
+    if (!isTRUE(check)) action("Failed to validate {.var data$date}. {check}")
+  }
+  
+  ## check `level`
+  if ("level" %in% colnames(data)) {
+    
+    check <- checkmate::check_subset(as.character(data$level),
+                                     choices = v_vals("level"))
+    
+    if (!isTRUE(check)) action("Failed to validate {.var data$level}. {check}")
+  }
 
   ## check `country_code`
   if ("country_code" %in% colnames(data)) {
     
-    choices <- countrycode::codelist$iso2c %>% setdiff(NA_character_)
-    check <- checkmate::check_subset(levels(data$country_code),
-                                     choices = choices)
-    if (!isTRUE(check)) action("Failed to validate {.var levels(country_code)}. {check}")
+    check <- checkmate::check_subset(as.character(data$country_code),
+                                     choices = vals_country_code)
+    
+    if (!isTRUE(check)) action("Failed to validate {.var data$country_code}. {check}")
     
     ## ensure `position_government` is present when `country_code = "CH" & level = "national"`
     if ((data %>%
@@ -207,23 +224,6 @@ assert_cols_valid <- function(data,
       action(paste0("Referendums with {.code country_code = \"CH\" & level = \"national\"} present in {.arg data} but column {.var ",
                     "position_government} is missing."))
     }
-  }
-  
-  ## check `date`
-  if ("date" %in% colnames(data)) {
-    
-    check <- checkmate::check_date(data$date,
-                                   any.missing = FALSE)
-    if (!isTRUE(check)) action("Failed to validate {.var date}. {check}")
-  }
-  
-  ## check `level`
-  if ("level" %in% colnames(data)) {
-    
-    choices <- v_vals("level")
-    check <- checkmate::check_subset(levels(data$level),
-                                     choices = choices)
-    if (!isTRUE(check)) action("Failed to validate {.var levels(level}. {check}")
   }
   
   ## check `subnational_entity_name`
@@ -756,8 +756,11 @@ tidy_referendums <- function(data,
           } else .x
         })) %>%
         ## nominal vars without variable_values in codebook
-        dplyr::mutate(dplyr::across(any_of(c("country_code",
-                                             "country_name",
+        dplyr::mutate(dplyr::across(any_of("country_code"),
+                                    factor,
+                                    levels = vals_country_code,
+                                    ordered = FALSE),
+                      dplyr::across(any_of(c("country_name",
                                              "subnational_entity_name",
                                              "municipality")),
                                     as.factor)) %>%
@@ -1608,6 +1611,11 @@ referendum_fields$never_empty <- c("_id",
                                    "votes_empty",
                                    "votes_invalid",
                                    "draft")
+
+vals_country_code <-
+  countrycode::codelist$iso2c %>%
+  setdiff(NA_character_) %>%
+  sort()
 
 mime_error_suffix <- "This indicates either some network issue or a change in the C2D API."
 
