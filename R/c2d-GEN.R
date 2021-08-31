@@ -131,8 +131,6 @@ assemble_query_filter <- function(country_code = NULL,
                             choices = v_vals("level"),
                             null.ok = TRUE,
                             .var.name = "level") %>%
-             purrr::when(length(.) == 0L ~ .,
-                         ~ dplyr::recode(., "subnational" = "sub-national") %>% stringr::str_to_sentence()) %>%
              query_filter_in(),
            institution =
              type %>%
@@ -595,8 +593,7 @@ tidy_referendums <- function(data,
           
           # convert all values to lowercase
           ## vectors
-          dplyr::across(c(level,
-                          result,
+          dplyr::across(c(result,
                           type,
                           any_of(c("inst_legal_basis_type",
                                    "inst_object_type",
@@ -675,9 +672,6 @@ tidy_referendums <- function(data,
                                             tier = 2L),
           tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags(tiers = 3L)]),
           ### various cleanups
-          level = stringr::str_replace(string = level,
-                                       pattern = "sub-national",
-                                       replacement = "subnational"),
           type = type %>% dplyr::recode("citizen assembly" = "citizens' assembly",
                                         "not provided" = NA_character_),
           dplyr::across(any_of(c("inst_trigger_actor",
@@ -976,11 +970,6 @@ untidy_referendums <- function(data,
                     dplyr::recode,
                     "parliament and president" = "parliament and President",
                     "parliament and government" = "parliament and Government"),
-      ## `level`
-      dplyr::across(any_of("level"),
-                    stringr::str_replace,
-                    pattern = "sub-national",
-                    replacement = "subnational"),
       ## `type`
       dplyr::across(any_of("type"),
                     dplyr::recode,
@@ -1015,8 +1004,7 @@ untidy_referendums <- function(data,
                     true = "Exists",
                     false = "Does not exist"),
       # uppercase first letter of various vars
-      dplyr::across(.cols = any_of(c("level",
-                                     "result",
+      dplyr::across(.cols = any_of(c("result",
                                      "type",
                                      "inst_legal_basis_type",
                                      "inst_object_type",

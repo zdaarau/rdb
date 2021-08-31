@@ -232,8 +232,6 @@ assemble_query_filter <- function(country_code = NULL,
                             choices = v_vals("level"),
                             null.ok = TRUE,
                             .var.name = "level") %>%
-             purrr::when(length(.) == 0L ~ .,
-                         ~ dplyr::recode(., "subnational" = "sub-national") %>% stringr::str_to_sentence()) %>%
              query_filter_in(),
            institution =
              type %>%
@@ -761,8 +759,7 @@ tidy_referendums <- function(data,
           
           # convert all values to lowercase
           ## vectors
-          dplyr::across(c(level,
-                          result,
+          dplyr::across(c(result,
                           type,
                           any_of(c("inst_legal_basis_type",
                                    "inst_object_type",
@@ -841,9 +838,6 @@ tidy_referendums <- function(data,
                                             tier = 2L),
           tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags(tiers = 3L)]),
           ### various cleanups
-          level = stringr::str_replace(string = level,
-                                       pattern = "sub-national",
-                                       replacement = "subnational"),
           type = type %>% dplyr::recode("citizen assembly" = "citizens' assembly",
                                         "not provided" = NA_character_),
           dplyr::across(any_of(c("inst_trigger_actor",
@@ -1150,11 +1144,6 @@ untidy_referendums <- function(data,
                     dplyr::recode,
                     "parliament and president" = "parliament and President",
                     "parliament and government" = "parliament and Government"),
-      ## `level`
-      dplyr::across(any_of("level"),
-                    stringr::str_replace,
-                    pattern = "sub-national",
-                    replacement = "subnational"),
       ## `type`
       dplyr::across(any_of("type"),
                     dplyr::recode,
@@ -1189,8 +1178,7 @@ untidy_referendums <- function(data,
                     true = "Exists",
                     false = "Does not exist"),
       # uppercase first letter of various vars
-      dplyr::across(.cols = any_of(c("level",
-                                     "result",
+      dplyr::across(.cols = any_of(c("result",
                                      "type",
                                      "inst_legal_basis_type",
                                      "inst_object_type",
@@ -1868,13 +1856,13 @@ The following fields are mandatory when adding/editing referendums via the [admi
 |--------------------------|-------|-----------|-----------------------------------------------------------------------------------------------|
 | `_id`                    | yes   | no        | must be provided in the URL, not the payload                                                  |
 | `country_code`           | no    | yes       | must be a valid choice; the back-end automatically derives `country_name` from `country_code` |
-| `canton`                 | no    | yes       | only mandatory if `"level":"Sub-national"`                                                    |
-| `municipality`           | no    | yes       | only mandatory if `"level":"Local"`                                                           |
+| `canton`                 | no    | yes       | only mandatory if `"level":"subnational"`                                                     |
+| `municipality`           | no    | yes       | only mandatory if `"level":"local"`                                                           |
 | `level`                  | no    | yes       | must be a valid choice                                                                        |
 | `date`                   | no    | yes       | must be a valid date (ISO 8601 date string)                                                   |
 | `title.en`               | no    | yes       | contains `NA`s from before relaunch                                                           |
 | `result`                 | no    | yes       | must be a valid choice ("Yes", "No" or "Unknown")                                             |
-| `context.recommendation` | no    | yes       | only mandatory if `"country_code":"CH","level":"National"`; must be a valid choice            |
+| `context.recommendation` | no    | yes       | only mandatory if `"country_code":"CH","level":"national"`; must be a valid choice            |
 | `total_electorate`       | no    | yes       | must be a valid integer                                                                       |
 | `citizens_abroad`        | no    | no        | omitting it in additions leads to serious problems (cf. GH issue \#50)                        |
 | `votes_yes`              | no    | no        | omitting it in additions leads to serious problems (cf. GH issue \#50)                        |
@@ -2325,14 +2313,14 @@ download_file_attachment <- function(s3_object_key,
     | field                    | notes                                                                                                             |
     |--------------------------|-------------------------------------------------------------------------------------------------------------------|
     | `country_code`           | must be a valid choice                                                                                            |
-    | `canton`                 | only mandatory if `"level":"Sub-national"`                                                                        |
-    | `municipality`           | only mandatory if `"level":"Local"`                                                                               |
+    | `canton`                 | only mandatory if `"level":"subnational"`                                                                         |
+    | `municipality`           | only mandatory if `"level":"local"`                                                                               |
     | `level`                  | must be a valid choice                                                                                            |
     | `date`                   | must be a valid date (ISO 8601 date string)                                                                       |
     | `institution`            | must be a valid choice                                                                                            |
     | `title.en`               | must contain at least one non-whitespace character                                                                |
     | `result`                 | must be a valid choice ("Yes", "No" or "Unknown")                                                                 |
-    | `context.recommendation` | only mandatory if `"country_code":"CH","level":"National"`; must be a valid choice                                |
+    | `context.recommendation` | only mandatory if `"country_code":"CH","level":"national"`; must be a valid choice                                |
     | `total_electorate`       | must be a valid integer                                                                                           |
     | `citizens_abroad`        | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
     | `votes_yes`              | not actually mandatory, but [serious problems arise when omitted](https://github.com/ccmdesign/c2d-app/issues/50) |
@@ -2346,7 +2334,7 @@ download_file_attachment <- function(s3_object_key,
 
 -   Nested fields like `categories` can be partially provided.
 
--   The `context.*` fields are ignored unless `"country_code":"CH","level":"National"`, cf. [issue \#52](https://github.com/ccmdesign/c2d-app/issues/52).
+-   The `context.*` fields are ignored unless `"country_code":"CH","level":"national"`, cf. [issue \#52](https://github.com/ccmdesign/c2d-app/issues/52).
 
 -   The order of the JSON fields doesn't matter.
 
@@ -2363,7 +2351,7 @@ download_file_attachment <- function(s3_object_key,
          --request POST \
          --header 'Content-Type: application/json' \
          --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YzhiYTE3ZDYxYWY4NDYyMmRkZThjNjEiLCJleHAiOjE2MzAxODY0ODB9.lpKWUPyYh7yGWN1AKBWkjhrsQIVeIH71DUOA4hpJhR8' \
-         --data-raw $'{"title":{"en":"test test test"},"date":"2222-02-22","level":"National","country_code":"AT","institution":"Citizens\' initiative","votes_no":-1,"votes_yes":-1,"votes_empty":-1,"votes_invalid":-1,"total_electorate":-1,"citizens_abroad":-1,"result":"Unknown"}'
+         --data-raw $'{"title":{"en":"test test test"},"date":"2222-02-22","level":"national","country_code":"AT","institution":"Citizens\' initiative","votes_no":-1,"votes_yes":-1,"votes_empty":-1,"votes_invalid":-1,"total_electorate":-1,"citizens_abroad":-1,"result":"Unknown"}'
     ```
 
 ```{r}
@@ -2466,7 +2454,7 @@ add_referendums <- function(data,
 
     `country_name` is ignored and automatically derived from `country_code`.
 
--   The `context.*` fields are ignored unless `"country_code":"CH","level":"National"`, cf. [issue \#52](https://github.com/ccmdesign/c2d-app/issues/52).
+-   The `context.*` fields are ignored unless `"country_code":"CH","level":"national"`, cf. [issue \#52](https://github.com/ccmdesign/c2d-app/issues/52).
 
 -   The order of the JSON fields doesn't matter.
 
