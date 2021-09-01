@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9015</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9016</span>
       </span>
     </div>
 
@@ -211,8 +211,9 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <p>Instead of not capturing such votings, it would be superior to introduce another variable indicating the status of a voting (official, inofficial, …); currently we only have an <em>institutional</em> variable <code>legal_basis_type</code> (formerly <code>official_status</code>) which measures a completely different thing. Maybe name this new variable simply <code>status</code>?</p>
 </li>
 <li>
-<p>We need a proper way to capture referendums with more than yes-or-no answer options. This includes</p>
+<p>We need a proper way to capture referendums with other or more than yes-or-no answer options. This includes</p>
 <ul>
+<li>other options than yes/no (e.g. <a href="https://sudd.ch/event.php?id=cl022020" class="external-link">this one</a>)</li>
 <li>multiple options (e.g. <a href="https://sudd.ch/event.php?id=bq012014" class="external-link">like this one</a>)</li>
 <li>preference / hierarchy information, i.e. whether or not multiple choices at the same time are allowed (i.e. whether or not options are mutually exclusive) – and if so – how ambiguities are resolved (e.g. by an additional preference list)</li>
 </ul>
@@ -307,14 +308,15 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <li><p>According to the guidelines in <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx</code>, the PDF <code>files</code> of <code>country_code == "CH"</code> entries must be named consistently <code>Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag</code> (“Abstimmungsbroschüre”“) and <code>Results_CH/Kantonskürzel_Jahr_Monat_Tag</code> (results) -&gt; check if this is actually always the case!</p></li>
 <li>
 <p>check <code>country_code</code> for obsolete codes, i.e. check if</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ISOcodes<span class="sc">::</span>ISO_3166_3<span class="sc">$</span>Alpha_4 <span class="sc">%&gt;%</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exclude simple renamings where `country_code` didn't change</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  magrittr<span class="sc">::</span><span class="fu">extract</span>(stringr<span class="sc">::</span><span class="fu">str_sub</span>(<span class="at">string =</span> ., <span class="at">start =</span> 3L) <span class="sc">!=</span> <span class="st">"AA"</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract former `country_code`</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  strin<span class="st">`</span><span class="at">gr::str_sub(end = 2L) %&gt;%</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">  # check</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">  magrittr::is_in(data2$country_code) %&gt;%</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">  any()</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">ISOcodes</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISO_3166_3</a></span><span class="op">$</span><span class="va">Alpha_4</span> <span class="op">%&gt;%</span>
+  <span class="co"># exclude simple renamings where `country_code` didn't change</span>
+  <span class="fu">magrittr</span><span class="fu">::</span><span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html" class="external-link">extract</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span>string <span class="op">=</span> <span class="va">.</span>, start <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"AA"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="co"># extract former `country_code`</span>
+  <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span>end <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="co"># check</span>
+  <span class="fu">magrittr</span><span class="fu">::</span><span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html" class="external-link">is_in</a></span><span class="op">(</span><span class="va">data2</span><span class="op">$</span><span class="va">country_code</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>and if so, assign <code>country_code_historical</code>, set <code>is_past_jurisdiction = TRUE</code> and assign proper new <code>country_code</code> (<code>ISOcodes::ISO_3166_3$Alpha_4 %&gt;% stringr::str_sub(start = 3L)</code>; if it’s <code>"HH"</code>, a “manual” decision about which successor country we shall assign has to be hard-coded)`</p>
 </li>
 <li><p>check <code>electorate_abroad</code> for obvious errors (e.g. <code>id == "5f99b6c8d1291cc3961f1c2c"</code> is one)</p></li>

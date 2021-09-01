@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9015</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9016</span>
       </span>
     </div>
 
@@ -130,7 +130,7 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <h2 id="section-referendum-data" class="hasAnchor"><a href="#section-referendum-data" class="anchor"></a>Referendum data</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -154,12 +154,6 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="data_codebook.html">data_codebook</a></code> </p>
-        </td>
-        <td><p>C2D Codebook</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="download_file_attachment.html">download_file_attachment()</a></code> </p>
         </td>
         <td><p>Download file attachment</p></td>
@@ -169,42 +163,6 @@
           <p><code><a href="edit_referendums.html">edit_referendums()</a></code> </p>
         </td>
         <td><p>Edit existing referendums in the C2D database</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="hierarchize_tags.html">hierarchize_tags()</a></code> </p>
-        </td>
-        <td><p>Hierarchize Tags</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="infer_tags.html">infer_tags()</a></code> </p>
-        </td>
-        <td><p>Infer higher-tier tags</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="is_online.html">is_online()</a></code> </p>
-        </td>
-        <td><p>Test C2D API availability</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="list_sudd_referendums.html">list_sudd_referendums()</a></code> </p>
-        </td>
-        <td><p>List referendum data from <a href='https://sudd.ch/'>sudd.ch</a></p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="list_sudd_territories.html">list_sudd_territories()</a></code> </p>
-        </td>
-        <td><p>List referendum territories from <a href='https://sudd.ch/'>sudd.ch</a></p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="list_sudd_titles.html">list_sudd_titles()</a></code> </p>
-        </td>
-        <td><p>List referendum titles from <a href='https://sudd.ch/'>sudd.ch</a></p></td>
       </tr><tr>
         
         <td>
@@ -226,9 +184,28 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="sudd_referendums.html">sudd_referendums()</a></code> </p>
+          <p><code><a href="validate_referendums.html">validate_referendums()</a></code> </p>
         </td>
-        <td><p>Get referendum data from <a href='https://sudd.ch/'>sudd.ch</a></p></td>
+        <td><p>Validate referendums</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-referendum-metadata" class="hasAnchor"><a href="#section-referendum-metadata" class="anchor"></a>Referendum metadata</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="data_codebook.html">data_codebook</a></code> </p>
+        </td>
+        <td><p>C2D Codebook</p></td>
       </tr><tr>
         
         <td>
@@ -241,12 +218,87 @@
           <p><code><a href="val_lbls.html">val_lbls()</a></code> </p>
         </td>
         <td><p>Get the set of possible <em>value labels</em> of a referendum data variable</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-tags" class="hasAnchor"><a href="#section-tags" class="anchor"></a>Tags</h2>
+          <p class="section-desc"><p>Functions to work with referendum <a href="https://rpkg.dev/c2d/articles/codebook.html#tags">tags</a>.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="hierarchize_tags.html">hierarchize_tags()</a></code> </p>
+        </td>
+        <td><p>Hierarchize Tags</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="validate_referendums.html">validate_referendums()</a></code> </p>
+          <p><code><a href="infer_tags.html">infer_tags()</a></code> </p>
         </td>
-        <td><p>Validate referendums</p></td>
+        <td><p>Infer higher-tier tags</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-c-d-api-status" class="hasAnchor"><a href="#section-c-d-api-status" class="anchor"></a>C2D API Status</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="is_online.html">is_online()</a></code> </p>
+        </td>
+        <td><p>Test C2D API availability</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-sudd-ch-scraping" class="hasAnchor"><a href="#section-sudd-ch-scraping" class="anchor"></a>sudd.ch scraping</h2>
+          <p class="section-desc"><p>Functions to scrape the data from the <a href="https://sudd.ch/" class="external-link">sudd.ch</a> database.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="list_sudd_referendums.html">list_sudd_referendums()</a></code> </p>
+        </td>
+        <td><p>List referendum data from <a href='https://sudd.ch/'>sudd.ch</a></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="list_sudd_territories.html">list_sudd_territories()</a></code> </p>
+        </td>
+        <td><p>List referendum territories from <a href='https://sudd.ch/'>sudd.ch</a></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="list_sudd_titles.html">list_sudd_titles()</a></code> </p>
+        </td>
+        <td><p>List referendum titles from <a href='https://sudd.ch/'>sudd.ch</a></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sudd_referendums.html">sudd_referendums()</a></code> </p>
+        </td>
+        <td><p>Get referendum data from <a href='https://sudd.ch/'>sudd.ch</a></p></td>
       </tr>
     </tbody>
     </table>

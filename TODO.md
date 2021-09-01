@@ -238,9 +238,9 @@
     ``` {.r}
     ISOcodes::ISO_3166_3$Alpha_4 %>%
       # exclude simple renamings where `country_code` didn't change
-      magrittr::extract(stringr::str_sub(string = ., start = 3L) != "AA")
+      magrittr::extract(stringr::str_sub(string = ., start = 3L) != "AA") %>%
       # extract former `country_code`
-      strin`gr::str_sub(end = 2L) %>%
+      stringr::str_sub(end = 2L) %>%
       # check
       magrittr::is_in(data2$country_code) %>%
       any()

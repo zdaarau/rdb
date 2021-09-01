@@ -34,7 +34,8 @@ reference:
 - contents:
   - has_concept("metadata")
 
-- title: "[Tags](https://rpkg.dev/c2d/articles/codebook.html#tags)"
+- title: "Tags"
+  desc: "Functions to work with referendum [tags](https://rpkg.dev/c2d/articles/codebook.html#tags)."
 - contents:
   - has_concept("tags")
 
@@ -42,7 +43,7 @@ reference:
 - contents:
   - has_concept("api_status")
 
-- title: "[sudd.ch](https://sudd.ch/) scraping"
+- title: "sudd.ch scraping"
   desc: "Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database."
 - contents:
   - has_concept("sudd")
