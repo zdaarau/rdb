@@ -1179,6 +1179,8 @@ query_filter_in <- function(x) {
 
 add_sudd_country_name_de <- function(data) {
   
+  pal::assert_pkg("assertr")
+  
   data %>%
     dplyr::mutate(territory_name_de_short = shorten_sudd_territory_name_de(territory_name_de)) %>%
     dplyr::left_join(list_sudd_territories() %>% dplyr::select(country_name_de, territory_name_de),
@@ -1243,9 +1245,6 @@ shorten_sudd_territory_name_de <- function(x) {
 sudd_referendum <- function(id_sudd) {
   
   checkmate::assert_string(id_sudd)
-  pal::assert_pkg("xml2")
-  pal::assert_pkg(pkg = "rvest",
-                  min_version = "1.0.0")
   
   httr::RETRY(verb = "GET",
               url = "https://sudd.ch/event.php",
