@@ -24,3 +24,25 @@ navbar:
     codebook:
       text: "C2D Codebook"
       href: "articles/codebook.html"
+
+reference:
+- title: "Referendum data"
+- contents:
+  - has_concept("referendum")
+
+- title: "Referendum metadata"
+- contents:
+  - has_concept("metadata")
+
+- title: "[Tags](https://rpkg.dev/c2d/articles/codebook.html#tags)"
+- contents:
+  - has_concept("tags")
+
+- title: "C2D API Status"
+- contents:
+  - has_concept("api_status")
+
+- title: "[sudd.ch](https://sudd.ch/) scraping"
+  desc: "Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database."
+- contents:
+  - has_concept("sudd")

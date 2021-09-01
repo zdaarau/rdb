@@ -3121,6 +3121,10 @@ The [`list.php`](https://sudd.ch/list.php) endpoint supports
     -   `moddate`: list all referendums by `date_last_edited`
     -   `random`: list 5 randomly selected referendums
 
+## Description
+
+Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database.
+
 ## `list_sudd_territories`
 
 **Notes:**
