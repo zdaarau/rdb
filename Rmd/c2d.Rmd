@@ -2761,7 +2761,7 @@ edit_referendums <- function(data,
 This function performs various data validation steps to ensure there are no errors in the database.
 
 ```{r}
-#' Validate referendums
+#' Validate referendum data
 #'
 #' @param data The referendum data to validate, as returned by [referendums()].
 #' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.

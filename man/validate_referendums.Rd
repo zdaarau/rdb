@@ -2,7 +2,7 @@
 % Please edit documentation in R/c2d-GEN.R
 \name{validate_referendums}
 \alias{validate_referendums}
-\title{Validate referendums}
+\title{Validate referendum data}
 \usage{
 validate_referendums(
   data,
@@ -21,7 +21,7 @@ validate_referendums(
 \code{data}, invisibly.
 }
 \description{
-Validate referendums
+Validate referendum data
 }
 \seealso{
 Other referendum data functions:

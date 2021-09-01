@@ -2190,7 +2190,7 @@ edit_referendums <- function(data,
   invisible(data)
 }
 
-#' Validate referendums
+#' Validate referendum data
 #'
 #' @param data The referendum data to validate, as returned by [referendums()].
 #' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
