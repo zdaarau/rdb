@@ -1519,9 +1519,9 @@ sudd_referendum <- function(id_sudd) {
                         "\u2517\u2501 Ministersystem"                    = "votes_option_2",
                         "\u2517\u2501 Gemischte Wahl"                    = "votes_option_1",
                         "\u2517\u2501 Reine Volkswahl"                   = "votes_option_2",
-                        "\u2517\u2501 Präsidialsystem"                   = "votes_option_1",
+                        "\u2517\u2501 Pr\u00e4sidialsystem"              = "votes_option_1",
                         "\u2517\u2501 Parlamentarisches System"          = "votes_option_2",
-                        "\u2517\u2501 Nein zu beiden Vorschlägen"        = "votes_option_none",
+                        "\u2517\u2501 Nein zu beiden Vorschl\u00e4gen"   = "votes_option_none",
                         "\u2517\u2501 Stimmen ausser Betracht"           = "votes_invalid",
                         "Staaten"                                        = "subterritories",
                         "\u2517\u2501 Annehmende Staaten"                = "subterritories_yes",
@@ -2662,7 +2662,7 @@ validate_referendums <- function(data,
     # define allowed exceptions
     allowed_exceptions <- tibble::tribble(
       ~country_code, ~id_sudd_prefix,
-      # Curaçao
+      # Curacao
       "CW", "an",
       # Szeklerland, cf. https://sudd.ch/event.php?id=hu042008
       "RO", "hu"
