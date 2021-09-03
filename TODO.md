@@ -106,7 +106,10 @@
 -   We need a proper way to capture referendums with other or more than yes-or-no answer options. This includes
 
     -   other options than yes/no (e.g. [this one](https://sudd.ch/event.php?id=cl022020))
-    -   multiple options (e.g. [like this one](https://sudd.ch/event.php?id=bq012014))
+    -   multiple options (e.g. [this one](https://sudd.ch/event.php?id=bq012014))
+    -   competing (counter) proposals with tie-breaker question (e.g. [this one](https://sudd.ch/event.php?lang=de&id=ch021920) or [this
+        one](https://sudd.ch/event.php?lang=de&id=ch052010))
+    -   competing / mutually exclusive proposals (e.g. [this one](https://sudd.ch/event.php?id=pl011928) or [this one](https://sudd.ch/event.php?id=si011996))
     -   preference / hierarchy information, i.e. whether or not multiple choices at the same time are allowed (i.e. whether or not options are mutually
         exclusive) -- and if so -- how ambiguities are resolved (e.g. by an additional preference list)
 

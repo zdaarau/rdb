@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9017</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9018</span>
       </span>
     </div>
 
@@ -241,28 +241,28 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 #&gt; <span style='color: #949494;'># … with 63 more rows, and 32 more variables: territory_type_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   date &lt;date&gt;, year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   question_type_de &lt;chr&gt;, types &lt;list&gt;, result_de &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, polling_cards &lt;int&gt;, votes_total &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_void &lt;int&gt;, votes_invalid &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, …</span></div><div class='input'>
+#&gt; <span style='color: #949494;'>#   result_status_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;,</span>
+#&gt; <span style='color: #949494;'>#   electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;, polling_cards &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_total &lt;int&gt;, votes_empty &lt;int&gt;, votes_void &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, …</span></div><div class='input'>
 <span class='co'># get sudd.ch referendum data from five randomly picked referendums</span>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"random"</span><span class='op'>)</span> |&gt;
   <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_referendums.html'>sudd_referendums</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 35</span>
-#&gt;   id_sudd  country_code country_code_historical country_name territory_name_de  
-#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>              
-#&gt; <span style='color: #BCBCBC;'>1</span> fr021935 FR           <span style='color: #BB0000;'>NA</span>                      France       Frankreich         
-#&gt; <span style='color: #BCBCBC;'>2</span> kh051945 KH           <span style='color: #BB0000;'>NA</span>                      Cambodia     Kambodscha         
-#&gt; <span style='color: #BCBCBC;'>3</span> cg011958 CG           <span style='color: #BB0000;'>NA</span>                      Congo        Mittelkongo (Repub…
-#&gt; <span style='color: #BCBCBC;'>4</span> bf011970 BF           <span style='color: #BB0000;'>NA</span>                      Burkina Faso Obervolta (Burkina…
-#&gt; <span style='color: #BCBCBC;'>5</span> ch022006 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland  Schweiz            
-#&gt; <span style='color: #949494;'># … with 30 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 31</span>
+#&gt;   id_sudd  country_code country_code_historical country_name  territory_name_de 
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>             
+#&gt; <span style='color: #BCBCBC;'>1</span> cl011817 CL           <span style='color: #BB0000;'>NA</span>                      Chile         Chile             
+#&gt; <span style='color: #BCBCBC;'>2</span> it011860 IT           <span style='color: #BB0000;'>NA</span>                      Italy         Emilia (Italien)  
+#&gt; <span style='color: #BCBCBC;'>3</span> li011922 LI           <span style='color: #BB0000;'>NA</span>                      Liechtenstein Liechtenstein     
+#&gt; <span style='color: #BCBCBC;'>4</span> ph011990 PH           <span style='color: #BB0000;'>NA</span>                      Philippines   Cordilleras (Phil…
+#&gt; <span style='color: #BCBCBC;'>5</span> cl012017 CL           <span style='color: #BB0000;'>NA</span>                      Chile         Osterinsel (Rapa …
+#&gt; <span style='color: #949494;'># … with 26 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;, question_type_de &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;,</span>
-#&gt; <span style='color: #949494;'>#   electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;, votes_total &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;,</span>
+#&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;, votes_total &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_void &lt;int&gt;, votes_invalid &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, subterritories &lt;dbl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   subterritories_yes &lt;dbl&gt;, subterritories_no &lt;dbl&gt;, …</span></div></pre>
+#&gt; <span style='color: #949494;'>#   votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_option_2 &lt;int&gt;, files &lt;list&gt;, remarks &lt;list&gt;, sources &lt;list&gt;, …</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

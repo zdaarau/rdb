@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9017</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9018</span>
       </span>
     </div>
 
@@ -161,11 +161,11 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 #&gt; <span style='color: #BCBCBC;'>1</span> li012015 LI           <span style='color: #BB0000;'>NA</span>                      Liechtenstein Liechtenstein    
 #&gt; <span style='color: #949494;'># … with 24 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;, question_type_de &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;,</span>
-#&gt; <span style='color: #949494;'>#   electorate_total &lt;int&gt;, polling_cards &lt;int&gt;, votes_total &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_void &lt;int&gt;, votes_invalid &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, files &lt;tibble[,2]&gt;,</span>
-#&gt; <span style='color: #949494;'>#   result_status_de &lt;chr&gt;, remarks &lt;list&gt;, sources &lt;list&gt;, …</span></div><div class='input'>
+#&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;,</span>
+#&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   polling_cards &lt;int&gt;, votes_total &lt;int&gt;, votes_empty &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_void &lt;int&gt;, votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_no &lt;int&gt;, files &lt;list&gt;, remarks &lt;list&gt;, sources &lt;list&gt;, …</span></div><div class='input'>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='referendums.html'>referendums</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> |&gt; <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>sudd_referendums</span><span class='op'>(</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 28</span>
 #&gt;   id_sudd  country_code country_code_historical country_name territory_name_de
@@ -177,11 +177,11 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 #&gt; <span style='color: #BCBCBC;'>5</span> at011938 AT           <span style='color: #BB0000;'>NA</span>                      Austria      Österreich       
 #&gt; <span style='color: #949494;'># … with 23 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;, question_type_de &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;,</span>
-#&gt; <span style='color: #949494;'>#   electorate_total &lt;int&gt;, votes_total &lt;int&gt;, votes_invalid &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, files &lt;tibble[,2]&gt;,</span>
-#&gt; <span style='color: #949494;'>#   result_status_de &lt;chr&gt;, remarks &lt;list&gt;, sources &lt;list&gt;,</span>
-#&gt; <span style='color: #949494;'>#   date_last_edited &lt;date&gt;, votes_option_1 &lt;int&gt;, votes_option_2 &lt;int&gt;</span></div></pre>
+#&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;,</span>
+#&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;, votes_total &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_option_1 &lt;int&gt;, votes_option_2 &lt;int&gt;, files &lt;list&gt;, remarks &lt;list&gt;,</span>
+#&gt; <span style='color: #949494;'>#   sources &lt;list&gt;, date_last_edited &lt;date&gt;</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

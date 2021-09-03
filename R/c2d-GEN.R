@@ -1350,33 +1350,105 @@ sudd_referendum <- function(id_sudd) {
     rvest::html_element(css = "main table") %>%
     rvest::html_children()
   
-  
   field_names <-
     html %>%
     rvest::html_elements(css = "td.feld") %>%
     rvest::html_text()
   
-  # handle known duplicate fields
-  ## simple duplicates (errors)
-  if (id_sudd == "gr011862") {
+  # handle fields with duplicated/ambiguous names
+  if (anyDuplicated(field_names)) {
     
-    i_to_drop <- which(field_names == "\u2517\u2501 Republik")[2L]
+    ## simple duplicates (errors)
+    if (id_sudd == "gr011862") {
+      
+      i_to_drop <- which(field_names == "\u2517\u2501 Republik")[2L]
+      html %<>% .[-i_to_drop]
+      field_names %<>% .[-i_to_drop]
+      
+      ## competing / mutually exclusive proposals, e.g. proposals with direct counter proposal and (optionally) tie-breaker question (CH and LI)
+    } else {
+      
+      option_names <-
+        html %>%
+        rvest::html_elements(css = "td.feld strong") %>%
+        rvest::html_text()
+      
+      if (length(option_names) < 2L) cli::cli_abort("Unknown table layout detected for referendum with {.arg id_sudd = {id_sudd}}. Please debug.")
+      
+      i_option_names <- which(field_names %in% option_names)
+      option_names_counter <- c("Gegenentwurf", "Gegenvorschlag")
+      option_names_tie_breaker <- "Stichfrage"
+      option_names_special <- c(option_names_counter, option_names_tie_breaker)
+      has_counter_proposal <- any(option_names_counter %in% option_names)
+      n_proposals_original <-
+        option_names %>%
+        setdiff(option_names_special) %>%
+        length()
+      
+      i_option_field_names <-
+        i_option_names[-length(i_option_names)] %>%
+        purrr::imap(~ (.x + 1L):(i_option_names[.y + 1L] - 1L)) %>%
+        c(list((dplyr::last(i_option_names) + 1L):(min(length(field_names), which(field_names %in% c("Medien",
+                                                                                                     "Bemerkungen",
+                                                                                                     "Gleichzeitig mit",
+                                                                                                     "Quellen",
+                                                                                                     "Vollst\u00e4ndigkeit",
+                                                                                                     "Letzte \u00c4nderung"))) - 1L)))
+      # rename field names
+      option_suffixes <-
+        option_names %>%
+        purrr::imap_chr(~ .x %>% purrr::when(. %in% option_names_counter                        ~ "counter_proposal",
+                                             . %in% option_names_tie_breaker                    ~ "tie_breaker",
+                                             has_counter_proposal && n_proposals_original == 1L ~ "proposal",
+                                             ~ glue::glue("option_{.y}")))
+      renamings <-
+        purrr::map2(.x = setdiff(option_names,
+                                 option_names_tie_breaker),
+                    .y = setdiff(option_suffixes,
+                                 "tie_breaker"),
+                    .f = ~ rlang::list2(!!paste("\u2517\u2501", .x) := glue::glue("votes_tie_breaker_{.y}"),
+                                        !!paste("\u2517\u2501 St\u00e4nde", .x) := glue::glue("subterritories_{.y}_tie_breaker"))) %>%
+        purrr::flatten()
+      
+      for (i in seq_along(option_names)) {
+        
+        field_names[i_option_field_names[[i]]] %<>%
+          dplyr::recode(!!!c(renamings,
+                             list("Abgegebene Stimmen"                   = glue::glue("votes_{option_suffixes[i]}_total"),
+                                  "Stimmen ausser Betracht"              = glue::glue("votes_{option_suffixes[i]}_invalid"),
+                                  "Ohne Antwort"                         = glue::glue("votes_{option_suffixes[i]}_empty"),
+                                  "G\u00fcltige (= massgebende) Stimmen" = glue::glue("votes_{option_suffixes[i]}_valid"),
+                                  "\u2517\u2501 Ja-Stimmen"              = glue::glue("votes_{option_suffixes[i]}_yes"),
+                                  "\u2517\u2501 Nein-Stimmen"            = glue::glue("votes_{option_suffixes[i]}_no"),
+                                  "Ja-Stimmen"                           = glue::glue("votes_{option_suffixes[i]}_yes"),
+                                  "Nein-Stimmen"                         = glue::glue("votes_{option_suffixes[i]}_no"),
+                                  "St\u00e4nde (Kantone)"                = glue::glue("subterritories_{option_suffixes[i]}"),
+                                  "\u2517\u2501 Annehmende St\u00e4nde"  = glue::glue("subterritories_{option_suffixes[i]}_yes"),
+                                  "\u2517\u2501 Verwerfende St\u00e4nde" = glue::glue("subterritories_{option_suffixes[i]}_no"))))
+      }
+      
+      # drop obsolete fields
+      html %<>% .[-i_option_names]
+      field_names %<>% .[-i_option_names]
+      
+    }
+  }
+  
+  # handle other special cases
+  if (id_sudd %in% c("li011954",
+                     "li031985")) {
+    
+    field_names %<>% dplyr::recode("\u2517\u2501 Initiative"     = "votes_proposal",
+                                   "\u2517\u2501 Gegenvorschlag" = "votes_counter_proposal",
+                                   "\u2517\u2501 Nein-Stimmen"   = "votes_option_none")
+  }
+  
+  # remove unnecessary fields
+  i_to_drop <- which(field_names == "Nicht teilgenommen")
+  
+  if (length(i_to_drop)) {
     html %<>% .[-i_to_drop]
     field_names %<>% .[-i_to_drop]
-    
-    ## Swiss initiatives with direct counter proposal
-  } else if (id_sudd %in% c("ch021920",
-                            "ch052010")) {
-    
-    i_subterritories <- field_names %>% stringr::str_detect("(\u2517\u2501 )?St\u00e4nde (Kantone)") %>% which()
-    i_subterritories_yes <- field_names %>% stringr::str_detect("(\u2517\u2501 )?Annehmende St\u00e4nde") %>% which()
-    i_subterritories_no <- field_names %>% stringr::str_detect("(\u2517\u2501 )?Verwerfende St\u00e4nde") %>% which()
-    i_votes_valid <- field_names %>% stringr::str_detect("(\u2517\u2501 )?G\u00fcltige (= massgebende) Stimmen") %>% which()
-    i_votes_invalid <- field_names %>% stringr::str_detect("(\u2517\u2501 )?Ohne Antwort") %>% which()
-    i_votes_yes <- field_names %>% stringr::str_detect("(\u2517\u2501 )?Ja-Stimmen") %>% which()
-    i_votes_no <- field_names %>% stringr::str_detect("(\u2517\u2501 )?Nein-Stimmen") %>% which()
-    
-    # TODO!
   }
   
   field_names %<>%
@@ -1387,14 +1459,19 @@ sudd_referendum <- function(id_sudd) {
                   "\u2517\u2501 Fragemuster"                       = "question_type_de",
                   "\u2517\u2501 Abstimmungstyp"                    = "types",
                   "Ergebnis"                                       = "result_de",
+                  "Vollst\u00e4ndigkeit"                           = "result_status_de",
                   "\u2517\u2501 Mehrheiten"                        = "adoption_requirements_de",
                   "Stimmberechtigte"                               = "electorate_total",
                   "\u2517\u2501 Davon im Ausland"                  = "electorate_abroad",
                   "Stimmausweise"                                  = "polling_cards",
                   "Stimmbeteiligung"                               = "votes_total",
                   "Stimmen ausser Betracht"                        = "votes_invalid",
+                  "Stimmzettel ausser Betracht"                    = "votes_invalid",
                   "\u2517\u2501 Leere Stimmen"                     = "votes_empty",
+                  "\u2517\u2501 Leere Stimmzettel"                 = "votes_empty",
                   "\u2517\u2501 Ung\u00fcltige Stimmen"            = "votes_void",
+                  "\u2517\u2501 Ung\u00fcltige Stimmzettel"        = "votes_void",
+                  "Ganz ung\u00fcltige Stimmzettel"                = "votes_void",
                   "G\u00fcltige (= massgebende) Stimmen"           = "votes_valid",
                   "\u2517\u2501 Ja-Stimmen"                        = "votes_yes",
                   "\u2517\u2501 Nein-Stimmen"                      = "votes_no",
@@ -1413,7 +1490,6 @@ sudd_referendum <- function(id_sudd) {
                   "Bemerkungen"                                    = "remarks",
                   "Gleichzeitig mit"                               = "ids_sudd_simultaneous",
                   "Quellen"                                        = "sources",
-                  "Vollst\u00e4ndigkeit"                           = "result_status_de",
                   "Letzte \u00c4nderung"                           = "date_last_edited") %>%
     # assert field names are unique
     checkmate::assert_character(any.missing = FALSE,
@@ -1460,21 +1536,24 @@ sudd_referendum <- function(id_sudd) {
                                          col_text,
                                        
                                        # integer scalars
-                                       stringr::str_detect(string = .,
-                                                           pattern = rex::rex(start,
-                                                                              or("electorate_total",
-                                                                                 "electorate_abroad",
-                                                                                 "polling_cards",
-                                                                                 "votes_total",
-                                                                                 "votes_invalid",
-                                                                                 "votes_empty",
-                                                                                 "votes_void",
-                                                                                 "votes_valid",
-                                                                                 "votes_yes",
-                                                                                 "votes_no",
-                                                                                 group("votes_option_", some_of(digit)),
-                                                                                 "votes_option_none"),
-                                                                              end)) ~
+                                       stringr::str_detect(
+                                         string = .,
+                                         pattern = paste0(
+                                           "^",
+                                           pal::fuse_regex("electorate_total",
+                                                           "electorate_abroad",
+                                                           "polling_cards",
+                                                           "votes_total",
+                                                           "votes_invalid",
+                                                           "votes_empty",
+                                                           "votes_void",
+                                                           "votes_valid",
+                                                           "votes_yes",
+                                                           "votes_no",
+                                                           "votes_proposal",
+                                                           "votes_counter_proposal",
+                                                           "votes_((option_\\d+|none)|(counter_)?proposal)(_(total|empty|void|invalid|valid|yes|no))?"),
+                                           "$")) ~
                                          cells[[2L]] %>%
                                          rvest::html_elements(css = "data") %>%
                                          rvest::html_attr("value") %>%
@@ -1483,14 +1562,13 @@ sudd_referendum <- function(id_sudd) {
                                                      ~ .) %>%
                                          as.integer(),
                                        
-                                       . %in% c("subterritories",
-                                                "subterritories_yes",
-                                                "subterritories_no") ~
+                                       stringr::str_detect(string = .,
+                                                           pattern = "^subterritories") ~
                                          cells[[2L]] %>%
                                          rvest::html_elements(css = "data") %>%
                                          rvest::html_attr("value") %>%
-                                         # fall back to bare text if no semantic data could be extracted
-                                         purrr::when(length(.) == 0L ~ col_text,
+                                         # fall back to parsing text if no semantic data could be extracted
+                                         purrr::when(length(.) == 0L ~ col_text %>% stringr::str_remove_all(pattern = "[^\\d]"),
                                                      ~ .) %>%
                                          as.numeric(),
                                        
@@ -1527,7 +1605,8 @@ sudd_referendum <- function(id_sudd) {
                                                           rvest::html_attr(name = "href") %>%
                                                           complete_sudd_url() %>%
                                                           tibble::tibble(description = rvest::html_text(.x),
-                                                                         url = .)),
+                                                                         url = .)) %>%
+                                         list(),
                                        . == "ids_sudd_simultaneous" ~
                                          urls %>%
                                          stringr::str_extract(pattern = "(?<=[\\?&]id=)[\\w\\d]+") %>%
@@ -2974,35 +3053,36 @@ sudd_referendums <- function(ids_sudd) {
                     country_code_historical,
                     country_name,
                     territory_name_de,
-                    any_of("territory_type_de"),
-                    any_of("date"),
-                    any_of("year"),
-                    any_of("month"),
-                    any_of("day"),
-                    any_of("title_de"),
-                    any_of("question_type_de"),
-                    any_of("types"),
-                    any_of("result_de"),
-                    any_of("adoption_requirements_de"),
-                    any_of("electorate_total"),
-                    any_of("electorate_abroad"),
-                    any_of("polling_cards"),
-                    any_of("votes_total"),
-                    any_of("votes_empty"),
-                    any_of("votes_void"),
-                    any_of("votes_invalid"),
-                    any_of("votes_valid"),
-                    any_of("votes_yes"),
-                    any_of("votes_no"),
-                    starts_with("votes_option_\\d+"),
+                    any_of(c("territory_type_de",
+                             "date",
+                             "year",
+                             "month",
+                             "day",
+                             "title_de",
+                             "question_type_de",
+                             "types",
+                             "result_de",
+                             "result_status_de",
+                             "adoption_requirements_de",
+                             "electorate_total",
+                             "electorate_abroad",
+                             "polling_cards",
+                             "votes_total",
+                             "votes_empty",
+                             "votes_void",
+                             "votes_invalid",
+                             "votes_valid",
+                             "votes_yes",
+                             "votes_no")),
+                    matches("^votes_(option_\\d+|(counter_)?proposal)(_(total|empty|void|invalid|valid|yes|no))?$"),
                     any_of("votes_option_none"),
-                    any_of("subterritories"),
-                    any_of("subterritories_yes"),
-                    any_of("subterritories_no"),
-                    any_of("files"),
-                    any_of("result_status_de"),
-                    any_of("remarks"),
-                    any_of("sources"),
-                    any_of("ids_sudd_simultaneous"),
-                    any_of("date_last_edited"))
+                    matches("^$"),
+                    any_of(c("subterritories",
+                             "subterritories_yes",
+                             "subterritories_no",
+                             "files",
+                             "remarks",
+                             "sources",
+                             "ids_sudd_simultaneous",
+                             "date_last_edited")))
 }
