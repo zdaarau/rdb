@@ -1335,6 +1335,8 @@ shorten_sudd_territory_name_de <- function(x) {
                       pattern = "\\s*\\([^\\)]+\\).*")
 }
 
+
+
 sudd_referendum <- function(id_sudd) {
   
   checkmate::assert_string(id_sudd)

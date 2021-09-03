@@ -1622,6 +1622,61 @@ shorten_sudd_territory_name_de <- function(x) {
 }
 ```
 
+#### `sudd_referendum_field_names`
+
+Determines the `field_names` of a sudd.ch referendum, whether it `has_field_names_duplicated`, and if so, the actual `field_names_duplicated` (incl. number of
+duplications).
+
+This function is mainly useful for debugging and thus not included in the final package (`purl = FALSE`).
+
+To get an overview of *all* duplicated sudd.ch referendum field names, use:
+
+``` {.r}
+data_sudd_field_names <-
+  c2d::list_sudd_referendums() %$%
+  id_sudd %>%
+  purrr::map_dfr(c2d:::sudd_referendum_field_names) %>%
+  tibble::add_column(!!!(.$id_sudd %>% purrr::map_dfr(c2d:::parse_sudd_id)),
+                     year = .$id_sudd %>% stringr::str_extract(pattern = "\\d{4}$"))
+
+data_sudd_field_names %>%
+  dplyr::filter(has_field_names_duplicated) %>%
+  dplyr::arrange(country_code, year, id_sudd) %>%
+  print(n = Inf)
+```
+
+```{r, purl = FALSE}
+sudd_referendum_field_names <- function(id_sudd) {
+  
+  checkmate::assert_string(id_sudd)
+  
+  html <-
+    httr::RETRY(verb = "GET",
+                url = "https://sudd.ch/event.php",
+                query = list(id = id_sudd),
+                times = 5L) %>%
+    xml2::read_html() %>%
+    rvest::html_element(css = "main table") %>%
+    rvest::html_children()
+  
+  field_names <-
+    html %>%
+    rvest::html_elements(css = "td.feld") %>%
+    rvest::html_text()
+  
+  field_names_duplicated <-
+    field_names[field_names %in% field_names[duplicated(field_names)]] %>%
+    table(exclude = NULL) %>%
+    tibble::enframe(name = "field_name",
+                    value = "n")
+  
+  tibble::tibble(id_sudd = id_sudd,
+                 field_names = list(field_names),
+                 has_field_names_duplicated = nrow(field_names_duplicated) > 0L,
+                 field_names_duplicated = list(field_names_duplicated))
+}
+```
+
 #### `sudd_referendum`
 
 Retrieves a single referendum's data from sudd.ch.
