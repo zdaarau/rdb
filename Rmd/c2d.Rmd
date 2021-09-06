@@ -157,7 +157,7 @@ utils::globalVariables(names = c(".",
 }
 
 .onUnload <- function(libpath) {
-  pkgpins::deregister(pkg = pkg)
+  pkgpins::deregister(pkg = this_pkg)
 }
 ```
 
@@ -288,7 +288,8 @@ assemble_query_filter <- function(country_code = NULL,
 
 ```{r}
 assert_cols_valid <- function(data,
-                              action = cli::cli_abort) {
+                              action = cli::cli_abort,
+                              cli_progress_id = NULL) {
   
   non_na_col_names <- c("id",
                         "country_code",
@@ -302,10 +303,16 @@ assert_cols_valid <- function(data,
     colnames()
   n_na_col_names <- length(na_col_names)
   
-  if (n_na_col_names) action("Detected {n_na_col_names} column{?s} in {.arg data} that contain forbidden {.val NA}s: {.var {na_col_names}}")
+  if (n_na_col_names) {
+    cli::cli_progress_done(id = cli_progress_id,
+                           result = "failed")
+    action("Detected {n_na_col_names} column{?s} in {.arg data} that contain forbidden {.val NA}s: {.var {na_col_names}}")
+  }
   
   ## check `id`
   if ("id" %in% colnames(data) && anyDuplicated(data$id)) {
+    cli::cli_progress_done(id = cli_progress_id,
+                           result = "failed")
     action("Duplicated {.var id}s detected. IDs must be unique.")
   }
   
@@ -314,7 +321,11 @@ assert_cols_valid <- function(data,
     
     check <- checkmate::check_date(data$date,
                                    any.missing = FALSE)
-    if (!isTRUE(check)) action("Failed to validate {.var data$date}. {check}")
+    if (!isTRUE(check)) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
+      action("Failed to validate {.var data$date}. {check}")
+    }
   }
   
   ## check `level`
@@ -323,7 +334,11 @@ assert_cols_valid <- function(data,
     check <- checkmate::check_subset(as.character(data$level),
                                      choices = v_vals("level"))
     
-    if (!isTRUE(check)) action("Failed to validate {.var data$level}. {check}")
+    if (!isTRUE(check)) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
+      action("Failed to validate {.var data$level}. {check}")
+    }
   }
 
   ## check `country_code`
@@ -332,7 +347,11 @@ assert_cols_valid <- function(data,
     check <- checkmate::check_subset(as.character(data$country_code),
                                      choices = ISOcodes::ISO_3166_1$Alpha_2)
     
-    if (!isTRUE(check)) action("Failed to validate {.var data$country_code}. {check}")
+    if (!isTRUE(check)) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
+      action("Failed to validate {.var data$country_code}. {check}")
+    }
     
     ## ensure `position_government` is present when `country_code = "CH" & level = "national"`
     if ((data %>%
@@ -341,6 +360,8 @@ assert_cols_valid <- function(data,
          magrittr::is_greater_than(0L))
         && !("position_government" %in% colnames(data))) {
       
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
       action(paste0("Referendums with {.code country_code = \"CH\" & level = \"national\"} present in {.arg data} but column {.var ",
                     "position_government} is missing."))
     }
@@ -351,6 +372,8 @@ assert_cols_valid <- function(data,
   if (any(data[["level"]] != "national")) {
     
     if (!("subnational_entity_name" %in% colnames(data))) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
       action(paste0("Referendums of {.var level} below {.val national} present in {.arg data} but column {.var subnational_entity_name} is missing."))
     }
     
@@ -363,6 +386,8 @@ assert_cols_valid <- function(data,
     n_missing_subnational_entities <- length(ix_missing_subnational_entities)
     
     if (n_missing_subnational_entities) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
       action(paste0("{n_missing_subnational_entities} row{?s} in {.arg data} {?is/are} missing a {.var subnational_entity_name}. Affected {?is/are} ",
                     "the row{?s} with ind{?ex/ices} {.val {ix_missing_subnational_entities}}."))
     }
@@ -372,6 +397,8 @@ assert_cols_valid <- function(data,
   if (any(data[["level"]] == "local")) {
     
     if (!("municipality" %in% colnames(data))) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
       action(paste0("Referendums of {.var level = \"local\"} present in {.arg data} but column {.var municipality} is missing."))
     }
     
@@ -384,6 +411,8 @@ assert_cols_valid <- function(data,
     n_missing_municipalities <- length(ix_missing_municipalities)
     
     if (n_missing_municipalities) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
       action(paste0("{n_missing_municipalities} row{?s} in {.arg data} {?is/are} missing a {.var municipality}. Affected {?is/are} the row{?s} with ",
                     "ind{?ex/ices} {.val {ix_missing_subnational_entities}}."))
     }
@@ -403,6 +432,8 @@ assert_cols_valid <- function(data,
     n_illegal_votes_per_subterritory <- length(ix_illegal_votes_per_subterritory)
     
     if (n_illegal_votes_per_subterritory) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
       action(paste0("{n_illegal_votes_per_subterritory} row{?s} in {.arg data} {?has/have} a {.var position_government} set although they are not Swiss ",
                     "national referendums. Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal_votes_per_subterritory}}."))
     }
@@ -428,6 +459,8 @@ assert_cols_valid <- function(data,
         n_illegal <- length(ix_illegal)
         
         if (n_illegal) {
+          cli::cli_progress_done(id = cli_progress_id,
+                                 result = "failed")
           action(paste0("{n_illegal} row{?s} in {.arg data} {?has/have} a {.var {v_name}} set although {cli::qty(n_illegal)}{?it is not a/they are not} Swiss",
                         " national referendum{?s}. Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal}}."))
         }
@@ -654,7 +687,7 @@ are ignored from package builds but kept in case they are needed again at some p
 ```{r, purl = FALSE}
 httr_config <- function() {
   
-  httr::config(cainfo = fs::path_package(package = pkg,
+  httr::config(cainfo = fs::path_package(package = this_pkg,
                                          "certs", "3479778542.crt"))
 }
 ```
@@ -1788,8 +1821,57 @@ sudd_referendum <- function(id_sudd) {
                                    "\u2517\u2501 Nein-Stimmen"   = "votes_option_none")
   }
   
+  ## move content of exotic fields to `remarks`
+  remarks_field <-
+    html[field_names == "Bemerkungen"] %>%
+    purrr::when(length(.) > 0L ~ rvest::html_elements(x = ., css = "td")[[2L]],
+                ~ .)
+  
+  remarks_list_col <- list(list(text = rvest::html_text2(remarks_field),
+                                urls =
+                                  remarks_field %>%
+                                  rvest::html_elements(css = "a") %>%
+                                  purrr::map_chr(~ .x %>%
+                                                   rvest::html_attr(name = "href") %>%
+                                                   complete_sudd_url()),
+                                html =
+                                  remarks_field %>%
+                                  xml2::xml_contents() %>%
+                                  as.character() %>%
+                                  paste0(collapse = "")))
+  i_fields_to_remarks <-
+    field_names %>%
+    stringr::str_detect(pattern = paste0("^",
+                                         pal::fuse_regex("\u2517\u2501\u2501\u2501 .+Stimmen( .+)?",
+                                                         "Unklare Stimmen",
+                                                         "Unstimmigkeiten",
+                                                         "G\u00fcltig stimmende Personen"),
+                                         "$")) %>%
+    which()
+  
+  if (length(i_fields_to_remarks)) {
+    
+    addendum <-
+      field_names[i_fields_to_remarks] %>%
+      stringr::str_extract("\\w.*") %>%
+      paste0(": ",
+             html[i_fields_to_remarks] %>%
+               rvest::html_elements(css = "td") %>%
+               magrittr::extract2(2L) %>%
+               rvest::html_elements(css = "data") %>%
+               rvest::html_attr("value"),
+             collapse = "\n\n")
+    
+    remarks_list_col[[1]]$text %<>% paste0(addendum, "\n\n", .)
+    remarks_list_col[[1]]$html %<>% paste0("<p>\n", addendum, "\n</p>", .)
+    html %<>% .[-i_fields_to_remarks]
+    field_names %<>% .[-i_fields_to_remarks]
+  }
+  
   # remove unnecessary fields
-  i_to_drop <- which(field_names == "Nicht teilgenommen")
+  i_to_drop <- which(field_names %in% c("Nicht eingelegte Stimmzettel",
+                                        "Nicht eingelegte Stimmenzettel",
+                                        "Nicht teilgenommen"))
   
   if (length(i_to_drop)) {
     html %<>% .[-i_to_drop]
@@ -1800,6 +1882,7 @@ sudd_referendum <- function(id_sudd) {
     dplyr::recode("Gebiet"                                         = "territory_name_de",
                   "\u2517\u2501 Stellung"                          = "territory_type_de",
                   "Datum"                                          = "date",
+                  "Titel"                                          = "title_de",
                   "Vorlage"                                        = "title_de",
                   "\u2517\u2501 Fragemuster"                       = "question_type_de",
                   "\u2517\u2501 Abstimmungstyp"                    = "types",
@@ -1812,8 +1895,10 @@ sudd_referendum <- function(id_sudd) {
                   "Stimmbeteiligung"                               = "votes_total",
                   "Stimmen ausser Betracht"                        = "votes_invalid",
                   "Stimmzettel ausser Betracht"                    = "votes_invalid",
+                  "Leere Stimmen"                                  = "votes_empty",
                   "\u2517\u2501 Leere Stimmen"                     = "votes_empty",
                   "\u2517\u2501 Leere Stimmzettel"                 = "votes_empty",
+                  "Ung\u00fcltige Stimmen"                         = "votes_void",
                   "\u2517\u2501 Ung\u00fcltige Stimmen"            = "votes_void",
                   "\u2517\u2501 Ung\u00fcltige Stimmzettel"        = "votes_void",
                   "Ganz ung\u00fcltige Stimmzettel"                = "votes_void",
@@ -1825,12 +1910,24 @@ sudd_referendum <- function(id_sudd) {
                   "Staaten"                                        = "subterritories",
                   "\u2517\u2501 Annehmende Staaten"                = "subterritories_yes",
                   "\u2517\u2501 Verwerfende Staaten"               = "subterritories_no",
+                  "Gebiete"                                        = "subterritories",
+                  "\u2517\u2501 Annehmende Gebiete"                = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Gebiete"               = "subterritories_no",
+                  "Provinzen"                                      = "subterritories",
+                  "\u2517\u2501 Annehmende Provinzen"              = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Provinzen"             = "subterritories_no",
+                  "Inseln"                                         = "subterritories",
+                  "\u2517\u2501 Annehmende Inseln"                 = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Inseln"                = "subterritories_no",
                   "St\u00e4nde (Kantone)"                          = "subterritories",
                   "\u2517\u2501 Annehmende St\u00e4nde"            = "subterritories_yes",
                   "\u2517\u2501 Verwerfende St\u00e4nde"           = "subterritories_no",
                   "Wahlkreise"                                     = "subterritories",
                   "\u2517\u2501 Annehmende Wahlkreise"             = "subterritories_yes",
                   "\u2517\u2501 Verwerfende Wahlkreise"            = "subterritories_no",
+                  "Senatswahlkreise"                               = "subterritories",
+                  "\u2517\u2501 Annehmende Senatswahlkreise"       = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Senatswahlkreise"      = "subterritories_no",
                   "Medien"                                         = "files",
                   "Bemerkungen"                                    = "remarks",
                   "Gleichzeitig mit"                               = "ids_sudd_simultaneous",
@@ -1842,12 +1939,23 @@ sudd_referendum <- function(id_sudd) {
                                 .var.name = "field_names") %>%
     # referendum-option-specific recodings (sequentially numbered `votes_option_#` columns)
     # TODO: adapt this once we can properly capture more than yes/no answer options
-    purrr::map_if(.p = ~ .x %>% stringr::str_detect(pattern = "^\u2517\u2501 "),
-                  .f = function(old_name, old_names) {
-                    paste0("votes_option_", which(old_names == old_name))
-                  },
+    purrr::map_at(.at = which(stringr::str_detect(string = .,
+                                                  pattern = "^\u2517\u2501 ")),
+                  .f = function(old_name, old_names) paste0("votes_option_", which(old_names == old_name)),
                   old_names = stringr::str_subset(string = .,
-                                                  pattern = "^\u2517\u2501 "))
+                                                  pattern = "^\u2517\u2501 ")) %>%
+    purrr::flatten_chr()
+
+  # assert no original uppercase field names are left over
+  i_field_names_unknown <-
+    field_names %>%
+    stringr::str_detect(pattern = "[:upper:]") %>%
+    which()
+  
+  if (length(i_field_names_unknown)) {
+    cli::cli_abort(paste0("Unknown {cli::qty(length(i_field_names_unknown))} field{?s} {.field {field_names[i_field_names_unknown]}} present in data for ",
+                          "referendum with {.arg id_sudd = {id_sudd}}."))
+  }
   
   purrr::map2_dfc(.x = html,
                   .y = field_names,
@@ -1885,19 +1993,32 @@ sudd_referendum <- function(id_sudd) {
                                          string = .,
                                          pattern = paste0(
                                            "^",
-                                           pal::fuse_regex("electorate_total",
-                                                           "electorate_abroad",
-                                                           "polling_cards",
-                                                           "votes_total",
-                                                           "votes_invalid",
-                                                           "votes_empty",
-                                                           "votes_void",
-                                                           "votes_valid",
-                                                           "votes_yes",
-                                                           "votes_no",
-                                                           "votes_proposal",
-                                                           "votes_counter_proposal",
-                                                           "votes_((option_\\d+|none)|(counter_)?proposal)(_(total|empty|void|invalid|valid|yes|no))?"),
+                                           pal::fuse_regex(
+                                             "electorate_total",
+                                             "electorate_abroad",
+                                             "polling_cards",
+                                             "votes_total",
+                                             "votes_invalid",
+                                             "votes_empty",
+                                             "votes_void",
+                                             "votes_valid",
+                                             "votes_yes",
+                                             "votes_no",
+                                             "votes_proposal",
+                                             "votes_counter_proposal",
+                                             paste0("votes_",
+                                                    pal::fuse_regex("option_(\\d+|none)",
+                                                                    "(counter_)?proposal",
+                                                                    "tie_breaker(_(option_\\d+|(counter_)?proposal))?"),
+                                                    paste0("(_",
+                                                           pal::fuse_regex("total",
+                                                                           "empty",
+                                                                           "void",
+                                                                           "invalid",
+                                                                           "valid",
+                                                                           "yes",
+                                                                           "no"),
+                                                           ")?"))),
                                            "$")) ~
                                          cells[[2L]] %>%
                                          rvest::html_elements(css = "data") %>%
@@ -1930,8 +2051,10 @@ sudd_referendum <- function(id_sudd) {
                                          lubridate::as_date(),
                                        
                                        # lists (multi-value cols)
-                                       . %in% c("remarks",
-                                                "sources") ~
+                                       . == "remarks" ~
+                                         remarks_list_col,
+                                       
+                                       . %in% c("sources") ~
                                          list(list(text = col_text,
                                                    urls = urls,
                                                    html =
@@ -2079,7 +2202,7 @@ tags <- function(tiers = 1:3) {
 ## Constants
 
 ```{r}
-pkg <- utils::packageName()
+this_pkg <- utils::packageName()
 ```
 
 ### C2D referendum database fields
@@ -2462,14 +2585,19 @@ referendums <- function(use_cache = TRUE,
                         query_filter = NULL,
                         tidy = TRUE) {
   
-  pkgpins::with_cache(.fn = ~ {
+  checkmate::assert_flag(incl_archive)
+  
+  result <- pkgpins::with_cache(expr = {
     
-    checkmate::assert_flag(incl_archive)
+    status_msg <- "Fetching JSON data from C2D API..."
+    cli::cli_progress_step(msg = status_msg,
+                           msg_done = paste(status_msg, "done"),
+                           msg_failed = paste(status_msg, "failed"))
     
-    # retrieve data
     data <-
       httr::RETRY(verb = "GET",
                   url = "https://services.c2d.ch/referendums",
+                  httr::progress(type = "down"),
                   query = list(mode = "stream",
                                format = "json",
                                filter = assemble_query_filter(country_code = country_code,
@@ -2488,26 +2616,47 @@ referendums <- function(use_cache = TRUE,
                             msg_suffix = mime_error_suffix) %>%
       # extract JSON
       httr::content(as = "text",
-                    encoding = "UTF-8") %>%
-      # convert JSON to list
-      # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result (depending on `query`)
+                    encoding = "UTF-8")
+    
+    status_msg <- "Converting JSON to list data..."
+    cli::cli_progress_step(msg = status_msg,
+                           msg_done = paste(status_msg, "done"),
+                           msg_failed = paste(status_msg, "failed"))
+    # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result (depending on `query`)
+    data %<>%
       jsonlite::fromJSON(simplifyVector = FALSE,
                          simplifyDataFrame = FALSE,
                          simplifyMatrix = FALSE,
                          flatten = FALSE) %$%
-      items %>%
-      # tidy data
-      tidy_referendums(tidy = tidy)
+      items
     
-    # exclude `archive` if requested
-    if (!incl_archive) data %<>% dplyr::select(-any_of("archive"))
+    status_msg <- "Tidying data..."
+    cli::cli_progress_step(msg = status_msg,
+                           msg_done = paste(status_msg, "done"),
+                           msg_failed = paste(status_msg, "failed"))
     
-    # return data
-    data
+    data %>% tidy_referendums(tidy = tidy)
   },
-  .use_cache = use_cache,
-  .cache_lifespan = cache_lifespan,
-  .pkg = pkg)
+  pkg = this_pkg,
+  from_fn = "referendums",
+  is_draft,
+  country_code,
+  subnational_entity_name,
+  municipality,
+  level,
+  type,
+  date,
+  date_time_created_min,
+  date_time_created_max,
+  query_filter,
+  tidy,
+  use_cache = use_cache,
+  cache_lifespan = cache_lifespan)
+  
+  # exclude `archive` if requested
+  if (!incl_archive) result %<>% dplyr::select(-any_of("archive"))
+  
+  result
 }
 ```
 
@@ -2916,11 +3065,22 @@ validate_referendums <- function(data,
   checkmate::assert_flag(check_id_sudd_prefix)
   
   # check columns
+  status_msg <- "Checking basic column validity..."
+  cli_progress_id <- cli::cli_progress_step(msg = status_msg,
+                                            msg_done = paste(status_msg, "done"),
+                                            msg_failed = paste(status_msg, "failed"))
+  
   assert_cols_valid(data = data,
-                    action = cli::cli_alert_warning)
+                    action = cli::cli_alert_warning,
+                    cli_progress_id = cli_progress_id)
   
   # check applicability constraints
   if (check_applicability_constraint) {
+    
+    status_msg <- "Asserting applicability constraints..."
+    cli::cli_progress_step(msg = status_msg,
+                           msg_done = paste(status_msg, "done"),
+                           msg_failed = paste(status_msg, "failed"))
     
     v_names_violated <-
       data_codebook %>%
@@ -2944,6 +3104,7 @@ validate_referendums <- function(data,
     
     if (n_v_names_violated) {
       
+      cli::cli_progress_done(result = "failed")
       cli::cli_alert_warning("Applicability constraints are violated for {n_v_names_violated} variable{?s}:")
       
       paste0("{.var ", v_names_violated, "}") %>%
@@ -2953,26 +3114,34 @@ validate_referendums <- function(data,
       
       first_v_name_violated <- v_names_violated[1L]
       
-      cli::cli_text("To get the applicability constraint of e.g. {.var {first_v_name_violated}}, run:")
-      cat("\n")
-      cli::cli_code(c("data_codebook %>%",
-                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
-                      "  applicability_constraint"))
-      cat("\n")
-      cli::cli_text("To inspect the entries in violation of the above applicability constraint, run:")
-      cat("\n")
-      cli::cli_code(c("data_codebook %>%",
-                      glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
-                      "  dplyr::filter(.data = data,",
-                      "                !eval(parse(text = applicability_constraint))) %$%",
-                      glue::glue("  {first_v_name_violated}")))
+      cli::cli({
+        cli::cli_text("\nTo get the applicability constraint of e.g. {.var {first_v_name_violated}}, run:")
+        cli::cli_text("")
+        cli::cli_code(c("data_codebook %>%",
+                        glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
+                        "  applicability_constraint"))
+        cli::cli_text("")
+        cli::cli_text("To inspect the entries in violation of the above applicability constraint, run:")
+        cli::cli_text("")
+        cli::cli_code(c("data_codebook %>%",
+                        glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
+                        "  dplyr::filter(.data = data,",
+                        "                !eval(parse(text = applicability_constraint))) %$%",
+                        glue::glue("  {first_v_name_violated}")))
+      })
     }
   }
   
   # check `id_sudd` prefix if requested
   if (check_id_sudd_prefix) {
     
+    status_msg <- "Validating `id_sudd` prefixes..."
+    cli::cli_progress_step(msg = status_msg,
+                           msg_done = paste(status_msg, "done"),
+                           msg_failed = paste(status_msg, "failed"))
+    
     if (!all(c("country_code", "id_sudd") %in% colnames(data))) {
+      cli::cli_progress_done(result = "failed")
       cli::cli_abort("Columns {.var country_code} and {.var id_sudd} must be present in {.arg data}.")
     }
     
@@ -2986,7 +3155,10 @@ validate_referendums <- function(data,
     )
     
     # assemble target country codes
-    country_codes <- data$country_code %>% as.list()
+    country_codes <-
+      data$country_code %>%
+      as.character() %>%
+      as.list()
     
     for (country_code in allowed_exceptions$country_code) {
       
@@ -2995,7 +3167,8 @@ validate_referendums <- function(data,
         dplyr::filter(country_code == !!country_code) %$%
         id_sudd_prefix %>%
         stringr::str_to_upper()
-      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code == .x) %>% which()
+      
+      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code %in% .x) %>% which()
       
       for (i in i_country_codes) {
         country_codes[[i]] <- unique(c(country_codes[[i]], additional_country_codes))
@@ -3716,14 +3889,6 @@ list_sudd_referendums <- function(mode = c("by_date",
 
 ## `sudd_referendums`
 
-TODO: Properly parse remaining exotic cols:
-
-``` {.r}
-data_sudd <- readr::read_rds(file = "data_sudd.rds")
-affected_cols <- data_sudd %>% colnames() %>% stringr::str_subset("[A-Z]") %>% sort()
-data_sudd %>% dplyr::filter(dplyr::if_any(.cols = all_of(affected_cols), .fns = ~ !is.na(.x))) %$% id_sudd
-```
-
 NOTES:
 
 -   The `@importFrom rlang :=` directive is to get rid of the R CMD check `no visible global function definition for ‘:=’`, see [this SO
@@ -3742,6 +3907,8 @@ NOTES:
 #'
 #' @param ids_sudd The referendum identifiers assigned by [sudd.ch](https://sudd.ch/). Either as a character vector or a data frame containing a column
 #'   `id_sudd`. `NA`s are ignored.
+#' @param use_cache `r pkgsnip::param_label("use_cache")`
+#' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
 #'
 #' @return `r pkgsnip::return_label("data")` The column names are aligned with those of [referendums()] as closely as possible.
 #' @family sudd
@@ -3752,69 +3919,82 @@ NOTES:
 #' c2d::referendum(id = "5bbc045192a21351232e596f")$id_sudd |> c2d::sudd_referendums()
 #' 
 #' c2d::referendums(country_code = "AT") |> c2d::sudd_referendums()
-sudd_referendums <- function(ids_sudd) {
- 
-  if (!rlang::is_atomic(ids_sudd)) {
+sudd_referendums <- function(ids_sudd,
+                             use_cache = TRUE,
+                             cache_lifespan = "1 week") {
+  
+  pkgpins::with_cache(expr = {
     
-    if (!("id_sudd" %in% colnames(ids_sudd))) {
-      cli::cli_abort(paste0("{.arg ids_sudd} must be either a character vector of valid sudd.ch referendum identifiers or a data frame with a column of such ",
-                            "named {.var id_sudd}."))
+    checkmate::assert_flag(use_cache)
+    
+    if (purrr::vec_depth(ids_sudd) > 1L) {
+      
+      if (!("id_sudd" %in% colnames(ids_sudd))) {
+        cli::cli_abort(paste0("{.arg ids_sudd} must be either a character vector of valid sudd.ch referendum identifiers or a data frame with a column of such",
+                              " named {.var id_sudd}."))
+      }
+      
+      ids_sudd <- ids_sudd$id_sudd
     }
     
-    ids_sudd <- ids_sudd$id_sudd
-  }
-  
-  ids_sudd %<>% magrittr::extract(!is.na(.))
-  
-  ids_sudd %>%
-    purrr::map_dfr(sudd_referendum) %>%
-    # properly parse `date`
-    dplyr::bind_cols(.$date %>% purrr::map_dfr(parse_sudd_date)) %>%
-    dplyr::mutate(date = lubridate::make_date(year = year,
-                                              month = month,
-                                              day = day)) %>%
-    # add `id_sudd`
-    tibble::add_column(id_sudd = ids_sudd,
-                       .before = 1L) %>%
-    # derive vx from `id_sudd`
-    dplyr::bind_cols(ids_sudd %>% purrr::map_dfr(parse_sudd_id)) %>%
-    # reorder columns
-    dplyr::relocate(id_sudd,
-                    country_code,
-                    country_code_historical,
-                    country_name,
-                    territory_name_de,
-                    any_of(c("territory_type_de",
-                             "date",
-                             "year",
-                             "month",
-                             "day",
-                             "title_de",
-                             "question_type_de",
-                             "types",
-                             "result_de",
-                             "result_status_de",
-                             "adoption_requirements_de",
-                             "electorate_total",
-                             "electorate_abroad",
-                             "polling_cards",
-                             "votes_total",
-                             "votes_empty",
-                             "votes_void",
-                             "votes_invalid",
-                             "votes_valid",
-                             "votes_yes",
-                             "votes_no")),
-                    matches("^votes_(option_\\d+|(counter_)?proposal)(_(total|empty|void|invalid|valid|yes|no))?$"),
-                    any_of("votes_option_none"),
-                    matches("^$"),
-                    any_of(c("subterritories",
-                             "subterritories_yes",
-                             "subterritories_no",
-                             "files",
-                             "remarks",
-                             "sources",
-                             "ids_sudd_simultaneous",
-                             "date_last_edited")))
+    ids_sudd <- ids_sudd[!is.na(ids_sudd)]
+    
+    purrr::map_dfr(cli::cli_progress_along(x = ids_sudd,
+                                           name = "Scraping referendum data from sudd.ch"),
+                   ~ sudd_referendum(ids_sudd[.x])) %>%
+      # properly parse `date`
+      dplyr::bind_cols(.$date %>% purrr::map_dfr(parse_sudd_date)) %>%
+      dplyr::mutate(date = lubridate::make_date(year = year,
+                                                month = month,
+                                                day = day)) %>%
+      # add `id_sudd`
+      tibble::add_column(id_sudd = ids_sudd,
+                         .before = 1L) %>%
+      # derive vx from `id_sudd`
+      dplyr::bind_cols(ids_sudd %>% purrr::map_dfr(parse_sudd_id)) %>%
+      # reorder columns
+      dplyr::relocate(id_sudd,
+                      country_code,
+                      country_code_historical,
+                      country_name,
+                      territory_name_de,
+                      any_of(c("territory_type_de",
+                               "date",
+                               "year",
+                               "month",
+                               "day",
+                               "title_de",
+                               "question_type_de",
+                               "types",
+                               "result_de",
+                               "result_status_de",
+                               "adoption_requirements_de",
+                               "electorate_total",
+                               "electorate_abroad",
+                               "polling_cards",
+                               "votes_total",
+                               "votes_empty",
+                               "votes_void",
+                               "votes_invalid",
+                               "votes_valid",
+                               "votes_yes",
+                               "votes_no")),
+                      matches("^votes_(option_\\d+|(counter_)?proposal)(_(total|empty|void|invalid|valid|yes|no))?$"),
+                      any_of("votes_option_none"),
+                      matches("^$"),
+                      any_of(c("subterritories",
+                               "subterritories_yes",
+                               "subterritories_no",
+                               "files",
+                               "remarks",
+                               "sources",
+                               "ids_sudd_simultaneous",
+                               "date_last_edited")))
+  },
+  pkg = this_pkg,
+  from_fn = "sudd_referendums",
+  ids_sudd,
+  use_cache = use_cache,
+  cache_lifespan = cache_lifespan)
 }
 ```

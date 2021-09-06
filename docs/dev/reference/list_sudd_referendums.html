@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9018</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9019</span>
       </span>
     </div>
 
@@ -182,20 +182,20 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># list all referendums by modification date</span>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"by_mod_date"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3,020 × 12</span>
-#&gt;    id_sudd  country_code country_name   country_code_historical is_past_jurisdi…
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>           
-#&gt; <span style='color: #BCBCBC;'> 1</span> fr021793 FR           France         <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #BCBCBC;'> 2</span> fr031798 FR           France         <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #BCBCBC;'> 3</span> gu011946 GU           Guam           <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #BCBCBC;'> 4</span> gu011982 GU           Guam           <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #BCBCBC;'> 5</span> gu021982 GU           Guam           <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #BCBCBC;'> 6</span> lv012008 LV           Latvia         <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #BCBCBC;'> 7</span> lv012012 LV           Latvia         <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #BCBCBC;'> 8</span> as011966 AS           American Samoa <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #BCBCBC;'> 9</span> as011970 AS           American Samoa <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #BCBCBC;'>10</span> as021970 AS           American Samoa <span style='color: #BB0000;'>NA</span>                      FALSE           
-#&gt; <span style='color: #949494;'># … with 3,010 more rows, and 7 more variables: territory_name_de &lt;chr&gt;,</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3,023 × 12</span>
+#&gt;    id_sudd  country_code country_name country_code_historical is_past_jurisdict…
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>             
+#&gt; <span style='color: #BCBCBC;'> 1</span> ch092021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 2</span> ch102021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 3</span> sm012021 SM           San Marino   <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 4</span> fr021793 FR           France       <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 5</span> fr031798 FR           France       <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 6</span> gu011946 GU           Guam         <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 7</span> gu011982 GU           Guam         <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 8</span> gu021982 GU           Guam         <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 9</span> lv012008 LV           Latvia       <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'>10</span> lv012012 LV           Latvia       <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #949494;'># … with 3,013 more rows, and 7 more variables: territory_name_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   date &lt;date&gt;, year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   date_last_edited &lt;date&gt;</span></div><div class='input'>
 <span class='co'># list all referendums whose title matches "AHV"</span>
@@ -225,7 +225,7 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"filter"</span>,
                            filter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>year_min <span class='op'>=</span> <span class='fl'>2020</span><span class='op'>)</span><span class='op'>)</span> |&gt;
   <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_referendums.html'>sudd_referendums</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 73 × 37</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 76 × 37</span>
 #&gt;    id_sudd  country_code country_code_historical country_name       territory_name_…
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           
 #&gt; <span style='color: #BCBCBC;'> 1</span> ch012020 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland        Schweiz         
@@ -238,7 +238,7 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 #&gt; <span style='color: #BCBCBC;'> 8</span> ru032020 RU           <span style='color: #BB0000;'>NA</span>                      Russian Federation Russland        
 #&gt; <span style='color: #BCBCBC;'> 9</span> ru042020 RU           <span style='color: #BB0000;'>NA</span>                      Russian Federation Russland        
 #&gt; <span style='color: #BCBCBC;'>10</span> ru052020 RU           <span style='color: #BB0000;'>NA</span>                      Russian Federation Russland        
-#&gt; <span style='color: #949494;'># … with 63 more rows, and 32 more variables: territory_type_de &lt;chr&gt;,</span>
+#&gt; <span style='color: #949494;'># … with 66 more rows, and 32 more variables: territory_type_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   date &lt;date&gt;, year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   question_type_de &lt;chr&gt;, types &lt;list&gt;, result_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   result_status_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;,</span>
@@ -248,21 +248,21 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='co'># get sudd.ch referendum data from five randomly picked referendums</span>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"random"</span><span class='op'>)</span> |&gt;
   <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_referendums.html'>sudd_referendums</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 31</span>
-#&gt;   id_sudd  country_code country_code_historical country_name  territory_name_de 
-#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>             
-#&gt; <span style='color: #BCBCBC;'>1</span> cl011817 CL           <span style='color: #BB0000;'>NA</span>                      Chile         Chile             
-#&gt; <span style='color: #BCBCBC;'>2</span> it011860 IT           <span style='color: #BB0000;'>NA</span>                      Italy         Emilia (Italien)  
-#&gt; <span style='color: #BCBCBC;'>3</span> li011922 LI           <span style='color: #BB0000;'>NA</span>                      Liechtenstein Liechtenstein     
-#&gt; <span style='color: #BCBCBC;'>4</span> ph011990 PH           <span style='color: #BB0000;'>NA</span>                      Philippines   Cordilleras (Phil…
-#&gt; <span style='color: #BCBCBC;'>5</span> cl012017 CL           <span style='color: #BB0000;'>NA</span>                      Chile         Osterinsel (Rapa …
-#&gt; <span style='color: #949494;'># … with 26 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 29</span>
+#&gt;   id_sudd  country_code country_code_historical country_name    territory_name_…
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           
+#&gt; <span style='color: #BCBCBC;'>1</span> us031836 US           <span style='color: #BB0000;'>NA</span>                      United States   Republik Texas …
+#&gt; <span style='color: #BCBCBC;'>2</span> ma011962 MA           <span style='color: #BB0000;'>NA</span>                      Morocco         Marokko         
+#&gt; <span style='color: #BCBCBC;'>3</span> mp291985 MP           <span style='color: #BB0000;'>NA</span>                      Northern Maria… Nördliche Maria…
+#&gt; <span style='color: #BCBCBC;'>4</span> ma011992 MA           <span style='color: #BB0000;'>NA</span>                      Morocco         Marokko         
+#&gt; <span style='color: #BCBCBC;'>5</span> rw012003 RW           <span style='color: #BB0000;'>NA</span>                      Rwanda          Ruanda          
+#&gt; <span style='color: #949494;'># … with 24 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;, question_type_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;, votes_total &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_void &lt;int&gt;, votes_invalid &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_option_2 &lt;int&gt;, files &lt;list&gt;, remarks &lt;list&gt;, sources &lt;list&gt;, …</span></div></pre>
+#&gt; <span style='color: #949494;'>#   votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   subterritories &lt;dbl&gt;, subterritories_yes &lt;dbl&gt;, subterritories_no &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   remarks &lt;list&gt;, sources &lt;list&gt;, ids_sudd_simultaneous &lt;list&gt;, …</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
