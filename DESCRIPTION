@@ -24,7 +24,7 @@ License: AGPL (>= 3)
 URL: https://rpkg.dev/c2d, https://gitlab.com/zdaarau/rpkgs/c2d
 BugReports: https://gitlab.com/zdaarau/rpkgs/c2d/issues
 Depends: 
-    R (>= 3.5.0)
+    R (>= 4.1)
 Imports: 
     checkmate (>= 2.0.0),
     cli (>= 3.0.0),
