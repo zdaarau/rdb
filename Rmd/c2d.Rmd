@@ -607,6 +607,7 @@ country_code_to_name <- function(country_code,
 derive_country_vx <- function(country_code,
                               date) {
   
+  pal::assert_pkg("assertr")
   country_code %<>% as.character()
   
   data_historical <-
