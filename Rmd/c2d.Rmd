@@ -3732,6 +3732,8 @@ list_sudd_titles <- function() {
 #'   matching](https://en.wikipedia.org/wiki/Approximate_string_matching) is supported.
 #' - `year_min`: The lower year limit of the referendums' `date`. A positive integer.
 #' - `year_max`: The upper year limit of the referendums' `date`. A positive integer.
+#' @param use_cache `r pkgsnip::param_label("use_cache")`
+#' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
 #'
 #' @return A [tibble][tibble::tbl_df] containing at least an `id_sudd` column.
 #' @family sudd
@@ -3762,7 +3764,9 @@ list_sudd_referendums <- function(mode = c("by_date",
                                   filter = list(territory_name_de = NULL,
                                                 title_de = NULL,
                                                 year_min = NULL,
-                                                year_max = NULL)) {
+                                                year_max = NULL),
+                                  use_cache = TRUE,
+                                  cache_lifespan = "1 week") {
   # check args
   mode <- rlang::arg_match(mode)
   order <-
@@ -3770,121 +3774,134 @@ list_sudd_referendums <- function(mode = c("by_date",
     dplyr::recode("ascending" = "asc",
                   "descending" = "desc")
   
-  checkmate::assert_list(filter,
-                         names = "unique")
+  # do not cache `mode = "random"`
+  if (mode == "random") use_cache <- FALSE
   
-  checkmate::assert_subset(names(filter),
-                           choices = c("territory_name_de",
-                                       "title_de",
-                                       "year_min",
-                                       "year_max"))
-  
-  checkmate::assert_string(filter$territory_name_de,
-                           null.ok = TRUE)
-  checkmate::assert_string(filter$title_de,
-                           null.ok = TRUE)
-  
-  filter$year_min <- checkmate::assert_int(filter$year_min,
-                                           lower = sudd_min_year,
-                                           upper = sudd_max_year,
-                                           null.ok = TRUE,
-                                           coerce = TRUE)
-  filter$year_max <- checkmate::assert_int(filter$year_max,
-                                           lower = filter$year_min %||% sudd_min_year,
-                                           upper = sudd_max_year,
-                                           null.ok = TRUE,
-                                           coerce = TRUE)
-  
-  is_year_missing <- purrr::map_lgl(c(filter$year_min, filter$year_max), is.null) %>% {!all(.) && any(!.)}
-  
-  if (is_year_missing) {
-    filter$year_min <- filter$year_min %||% sudd_min_year
-    filter$year_max <- filter$year_max %||% sudd_max_year
-  }
-  
-  if (mode == "filter" && all(purrr::map_lgl(filter, is.null))) {
-    cli::cli_abort("At least one filtering argument must be provided in {.arg filter} when {.arg mode = \"filter\"}.")
-  }
-  
-  names(filter) %<>% dplyr::recode("territory_name_de" = "area",
-                                   "title_de" = "topic",
-                                   "year_min" = "first",
-                                   "year_max" = "last")
-  
-  # assemble query params
-  query <- c(list(mode = mode %>% dplyr::recode("by_date" = "allrefs",
-                                                "by_mod_date" = "moddate"))[mode != "filter"],
-             list(sense = order)[mode %in% c("by_date", "filter")],
-             filter[mode == "filter"])
-  
-  # retrieve and parse data
-  html <-
-    httr::RETRY(verb = "GET",
-                url = "https://sudd.ch/list.php",
-                query = query,
-                times = 5L) %>%
-    xml2::read_html()
-  
-  if (mode == "random") {
+  pkgpins::with_cache(expr = {
     
-    result <-
-      html %>%
-      rvest::html_elements(css = "main ul li a") %>%
-      rvest::html_attr(name = "href") %>%
-      stringr::str_extract(pattern = "(?<=id=)[\\w\\d]+") %>%
-      tibble::tibble(id_sudd = .)
+    checkmate::assert_list(filter,
+                           names = "unique")
     
-  } else {
+    checkmate::assert_subset(names(filter),
+                             choices = c("territory_name_de",
+                                         "title_de",
+                                         "year_min",
+                                         "year_max"))
     
-    rows <-
-      html %>%
-      rvest::html_element(css = "main table") %>%
-      rvest::html_children() %>%
-      purrr::map(rvest::html_elements,
-                 css = "td")
+    checkmate::assert_string(filter$territory_name_de,
+                             null.ok = TRUE)
+    checkmate::assert_string(filter$title_de,
+                             null.ok = TRUE)
     
-    col_1 <- rows %>% purrr::map(magrittr::extract2, 1L)
-    col_2 <- rows %>% purrr::map(magrittr::extract2, 2L)
-    col_3 <- rows %>% purrr::map(magrittr::extract2, 3L)
-    col_4 <- rows %>% purrr::map(magrittr::extract2, 4L)
+    filter$year_min <- checkmate::assert_int(filter$year_min,
+                                             lower = sudd_min_year,
+                                             upper = sudd_max_year,
+                                             null.ok = TRUE,
+                                             coerce = TRUE)
+    filter$year_max <- checkmate::assert_int(filter$year_max,
+                                             lower = filter$year_min %||% sudd_min_year,
+                                             upper = sudd_max_year,
+                                             null.ok = TRUE,
+                                             coerce = TRUE)
     
-    result <-
-      tibble::tibble(id_sudd = col_4 %>% purrr::map_chr(~ .x %>%
-                                                          rvest::html_element(css = "a") %>%
-                                                          rvest::html_attr(name = "href") %>%
-                                                          stringr::str_extract(pattern = "(?<=[\\?&]id=)[\\w\\d]+")),
-                     territory_name_de = col_2 %>% purrr::map_chr(rvest::html_text),
-                     !!!(col_3 %>% purrr::map_chr(rvest::html_text) %>% parse_sudd_date_de()),
-                     title_de = col_4 %>% purrr::map_chr(rvest::html_text)) %>%
-      # add `date`
-      dplyr::mutate(date = lubridate::make_date(year = year,
-                                                month = month,
-                                                day = day)) %>%
-      dplyr::relocate(date,
-                      .before = year)
+    is_year_missing <- purrr::map_lgl(c(filter$year_min, filter$year_max), is.null) %>% {!all(.) && any(!.)}
     
-    if (mode == "by_mod_date") {
-      
-      result %<>%
-        tibble::add_column(date_last_edited =
-                             col_1 %>%
-                             purrr::map_chr(~ .x %>%
-                                              rvest::html_element(css = "time") %>%
-                                              rvest::html_attr(name = "datetime")) %>%
-                             lubridate::as_date()) %>%
-        tidyr::fill(date_last_edited,
-                    .direction = "down")
+    if (is_year_missing) {
+      filter$year_min <- filter$year_min %||% sudd_min_year
+      filter$year_max <- filter$year_max %||% sudd_max_year
     }
-  }
-  
-  result %>%
-    # derive vx from `id_sudd`
-    dplyr::bind_cols(.$id_sudd %>% purrr::map_dfr(parse_sudd_id)) %>%
-    dplyr::mutate(is_past_jurisdiction = !is.na(country_code_historical)) %>%
-    dplyr::select(id_sudd,
-                  starts_with("country_"),
-                  is_past_jurisdiction,
-                  everything())
+    
+    if (mode == "filter" && all(purrr::map_lgl(filter, is.null))) {
+      cli::cli_abort("At least one filtering argument must be provided in {.arg filter} when {.arg mode = \"filter\"}.")
+    }
+    
+    names(filter) %<>% dplyr::recode("territory_name_de" = "area",
+                                     "title_de" = "topic",
+                                     "year_min" = "first",
+                                     "year_max" = "last")
+    
+    # assemble query params
+    query <- c(list(mode = mode %>% dplyr::recode("by_date" = "allrefs",
+                                                  "by_mod_date" = "moddate"))[mode != "filter"],
+               list(sense = order)[mode %in% c("by_date", "filter")],
+               filter[mode == "filter"])
+    
+    # retrieve and parse data
+    html <-
+      httr::RETRY(verb = "GET",
+                  url = "https://sudd.ch/list.php",
+                  query = query,
+                  times = 5L) %>%
+      xml2::read_html()
+    
+    if (mode == "random") {
+      
+      result <-
+        html %>%
+        rvest::html_elements(css = "main ul li a") %>%
+        rvest::html_attr(name = "href") %>%
+        stringr::str_extract(pattern = "(?<=id=)[\\w\\d]+") %>%
+        tibble::tibble(id_sudd = .)
+      
+    } else {
+      
+      rows <-
+        html %>%
+        rvest::html_element(css = "main table") %>%
+        rvest::html_children() %>%
+        purrr::map(rvest::html_elements,
+                   css = "td")
+      
+      col_1 <- rows %>% purrr::map(magrittr::extract2, 1L)
+      col_2 <- rows %>% purrr::map(magrittr::extract2, 2L)
+      col_3 <- rows %>% purrr::map(magrittr::extract2, 3L)
+      col_4 <- rows %>% purrr::map(magrittr::extract2, 4L)
+      
+      result <-
+        tibble::tibble(id_sudd = col_4 %>% purrr::map_chr(~ .x %>%
+                                                            rvest::html_element(css = "a") %>%
+                                                            rvest::html_attr(name = "href") %>%
+                                                            stringr::str_extract(pattern = "(?<=[\\?&]id=)[\\w\\d]+")),
+                       territory_name_de = col_2 %>% purrr::map_chr(rvest::html_text),
+                       !!!(col_3 %>% purrr::map_chr(rvest::html_text) %>% parse_sudd_date_de()),
+                       title_de = col_4 %>% purrr::map_chr(rvest::html_text)) %>%
+        # add `date`
+        dplyr::mutate(date = lubridate::make_date(year = year,
+                                                  month = month,
+                                                  day = day)) %>%
+        dplyr::relocate(date,
+                        .before = year)
+      
+      if (mode == "by_mod_date") {
+        
+        result %<>%
+          tibble::add_column(date_last_edited =
+                               col_1 %>%
+                               purrr::map_chr(~ .x %>%
+                                                rvest::html_element(css = "time") %>%
+                                                rvest::html_attr(name = "datetime")) %>%
+                               lubridate::as_date()) %>%
+          tidyr::fill(date_last_edited,
+                      .direction = "down")
+      }
+    }
+    
+    result %>%
+      # derive vx from `id_sudd`
+      dplyr::bind_cols(.$id_sudd %>% purrr::map_dfr(parse_sudd_id)) %>%
+      dplyr::mutate(is_past_jurisdiction = !is.na(country_code_historical)) %>%
+      dplyr::select(id_sudd,
+                    starts_with("country_"),
+                    is_past_jurisdiction,
+                    everything())
+  },
+  pkg = this_pkg,
+  from_fn = "list_sudd_referendums",
+  mode,
+  order,
+  filter,
+  use_cache = use_cache,
+  cache_lifespan = cache_lifespan)
 }
 ```
 
