@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9019</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9020</span>
       </span>
     </div>
 
@@ -132,7 +132,9 @@ function can be directly fed to <code><a href='sudd_referendums.html'>sudd_refer
   mode <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"by_date"</span>, <span class='st'>"by_mod_date"</span>, <span class='st'>"filter"</span>, <span class='st'>"random"</span><span class='op'>)</span>,
   order <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ascending"</span>, <span class='st'>"descending"</span><span class='op'>)</span>,
   filter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>territory_name_de <span class='op'>=</span> <span class='cn'>NULL</span>, title_de <span class='op'>=</span> <span class='cn'>NULL</span>, year_min <span class='op'>=</span> <span class='cn'>NULL</span>, year_max <span class='op'>=</span>
-    <span class='cn'>NULL</span><span class='op'>)</span>
+    <span class='cn'>NULL</span><span class='op'>)</span>,
+  use_cache <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  cache_lifespan <span class='op'>=</span> <span class='st'>"1 week"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -163,6 +165,14 @@ results via the <code>order</code> parameter is supported.</p></li>
 <li><p><code>year_max</code>: The upper year limit of the referendums' <code>date</code>. A positive integer.</p></li>
 </ul></td>
     </tr>
+    <tr>
+      <th>use_cache</th>
+      <td><p>Return cached results if possible. If <code>FALSE</code>, results are always newly fetched regardless of <code>cache_lifespan</code>.</p></td>
+    </tr>
+    <tr>
+      <th>cache_lifespan</th>
+      <td><p>The duration after which cached results are refreshed (i.e. newly fetched). A valid <a href='http://lubridate.tidyverse.org/reference/as.duration.html'>lubridate duration</a>. Only relevant if <code>use_cache = TRUE</code>.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -185,16 +195,16 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 3,023 × 12</span>
 #&gt;    id_sudd  country_code country_name country_code_historical is_past_jurisdict…
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>             
-#&gt; <span style='color: #BCBCBC;'> 1</span> ch092021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             
-#&gt; <span style='color: #BCBCBC;'> 2</span> ch102021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             
-#&gt; <span style='color: #BCBCBC;'> 3</span> sm012021 SM           San Marino   <span style='color: #BB0000;'>NA</span>                      FALSE             
-#&gt; <span style='color: #BCBCBC;'> 4</span> fr021793 FR           France       <span style='color: #BB0000;'>NA</span>                      FALSE             
-#&gt; <span style='color: #BCBCBC;'> 5</span> fr031798 FR           France       <span style='color: #BB0000;'>NA</span>                      FALSE             
-#&gt; <span style='color: #BCBCBC;'> 6</span> gu011946 GU           Guam         <span style='color: #BB0000;'>NA</span>                      FALSE             
-#&gt; <span style='color: #BCBCBC;'> 7</span> gu011982 GU           Guam         <span style='color: #BB0000;'>NA</span>                      FALSE             
-#&gt; <span style='color: #BCBCBC;'> 8</span> gu021982 GU           Guam         <span style='color: #BB0000;'>NA</span>                      FALSE             
-#&gt; <span style='color: #BCBCBC;'> 9</span> lv012008 LV           Latvia       <span style='color: #BB0000;'>NA</span>                      FALSE             
-#&gt; <span style='color: #BCBCBC;'>10</span> lv012012 LV           Latvia       <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 1</span> si012021 SI           Slovenia     <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 2</span> ch092021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 3</span> ch102021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 4</span> sm012021 SM           San Marino   <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 5</span> fr021793 FR           France       <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 6</span> fr031798 FR           France       <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 7</span> gu011946 GU           Guam         <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 8</span> gu011982 GU           Guam         <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'> 9</span> gu021982 GU           Guam         <span style='color: #BB0000;'>NA</span>                      FALSE             
+#&gt; <span style='color: #BCBCBC;'>10</span> lv012008 LV           Latvia       <span style='color: #BB0000;'>NA</span>                      FALSE             
 #&gt; <span style='color: #949494;'># … with 3,013 more rows, and 7 more variables: territory_name_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   date &lt;date&gt;, year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   date_last_edited &lt;date&gt;</span></div><div class='input'>
@@ -249,19 +259,19 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"random"</span><span class='op'>)</span> |&gt;
   <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_referendums.html'>sudd_referendums</a></span><span class='op'>(</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 29</span>
-#&gt;   id_sudd  country_code country_code_historical country_name    territory_name_…
-#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           
-#&gt; <span style='color: #BCBCBC;'>1</span> us031836 US           <span style='color: #BB0000;'>NA</span>                      United States   Republik Texas …
-#&gt; <span style='color: #BCBCBC;'>2</span> ma011962 MA           <span style='color: #BB0000;'>NA</span>                      Morocco         Marokko         
-#&gt; <span style='color: #BCBCBC;'>3</span> mp291985 MP           <span style='color: #BB0000;'>NA</span>                      Northern Maria… Nördliche Maria…
-#&gt; <span style='color: #BCBCBC;'>4</span> ma011992 MA           <span style='color: #BB0000;'>NA</span>                      Morocco         Marokko         
-#&gt; <span style='color: #BCBCBC;'>5</span> rw012003 RW           <span style='color: #BB0000;'>NA</span>                      Rwanda          Ruanda          
+#&gt;   id_sudd  country_code country_code_historical country_name  territory_name_de 
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>             
+#&gt; <span style='color: #BCBCBC;'>1</span> do011873 DO           <span style='color: #BB0000;'>NA</span>                      Dominican Re… Dominikanische Re…
+#&gt; <span style='color: #BCBCBC;'>2</span> nz011905 NZ           <span style='color: #BB0000;'>NA</span>                      New Zealand   Neuseeland        
+#&gt; <span style='color: #BCBCBC;'>3</span> vi011933 VI           <span style='color: #BB0000;'>NA</span>                      Virgin Islan… Amerikanische Jun…
+#&gt; <span style='color: #BCBCBC;'>4</span> ba021993 BA           <span style='color: #BB0000;'>NA</span>                      Bosnia and H… Republika Srpska …
+#&gt; <span style='color: #BCBCBC;'>5</span> md012006 MD           <span style='color: #BB0000;'>NA</span>                      Moldova, Rep… Transnistrische M…
 #&gt; <span style='color: #949494;'># … with 24 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;, question_type_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;, votes_total &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   subterritories &lt;dbl&gt;, subterritories_yes &lt;dbl&gt;, subterritories_no &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_option_1 &lt;int&gt;, votes_option_2 &lt;int&gt;, votes_option_3 &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   remarks &lt;list&gt;, sources &lt;list&gt;, ids_sudd_simultaneous &lt;list&gt;, …</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
