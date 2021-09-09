@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9020</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9021</span>
       </span>
     </div>
 
@@ -258,21 +258,21 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='co'># get sudd.ch referendum data from five randomly picked referendums</span>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"random"</span><span class='op'>)</span> |&gt;
   <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_referendums.html'>sudd_referendums</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 29</span>
-#&gt;   id_sudd  country_code country_code_historical country_name  territory_name_de 
-#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>             
-#&gt; <span style='color: #BCBCBC;'>1</span> do011873 DO           <span style='color: #BB0000;'>NA</span>                      Dominican Re… Dominikanische Re…
-#&gt; <span style='color: #BCBCBC;'>2</span> nz011905 NZ           <span style='color: #BB0000;'>NA</span>                      New Zealand   Neuseeland        
-#&gt; <span style='color: #BCBCBC;'>3</span> vi011933 VI           <span style='color: #BB0000;'>NA</span>                      Virgin Islan… Amerikanische Jun…
-#&gt; <span style='color: #BCBCBC;'>4</span> ba021993 BA           <span style='color: #BB0000;'>NA</span>                      Bosnia and H… Republika Srpska …
-#&gt; <span style='color: #BCBCBC;'>5</span> md012006 MD           <span style='color: #BB0000;'>NA</span>                      Moldova, Rep… Transnistrische M…
-#&gt; <span style='color: #949494;'># … with 24 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 36</span>
+#&gt;   id_sudd  country_code country_code_historical country_name territory_name_de
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>            
+#&gt; <span style='color: #BCBCBC;'>1</span> za011908 ZA           <span style='color: #BB0000;'>NA</span>                      South Africa Natal (Südafrika)
+#&gt; <span style='color: #BCBCBC;'>2</span> dk041963 DK           <span style='color: #BB0000;'>NA</span>                      Denmark      Dänemark         
+#&gt; <span style='color: #BCBCBC;'>3</span> ch041988 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland  Schweiz          
+#&gt; <span style='color: #BCBCBC;'>4</span> ch091992 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland  Schweiz          
+#&gt; <span style='color: #BCBCBC;'>5</span> pr012005 PR           <span style='color: #BB0000;'>NA</span>                      Puerto Rico  Puerto Rico      
+#&gt; <span style='color: #949494;'># … with 31 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;, question_type_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;, votes_total &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_option_1 &lt;int&gt;, votes_option_2 &lt;int&gt;, votes_option_3 &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   remarks &lt;list&gt;, sources &lt;list&gt;, ids_sudd_simultaneous &lt;list&gt;, …</span></div></pre>
+#&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, votes_total &lt;int&gt;, votes_empty &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_void &lt;int&gt;, votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;, votes_option_2 &lt;int&gt;, …</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

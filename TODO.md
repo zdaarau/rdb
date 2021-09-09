@@ -300,9 +300,9 @@
 
     -   oder -- falls *Direct Democracy* vermieden werden soll im Namen (bspw. wegen [starker Vereinnahmung durch politische
         Bewegungen](https://en.wikipedia.org/wiki/Direct_democracy_(disambiguation))) -- **RDB** für ***R**eferendum **D**ata**b**ase*. Die Domain `rdb.vote`
-        wäre noch zu haben (USD 95.34/Jahr). Im Politik-Bereich ist `RDB` bislang kaum besetzt; alles ziemlich unverfänglich, wofür RDB [international
-        steht](https://en.wikipedia.org/wiki/RDB); auch im [deutschsprachigen Raum](https://de.wikipedia.org/wiki/RDB) gibt es keine problematische Konkurrenz
-        (am ehesten noch [diese Rechtsdatenbank](https://rdb.manz.at/)).
+        wäre noch zu haben (USD 95.34/Jahr), wie auch `rdb.report` (USD 26.96/Jahr) für den Jahresbericht. Im Politik-Bereich ist `RDB` bislang kaum besetzt;
+        alles ziemlich unverfänglich, wofür RDB [international steht](https://en.wikipedia.org/wiki/RDB); auch im [deutschsprachigen
+        Raum](https://de.wikipedia.org/wiki/RDB) gibt es keine problematische Konkurrenz (am ehesten noch [diese Rechtsdatenbank](https://rdb.manz.at/)).
 
     Die alte Domain `c2d.ch` könnten wir einige Jahre weiter halten und einfach auf die neue umleiten.
 

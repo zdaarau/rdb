@@ -103,8 +103,8 @@ utils::globalVariables(names = c(".",
 #' @param date_time_created_max The maximum `date_time_created` to be included. A [date][base::Date], a [datetime][base::DateTimeClasses], or something
 #'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`).
 #' @param query_filter A valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents) which allows for
-#'   maximum control over what data is included. This takes precedence over all the other parameters, i.e. if `query_filter` is provided, the parameters
-#'   ``r formals(assemble_query_filter) %>% names() %>% setdiff(c("query_filter", "base64_encode")) %>% pal::prose_ls(wrap = "`")`` are ignored.
+#' maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if `query_filter` is provided, the
+#' parameters `r formals(assemble_query_filter) %>% names() %>% setdiff(c("query_filter", "base64_encode")) %>% pal::prose_ls(wrap = "\x60")` are ignored.
 #' @param base64_encode Whether or not to [Base64](https://en.wikipedia.org/wiki/Base64)-encode the resulting query filter document. Note that the
 #'   `query_filter` argument provided to other functions of this package must be Base64-encoded.
 #'
@@ -625,7 +625,7 @@ tidy_date <- function(x) {
 #'
 #' @param data The MongoDB data as a list (converted from the JSON returned by the C2D API using [jsonlite::fromJSON()]).
 #' @param tidy Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If `FALSE`, the raw MongoDB
-#'   referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the 
+#'   referendum data will only be modified just enough to be able to return it as a [tibble][tibble::tbl_df]. Note that untidy data doesn't conform to the 
 #'   [codebook][data_codebook] (i.a. different variable names).
 #'
 #' @return `r pkgsnip::return_label("data")`
@@ -2023,11 +2023,11 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
 #'
 #' Downloads the referendum data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
 #'
-#' @param use_cache `r pkgsnip::param_label("use_cache")`
-#' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
-#' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the C2D database.
 #' @inheritParams assemble_query_filter
 #' @inheritParams tidy_referendums
+#' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the C2D database.
+#' @param use_cache `r pkgsnip::param_label("use_cache")`
+#' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @family referendum
@@ -2045,20 +2045,20 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
 #' # provide custom `query_filter` for more complex queries like regex matches
 #' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
 #' c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')
-referendums <- function(use_cache = TRUE,
-                        cache_lifespan = "1 week",
-                        incl_archive = FALSE,
-                        is_draft = FALSE,
-                        country_code = NULL,
+referendums <- function(country_code = NULL,
                         subnational_entity_name = NULL,
                         municipality = NULL,
                         level = NULL,
                         type = NULL,
                         date = NULL,
+                        is_draft = FALSE,
                         date_time_created_min = NULL,
                         date_time_created_max = NULL,
                         query_filter = NULL,
-                        tidy = TRUE) {
+                        incl_archive = FALSE,
+                        tidy = TRUE,
+                        use_cache = TRUE,
+                        cache_lifespan = "1 week") {
   
   checkmate::assert_flag(incl_archive)
   
@@ -3090,7 +3090,7 @@ list_sudd_referendums <- function(mode = c("by_date",
                                              null.ok = TRUE,
                                              coerce = TRUE)
     
-    is_year_missing <- purrr::map_lgl(c(filter$year_min, filter$year_max), is.null) %>% {!all(.) && any(!.)}
+    is_year_missing <- purrr::map_lgl(c(filter$year_min, filter$year_max), is.null) %>% { !all(.) && any(!.) }
     
     if (is_year_missing) {
       filter$year_min <- filter$year_min %||% sudd_min_year

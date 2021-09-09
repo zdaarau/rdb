@@ -12,7 +12,7 @@ referendum(id, incl_archive = FALSE, tidy = TRUE)
 \item{incl_archive}{Whether or not to include an \code{archive} column containing data from an earlier, obsolete state of the C2D database.}
 
 \item{tidy}{Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If \code{FALSE}, the raw MongoDB
-referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the
+referendum data will only be modified just enough to be able to return it as a \link[tibble:tbl_df-class]{tibble}. Note that untidy data doesn't conform to the
 \link[=data_codebook]{codebook} (i.a. different variable names).}
 }
 \value{

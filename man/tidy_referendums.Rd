@@ -10,7 +10,7 @@ tidy_referendums(data, tidy = TRUE)
 \item{data}{The MongoDB data as a list (converted from the JSON returned by the C2D API using \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}}).}
 
 \item{tidy}{Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If \code{FALSE}, the raw MongoDB
-referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the
+referendum data will only be modified just enough to be able to return it as a \link[tibble:tbl_df-class]{tibble}. Note that untidy data doesn't conform to the
 \link[=data_codebook]{codebook} (i.a. different variable names).}
 }
 \value{

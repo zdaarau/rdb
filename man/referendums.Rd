@@ -5,32 +5,23 @@
 \title{Get referendum data}
 \usage{
 referendums(
-  use_cache = TRUE,
-  cache_lifespan = "1 week",
-  incl_archive = FALSE,
-  is_draft = FALSE,
   country_code = NULL,
   subnational_entity_name = NULL,
   municipality = NULL,
   level = NULL,
   type = NULL,
   date = NULL,
+  is_draft = FALSE,
   date_time_created_min = NULL,
   date_time_created_max = NULL,
   query_filter = NULL,
-  tidy = TRUE
+  incl_archive = FALSE,
+  tidy = TRUE,
+  use_cache = TRUE,
+  cache_lifespan = "1 week"
 )
 }
 \arguments{
-\item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{cache_lifespan}.}
-
-\item{cache_lifespan}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Only relevant if \code{use_cache = TRUE}.}
-
-\item{incl_archive}{Whether or not to include an \code{archive} column containing data from an earlier, obsolete state of the C2D database.}
-
-\item{is_draft}{\code{TRUE} means to include only referendum entries with \emph{draft} status, \code{FALSE} to include only normal entries. Set to \code{NULL} in order to
-include both draft and normal entries.}
-
 \item{country_code}{The \code{country_code}(s) to be included. A character vector.}
 
 \item{subnational_entity_name}{The \code{subnational_entity_name}(s) to be included. A character vector.}
@@ -43,6 +34,9 @@ include both draft and normal entries.}
 
 \item{date}{The \code{date}(s) to be included. A character vector.}
 
+\item{is_draft}{\code{TRUE} means to include only referendum entries with \emph{draft} status, \code{FALSE} to include only normal entries. Set to \code{NULL} in order to
+include both draft and normal entries.}
+
 \item{date_time_created_min}{The minimum \code{date_time_created} to be included. A \link[base:Dates]{date}, a \link[base:DateTimeClasses]{datetime}, or something
 coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
 
@@ -50,12 +44,18 @@ coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
 coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
 
 \item{query_filter}{A valid \href{https://docs.mongodb.com/manual/core/document/#query-filter-documents}{MongoDB JSON query filter document} which allows for
-maximum control over what data is included. This takes precedence over all the other parameters, i.e. if \code{query_filter} is provided, the parameters
-\code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date}, \code{is_draft}, \code{date_time_created_min} and \code{date_time_created_max})`` are ignored.}
+maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if \code{query_filter} is provided, the
+parameters \code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date}, \code{is_draft}, \code{date_time_created_min} and \code{date_time_created_max} are ignored.}
+
+\item{incl_archive}{Whether or not to include an \code{archive} column containing data from an earlier, obsolete state of the C2D database.}
 
 \item{tidy}{Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If \code{FALSE}, the raw MongoDB
-referendum data will only be modified just enough to be able to return it as a tibble. Note that the latter doesn't conform to the
+referendum data will only be modified just enough to be able to return it as a \link[tibble:tbl_df-class]{tibble}. Note that untidy data doesn't conform to the
 \link[=data_codebook]{codebook} (i.a. different variable names).}
+
+\item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{cache_lifespan}.}
+
+\item{cache_lifespan}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Only relevant if \code{use_cache = TRUE}.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
