@@ -795,8 +795,6 @@ tidy_referendums <- function(data,
             stringr::str_sub(end = 8L),
           
           ### split `tags` into separate per-tier vars
-          #### WORKAROUND for <https://github.com/ccmdesign/c2d-app/issues/53>
-          tags = clean_tags(tags),
           tags_tier_1 = tags %>% purrr::map(infer_tags,
                                             tier = 1L),
           tags_tier_2 = tags %>% purrr::map(infer_tags,
@@ -1741,21 +1739,6 @@ sudd_referendum <- function(id_sudd) {
                                        ~ "PARSING ERROR; PLEASE DEBUG"
                                      ))
                   })
-}
-
-clean_tags <- function(tags) {
-  
-  tags %>% purrr::map(~ .x %>% dplyr::recode("swiss abroad" = "Swiss abroad",
-                                             "eu" = "EU",
-                                             "territoral questions" = "territorial questions",
-                                             "citizen's initiatives" = "citizens' initiatives",
-                                             "religion - churches" = "religion, churches",
-                                             "european policy" = "European policy",
-                                             "armed forces - general" = "armed forces in general",
-                                             "other european organisations" = "other European organisations",
-                                             "un" = "UN",
-                                             "efta" = "EFTA",
-                                             "eea" = "EEA"))
 }
 
 restore_tags <- function(tags_tier_1,
