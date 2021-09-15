@@ -373,6 +373,8 @@ assert_cols_valid <- function(data,
 #' By default, the `email` and `password` are read from the first element of the R option `c2d.credentials` (a named character vector where names are e-mail
 #' addresses and values are passwords).
 #'
+#' User session tokens expire automatically after 15 days of inactivity.
+#'
 #' @param email The e-mail address of the user for which a session should be created. A character scalar.
 #' @param password The password of the user for which a session should be created. A character scalar.
 #'
@@ -393,10 +395,10 @@ auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
   token <- tokens %>% dplyr::filter(email == !!email)
   if (nrow(token)) token %<>% dplyr::filter(date_time_last_active == max(date_time_last_active))
   
-  # ensure token is not expired (checked if older than 1 day), else set to `NULL`
+  # ensure token is not expired (checked if older than 14 days), else set to `NULL`
   if (nrow(token) &&
       checkmate::test_string(token$token, min.chars = 1L) &&
-      ((token$date_time_last_active > (lubridate::now() - lubridate::duration(1L, units = "days"))) || !is_session_expired(token$token))) {
+      ((token$date_time_last_active > (lubridate::now() - lubridate::duration(14L, units = "days"))) || !is_session_expired(token$token))) {
     
     token <- token$token
     
@@ -547,10 +549,10 @@ is_session_expired <- function(token) {
   
   response <-
     httr::RETRY(verb = "GET",
-              url = "https://services.c2d.ch/users/profile",
-              config = httr::add_headers(Authorization = paste("Bearer", token),
-                                         Connection = "keep-alive"),
-              times = 5L) %>%
+                url = "https://services.c2d.ch/users/profile",
+                config = httr::add_headers(Authorization = paste("Bearer", token),
+                                           Connection = "keep-alive"),
+                times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
                           msg_suffix = mime_error_suffix) %>%

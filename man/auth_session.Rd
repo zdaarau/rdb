@@ -24,5 +24,7 @@ Creates a new user session token if necessary. The token is stored in the R opti
 \details{
 By default, the \code{email} and \code{password} are read from the first element of the R option \code{c2d.credentials} (a named character vector where names are e-mail
 addresses and values are passwords).
+
+User session tokens expire automatically after 15 days of inactivity.
 }
 \keyword{internal}
