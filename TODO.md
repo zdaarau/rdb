@@ -81,8 +81,6 @@
 
     -\> see [issue \#44](https://github.com/ccmdesign/c2d-app/issues/44)
 
-## Internal (at least for now)
-
 -   Rethink standardization of `country_name`. Current problem: standardization happens only when creating/editing entries. Thus, it's not consistent, e.g. for
     `country_code == "GB"` there are entries from before the relaunch with `country_name = "United Kingdom"`, and there are newer entries with the auto-deduced
     `country_name = "United Kingdom of Great Britain and Northern Ireland"`.
@@ -92,7 +90,10 @@
 
     Ideally, this would be done in the API back-end so `country_name` is determined at request time if possible.
 
-    -\> see [issue \#43](https://github.com/ccmdesign/c2d-app/issues/43) for a closed (and partially invalid) first problem report (need to submit a new one).
+    -\> see [issue \#43](https://github.com/ccmdesign/c2d-app/issues/43) for a closed (and partially invalid) first problem report and
+    [\#51](https://github.com/ccmdesign/c2d-app/issues/51) for a follow-up requesting an improved UX.
+
+## Internal (at least for now)
 
 -   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
     one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
@@ -134,15 +135,15 @@
     Therefore, we should define a better/stricter policy how titles are captured (and identify existing entries violating this policy, so they can be
     corrected).
 
--   C2D website: Möglichkeit zum Report falscher/fehlender Daten schaffen! Bevor CCM Design damit beauftragt wird, sollten wir definieren, wie ungefähr das
-    aussehen soll. Bspw. einfach via HTML-Formular mit geeigneten Feldern (je nach Seite, von dem es aufgerufen wird, bereits vorbefüllt (`country_code`,
-    `level`, `id` etc.))?
+-   Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.
 
--   C2D website: The about text should be overhauled.
+    Bspw. werden
 
--   C2D website: The listing of referendums should be overhauled. It currently lacks important information, e.g. `level`.
+    -   alle Abstimmungen, die die [Republik Kosovo](https://de.wikipedia.org/wiki/Kosovo) betreffen, unter dem `country_name` *Serbia* geführt...
+    -   für die Abstimmungen in Taiwan uneinheitliche `country_name`'s verwendet, für die Abstimmungen am 2018-11-24 *Taiwan, Province of China*, für die
+        anderen einfach *Taiwan*...
 
--   C2D admin front-end: Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
+    Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen.
 
 -   MongoDB/API: Track atomic edit history, traceable by author, and make it visually inspectable (some kind off diff viewer would be cool). On top of this,
     some method to easily undo specific or all edits by a specific user account should be added.
@@ -156,7 +157,19 @@
     but is this actually possible? generally, the order of variables in the returned JSON seems random: compare e.g. `date` of
     [here](https://services.c2d.ch/referendums/6102ae4ec72633da60229941) vs. [here](https://services.c2d.ch/referendums/604b33cb4132d76d38bfe97b)
 
+-   C2D admin front-end: Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
+
+-   C2D website: Möglichkeit zum Report falscher/fehlender Daten schaffen! Bevor CCM Design damit beauftragt wird, sollten wir definieren, wie ungefähr das
+    aussehen soll. Bspw. einfach via HTML-Formular mit geeigneten Feldern (je nach Seite, von dem es aufgerufen wird, bereits vorbefüllt (`country_code`,
+    `level`, `id` etc.))?
+
+-   C2D website: The about text should be overhauled.
+
+-   C2D website: The listing of referendums should be overhauled. It currently lacks important information, e.g. `level`.
+
 ### Content
+
+#### An Mayowa delegiert
 
 -   Bei verschiedenen Abstimmungen meldet sudd.ch
 
@@ -164,13 +177,36 @@
 
     Betroffen sind die folgenden Abstimmungen:
 
-    -   [Ägypten 1976-06-10](https://sudd.ch/event.php?id=eg011976)
-    -   [New Zealand 1931-12-02](https://sudd.ch/event.php?id=nz011931) (3 Einträge in der C2D-Datenbank, jeweils einer pro Option)
-    -   [Puerto Rico 1952-11-04 (3. Abstimmungsvorlage "Abolition of certain social rights")](https://sudd.ch/event.php?lang=de&id=pr041952)
+    -   [Ägypten 1976-06-10](https://sudd.ch/event.php?id=eg011976); bei uns:
+        [5bbbe82f92a21351232e0381](https://admin.c2d.ch/referendum/5bbbe82f92a21351232e0381)
+    -   [New Zealand 1931-12-02](https://sudd.ch/event.php?id=nz011931); bei uns 3 Einträge, jeweils einer pro Option:
+        [5bbbe29792a21351232de3c9](https://admin.c2d.ch/referendum/5bbbe29792a21351232de3c9),
+        [5bbbe29792a21351232de3c7](https://admin.c2d.ch/referendum/5bbbe29792a21351232de3c7),
+        [5bbbe29792a21351232de3c7](https://admin.c2d.ch/referendum/5bbbe29792a21351232de3c7)
+    -   [Puerto Rico 1952-11-04 (3. Abstimmungsvorlage "Abolition of certain social rights")](https://sudd.ch/event.php?lang=de&id=pr041952), bei uns:
+        [5bbbe2ba92a21351232ded1f](https://admin.c2d.ch/referendum/5bbbe2ba92a21351232ded1f)
 
     Falls in diesen Fällen tatsächlich keine Abstimmungen stattfanden, sollten die Einträge aus der C2D-Datenbank entfernt werden!
 
-    TODO: Via R alle betroffenen Referenden in unserer Datenbank ausfindig machen.
+-   Bei der [Abstimmung Norfolk Island 1980-07-10](https://admin.c2d.ch/referendum/5bbbeaee92a21351232e0ca5) meint sudd.ch, sie habe stattdessen [1979-07-10
+    stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.
+
+-   [Silagadze & Gherghina (2019)](https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf) (S. 467) detected some referendums that are missing in
+    the database -\> systematically check/add these!
+
+    They include Italy ~~1929~~ and 1934, ~~Andorra 1933~~, ~~Austria 1938~~, Romania 2009, ~~Slovenia 2015~~, ~~Bulgaria 2016~~, ~~Netherlands 2016~~, ~~UK
+    2016~~.
+
+#### Other
+
+-   A total of 860 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
+    traced and added ASAP!
+
+-   Complete and add [Aargau cantonal referendums 1888--1971](https://docs.google.com/spreadsheets/d/108CXVcVISDb8Z9R_fn7S82brXOE8dfIY0VKp3QTc0uU/) once [issue
+    \#29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved.
+
+-   Voting with `id == "5bbbfee992a21351232e4f37"` (Romania 2008-02-01) was limited to the region
+    [Szeklerland](https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land), therefore `subnational_entity` should be set to `Székely Land`
 
 -   Sobald via Admin-Interface [nach Draft-Status gefiltert werden kann](https://github.com/ccmdesign/c2d-app/issues/27), sollten die existierenden Drafts
     geprüft werden -\> entweder vervollständigen und freischalten oder löschen!
@@ -181,10 +217,7 @@
     c2d::referendums() %>% dplyr::filter(stringr::str_detect(string = id_official, pattern = "\\D") | !(country_code == "CH" & level == "national") & !is.na(id_official))
     ```
 
-    Plus: What does `id_official = "0"` mean?
-
--   Voting with `id == "5bbbfee992a21351232e4f37"` (Romania 2008-02-01) was limited to the region
-    [Szeklerland](https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land), therefore `subnational_entity` should be set to `Székely Land`
+    Plus: Nobody knows what `id_official = "0"` means, so it should be replaced with `NA` (if no proper `id_official` can be determined).
 
 -   **`municipality`** scheint inkonsistent zugewiesen; enthält Werte, die klar eine Gemeinde bezeichnen (bspw. `"London"`), aber auch solche wie
     [`"Republic of Serbian Krajina until 1991"`](https://de.wikipedia.org/wiki/Republik_Serbische_Krajina) oder
@@ -196,11 +229,16 @@
     -   `is_past_jurisdiction = TRUE` gesetzt werden
     -   den gegenwärtigen Wert in `municipality` stattdessen in `subnational_entity_name` eintragen
 
--   A total of 860 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
-    traced and added ASAP!
+-   Die Abstimmungen *Netherlands 2005-04-08* und *2014-12-17* fanden genau genommen auf [Sint Eustatius](https://de.wikipedia.org/wiki/Sint_Eustatius) statt,
+    siehe sudd.ch-Einträge ([1](https://sudd.ch/event.php?id=an022005), [2](https://sudd.ch/event.php?id=bq012014)); Sint Eustatius ist zwar eine [Besondere
+    Gemeinde der Niederlande](https://de.wikipedia.org/wiki/Karibische_Niederlande), besitzt aber einen eigenen ISO-Ländercode (BQ-SE) etc.
 
--   [Silagadze & Gherghina (2019)](https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf) (S. 467) detected some referendums that are missing in
-    the database -\> systematically check/add these!
+    Sollte daher als `country_name` nicht besser *Sint Eustatius* eingetragen werden? Andernfalls sollte `subnational_entity` auf `"Sint Eustatius"` gesetzt
+    werden, da ja nicht die gesamte Niederlande abstimmen konnte!
+
+-   Die Abstimmungen *France 2006-02-23* und *2006-09-06* beziehen sich auf Referenden in [Sark](https://de.wikipedia.org/wiki/Sark), `country_name` sollte
+    daher auf `"United Kingdom"` oder (besser?) [`"Guernsey"`](https://de.wikipedia.org/wiki/Sark#Gesetzgebung_und_Autonomie) gesetzt werden und
+    `subnational_entity = "Sark"`!
 
 -   Regarding data about subnational referendums in the US, we currently know of two up-to-date compilations:
 
@@ -259,7 +297,7 @@
 
 -   Implement fn to delete referendums once [issue \#45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
 
--   Automated vote entry creation by feeding scraped data to `c2d::add_referendums()`.
+-   Automated vote entry creation by feeding scraped sudd.ch data to `c2d::add_referendums()`.
 
 -   Funktion schreiben zum Hinzufügen der von Uwe favorisierten Weltregionen:
 
@@ -350,18 +388,6 @@
     [Admin-Portal](https://admin.c2d.ch/) keine `NA`s zulässt, sprich die Coder bei Unbekanntheit des Wertes gezwungen sind, `"None"` anzugeben. Wie siehst du
     das?
 
--   Völkerrechtlich umstrittene Gebiete: Es gibt bislang keine explizite C2D-Policy dazu, wir müssten daher etwas definieren.
-
-    Bspw. werden
-
-    -   alle Abstimmungen, die die [Republik Kosovo](https://de.wikipedia.org/wiki/Kosovo) betreffen, unter dem `country_name` *Serbia* geführt...
-    -   für die Abstimmungen in Taiwan uneinheitliche `country_name`'s verwendet, für die Abstimmungen am 2018-11-24 *Taiwan, Province of China*, für die
-        anderen einfach *Taiwan*...
-
-    Pragmatisch wäre, einfach die Handhabung der offiziellen/diplomatischen Schweiz zu übernehmen. Wie siehst du das?
-
--   Zufällig irgendeine Idee, was `id_official = "0"` (ehemals `number`) zu bedeuten hat?
-
 -   Currently, `inst_trigger_threshold` is a free text field which is really bad for analysis since no coding consistency at all is enforced. Instead, we should
     define, in what way the same information could be captured in a more systematic way (splitting it into two vars `inst_trigger_threshold_relative` and
     `inst_trigger_threshold_absolute` might make sense), introduce the new variable and then convert the old values to the new format.
@@ -371,20 +397,6 @@
 #### Sonstige
 
 -   Are `id_sudd`s stable over time? Maybe contact the creator [Beat Müller](mailto:beat@sudd.ch) and ask?
-
--   Bei der Abstimmung *Norfolk Island 1980-07-10* meint sudd.ch, sie habe stattdessen [1979-07-10
-    stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.
-
--   Die Abstimmungen *Netherlands 2005-04-08* und *2014-12-17* fanden genau genommen auf [Sint Eustatius](https://de.wikipedia.org/wiki/Sint_Eustatius) statt,
-    siehe sudd.ch-Einträge ([1](https://sudd.ch/event.php?id=an022005), [2](https://sudd.ch/event.php?id=bq012014)); Sint Eustatius ist zwar eine [Besondere
-    Gemeinde der Niederlande](https://de.wikipedia.org/wiki/Karibische_Niederlande), besitzt aber einen eigenen ISO-Ländercode (BQ-SE) etc.
-
-    Sollte daher als `country_name` nicht besser *Sint Eustatius* eingetragen werden? Andernfalls sollte `subnational_entity` auf `"Sint Eustatius"` gesetzt
-    werden, da ja nicht die gesamte Niederlande abstimmen konnte!
-
--   Die Abstimmungen *France 2006-02-23* und *2006-09-06* beziehen sich auf Referenden in [Sark](https://de.wikipedia.org/wiki/Sark), `country_name` sollte
-    daher auf `"United Kingdom"` oder (besser?) [`"Guernsey"`](https://de.wikipedia.org/wiki/Sark#Gesetzgebung_und_Autonomie) gesetzt werden und
-    `subnational_entity = "Sark"`!
 
 -   Genauer abklären, inwieweit man Angaben von Swissvotes integrieren oder linken könnte. Evtl. Techniker hinter Swissvotes kontaktieren, um herauszufinden,
     mit welchen Weiterentwicklungen zu rechnen ist (Stichwort: API!); ein Blick in den Quellcode des [swissdd](https://politanch.github.io/swissdd/)-R-Pakets
