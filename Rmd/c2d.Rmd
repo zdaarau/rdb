@@ -2786,9 +2786,9 @@ NOTES:
 
 -   If `draft` is not provided, it defaults to `true`.
 
--   `country_name` is ignored and automatically derived from `country_code`.
-
 -   Nested fields like `categories` can be partially provided.
+
+-   `country_name` is ignored and automatically derived from `country_code`.
 
 -   The `context.*` fields are ignored unless `"country_code":"CH","level":"national"`, cf. [issue \#52](https://github.com/ccmdesign/c2d-app/issues/52).
 
@@ -2908,7 +2908,7 @@ NOTES:
 -   For edits, the only mandatory JSON field is `draft`. Only the fields that are supposed to change need to be supplied. Nested fields like `categories` can be
     partially overwritten, too.
 
-    `country_name` is ignored and automatically derived from `country_code`.
+-   `country_name` is ignored and automatically derived from `country_code`.
 
 -   The `context.*` fields are ignored unless `"country_code":"CH","level":"national"`, cf. [issue \#52](https://github.com/ccmdesign/c2d-app/issues/52).
 
