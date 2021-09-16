@@ -38,7 +38,7 @@ Imports:
     lubridate (>= 1.7.10),
     magrittr (>= 2.0.1),
     pal (>= 0.0.9065),
-    pkgpins (>= 0.6.1),
+    pkgpins (>= 0.6.2),
     purrr (>= 0.3.4),
     rlang (>= 0.4.11),
     rvest (>= 1.0.1),
