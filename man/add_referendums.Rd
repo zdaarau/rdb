@@ -25,7 +25,7 @@ add_referendums(
 \item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_empty}{\code{votes_empty}}
 \item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_invalid}{\code{votes_invalid}}
 \item \href{https://rpkg.dev/c2d/articles/codebook.html#is_draft}{\code{is_draft}}
-\item \href{https://rpkg.dev/c2d/articles/codebook.html#type}{\code{type}} ``
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#type}{\code{type}}
 }
 
 plus the column \href{https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name}{\code{subnational_entity_name}} for referendums of
@@ -45,7 +45,12 @@ plus any additional \link[=codebook]{valid} columns containing the values for th
 Adds new referendum entries to the C2D database via \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
 }
 \details{
-Note that the following variables are not supported, i.e. simply dropped from \code{data}: \code{files}
+Note that the following variables are not supported, i.e. simply dropped from \code{data}:
+\itemize{
+\item \code{id_official}
+\item \code{id_sudd}
+\item \code{files}
+}
 }
 \seealso{
 Other referendum data functions:

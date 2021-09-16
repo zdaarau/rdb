@@ -2238,10 +2238,13 @@ download_file_attachment <- function(s3_object_key,
 #' Adds new referendum entries to the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
 #'
 #' @details
-#' Note that the following variables are not supported, i.e. simply dropped from `data`: `files`
+#' Note that the following variables are not supported, i.e. simply dropped from `data`:
+#' - `id_official`
+#' - `id_sudd`
+#' - `files`
 #'
 #' @param data The new referendum data. A [tibble][tibble::tbl_df] that in any case must contain the columns
-#'  ``r referendum_fields$required_for_additions %>% dplyr::recode(!!!v_names) %>% paste0("[`", ., "`](https://rpkg.dev/c2d/articles/codebook.html#", ., ")") %>% pal::as_md_list()``
+#' `r referendum_fields$required_for_additions %>% dplyr::recode(!!!v_names) %>% paste0("[\x60", ., "\x60](https://rpkg.dev/c2d/articles/codebook.html#", ., ")") %>% pal::as_md_list()`
 #'   
 #' plus the column [`subnational_entity_name`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) for referendums of
 #' [`level`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) below `"national"`, and the column
@@ -2282,8 +2285,9 @@ add_referendums <- function(data,
   assert_cols_valid(data)
   
   # drop disabled variables
-  data %<>% drop_disabled_vx("files")
-  
+  data %<>% drop_disabled_vx(to_drop = c("id_official",
+                                         "id_sudd",
+                                         "files"))
   # convert data to MongoDB schema
   json_items <-
     data %>%
@@ -2361,8 +2365,9 @@ edit_referendums <- function(data,
   assert_cols_valid(data)
   
   # drop disabled variables
-  data %<>% drop_disabled_vx("files")
-  
+  data %<>% drop_disabled_vx(to_drop = c("id_official",
+                                         "id_sudd",
+                                         "files"))
   # convert data to MongoDB schema
   ids <- data$id
   

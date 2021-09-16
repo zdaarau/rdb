@@ -26,7 +26,12 @@ plus a \link[=codebook]{valid} column containing the new values for each additio
 Edits existing referendum entries in the C2D database via \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
 }
 \details{
-Note that the following variables are not supported, i.e. simply dropped from \code{data}: \code{files}
+Note that the following variables are not supported, i.e. simply dropped from \code{data}:
+\itemize{
+\item \code{id_official}
+\item \code{id_sudd}
+\item \code{files}
+}
 }
 \seealso{
 Other referendum data functions:
