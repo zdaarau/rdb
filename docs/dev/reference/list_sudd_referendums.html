@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9022</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9023</span>
       </span>
     </div>
 
@@ -235,7 +235,7 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"filter"</span>,
                            filter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>year_min <span class='op'>=</span> <span class='fl'>2020</span><span class='op'>)</span><span class='op'>)</span> |&gt;
   <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_referendums.html'>sudd_referendums</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 80 × 37</span>
+</div><div class='output co'>#&gt; <span class='message'>Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■                            </span>  10% | E…</span></div><div class='output co'>#&gt; <span class='message'>Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■                   </span>  40% | E…</span></div><div class='output co'>#&gt; <span class='message'>Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■               </span>  55% | E…</span></div><div class='output co'>#&gt; <span class='message'>Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■■          </span>  70% | E…</span></div><div class='output co'>#&gt; <span class='message'>Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■■■■■■■     </span>  85% | E…</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 80 × 37</span>
 #&gt;    id_sudd  country_code country_code_historical country_name       territory_name_…
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           
 #&gt; <span style='color: #BCBCBC;'> 1</span> ch012020 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland        Schweiz         
@@ -258,21 +258,21 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='co'># get sudd.ch referendum data from five randomly picked referendums</span>
 <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"random"</span><span class='op'>)</span> |&gt;
   <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_referendums.html'>sudd_referendums</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 33</span>
-#&gt;   id_sudd  country_code country_code_historical country_name   territory_name_de
-#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>            
-#&gt; <span style='color: #BCBCBC;'>1</span> fr011798 FR           <span style='color: #BB0000;'>NA</span>                      France         Stadtrepublik Mü…
-#&gt; <span style='color: #BCBCBC;'>2</span> pm011976 PM           <span style='color: #BB0000;'>NA</span>                      Saint Pierre … St. Pierre et Mi…
-#&gt; <span style='color: #BCBCBC;'>3</span> ch131994 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland    Schweiz          
-#&gt; <span style='color: #BCBCBC;'>4</span> ch092014 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland    Schweiz          
-#&gt; <span style='color: #BCBCBC;'>5</span> tw022018 TW           <span style='color: #BB0000;'>NA</span>                      Taiwan, Provi… Republik China (…
-#&gt; <span style='color: #949494;'># … with 28 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 31</span>
+#&gt;   id_sudd  country_code country_code_historical country_name territory_name_de
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>            
+#&gt; <span style='color: #BCBCBC;'>1</span> ch011876 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland  Schweiz          
+#&gt; <span style='color: #BCBCBC;'>2</span> ch021877 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland  Schweiz          
+#&gt; <span style='color: #BCBCBC;'>3</span> ro011938 RO           <span style='color: #BB0000;'>NA</span>                      Romania      Rumänien         
+#&gt; <span style='color: #BCBCBC;'>4</span> ch021962 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland  Schweiz          
+#&gt; <span style='color: #BCBCBC;'>5</span> ie021968 IE           <span style='color: #BB0000;'>NA</span>                      Ireland      Irland           
+#&gt; <span style='color: #949494;'># … with 26 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span>
 #&gt; <span style='color: #949494;'>#   month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;, question_type_de &lt;chr&gt;,</span>
 #&gt; <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, votes_total &lt;int&gt;, votes_empty &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_void &lt;int&gt;, votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;, subterritories &lt;dbl&gt;, …</span></div></pre>
+#&gt; <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;, votes_total &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_void &lt;int&gt;, votes_invalid &lt;int&gt;,</span>
+#&gt; <span style='color: #949494;'>#   votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, subterritories &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   subterritories_yes &lt;dbl&gt;, subterritories_no &lt;dbl&gt;, remarks &lt;list&gt;, …</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
