@@ -1141,31 +1141,33 @@ tidy_referendums <- function(data,
                         any_of("inst_precondition_decision"))
       
       # correct known errors
-      ## `id_sudd`
-      data$id_sudd[data$country_code == "AZ" & data$id_sudd == "az021009"] <- "az022009"
-      data$id_sudd[data$country_code == "BS" & data$id_sudd == "bs021002"] <- "bs022002"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011972"] <- "mg011972"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011975"] <- "mg011975"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011992"] <- "mg011992"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011995"] <- "mg011995"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md011998"] <- "mg011998"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md012007"] <- "mg012007"
-      data$id_sudd[data$country_code == "MG" & data$id_sudd == "md012010"] <- "mg012010"
-      data$id_sudd[data$country_code == "MH" & data$id_sudd == "mh00578"] <- "mh011979"
-      data$id_sudd[data$country_code == "MW" & data$id_sudd == "mw012003"] <- "mw011993"
-      data$id_sudd[data$country_code == "EC" & data$id_sudd == "ec031993"] <- "ec031994"
-      data$id_sudd[data$country_code == "EC" & data$id_sudd == "ec021006"] <- "ec022006"
-      data$id_sudd[data$country_code == "GQ" & data$id_sudd == "gq012968"] <- "gq011968"
-      data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt011998"] <- "gt011999"
-      data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt021998"] <- "gt021999"
-      data$id_sudd[data$country_code == "GT" & data$id_sudd == "gt031998"] <- "gt031999"
-      data$id_sudd[data$country_code == "LI" & data$id_sudd == "li021920"] <- "li021930"
-      data$id_sudd[data$country_code == "LT" & data$id_sudd == "lt031993"] <- "lt031994"
-      data$id_sudd[data$country_code == "NF" & data$id_sudd == "nf011980"] <- "nf011979"
-      data$id_sudd[data$country_code == "TV" & data$id_sudd == "tv011994"] <- "tv011974"
-      data$id_sudd[data$country_code == "UY" & data$id_sudd == "uy011918"] <- "uy011917"
-      data$id_sudd[data$country_code == "YE" & data$id_sudd == "ye012991"] <- "ye011991"
-      # data$id_sudd[data$country_code == "" & data$id_sudd == ""] <- ""
+      # TODO: correct this upstream using `edit_referendums()` once [issue #29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved
+      ## wrong `id_sudd`
+      data$id_sudd[data$id == "5bbbffa992a21351232e50e7"] <- "az022009"
+      data$id_sudd[data$id == "5bbbfb7c92a21351232e4185"] <- "bs022002"
+      data$id_sudd[data$id == "5bbbe5fb92a21351232dfbfb"] <- "mg011972"
+      data$id_sudd[data$id == "5bbbe7fd92a21351232e0243"] <- "mg011975"
+      data$id_sudd[data$id == "5bbbf37c92a21351232e2721"] <- "mg011992"
+      data$id_sudd[data$id == "5bbbf60a92a21351232e2f4d"] <- "mg011995"
+      data$id_sudd[data$id == "5bbbf7e892a21351232e3757"] <- "mg011998"
+      data$id_sudd[data$id == "5bbbfe8692a21351232e4c99"] <- "mg012007"
+      data$id_sudd[data$id == "5bbc009e92a21351232e5389"] <- "mg012010"
+      data$id_sudd[data$id == "5bbbe99c92a21351232e0949"] <- "mh011979"
+      data$id_sudd[data$id %in% c("5bbbf45592a21351232e291f", "5bbbf45592a21351232e291d")] <- "mw011993"
+      data$id_sudd[data$id == "5bbbf50592a21351232e2ca9"] <- "ec031994"
+      data$id_sudd[data$id == "5bbbfe7b92a21351232e4c0f"] <- "ec022006"
+      data$id_sudd[data$id == "5bbbe2d592a21351232df4f7"] <- "gq011968"
+      data$id_sudd[data$id == "5bbbf92f92a21351232e3a11"] <- "gt011999"
+      data$id_sudd[data$id == "5bbbf92f92a21351232e3a17"] <- "gt021999"
+      data$id_sudd[data$id == "5bbbf92f92a21351232e3a15"] <- "gt031999"
+      data$id_sudd[data$id == "5bbbe29492a21351232de33d"] <- "li021930"
+      data$id_sudd[data$id == "5bbbf50592a21351232e2c9d"] <- "lt031994"
+      data$id_sudd[data$id == "5bbbeaee92a21351232e0ca5"] <- "nf011979"
+      data$id_sudd[data$id == "5bbbe73592a21351232dffc1"] <- "tv011974"
+      data$id_sudd[data$id == "5bbbe27f92a21351232ddd93"] <- "uy011917"
+      data$id_sudd[data$id == "5bbbf2e692a21351232e23cb"] <- "ye011991"
+      ## missing `id_sudd`
+      data$id_sudd[data$id == "5caf179361af8403c235ddc9"] <- "si012015"
     }
   }
   
