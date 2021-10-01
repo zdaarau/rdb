@@ -1,9 +1,8 @@
 ^data-raw$
-^doc$
 ^docs$
-^Meta$
 ^pkgdown$
 ^Rmd$
+^snippets$
 ^cran-comments\.md$
 ^TODO\.md$
 ^LICENSE(\.md)?$
