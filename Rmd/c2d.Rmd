@@ -667,7 +667,7 @@ drop_disabled_vx <- function(data,
 
 ### `flatten_array_as_is`
 
-A helper function to convert an R list to JSON using `jsonlite::toJSON(auto_unbox = TRUE)`.
+A helper function to apply to list elements before converting the list to JSON using `jsonlite::toJSON(auto_unbox = TRUE)`.
 
 ```{r}
 flatten_array_as_is <- function(x) {
@@ -1574,7 +1574,7 @@ complete_sudd_url <- function(x) {
                      .f = ~ .x %||% "https") %>%
     purrr::modify_in(.where = "hostname",
                      .f = ~ .x %||% "sudd.ch") %>%
-    # work around "Error: All components of query must be named"
+    # work around "Error: All components of query must be named" in `httr::build_url()`
     purrr::modify_in(.where = "query",
                      .f = ~ {
                        .x[names(.x) == ""] <- NULL
@@ -2367,7 +2367,7 @@ rm(sudd_years)
 ### Variable renamings
 
 This maps the field names of the back-end's MongoDB to the final variable names as found in the [C2D codebook](https://rpkg.dev/c2d/articles/codebook.html). The
-renamings should eventually all be upstreamed and this mapping shall be become superfluous.
+renamings should eventually all be upstreamed and this mapping shall become superfluous.
 
 ```{r}
                 # old name                                               new name
@@ -2428,7 +2428,7 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
 The R code chunks below are *not* included in the [source package](https://r-pkgs.org/package-structure-state.html#source-package) (`purl = FALSE`). The chunks
 have to be executed at least once to generate the necessary internal data file [`R/sysdata.rda`](https://r-pkgs.org/data.html#data-sysdata).
 
-### Codebook data
+### `data_codebook`
 
 TODO: Once the toml\* package is finished, use it instead to do the stuff below more generically.
 
@@ -2462,7 +2462,7 @@ data_codebook <- {
 }
 ```
 
-### Tags
+### `data_tags`
 
 ```{r, purl = FALSE}
 data_tags <-
@@ -2486,7 +2486,7 @@ data_tags <-
   tidyr::unnest_longer(col = tag_tier_3)
 ```
 
-### Pre-computed constants
+### `months_de`
 
 ```{r, purl = FALSE}
 pal::assert_pkg("clock")
@@ -2495,9 +2495,16 @@ months_de <-
   1:12 %>%
   magrittr::set_names(clock::clock_labels_lookup("de")$month) %>%
   as.list()
+```
 
-# NOTE: `var_lbls` is assigned here because when inlined, it somehow breaks `devtools::run_examples()` during pkg check ("C stack usage (...) is too close to
-#       the limit"); maybe too large fn stack? (modifying `pal::strip_md()` to minimize the fn stack was tried but didn't help)
+### `var_lbls`
+
+NOTES:
+
+-   `var_lbls` is assigned here because when inlined, it somehow breaks `devtools::run_examples()` during pkg check ("C stack usage (...) is too close to the
+    limit"); maybe too large fn stack? (modifying `pal::strip_md()` to minimize the fn stack was tried but didn't help)
+
+```{r}
 var_lbls <-
   data_codebook$variable_label %>%
   pal::strip_md() %>%
@@ -2520,9 +2527,11 @@ usethis::use_data(data_codebook,
                   version = 3L)
 ```
 
-# Referendum data
+# EXPORTED
 
-## `referendums`
+## Referendum data
+
+### `referendums`
 
 ```{r}
 #' Get referendum data
@@ -2641,7 +2650,7 @@ referendums <- function(country_code = NULL,
 }
 ```
 
-## `referendum`
+### `referendum`
 
 ```{r}
 #' Get a single referendum's data
@@ -2694,7 +2703,7 @@ referendum <- function(id,
 }
 ```
 
-## `download_file_attachment`
+### `download_file_attachment`
 
 ```{r}
 #' Download file attachment
@@ -2763,7 +2772,7 @@ download_file_attachment <- function(s3_object_key,
 }
 ```
 
-## `add_referendums`
+### `add_referendums`
 
 NOTES:
 
@@ -2908,7 +2917,7 @@ add_referendums <- function(data,
 }
 ```
 
-## `edit_referendums`
+### `edit_referendums`
 
 NOTES:
 
@@ -3025,7 +3034,7 @@ edit_referendums <- function(data,
 }
 ```
 
-## `validate_referendums`
+### `validate_referendums`
 
 This function performs various data validation steps to ensure there are no errors in the database.
 
@@ -3177,7 +3186,7 @@ validate_referendums <- function(data,
 }
 ```
 
-## `count_referendums`
+### `count_referendums`
 
 ```{r}
 #' Count number of referendums
@@ -3234,7 +3243,7 @@ count_referendums <- function(is_draft = FALSE,
 }
 ```
 
-## `search_referendums`
+### `search_referendums`
 
 Currently, the C2D API [only supports searching in the English referendum
 title](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
@@ -3273,9 +3282,9 @@ search_referendums <- function(term) {
 }
 ```
 
-# Referendum metadata
+## Referendum metadata
 
-## `data_codebook`
+### `data_codebook`
 
 ```{r}
 #' C2D Codebook
@@ -3292,7 +3301,7 @@ search_referendums <- function(term) {
 "data_codebook"
 ```
 
-## `val_lbls`
+### `val_lbls`
 
 ```{r}
 #' Get the set of possible *value labels* of a referendum data variable
@@ -3332,7 +3341,7 @@ val_lbls <- function(v_name,
 }
 ```
 
-## `v_vals`
+### `v_vals`
 
 ```{r}
 #' Get the set of possible *values* of a referendum data variable
@@ -3366,17 +3375,17 @@ v_vals <- function(v_name) {
 }
 ```
 
-# Tags
+## Tags
 
 The tags classification was developped together with [Swissvotes](https://swissvotes.ch/), the [Institute of Federalism of the University of
 Fribourg](https://www.unifr.ch/federalism/en/) and the [Section Politics of the Federal Statistical
 Office](https://www.bfs.admin.ch/bfs/en/home/statistics/politics.html). Any modifications should be coordinated with these parties.
 
-## DESCRIPTION
+### DESCRIPTION
 
 Functions to work with referendum [tags](https://rpkg.dev/c2d/articles/codebook.html#tags).
 
-## `hierarchize_tags`
+### `hierarchize_tags`
 
 ```{r}
 #' Hierarchize Tags
@@ -3476,7 +3485,7 @@ hierarchize_tags <- function(x) {
 }
 ```
 
-## `infer_tags`
+### `infer_tags`
 
 ```{r}
 #' Infer higher-tier tags
@@ -3526,9 +3535,9 @@ infer_tags <- function(tags,
 }
 ```
 
-# C2D API Status
+## C2D API Status
 
-## `is_online`
+### `is_online`
 
 ```{r}
 #' Test C2D API availability
@@ -3567,7 +3576,7 @@ is_online <- function(quiet = FALSE) {
 }
 ```
 
-# sudd.ch scraping
+## sudd.ch scraping
 
 The [`list.php`](https://sudd.ch/list.php) endpoint supports
 
@@ -3587,11 +3596,11 @@ The [`list.php`](https://sudd.ch/list.php) endpoint supports
     -   `moddate`: list all referendums by `date_last_edited`
     -   `random`: list 5 randomly selected referendums
 
-## DESCRIPTION
+### DESCRIPTION
 
 Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database.
 
-## `list_sudd_territories`
+### `list_sudd_territories`
 
 NOTES:
 
@@ -3652,7 +3661,7 @@ list_sudd_territories <- function() {
 }
 ```
 
-## `list_sudd_titles`
+### `list_sudd_titles`
 
 ```{r}
 #' List referendum titles from [sudd.ch](https://sudd.ch/)
@@ -3691,7 +3700,7 @@ list_sudd_titles <- function() {
 }
 ```
 
-## `list_sudd_referendums`
+### `list_sudd_referendums`
 
 ```{r}
 #' List referendum data from [sudd.ch](https://sudd.ch/)
@@ -3890,7 +3899,7 @@ list_sudd_referendums <- function(mode = c("by_date",
 }
 ```
 
-## `sudd_referendums`
+### `sudd_referendums`
 
 NOTES:
 
