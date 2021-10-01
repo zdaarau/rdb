@@ -640,6 +640,7 @@ tidy_referendums <- function(data,
   data %<>%
     # unnest columns and ensure list type for multi-value columns
     # NOTE that `tidyr::unnest()` is unbearably slow, so we use a custom function
+    # TODO: `tidyr::unnest()` [got a speed-up in v1.1.4](https://github.com/tidyverse/tidyr/releases/tag/v1.1.4): re-evaluate! 
     purrr::map(.f = function(l,
                              category_names = names(l$categories),
                              context_names = names(l$context),
@@ -1317,7 +1318,7 @@ complete_sudd_url <- function(x) {
                      .f = ~ .x %||% "https") %>%
     purrr::modify_in(.where = "hostname",
                      .f = ~ .x %||% "sudd.ch") %>%
-    # work around "Error: All components of query must be named"
+    # work around "Error: All components of query must be named" in `httr::build_url()`
     purrr::modify_in(.where = "query",
                      .f = ~ {
                        .x[names(.x) == ""] <- NULL
@@ -1997,6 +1998,8 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
                                  "object_key" = "s3_object_key",
                                  "size"       = "file_size",
                                  "deleted"    = "is_deleted"))
+
+
 
 
 
