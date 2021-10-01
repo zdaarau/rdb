@@ -2504,7 +2504,7 @@ NOTES:
 -   `var_lbls` is assigned here because when inlined, it somehow breaks `devtools::run_examples()` during pkg check ("C stack usage (...) is too close to the
     limit"); maybe too large fn stack? (modifying `pal::strip_md()` to minimize the fn stack was tried but didn't help)
 
-```{r}
+```{r, purl = FALSE}
 var_lbls <-
   data_codebook$variable_label %>%
   pal::strip_md() %>%
