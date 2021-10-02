@@ -1,49 +1,59 @@
 development:
   mode: auto
-
 template:
   opengraph:
     twitter:
       card: summary
-      creator: "@2BSalim"
+      creator: '@2BSalim'
   params:
     analytics:
       goatcounter:
-        endpoint: "https://rpkg-dev.goatcounter.com/count"
+        endpoint: https://rpkg-dev.goatcounter.com/count
     bootswatch: yeti
-    mathjax: false
-    selfhost_assets: true
-
+    mathjax: no
+    selfhost_assets: yes
 url: https://rpkg.dev/c2d
-
 navbar:
   structure:
-    left:  [home, intro, reference, codebook, tutorials, news]
-    right: [github]
+    left:
+    - home
+    - intro
+    - reference
+    - codebook
+    - tutorials
+    - news
+    right: github
   components:
     codebook:
-      text: "C2D Codebook"
-      href: "articles/codebook.html"
-
+      text: C2D Codebook
+      href: articles/codebook.html
 reference:
-- title: "Referendum data"
+- title: Referendum data
 - contents:
-  - has_concept("referendum")
-
-- title: "Referendum metadata"
+  - referendums
+  - referendum
+  - download_file_attachment
+  - add_referendums
+  - edit_referendums
+  - validate_referendums
+  - count_referendums
+  - search_referendums
+- title: Referendum metadata
 - contents:
-  - has_concept("metadata")
-
-- title: "Tags"
-  desc: "Functions to work with referendum [tags](https://rpkg.dev/c2d/articles/codebook.html#tags)."
+  - data_codebook
+  - val_lbls
+  - v_vals
+- title: Tags
+  desc: Functions to work with referendum [tags](https://rpkg.dev/c2d/articles/codebook.html#tags).
 - contents:
-  - has_concept("tags")
-
-- title: "C2D API Status"
+  - hierarchize_tags
+  - infer_tags
+- title: C2D API Status
+- contents: is_online
+- title: sudd.ch scraping
+  desc: Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database.
 - contents:
-  - has_concept("api_status")
-
-- title: "sudd.ch scraping"
-  desc: "Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database."
-- contents:
-  - has_concept("sudd")
+  - list_sudd_territories
+  - list_sudd_titles
+  - list_sudd_referendums
+  - sudd_referendums
