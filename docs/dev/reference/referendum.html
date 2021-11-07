@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9023</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9024</span>
       </span>
     </div>
 
@@ -159,22 +159,22 @@ referendum data will only be modified just enough to be able to return it as a <
 <code><a href='download_file_attachment.html'>download_file_attachment</a>()</code>,
 <code><a href='edit_referendums.html'>edit_referendums</a>()</code>,
 <code><a href='referendums.html'>referendums</a>()</code>,
-<code><a href='search_referendums.html'>search_referendums</a>()</code>,
 <code><a href='validate_referendums.html'>validate_referendums</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendum</span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"5bbbe26a92a21351232dd73f"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 1 × 63</span>
-#&gt;   id                       id_official id_sudd country_code country_name subnational_ent…
-#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>           
-#&gt; <span style='color: #BCBCBC;'>1</span> 5bbbe26a92a21351232dd73f 5           <span style='color: #BB0000;'>NA</span>      CH           Switzerland  <span style='color: #BB0000;'>NA</span>              
-#&gt; <span style='color: #949494;'># … with 57 more variables: municipality &lt;fct&gt;, level &lt;ord&gt;, date &lt;date&gt;,</span>
-#&gt; <span style='color: #949494;'>#   title_de &lt;chr&gt;, title_fr &lt;chr&gt;, title_en &lt;chr&gt;, committee_name &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   result &lt;fct&gt;, subterritories_yes &lt;dbl&gt;, subterritories_no &lt;dbl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   votes_per_subterritory &lt;list&gt;, lower_house_yes &lt;int&gt;, lower_house_no &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   lower_house_abstentions &lt;int&gt;, upper_house_yes &lt;int&gt;, …</span></div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>referendum</span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"5bbbe26a92a21351232dd73f"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 1 × 69</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   id            id_official id_sudd country_code country_code_hist… country_name</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> 5bbbe26a92a2… 5           <span style='color: #BB0000;'>NA</span>      CH           <span style='color: #BB0000;'>NA</span>                 Switzerland </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 63 more variables: subnational_entity_name &lt;fct&gt;, municipality &lt;fct&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   level &lt;ord&gt;, is_past_jurisdiction &lt;lgl&gt;, date &lt;date&gt;, title_de &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   title_fr &lt;chr&gt;, title_en &lt;chr&gt;, question &lt;chr&gt;, question_en &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   committee_name &lt;chr&gt;, result &lt;fct&gt;, subterritories_yes &lt;dbl&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   subterritories_no &lt;dbl&gt;, electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_yes &lt;int&gt;, votes_no &lt;int&gt;, votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_per_subterritory &lt;list&gt;, lower_house_yes &lt;int&gt;, …</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

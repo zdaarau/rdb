@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9023</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9024</span>
       </span>
     </div>
 
@@ -152,19 +152,23 @@
 <code><a href='hierarchize_tags.html'>hierarchize_tags</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,
-                tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "foreign policy"               "environment and living space"</div><div class='input'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,
-                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "European policy" "environment"    </div><div class='input'>
-<span class='co'># tags of different tiers can mixed in `tags`</span>
-<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"environment"</span><span class='op'>)</span>,
-                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "European policy" "environment"    </div><div class='input'>
-<span class='co'># but `tags` of a higher tier than `tier` will be ignored</span>
-<span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='st'>"foreign policy"</span>,
-                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; character(0)</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,</span>
+<span class='r-in'>                tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "foreign policy"               "environment and living space"</span>
+<span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,</span>
+<span class='r-in'>                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "European policy" "environment"    </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># tags of different tiers can mixed in `tags`</span></span>
+<span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"environment"</span><span class='op'>)</span>,</span>
+<span class='r-in'>                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "European policy" "environment"    </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># but `tags` of a higher tier than `tier` will be ignored</span></span>
+<span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='st'>"foreign policy"</span>,</span>
+<span class='r-in'>                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> character(0)</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

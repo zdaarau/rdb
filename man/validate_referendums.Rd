@@ -30,7 +30,6 @@ Other referendum data functions:
 \code{\link{download_file_attachment}()},
 \code{\link{edit_referendums}()},
 \code{\link{referendums}()},
-\code{\link{referendum}()},
-\code{\link{search_referendums}()}
+\code{\link{referendum}()}
 }
 \concept{referendum}

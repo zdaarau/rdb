@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9023</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9024</span>
       </span>
     </div>
 
@@ -245,7 +245,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 </li>
 <li>
 <p>MongoDB/API: Track atomic edit history, traceable by author, and make it visually inspectable (some kind off diff viewer would be cool). On top of this, some method to easily undo specific or all edits by a specific user account should be added.</p>
-<p>See <a href="https://github.com/ccmdesign/c2d-app/issues/34" class="external-link">issue #34</a> (point 3) for a tentative request and <a href="https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636" class="external-link">@liviass answer</a> about an already existing events collection (with no API endpoint so far).</p>
+<p>See <a href="https://github.com/ccmdesign/c2d-app/issues/34" class="external-link">issue #34</a> (point 3) for a tentative request and [@liviass answer](<a href="https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636" class="external-link uri">https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636</a>) about an already existing events collection (with no API endpoint so far).</p>
 </li>
 <li>
 <p>MongoDB: optimize order of subvariables (<code>files</code> and <code>context.votes_per_canton</code>); doing this post-hoc in R is slow/inefficient, so getting the JSON in the desired order directly from the API would be cool…</p>
@@ -333,7 +333,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <h3 class="hasAnchor">
 <a href="#validation" class="anchor"></a>Validation</h3>
 <ul>
-<li><p>Systematically inspect/handle all <code>applicability_constraint</code> violations (see <code><a href="reference/validate_referendums.html">validate_referendums(check_applicability_constraint = TRUE)</a></code>).</p></li>
+<li><p>Systematically inspect/handle all <code>applicability_constraint</code> violations (see <code>validate_referendums(check_applicability_constraint = TRUE)</code>).</p></li>
 <li>
 <p>Systematically check if variables that are “completely dependent” on other variables (like <code>inst_trigger_actor</code> on <code>inst_trigger_type</code>) are correctly filled.</p>
 <p>E.g. is <code>inst_trigger_type</code> missing for referendums with IDs <code>5cb82f07cb48652399618eb1</code> and <code>6080ef7d4132d76d38bfe9e0</code> although <code>inst_trigger_actor</code> is present!</p>
@@ -362,6 +362,7 @@ Specialities of the result (e.g. contradictory numbers)</li>
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h3>
 <ul>
 <li><p>Implement fn to delete referendums once <a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a> is resolved.</p></li>
+<li><p>As soon as <a href="https://github.com/ccmdesign/c2d-app/issues/57" class="external-link">issue #57</a> is resolved, properly process the question variables (and adapt codebook)</p></li>
 <li><p>Automated vote entry creation by feeding scraped sudd.ch data to <code><a href="reference/add_referendums.html">c2d::add_referendums()</a></code>.</p></li>
 <li>
 <p>Funktion schreiben zum Hinzufügen der von Uwe favorisierten Weltregionen:</p>

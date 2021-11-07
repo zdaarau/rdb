@@ -33,6 +33,7 @@ utils::globalVariables(names = c(".",
                                  "date_last_edited",
                                  "date_time_created",
                                  "date_time_last_active",
+                                 "date_time_last_edited",
                                  "Date_withdrawn",
                                  "day",
                                  "electorate_abroad",
@@ -50,9 +51,13 @@ utils::globalVariables(names = c(".",
                                  "municipality",
                                  "n",
                                  "Name",
+                                 "number",
+                                 "question",
+                                 "question_en",
                                  "remarks",
                                  "result",
                                  "rowid",
+                                 "sources",
                                  "subnational_entity_name",
                                  "sudd_prefix",
                                  "tag_tier_1",
@@ -77,13 +82,9 @@ utils::globalVariables(names = c(".",
                                  "year"))
 
 .onLoad <- function(libname, pkgname) {
-  pkgpins::clear(pkg = pkgname,
-                 max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
-                                     default = "30 days"))
-}
-
-.onUnload <- function(libpath) {
-  pkgpins::deregister(pkg = this_pkg)
+  pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
+                       max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
+                                           default = "30 days"))
 }
 
 
@@ -639,8 +640,8 @@ tidy_referendums <- function(data,
   
   data %<>%
     # unnest columns and ensure list type for multi-value columns
-    # NOTE that `tidyr::unnest()` is unbearably slow, so we use a custom function
-    # TODO: `tidyr::unnest()` [got a speed-up in v1.1.4](https://github.com/tidyverse/tidyr/releases/tag/v1.1.4): re-evaluate! 
+    # NOTE that despite of the [speed-up in v1.1.4](https://github.com/tidyverse/tidyr/releases/tag/v1.1.4), `tidyr::unnest()` is still much slower than our
+    # custom function
     purrr::map(.f = function(l,
                              category_names = names(l$categories),
                              context_names = names(l$context),
@@ -677,6 +678,13 @@ tidy_referendums <- function(data,
       
       l
     }) %>%
+    # provisionally replace empty (but actually mandatory) fields with NAs
+    purrr::modify_depth(.depth = 1L,
+                        .f = ~ {
+                          if (!length(.x$date_time_last_edited)) .x$date_time_last_edited <- lubridate::as_datetime(0)[NA]
+                          if (!length(.x$is_past_jurisdiction)) .x$is_past_jurisdiction <- NA
+                          .x
+                        }) %>%
     # convert to tibble
     purrr::map_dfr(tibble::as_tibble_row)
   
@@ -686,15 +694,13 @@ tidy_referendums <- function(data,
     if (tidy) {
       
       data %<>%
-        # rename variables (mind that the MongoDB-based API doesn't demand a schema)
+        # rename variables (mind that the MongoDB-based API doesn't demand a fixed schema)
         rename_from_list(names_list = v_names) %>%
         # add vars which aren't always included
         dplyr::full_join(y = tibble::tibble(subnational_entity_name = character(),
-                                            municipality = character(),
-                                            id_sudd = character()),
+                                            municipality = character()),
                          by = intersect(c("subnational_entity_name",
-                                          "municipality",
-                                          "id_sudd"),
+                                          "municipality"),
                                         colnames(.))) %>%
         
         # create/recode variables
@@ -779,17 +785,17 @@ tidy_referendums <- function(data,
           ## nominal
           ### flatten `id`
           id = purrr::flatten_chr(id),
-          ### extract `id_official` from `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
+          ### complement `id_official` by old `number` when it doesn't signify an `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
           id_official =
-            id_sudd %>%
-            dplyr::if_else(stringr::str_detect(string = .,
-                                               pattern = "^\\D"),
+            number %>%
+            dplyr::if_else(is.na(id_official) & stringr::str_detect(string = .,
+                                                                    pattern = "^\\D"),
                            NA_character_,
                            .),
           id_sudd =
-            id_sudd %>%
-            dplyr::if_else(stringr::str_detect(string = .,
-                                               pattern = "^\\D"),
+            number %>%
+            dplyr::if_else(is.na(id_sudd) & stringr::str_detect(string = .,
+                                                                pattern = "^\\D"),
                            .,
                            NA_character_) %>%
             # everything beyond the 8th char seems to be manually added -> strip!
@@ -860,7 +866,8 @@ tidy_referendums <- function(data,
         ) %>%
         
         # remove obsolete vars
-        dplyr::select(-tags) %>%
+        dplyr::select(-c(number,
+                         tags)) %>%
         
         # convert to (ordered) factor where appropriate
         ## based on codebook
@@ -902,14 +909,18 @@ tidy_referendums <- function(data,
                         id_official,
                         id_sudd,
                         country_code,
+                        country_code_historical,
                         country_name,
                         subnational_entity_name,
                         municipality,
                         level,
+                        is_past_jurisdiction,
                         date,
                         title_de,
                         title_fr,
                         title_en,
+                        question,
+                        question_en,
                         committee_name,
                         result,
                         any_of("subterritories_yes"),
@@ -935,8 +946,10 @@ tidy_referendums <- function(data,
                         files,
                         url_sudd,
                         url_swissvotes,
+                        sources,
                         is_draft,
                         date_time_created,
+                        date_time_last_edited,
                         archive,
                         type,
                         any_of("inst_legal_basis_type"),
@@ -1949,7 +1962,6 @@ rm(sudd_years)
 
                 # old name                                               new name
 v_names <- list("_id"                                                  = "id",
-                "number"                                               = "id_sudd",
                 "canton"                                               = "subnational_entity_name",
                 "title.de"                                             = "title_de",
                 "title.en"                                             = "title_en",
@@ -2615,37 +2627,7 @@ count_referendums <- function(is_draft = FALSE,
     magrittr::set_names(names(.) %>% dplyr::recode("sub_national" = "subnational"))
 }
 
-#' Search in English referendum titles
-#'
-#' Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no [fuzzy
-#' search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are returned).
-#'
-#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
-#' titles.
-#'
-#' @param term The Search term. A character scalar.
-#'
-#' @return A character vector of English referendum titles matching the search `term`.
-#' @family referendum
-#' @export
-#'
-#' @examples
-#' c2d::search_referendums("freedom")
-search_referendums <- function(term) {
-  
-  httr::RETRY(verb = "GET",
-              url = "https://services.c2d.ch/referendums",
-              query = list(mode = "search",
-                           term = checkmate::assert_string(term)),
-              times = 5L) %>%
-    # ensure we actually got a JSON response
-    pal::assert_mime_type(mime_type = "application/json",
-                          msg_suffix = mime_error_suffix) %>%
-    # parse response
-    httr::content(as = "parsed") %$%
-    items %>%
-    purrr::flatten_chr() 
-}
+
 
 #' C2D Codebook
 #'

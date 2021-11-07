@@ -59,8 +59,23 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{\code{country_code}}{
 
-The \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} code
-identifying the country in which the referendum took place.
+The two-letter \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} code
+identifying the country in which the referendum took place; only set if
+\code{is_past_jurisdiction = FALSE}.
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{nominal} level.
+}
+
+}
+
+\subsection{\code{country_code_historical}}{
+
+The four-letter \href{https://en.wikipedia.org/wiki/ISO_3166-3}{ISO 3166-3}
+code identifying the \emph{historical} (i.e. ceased to exist) country in
+which the referendum took place; only set if
+\code{is_past_jurisdiction = TRUE}.
 \subsection{Level of measurement}{
 
 This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
@@ -135,6 +150,19 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 }
 
+\subsection{\code{is_past_jurisdiction}}{
+
+Whether or not the country where the referendum took place ceased to
+exist and thus has a \code{country_code_historical} instead of a
+\code{country_code} assigned.
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{nominal (binary)} level.
+}
+
+}
+
 \subsection{\code{date}}{
 
 The date on which the referendum took place.
@@ -171,6 +199,29 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 \subsection{\code{title_en}}{
 
 The referendum’s English title.
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{nominal} level.
+}
+
+}
+
+\subsection{\code{question}}{
+
+The question exactly as it was asked in the referendum.
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{nominal} level.
+}
+
+}
+
+\subsection{\code{question_en}}{
+
+An English translation of \code{question} if it wasn’t officially asked in
+English, otherwise the same as \code{question}.
 \subsection{Level of measurement}{
 
 This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
@@ -1011,6 +1062,18 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 }
 
+\subsection{\code{sources}}{
+
+Information about the source(s) of the referendum data like additional
+URLs or other references.
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{nominal} level.
+}
+
+}
+
 \subsection{\code{is_draft}}{
 
 Whether or not the entry is marked as a draft in the database.
@@ -1033,6 +1096,18 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 \subsection{\code{date_time_created}}{
 
 The date and time on which the referendum’s data entry was created.
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{interval} level.
+}
+
+}
+
+\subsection{\code{date_time_last_edited}}{
+
+The date and time on which the referendum’s data entry was last
+modified.
 \subsection{Level of measurement}{
 
 This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the

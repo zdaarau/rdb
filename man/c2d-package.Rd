@@ -4,13 +4,9 @@
 \name{c2d-package}
 \alias{c2d}
 \alias{c2d-package}
-\title{c2d: Download Data from the C2D Database, Which Covers Direct Democratic
-    Votes Worldwide}
+\title{c2d: Download Data from the C2D Database, Which Covers Direct Democratic Votes Worldwide}
 \description{
-c2d provides access to the C2D Database (https://c2d.ch) from
-    R. This database aims to record all direct democratic votes worldwide
-    and is operated by the Centre for Democracy Studies Aarau (ZDA) at the
-    University of Zurich, Switzerland.
+c2d provides access to the C2D Database (https://c2d.ch) from R. This database aims to record all direct democratic votes worldwide and is operated by the Centre for Democracy Studies Aarau (ZDA) at the University of Zurich, Switzerland.
 }
 \seealso{
 Useful links:

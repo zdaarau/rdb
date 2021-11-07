@@ -37,7 +37,6 @@ Other referendum data functions:
 \code{\link{edit_referendums}()},
 \code{\link{referendums}()},
 \code{\link{referendum}()},
-\code{\link{search_referendums}()},
 \code{\link{validate_referendums}()}
 }
 \concept{referendum}

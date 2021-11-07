@@ -37,7 +37,6 @@ reference:
   - edit_referendums
   - validate_referendums
   - count_referendums
-  - search_referendums
 - title: Referendum metadata
 - contents:
   - data_codebook

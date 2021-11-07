@@ -16,7 +16,11 @@ variable_label = "the referendum's identifier assigned by [sudd.ch](https://sudd
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "country_code"
-variable_label = "the [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code identifying the country in which the referendum took place"
+variable_label = "the two-letter [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code identifying the country in which the referendum took place; only set if `is_past_jurisdiction = FALSE`"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "country_code_historical"
+variable_label = "the four-letter [ISO 3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) code identifying the *historical* (i.e. ceased to exist) country in which the referendum took place; only set if `is_past_jurisdiction = TRUE`"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "country_name"
@@ -40,6 +44,10 @@ value_label_prefix = "The referendum took place at the"
 value_labels = [ "local political level", "subnational political level", "national political level" ]
 value_scale = "ordinal_ascending"
 [[01_main.item]]
+variable_name = "is_past_jurisdiction"
+variable_label = "whether or not the country where the referendum took place ceased to exist and thus has a [`country_code_historical`](#country_code_historical) instead of a [`country_code`](#country_code) assigned"
+value_scale = "binary"
+[[01_main.item]]
 variable_name = "date"
 variable_label = "the date on which the referendum took place"
 value_scale = "interval"
@@ -54,6 +62,14 @@ value_scale = "nominal"
 [[01_main.item]]
 variable_name = "title_en"
 variable_label = "the referendum's English title"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "question"
+variable_label = "the question exactly as it was asked in the referendum"
+value_scale = "nominal"
+[[01_main.item]]
+variable_name = "question_en"
+variable_label = "an English translation of [`question`](#question) if it wasn't officially asked in English, otherwise the same as [`question`](#question)"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "committee_name"
@@ -360,6 +376,10 @@ variable_name = "url_swissvotes"
 variable_label = "the URL of the corresponding entry on [swissvotes.ch](https://swissvotes.ch/)"
 value_scale = "nominal"
 [[01_main.item]]
+variable_name = "sources"
+variable_label = "information about the source(s) of the referendum data like additional URLs or other references"
+value_scale = "nominal"
+[[01_main.item]]
 variable_name = "is_draft"
 variable_label = "whether or not the entry is marked as a draft in the database"
 variable_values = [ true, false]
@@ -369,6 +389,10 @@ value_scale = "binary"
 [[01_main.item]]
 variable_name = "date_time_created"
 variable_label = "the date and time on which the referendum's data entry was created"
+value_scale = "interval"
+[[01_main.item]]
+variable_name = "date_time_last_edited"
+variable_label = "the date and time on which the referendum's data entry was last modified"
 value_scale = "interval"
 [[01_main.item]]
 variable_name = "archive"
