@@ -156,9 +156,11 @@ utils::globalVariables(names = c(".",
 
 ```{r}
 .onLoad <- function(libname, pkgname) {
-  pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
-                       max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
-                                           default = "30 days"))
+  if (xfun::is_unix()) {
+    pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
+                         max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
+                                             default = "30 days"))
+  }
 }
 ```
 
@@ -4023,4 +4025,25 @@ sudd_referendums <- function(ids_sudd,
   use_cache = use_cache,
   cache_lifespan = cache_lifespan)
 }
+```
+
+# TEMP
+
+```{r, purl = FALSE}
+data_c2d_aargau <-
+  readxl::read_excel("/home/salim/Arbeit/ZDA/Git/zdaarau/rpkgs/c2d/19-AG-Abstimmungen-1888-1971.xlsx") %>%
+  dplyr::mutate(date = lubridate::dmy(Datum),
+                title_en = deeplr::translate2(text = Vorlage,
+                                              auth_key = Sys.getenv("DEEPL_TOKEN"),
+                                              target_lang = "EN",
+                                              source_lang = "DE",
+                                              preserve_formatting = TRUE)) %>%
+  dplyr::select(date,
+                title_de = Vorlage,
+                title_en,
+                electorate_total = Stimmberechtigte,
+                votes_total = "Eingegangene Stimmzettel",
+                votes_yes = "Anzahl JA-Stimmen",
+                votes_no = "Anzahl NEIN-Stimmen",
+                votes_empty = Leer)
 ```

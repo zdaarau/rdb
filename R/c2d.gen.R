@@ -82,9 +82,11 @@ utils::globalVariables(names = c(".",
                                  "year"))
 
 .onLoad <- function(libname, pkgname) {
-  pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
-                       max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
-                                           default = "30 days"))
+  if (xfun::is_unix()) {
+    pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
+                         max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
+                                             default = "30 days"))
+  }
 }
 
 
