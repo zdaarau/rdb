@@ -156,11 +156,11 @@ utils::globalVariables(names = c(".",
 
 ```{r}
 .onLoad <- function(libname, pkgname) {
-  if (xfun::is_unix()) {
-    pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
-                         max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
-                                             default = "30 days"))
-  }
+  
+  rlang::with_handlers(.expr = pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
+                                                    max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
+                                                                        default = "30 days")),
+                       error = ~ cli::cli_alert_warning(text = "Failed to clear pkgpins cache on load of {.pkg pkgname}. Error message: {.x$message}"))
 }
 ```
 
