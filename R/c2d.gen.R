@@ -3207,25 +3207,26 @@ sudd_referendums <- function(ids_sudd,
                              use_cache = TRUE,
                              cache_lifespan = "1 week") {
   
-  pkgpins::with_cache(expr = {
+  if (purrr::vec_depth(ids_sudd) > 1L) {
     
-    checkmate::assert_flag(use_cache)
-    
-    if (purrr::vec_depth(ids_sudd) > 1L) {
-      
-      if (!("id_sudd" %in% colnames(ids_sudd))) {
-        cli::cli_abort(paste0("{.arg ids_sudd} must be either a character vector of valid sudd.ch referendum identifiers or a data frame with a column of such",
-                              " named {.var id_sudd}."))
-      }
-      
-      ids_sudd <- ids_sudd$id_sudd
+    if (!("id_sudd" %in% colnames(ids_sudd))) {
+      cli::cli_abort(paste0("{.arg ids_sudd} must be either a character vector of valid sudd.ch referendum identifiers or a data frame with a column of such",
+                            " named {.var id_sudd}."))
     }
     
-    ids_sudd <- ids_sudd[!is.na(ids_sudd)]
+    ids_sudd <- ids_sudd$id_sudd
+  }
+  
+  ids_sudd <-
+    checkmate::assert_character(ids_sudd,
+                                all.missing = FALSE) %>%
+    magrittr::extract(!is.na(.))
+  
+  pkgpins::with_cache(expr = {
     
-    purrr::map_dfr(cli::cli_progress_along(x = ids_sudd,
-                                           name = "Scraping referendum data from sudd.ch"),
-                   ~ sudd_referendum(ids_sudd[.x])) %>%
+    ids_sudd %>%
+      cli::cli_progress_along(name = "Scraping referendum data from sudd.ch") %>%
+      purrr::map_dfr(~ sudd_referendum(ids_sudd[.x])) %>%
       # properly parse `date`
       dplyr::bind_cols(.$date %>% purrr::map_dfr(parse_sudd_date)) %>%
       dplyr::mutate(date = lubridate::make_date(year = year,
