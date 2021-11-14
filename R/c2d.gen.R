@@ -3092,12 +3092,22 @@ list_sudd_referendums <- function(mode = c("by_date",
                filter[mode == "filter"])
     
     # retrieve and parse data
+    status_msg <- "Fetching raw HTML data from {.url sudd.ch}..."
+    cli::cli_progress_step(msg = status_msg,
+                           msg_done = paste(status_msg, "done"),
+                           msg_failed = paste(status_msg, "failed"))
+    
     html <-
       httr::RETRY(verb = "GET",
                   url = "https://sudd.ch/list.php",
                   query = query,
                   times = 5L) %>%
       xml2::read_html()
+    
+    status_msg <- "Parsing and tidying raw HTML data..."
+    cli::cli_progress_step(msg = status_msg,
+                           msg_done = paste(status_msg, "done"),
+                           msg_failed = paste(status_msg, "failed"))
     
     if (mode == "random") {
       
