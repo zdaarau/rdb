@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9024</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9026</span>
       </span>
     </div>
 
@@ -192,26 +192,38 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span class='co'># list all referendums by modification date</span></span>
 <span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"by_mod_date"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 3,033 × 12</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    id_sudd  country_code country_name country_code_historical is_past_jurisdict…</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> mx012021 MX           Mexico       <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> ch112021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> ch122021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> ch132021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> in012021 IN           India        <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> cl012021 CL           Chile        <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> et012021 ET           Ethiopia     <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> et012019 ET           Ethiopia     <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> ch042021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> ch052021 CH           Switzerland  <span style='color: #BB0000;'>NA</span>                      FALSE             </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 3,023 more rows, and 7 more variables: territory_name_de &lt;chr&gt;,</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>... done <span style='color: #B2B2B2;'>[523ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Parsing and tidying raw HTML data...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Parsing and tidying raw HTML data... done <span style='color: #B2B2B2;'>[43.6s]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 3,034 × 12</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    id_sudd  country_code country_name  country_code_historical is_past_jurisdic…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> nc012018 NC           New Caledonia <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> nc012020 NC           New Caledonia <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> nc012021 NC           New Caledonia <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> ch112021 CH           Switzerland   <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> ch122021 CH           Switzerland   <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> ch132021 CH           Switzerland   <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> rs012006 RS           Serbia        <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> ch092021 CH           Switzerland   <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> ch102021 CH           Switzerland   <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> de012021 DE           Germany       <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 3,024 more rows, and 7 more variables: territory_name_de &lt;chr&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   date &lt;date&gt;, year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   date_last_edited &lt;date&gt;</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># list all referendums whose title matches "AHV"</span></span>
 <span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"filter"</span>,</span>
 <span class='r-in'>                           filter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>title_de <span class='op'>=</span> <span class='st'>"AHV"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>... done <span style='color: #B2B2B2;'>[302ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Parsing and tidying raw HTML data...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Parsing and tidying raw HTML data... done <span style='color: #B2B2B2;'>[166ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 15 × 11</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    id_sudd  country_code country_name country_code_historical is_past_jurisdict…</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>             </span>
@@ -237,7 +249,22 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"filter"</span>,</span>
 <span class='r-in'>                           filter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>year_min <span class='op'>=</span> <span class='fl'>2020</span><span class='op'>)</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_referendums.html'>sudd_referendums</a></span><span class='op'>(</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 86 × 37</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>... done <span style='color: #B2B2B2;'>[413ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Parsing and tidying raw HTML data...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Parsing and tidying raw HTML data... done <span style='color: #B2B2B2;'>[672ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■                             </span>   8% | E…</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■                      </span>  29% | E…</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■                    </span>  38% | E…</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■                 </span>  47% | E…</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■              </span>  56% | E…</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■           </span>  67% | E…</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■■■■        </span>  76% | E…</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■■■■■■■     </span>  85% | E…</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   </span>  93% | E…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 87 × 37</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    id_sudd  country_code country_code_historical country_name   territory_name_…</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> ch012020 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland    Schweiz         </span>
@@ -250,7 +277,7 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> ru032020 RU           <span style='color: #BB0000;'>NA</span>                      Russian Feder… Russland        </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> ru042020 RU           <span style='color: #BB0000;'>NA</span>                      Russian Feder… Russland        </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> ru052020 RU           <span style='color: #BB0000;'>NA</span>                      Russian Feder… Russland        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 76 more rows, and 32 more variables: territory_type_de &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 77 more rows, and 32 more variables: territory_type_de &lt;chr&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   date &lt;date&gt;, year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   question_type_de &lt;chr&gt;, types &lt;list&gt;, result_de &lt;chr&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   result_status_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;,</span></span>
@@ -261,21 +288,27 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='r-in'><span class='co'># get sudd.ch referendum data from five randomly picked referendums</span></span>
 <span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_referendums</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"random"</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_referendums.html'>sudd_referendums</a></span><span class='op'>(</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 5 × 32</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   id_sudd  country_code country_code_historical country_name   territory_name_de</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> fr011798 FR           <span style='color: #BB0000;'>NA</span>                      France         Stadtrepublik Mü…</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span> mh041975 MH           <span style='color: #BB0000;'>NA</span>                      Marshall Isla… Marshall-Inseln  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span> ch011993 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland    Schweiz          </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span> br021993 BR           <span style='color: #BB0000;'>NA</span>                      Brazil         Brasilien        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span> uy012014 UY           <span style='color: #BB0000;'>NA</span>                      Uruguay        Uruguay          </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 27 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>... done <span style='color: #B2B2B2;'>[248ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Parsing and tidying raw HTML data...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Parsing and tidying raw HTML data... done <span style='color: #B2B2B2;'>[63ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 5 × 35</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   id_sudd  country_code country_code_historical country_name    territory_name_…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> bo011931 BO           <span style='color: #BB0000;'>NA</span>                      Bolivia, Pluri… Bolivien        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span> nz011969 NZ           <span style='color: #BB0000;'>NA</span>                      New Zealand     Neuseeland      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span> dz011976 DZ           <span style='color: #BB0000;'>NA</span>                      Algeria         Algerien        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span> ch061998 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland     Schweiz         </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span> tw042018 TW           <span style='color: #BB0000;'>NA</span>                      Taiwan, Provin… Republik China …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 30 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;, question_type_de &lt;chr&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, votes_total &lt;int&gt;, votes_empty &lt;int&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_void &lt;int&gt;, votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;, votes_option_2 &lt;int&gt;, files &lt;list&gt;, …</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;, votes_option_2 &lt;int&gt;, …</span></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

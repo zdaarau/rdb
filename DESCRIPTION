@@ -1,7 +1,7 @@
 Package: c2d
 Title: Download Data from the C2D Database, Which Covers Direct Democratic
     Votes Worldwide
-Version: 0.0.9025
+Version: 0.0.9026
 Authors@R: c(
     person("Salim", "Brüggemann", , "salim-b@pm.me", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5329-5987")),
@@ -31,7 +31,7 @@ Imports:
     lubridate (>= 1.7.10),
     magrittr (>= 2.0.1),
     pal (>= 0.0.9073),
-    pkgpins (>= 0.7.0),
+    pkgpins (>= 0.7.0.9001),
     purrr (>= 0.3.4),
     rlang (>= 0.4.11),
     rvest (>= 1.0.1),

@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9024</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9026</span>
       </span>
     </div>
 
@@ -159,6 +159,16 @@ and <code>tags_tier_3</code>.</p></td>
 <span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='referendums.html'>referendums</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_split.html'>group_split</a></span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>hierarchize_tags</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching JSON data from C2D API...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Downloading: 16 kB     Downloading: 16 kB     Downloading: 16 kB     Downloading: 16 kB     Downloading: 16 kB     Downloading: 16 kB     Downloading: 27 kB     Downloading: 27 kB     Downloading: 27 kB     Downloading: 27 kB     </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Fetching JSON data from C2D API... done <span style='color: #B2B2B2;'>[185ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Converting JSON to list data...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Converting JSON to list data... done <span style='color: #B2B2B2;'>[34ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Tidying data...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Tidying data... done <span style='color: #B2B2B2;'>[946ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 2 × 3</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   tag_tier_1         tag_tier_2        tag_tier_3           </span>
