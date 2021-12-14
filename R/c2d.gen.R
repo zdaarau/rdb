@@ -2629,7 +2629,37 @@ count_referendums <- function(is_draft = FALSE,
     magrittr::set_names(names(.) %>% dplyr::recode("sub_national" = "subnational"))
 }
 
-
+#' Search in English referendum titles
+#'
+#' Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no [fuzzy
+#' search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are returned).
+#'
+#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
+#' titles.
+#'
+#' @param term The Search term. A character scalar.
+#'
+#' @return A character vector of English referendum titles matching the search `term`.
+#' @family referendum
+#' @export
+#'
+#' @examples
+#' c2d::search_referendums("freedom")
+search_referendums <- function(term) {
+  
+  httr::RETRY(verb = "GET",
+              url = "https://services.c2d.ch/referendums",
+              query = list(mode = "search",
+                           term = checkmate::assert_string(term)),
+              times = 5L) %>%
+    # ensure we actually got a JSON response
+    pal::assert_mime_type(mime_type = "application/json",
+                          msg_suffix = mime_error_suffix) %>%
+    # parse response
+    httr::content(as = "parsed") %$%
+    items %>%
+    purrr::flatten_chr() 
+}
 
 #' C2D Codebook
 #'

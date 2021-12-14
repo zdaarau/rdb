@@ -3257,14 +3257,12 @@ count_referendums <- function(is_draft = FALSE,
 }
 ```
 
-### !`search_referendums`
-
-TODO: API Endpoint seems broken as of 2021-11-03. Either fix (and add a test) or remove the fn, cf. <https://github.com/ccmdesign/c2d-app/issues/62>
+### `search_referendums`
 
 Currently, the C2D API [only supports searching in the English referendum
 title](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
 
-```{r, purl = FALSE}
+```{r}
 #' Search in English referendum titles
 #'
 #' Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no [fuzzy
