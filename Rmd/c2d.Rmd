@@ -100,6 +100,7 @@ utils::globalVariables(names = c(".",
                                  "country_code_historical",
                                  "country_name",
                                  "country_name_de",
+                                 "data_codebook",
                                  "date_last_edited",
                                  "date_time_created",
                                  "date_time_last_active",
@@ -113,15 +114,43 @@ utils::globalVariables(names = c(".",
                                  "id_official",
                                  "id_sudd",
                                  "id_sudd_prefix",
+                                 "inst_has_precondition",
+                                 "inst_has_urgent_legal_basis",
+                                 "inst_is_assembly",
+                                 "inst_is_binding",
+                                 "inst_is_counter_proposal",
+                                 "inst_legal_basis_type",
+                                 "inst_object_author",
+                                 "inst_object_legal_level",
+                                 "inst_object_revision_divisibility",
+                                 "inst_object_revision_extent",
+                                 "inst_object_revision_modes",
+                                 "inst_object_type",
+                                 "inst_precondition_actor",
+                                 "inst_precondition_decision",
+                                 "inst_quorum_approval",
+                                 "inst_quorum_turnout",
+                                 "inst_topics_excluded",
+                                 "inst_topics_only",
+                                 "inst_trigger_actor",
+                                 "inst_trigger_actor_level",
+                                 "inst_trigger_threshold",
+                                 "inst_trigger_time_limit",
+                                 "inst_trigger_type",
                                  "is_draft",
                                  "is_past_jurisdiction",
                                  "items",
                                  "level",
+                                 "lower_house_abstentions",
+                                 "lower_house_no",
+                                 "lower_house_yes",
                                  "month",
                                  "municipality",
                                  "n",
                                  "Name",
                                  "number",
+                                 "position_government",
+                                 "ptype",
                                  "question",
                                  "question_en",
                                  "remarks",
@@ -129,6 +158,8 @@ utils::globalVariables(names = c(".",
                                  "rowid",
                                  "sources",
                                  "subnational_entity_name",
+                                 "subterritories_no",
+                                 "subterritories_yes",
                                  "sudd_prefix",
                                  "tag_tier_1",
                                  "tag_tier_2",
@@ -142,13 +173,20 @@ utils::globalVariables(names = c(".",
                                  "title_fr",
                                  "title_en",
                                  "type",
+                                 "upper_house_abstentions",
+                                 "upper_house_no",
+                                 "upper_house_yes",
                                  "url_sudd",
                                  "url_swissvotes",
                                  "value_labels",
                                  "variable_name",
                                  "variable_values",
                                  "votes",
+                                 "votes_empty",
+                                 "votes_invalid",
+                                 "votes_no",
                                  "votes_per_subterritory",
+                                 "votes_yes",
                                  "year"))
 ```
 
@@ -799,6 +837,22 @@ TODO:
 -   Upstream renamings and recodings as far as possible and subsequently remove them from `tidy_referendums()`, `assemble_query_filter()` and all other affected
     places.
 
+NOTES:
+
+-   Depending on the referendum(s), the number of fields returned by the C2D API varies. To systematically test if `tidy_referendums()` works for all cases,
+    run:
+
+    ``` r
+    ids = c2d::referendums(use_cache = FALSE) %$% id
+
+    ids %>%
+      cli::cli_progress_along(name = "Test") %>%
+      purrr::walk(~ {
+        cli::cli_text("i {.val {.x}} with id {.field {ids[.x]}}")
+        c2d::referendum(id = ids[.x])
+      })
+    ```
+
 ```{r}
 #' Tidy "raw" C2D API referendum data
 #'
@@ -861,8 +915,9 @@ tidy_referendums <- function(data,
     # provisionally replace empty (but actually mandatory) fields with NAs
     purrr::modify_depth(.depth = 1L,
                         .f = ~ {
-                          if (!length(.x$date_time_last_edited)) .x$date_time_last_edited <- lubridate::as_datetime(0)[NA]
+                          if (!length(.x$date_time_last_edited)) .x$date_time_last_edited <- list("$date" = NA_real_)
                           if (!length(.x$is_past_jurisdiction)) .x$is_past_jurisdiction <- NA
+                          if (!length(.x$country_code_historical)) .x$country_code_historical <- NA_character_
                           .x
                         }) %>%
     # convert to tibble
@@ -876,19 +931,13 @@ tidy_referendums <- function(data,
       data %<>%
         # rename variables (mind that the MongoDB-based API doesn't demand a fixed schema)
         rename_from_list(names_list = v_names) %>%
-        # add vars which aren't always included
-        dplyr::full_join(y = tibble::tibble(subnational_entity_name = character(),
-                                            municipality = character()),
-                         by = intersect(c("subnational_entity_name",
-                                          "municipality"),
-                                        colnames(.))) %>%
-        
         # create/recode variables
         dplyr::mutate(
           # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
           dplyr::across(any_of(c("subterritories_no",
                                  "subterritories_yes",
-                                 "date_time_created")),
+                                 "date_time_created",
+                                 "date_time_last_edited")),
                         as.double),
           
           # use explicit NA values
@@ -910,17 +959,17 @@ tidy_referendums <- function(data,
           
           # convert all values to lowercase
           ## vectors
-          dplyr::across(c(result,
-                          type,
-                          any_of(c("inst_legal_basis_type",
-                                   "inst_object_type",
-                                   "inst_object_legal_level",
-                                   "inst_object_revision_extent",
-                                   "inst_trigger_type",
-                                   "inst_trigger_actor_level",
-                                   "inst_trigger_time_limit",
-                                   "inst_quorum_approval",
-                                   "inst_precondition_decision"))),
+          dplyr::across(any_of(c("result",
+                                 "type",
+                                 "inst_legal_basis_type",
+                                 "inst_object_type",
+                                 "inst_object_legal_level",
+                                 "inst_object_revision_extent",
+                                 "inst_trigger_type",
+                                 "inst_trigger_actor_level",
+                                 "inst_trigger_time_limit",
+                                 "inst_quorum_approval",
+                                 "inst_precondition_decision")),
                         stringr::str_to_lower),
           ## lists
           dplyr::across(.cols = any_of(c("inst_object_revision_modes",
@@ -965,21 +1014,32 @@ tidy_referendums <- function(data,
           ## nominal
           ### flatten `id`
           id = purrr::flatten_chr(id),
-          ### complement `id_official` by old `number` when it doesn't signify an `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
-          id_official =
-            number %>%
-            dplyr::if_else(is.na(id_official) & stringr::str_detect(string = .,
-                                                                    pattern = "^\\D"),
-                           NA_character_,
-                           .),
-          id_sudd =
-            number %>%
-            dplyr::if_else(is.na(id_sudd) & stringr::str_detect(string = .,
-                                                                pattern = "^\\D"),
-                           .,
-                           NA_character_) %>%
-            # everything beyond the 8th char seems to be manually added -> strip!
-            stringr::str_sub(end = 8L),
+          ### complement `id_official` by old `number` when it doesn't signify an `id_sudd`
+          ### (the latter consists of a two-letter country code plus a 6-digit number)
+          id_official = {
+            if (exists("number")) {
+              number %>%
+              dplyr::if_else(is.na(id_official) & stringr::str_detect(string = .,
+                                                                      pattern = "^\\D"),
+                             NA_character_,
+                             .)
+            } else {
+              NA_character_
+            }
+          },
+          id_sudd = {
+            if (exists("number")) {
+              number %>%
+              dplyr::if_else(is.na(id_sudd) & stringr::str_detect(string = .,
+                                                                  pattern = "^\\D"),
+                             .,
+                             NA_character_) %>%
+                # everything beyond the 8th char seems to be manually added -> strip!
+                stringr::str_sub(end = 8L)
+            } else {
+              NA_character_
+            }
+          },
           
           ### split `tags` into separate per-tier vars
           tags_tier_1 = tags %>% purrr::map(infer_tags,
@@ -1027,6 +1087,7 @@ tidy_referendums <- function(data,
           ## interval
           date = lubridate::as_date(date),
           date_time_created = tidy_date(date_time_created),
+          date_time_last_edited = tidy_date(date_time_last_edited),
           ## undefined
           files = files %>% purrr::map(~ .x %>% purrr::map(~ .x %>%
                                                              # unnest and restore `date`
@@ -1046,8 +1107,8 @@ tidy_referendums <- function(data,
         ) %>%
         
         # remove obsolete vars
-        dplyr::select(-c(number,
-                         tags)) %>%
+        dplyr::select(-any_of(c("number",
+                                "tags"))) %>%
         
         # convert to (ordered) factor where appropriate
         ## based on codebook
@@ -1056,7 +1117,7 @@ tidy_referendums <- function(data,
           metadata <- data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
           if (nrow(metadata) != 1L) cli::cli_abort("Missing codebook metadata! Please debug")
           
-          if (!is.logical(.x) && !is.null(metadata$variable_values[[1L]])) {
+          if (is.factor(unlist(metadata$ptype))) {
             
             lvls <- purrr::flatten_chr(metadata$variable_values)
             is_ordered <- metadata$value_scale %in% c("ordinal_ascending", "ordinal_descending")
@@ -1072,18 +1133,24 @@ tidy_referendums <- function(data,
             }
           } else .x
         })) %>%
-        ## nominal vars without variable_values in codebook
+        ## fctrs without explicit variable_values set in codebook
         dplyr::mutate(dplyr::across(.cols = country_code,
                                     .fns = factor,
                                     levels = ISOcodes::ISO_3166_1$Alpha_2,
                                     ordered = FALSE),
-                      dplyr::across(.cols = c(country_name,
-                                              subnational_entity_name,
-                                              municipality),
+                      dplyr::across(.cols = any_of(c("country_name",
+                                                     "subnational_entity_name",
+                                                     "municipality")),
                                     .fns = as.factor)) %>%
         # add variable labels
         labelled::set_variable_labels(.labels = var_lbls,
                                       .strict = FALSE) %>%
+        # add vars which aren't always included and coerce to proper types
+        vctrs::tib_cast(to =
+                          data_codebook %$%
+                          magrittr::set_names(x = ptype,
+                                              value = variable_name) %>%
+                          tibble::as_tibble()) %>%
         # reorder columns
         dplyr::relocate(id,
                         id_official,
@@ -1103,22 +1170,22 @@ tidy_referendums <- function(data,
                         question_en,
                         committee_name,
                         result,
-                        any_of("subterritories_yes"),
-                        any_of("subterritories_no"),
-                        any_of("electorate_total"),
-                        any_of("electorate_abroad"),
-                        any_of("votes_yes"),
-                        any_of("votes_no"),
-                        any_of("votes_empty"),
-                        any_of("votes_invalid"),
-                        any_of("votes_per_subterritory"),
-                        any_of("lower_house_yes"),
-                        any_of("lower_house_no"),
-                        any_of("lower_house_abstentions"),
-                        any_of("upper_house_yes"),
-                        any_of("upper_house_no"),
-                        any_of("upper_house_abstentions"),
-                        any_of("position_government"),
+                        subterritories_yes,
+                        subterritories_no,
+                        electorate_total,
+                        electorate_abroad,
+                        votes_yes,
+                        votes_no,
+                        votes_empty,
+                        votes_invalid,
+                        votes_per_subterritory,
+                        lower_house_yes,
+                        lower_house_no,
+                        lower_house_abstentions,
+                        upper_house_yes,
+                        upper_house_no,
+                        upper_house_abstentions,
+                        position_government,
                         tags_tier_1,
                         tags_tier_2,
                         tags_tier_3,
@@ -1132,29 +1199,29 @@ tidy_referendums <- function(data,
                         date_time_last_edited,
                         archive,
                         type,
-                        any_of("inst_legal_basis_type"),
-                        any_of("inst_has_urgent_legal_basis"),
-                        any_of("inst_is_binding"),
-                        any_of("inst_is_counter_proposal"),
-                        any_of("inst_is_assembly"),
-                        any_of("inst_trigger_type"),
-                        any_of("inst_trigger_actor"),
-                        any_of("inst_trigger_actor_level"),
-                        any_of("inst_trigger_threshold"),
-                        any_of("inst_trigger_time_limit"),
-                        any_of("inst_object_type"),
-                        any_of("inst_object_author"),
-                        any_of("inst_object_legal_level"),
-                        any_of("inst_object_revision_extent"),
-                        any_of("inst_object_revision_modes"),
-                        any_of("inst_object_revision_divisibility"),
-                        any_of("inst_topics_only"),
-                        any_of("inst_topics_excluded"),
-                        any_of("inst_quorum_turnout"),
-                        any_of("inst_quorum_approval"),
-                        any_of("inst_has_precondition"),
-                        any_of("inst_precondition_actor"),
-                        any_of("inst_precondition_decision"))
+                        inst_legal_basis_type,
+                        inst_has_urgent_legal_basis,
+                        inst_is_binding,
+                        inst_is_counter_proposal,
+                        inst_is_assembly,
+                        inst_trigger_type,
+                        inst_trigger_actor,
+                        inst_trigger_actor_level,
+                        inst_trigger_threshold,
+                        inst_trigger_time_limit,
+                        inst_object_type,
+                        inst_object_author,
+                        inst_object_legal_level,
+                        inst_object_revision_extent,
+                        inst_object_revision_modes,
+                        inst_object_revision_divisibility,
+                        inst_topics_only,
+                        inst_topics_excluded,
+                        inst_quorum_turnout,
+                        inst_quorum_approval,
+                        inst_has_precondition,
+                        inst_precondition_actor,
+                        inst_precondition_decision)
       
       # correct known errors
       # TODO: correct this upstream using `edit_referendums()` once [issue #29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved
@@ -2437,110 +2504,6 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
                                  "deleted"    = "is_deleted"))
 ```
 
-## Data
-
-The R code chunks below are *not* included in the [source package](https://r-pkgs.org/package-structure-state.html#source-package) (`purl = FALSE`). The chunks
-have to be executed at least once to generate the necessary internal data file [`R/sysdata.rda`](https://r-pkgs.org/data.html#data-sysdata).
-
-### `data_codebook`
-
-TODO: Once the toml\* package is finished, use it instead to do the stuff below more generically.
-
-```{r, purl = FALSE}
-data_codebook <- {
-  
-  pal::assert_pkg("assertr")
-  codebook <- c2d:::read_toml("data-raw/c2d_codebook.toml")
-  
-  c(codebook$`01_main`$item,
-    codebook$`02_institutional`$`01_status`$item,
-    codebook$`02_institutional`$`02_trigger`$item,
-    codebook$`02_institutional`$`03_object`$item,
-    codebook$`02_institutional`$`04_other`$item) %>%
-    purrr::map_dfr(~ tibble::tibble(variable_name = .x$variable_name %||% NA_character_,
-                                    variable_label = .x$variable_label %||% NA_character_,
-                                    is_multi_valued = .x$is_multi_valued %||% FALSE,
-                                    applicability_constraint = .x$applicability_constraint %||% NA_character_,
-                                    variable_values = list(.x$variable_values) %||% list(character()),
-                                    value_label_prefix = .x$value_label_prefix %||% NA_character_,
-                                    value_labels = list(.x$value_labels) %||% list(character()),
-                                    value_label_suffix = .x$value_label_suffix %||% NA_character_,
-                                    value_default = list(.x$value_default) %||% list(character()),
-                                    value_scale = .x$value_scale %||% NA_character_)) %>%
-    # integrity checks
-    assertr::assert(predicate = assertr::not_na,
-                    variable_name,
-                    variable_label,
-                    value_scale,
-                    is_multi_valued)
-}
-```
-
-### `data_tags`
-
-```{r, purl = FALSE}
-data_tags <-
-  # download file from private CCM Design repo
-  pal::gh_text_file(owner = "ccmdesign",
-                    name = "c2d-app",
-                    rev = "master",
-                    path = "ch.c2d/web/themes.json") %>%
-  jsonlite::fromJSON(flatten = FALSE) %>%
-  tibble::as_tibble() %>%
-  # create tidy data version
-  dplyr::rename(tag_tier_1 = name,
-                tag_tier_2 = children) %>%
-  tidyr::unnest_longer(col = tag_tier_2) %$%
-  dplyr::bind_cols(tag_tier_1 = tag_tier_1,
-                   tag_tier_2) %>%
-  dplyr::rename(tag_tier_2 = name,
-                tag_tier_3 = children) %>%
-  # ensure consistent col subtypes
-  dplyr::mutate(tag_tier_3 = tag_tier_3 %>% purrr::map(~ { if (is.list(.x)) character() else .x })) %>%
-  tidyr::unnest_longer(col = tag_tier_3)
-```
-
-### `months_de`
-
-```{r, purl = FALSE}
-pal::assert_pkg("clock")
-
-months_de <-
-  1:12 %>%
-  magrittr::set_names(clock::clock_labels_lookup("de")$month) %>%
-  as.list()
-```
-
-### `var_lbls`
-
-NOTES:
-
--   `var_lbls` is assigned here because when inlined, it somehow breaks `devtools::run_examples()` during pkg check ("C stack usage (...) is too close to the
-    limit"); maybe too large fn stack? (modifying `pal::strip_md()` to minimize the fn stack was tried but didn't help)
-
-```{r, purl = FALSE}
-var_lbls <-
-  data_codebook$variable_label %>%
-  pal::strip_md() %>%
-  as.list() %>%
-  magrittr::set_names(value = data_codebook$variable_name)
-```
-
-Finally, we have to save all the external data objects to `data/*.RData` as well as the internal data objects to `R/sysdata.rda`.
-
-Note that `data_codebook` is saved as internal data and later exported because external data doesn't support `@aliases`.
-
-```{r, purl = FALSE}
-usethis::use_data(data_codebook,
-                  data_tags,
-                  months_de,
-                  var_lbls,
-                  internal = TRUE,
-                  overwrite = TRUE,
-                  compress = "xz",
-                  version = 3L)
-```
-
 # EXPORTED
 
 ## Referendum data
@@ -2787,6 +2750,10 @@ download_file_attachment <- function(s3_object_key,
 ```
 
 ### `add_referendums`
+
+TODO:
+
+-   Test if <https://github.com/ccmdesign/c2d-app/issues/50> is actually fixed and update table below
 
 NOTES:
 
@@ -3311,7 +3278,6 @@ search_referendums <- function(term) {
 #' @format `r pkgsnip::return_label("data")`
 #' @aliases codebook
 #' @family metadata
-#' @export
 "data_codebook"
 ```
 

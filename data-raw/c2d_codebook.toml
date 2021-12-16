@@ -46,11 +46,13 @@ value_scale = "ordinal_ascending"
 [[01_main.item]]
 variable_name = "is_past_jurisdiction"
 variable_label = "whether or not the country where the referendum took place ceased to exist and thus has a [`country_code_historical`](#country_code_historical) instead of a [`country_code`](#country_code) assigned"
+variable_values = [ true, false]
 value_scale = "binary"
 [[01_main.item]]
 variable_name = "date"
 variable_label = "the date on which the referendum took place"
 value_scale = "interval"
+ptype = "vctrs::new_date()"
 [[01_main.item]]
 variable_name = "title_de"
 variable_label = "the referendum's German title"
@@ -86,11 +88,13 @@ value_scale = "binary"
 variable_name = "subterritories_yes"
 variable_label = "the number of [administrative divisions](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level) that approved the referendum"
 applicability_constraint = "level != 'local'"
+ptype = "numeric()"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "subterritories_no"
 variable_label = "the number of [administrative divisions](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level) that rejected the referendum"
 applicability_constraint = "level != 'local'"
+ptype = "numeric()"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "electorate_total"
@@ -119,8 +123,9 @@ value_scale = "ratio"
 [[01_main.item]]
 variable_name = "votes_per_subterritory"
 variable_label = "the number of [`votes_yes`](#votes_yes), [`votes_no`](#votes_no), [`votes_empty`](#votes_empty) and [`votes_invalid`](#votes_invalid) per [administrative division](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level); currently only filled for Swiss referendums on the national level"
+is_nested = true
 applicability_constraint = "level != 'local'"
-value_scale = "undefined"
+value_scale = "ratio"
 [[01_main.item]]
 variable_name = "lower_house_yes"
 variable_label = "the number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; in [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism), this number includes only members of the _lower house_, in [unicameral legislatures](https://en.wikipedia.org/wiki/Unicameralism) all parliamentarians; currently only filled for Swiss referendums on the national level ([National Council](https://en.wikipedia.org/wiki/National_Council_(Switzerland)))"
@@ -355,7 +360,7 @@ value_scale = "nominal"
 [[01_main.item]]
 variable_name = "remarks"
 variable_label = "a free text field with additional information about the referendum"
-value_scale = "undefined"
+value_scale = "nominal"
 [[01_main.item]]
 variable_name = "files"
 variable_label = """
@@ -366,6 +371,7 @@ metadata about files attached to the referendum, including
 - `file_name`: the filename as it appears when the file is downloaded
 - `file_size`: the file's size in bytes
 - `s3_object_key`: the key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design); the file can be downloaded by feeding this key to [`c2d::download_file_attachment()`](https://rpkg.dev/c2d/reference/download_file_attachment.html)"""
+is_nested = true
 value_scale = "undefined"
 [[01_main.item]]
 variable_name = "url_sudd"
@@ -390,13 +396,16 @@ value_scale = "binary"
 variable_name = "date_time_created"
 variable_label = "the date and time on which the referendum's data entry was created"
 value_scale = "interval"
+ptype = "vctrs::new_datetime()"
 [[01_main.item]]
 variable_name = "date_time_last_edited"
 variable_label = "the date and time on which the referendum's data entry was last modified"
 value_scale = "interval"
+ptype = "vctrs::new_datetime()"
 [[01_main.item]]
 variable_name = "archive"
 variable_label = "the referendum's data from an earlier, obsolete state of the C2D database"
+is_nested = true
 value_scale = "undefined"
 [[01_main.item]]
 variable_name = "type"

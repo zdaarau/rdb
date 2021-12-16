@@ -2,7 +2,6 @@
 
 export(add_referendums)
 export(count_referendums)
-export(data_codebook)
 export(download_file_attachment)
 export(edit_referendums)
 export(hierarchize_tags)

@@ -30,6 +30,7 @@ utils::globalVariables(names = c(".",
                                  "country_code_historical",
                                  "country_name",
                                  "country_name_de",
+                                 "data_codebook",
                                  "date_last_edited",
                                  "date_time_created",
                                  "date_time_last_active",
@@ -43,15 +44,43 @@ utils::globalVariables(names = c(".",
                                  "id_official",
                                  "id_sudd",
                                  "id_sudd_prefix",
+                                 "inst_has_precondition",
+                                 "inst_has_urgent_legal_basis",
+                                 "inst_is_assembly",
+                                 "inst_is_binding",
+                                 "inst_is_counter_proposal",
+                                 "inst_legal_basis_type",
+                                 "inst_object_author",
+                                 "inst_object_legal_level",
+                                 "inst_object_revision_divisibility",
+                                 "inst_object_revision_extent",
+                                 "inst_object_revision_modes",
+                                 "inst_object_type",
+                                 "inst_precondition_actor",
+                                 "inst_precondition_decision",
+                                 "inst_quorum_approval",
+                                 "inst_quorum_turnout",
+                                 "inst_topics_excluded",
+                                 "inst_topics_only",
+                                 "inst_trigger_actor",
+                                 "inst_trigger_actor_level",
+                                 "inst_trigger_threshold",
+                                 "inst_trigger_time_limit",
+                                 "inst_trigger_type",
                                  "is_draft",
                                  "is_past_jurisdiction",
                                  "items",
                                  "level",
+                                 "lower_house_abstentions",
+                                 "lower_house_no",
+                                 "lower_house_yes",
                                  "month",
                                  "municipality",
                                  "n",
                                  "Name",
                                  "number",
+                                 "position_government",
+                                 "ptype",
                                  "question",
                                  "question_en",
                                  "remarks",
@@ -59,6 +88,8 @@ utils::globalVariables(names = c(".",
                                  "rowid",
                                  "sources",
                                  "subnational_entity_name",
+                                 "subterritories_no",
+                                 "subterritories_yes",
                                  "sudd_prefix",
                                  "tag_tier_1",
                                  "tag_tier_2",
@@ -72,13 +103,20 @@ utils::globalVariables(names = c(".",
                                  "title_fr",
                                  "title_en",
                                  "type",
+                                 "upper_house_abstentions",
+                                 "upper_house_no",
+                                 "upper_house_yes",
                                  "url_sudd",
                                  "url_swissvotes",
                                  "value_labels",
                                  "variable_name",
                                  "variable_values",
                                  "votes",
+                                 "votes_empty",
+                                 "votes_invalid",
+                                 "votes_no",
                                  "votes_per_subterritory",
+                                 "votes_yes",
                                  "year"))
 
 .onLoad <- function(libname, pkgname) {
@@ -683,8 +721,9 @@ tidy_referendums <- function(data,
     # provisionally replace empty (but actually mandatory) fields with NAs
     purrr::modify_depth(.depth = 1L,
                         .f = ~ {
-                          if (!length(.x$date_time_last_edited)) .x$date_time_last_edited <- lubridate::as_datetime(0)[NA]
+                          if (!length(.x$date_time_last_edited)) .x$date_time_last_edited <- list("$date" = NA_real_)
                           if (!length(.x$is_past_jurisdiction)) .x$is_past_jurisdiction <- NA
+                          if (!length(.x$country_code_historical)) .x$country_code_historical <- NA_character_
                           .x
                         }) %>%
     # convert to tibble
@@ -698,19 +737,13 @@ tidy_referendums <- function(data,
       data %<>%
         # rename variables (mind that the MongoDB-based API doesn't demand a fixed schema)
         rename_from_list(names_list = v_names) %>%
-        # add vars which aren't always included
-        dplyr::full_join(y = tibble::tibble(subnational_entity_name = character(),
-                                            municipality = character()),
-                         by = intersect(c("subnational_entity_name",
-                                          "municipality"),
-                                        colnames(.))) %>%
-        
         # create/recode variables
         dplyr::mutate(
           # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
           dplyr::across(any_of(c("subterritories_no",
                                  "subterritories_yes",
-                                 "date_time_created")),
+                                 "date_time_created",
+                                 "date_time_last_edited")),
                         as.double),
           
           # use explicit NA values
@@ -732,17 +765,17 @@ tidy_referendums <- function(data,
           
           # convert all values to lowercase
           ## vectors
-          dplyr::across(c(result,
-                          type,
-                          any_of(c("inst_legal_basis_type",
-                                   "inst_object_type",
-                                   "inst_object_legal_level",
-                                   "inst_object_revision_extent",
-                                   "inst_trigger_type",
-                                   "inst_trigger_actor_level",
-                                   "inst_trigger_time_limit",
-                                   "inst_quorum_approval",
-                                   "inst_precondition_decision"))),
+          dplyr::across(any_of(c("result",
+                                 "type",
+                                 "inst_legal_basis_type",
+                                 "inst_object_type",
+                                 "inst_object_legal_level",
+                                 "inst_object_revision_extent",
+                                 "inst_trigger_type",
+                                 "inst_trigger_actor_level",
+                                 "inst_trigger_time_limit",
+                                 "inst_quorum_approval",
+                                 "inst_precondition_decision")),
                         stringr::str_to_lower),
           ## lists
           dplyr::across(.cols = any_of(c("inst_object_revision_modes",
@@ -787,21 +820,32 @@ tidy_referendums <- function(data,
           ## nominal
           ### flatten `id`
           id = purrr::flatten_chr(id),
-          ### complement `id_official` by old `number` when it doesn't signify an `id_sudd` (the latter consists of a two-letter country code plus a 6-digit number)
-          id_official =
-            number %>%
-            dplyr::if_else(is.na(id_official) & stringr::str_detect(string = .,
-                                                                    pattern = "^\\D"),
-                           NA_character_,
-                           .),
-          id_sudd =
-            number %>%
-            dplyr::if_else(is.na(id_sudd) & stringr::str_detect(string = .,
-                                                                pattern = "^\\D"),
-                           .,
-                           NA_character_) %>%
-            # everything beyond the 8th char seems to be manually added -> strip!
-            stringr::str_sub(end = 8L),
+          ### complement `id_official` by old `number` when it doesn't signify an `id_sudd`
+          ### (the latter consists of a two-letter country code plus a 6-digit number)
+          id_official = {
+            if (exists("number")) {
+              number %>%
+              dplyr::if_else(is.na(id_official) & stringr::str_detect(string = .,
+                                                                      pattern = "^\\D"),
+                             NA_character_,
+                             .)
+            } else {
+              NA_character_
+            }
+          },
+          id_sudd = {
+            if (exists("number")) {
+              number %>%
+              dplyr::if_else(is.na(id_sudd) & stringr::str_detect(string = .,
+                                                                  pattern = "^\\D"),
+                             .,
+                             NA_character_) %>%
+                # everything beyond the 8th char seems to be manually added -> strip!
+                stringr::str_sub(end = 8L)
+            } else {
+              NA_character_
+            }
+          },
           
           ### split `tags` into separate per-tier vars
           tags_tier_1 = tags %>% purrr::map(infer_tags,
@@ -849,6 +893,7 @@ tidy_referendums <- function(data,
           ## interval
           date = lubridate::as_date(date),
           date_time_created = tidy_date(date_time_created),
+          date_time_last_edited = tidy_date(date_time_last_edited),
           ## undefined
           files = files %>% purrr::map(~ .x %>% purrr::map(~ .x %>%
                                                              # unnest and restore `date`
@@ -868,8 +913,8 @@ tidy_referendums <- function(data,
         ) %>%
         
         # remove obsolete vars
-        dplyr::select(-c(number,
-                         tags)) %>%
+        dplyr::select(-any_of(c("number",
+                                "tags"))) %>%
         
         # convert to (ordered) factor where appropriate
         ## based on codebook
@@ -878,7 +923,7 @@ tidy_referendums <- function(data,
           metadata <- data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
           if (nrow(metadata) != 1L) cli::cli_abort("Missing codebook metadata! Please debug")
           
-          if (!is.logical(.x) && !is.null(metadata$variable_values[[1L]])) {
+          if (is.factor(unlist(metadata$ptype))) {
             
             lvls <- purrr::flatten_chr(metadata$variable_values)
             is_ordered <- metadata$value_scale %in% c("ordinal_ascending", "ordinal_descending")
@@ -894,18 +939,24 @@ tidy_referendums <- function(data,
             }
           } else .x
         })) %>%
-        ## nominal vars without variable_values in codebook
+        ## fctrs without explicit variable_values set in codebook
         dplyr::mutate(dplyr::across(.cols = country_code,
                                     .fns = factor,
                                     levels = ISOcodes::ISO_3166_1$Alpha_2,
                                     ordered = FALSE),
-                      dplyr::across(.cols = c(country_name,
-                                              subnational_entity_name,
-                                              municipality),
+                      dplyr::across(.cols = any_of(c("country_name",
+                                                     "subnational_entity_name",
+                                                     "municipality")),
                                     .fns = as.factor)) %>%
         # add variable labels
         labelled::set_variable_labels(.labels = var_lbls,
                                       .strict = FALSE) %>%
+        # add vars which aren't always included and coerce to proper types
+        vctrs::tib_cast(to =
+                          data_codebook %$%
+                          magrittr::set_names(x = ptype,
+                                              value = variable_name) %>%
+                          tibble::as_tibble()) %>%
         # reorder columns
         dplyr::relocate(id,
                         id_official,
@@ -925,22 +976,22 @@ tidy_referendums <- function(data,
                         question_en,
                         committee_name,
                         result,
-                        any_of("subterritories_yes"),
-                        any_of("subterritories_no"),
-                        any_of("electorate_total"),
-                        any_of("electorate_abroad"),
-                        any_of("votes_yes"),
-                        any_of("votes_no"),
-                        any_of("votes_empty"),
-                        any_of("votes_invalid"),
-                        any_of("votes_per_subterritory"),
-                        any_of("lower_house_yes"),
-                        any_of("lower_house_no"),
-                        any_of("lower_house_abstentions"),
-                        any_of("upper_house_yes"),
-                        any_of("upper_house_no"),
-                        any_of("upper_house_abstentions"),
-                        any_of("position_government"),
+                        subterritories_yes,
+                        subterritories_no,
+                        electorate_total,
+                        electorate_abroad,
+                        votes_yes,
+                        votes_no,
+                        votes_empty,
+                        votes_invalid,
+                        votes_per_subterritory,
+                        lower_house_yes,
+                        lower_house_no,
+                        lower_house_abstentions,
+                        upper_house_yes,
+                        upper_house_no,
+                        upper_house_abstentions,
+                        position_government,
                         tags_tier_1,
                         tags_tier_2,
                         tags_tier_3,
@@ -954,29 +1005,29 @@ tidy_referendums <- function(data,
                         date_time_last_edited,
                         archive,
                         type,
-                        any_of("inst_legal_basis_type"),
-                        any_of("inst_has_urgent_legal_basis"),
-                        any_of("inst_is_binding"),
-                        any_of("inst_is_counter_proposal"),
-                        any_of("inst_is_assembly"),
-                        any_of("inst_trigger_type"),
-                        any_of("inst_trigger_actor"),
-                        any_of("inst_trigger_actor_level"),
-                        any_of("inst_trigger_threshold"),
-                        any_of("inst_trigger_time_limit"),
-                        any_of("inst_object_type"),
-                        any_of("inst_object_author"),
-                        any_of("inst_object_legal_level"),
-                        any_of("inst_object_revision_extent"),
-                        any_of("inst_object_revision_modes"),
-                        any_of("inst_object_revision_divisibility"),
-                        any_of("inst_topics_only"),
-                        any_of("inst_topics_excluded"),
-                        any_of("inst_quorum_turnout"),
-                        any_of("inst_quorum_approval"),
-                        any_of("inst_has_precondition"),
-                        any_of("inst_precondition_actor"),
-                        any_of("inst_precondition_decision"))
+                        inst_legal_basis_type,
+                        inst_has_urgent_legal_basis,
+                        inst_is_binding,
+                        inst_is_counter_proposal,
+                        inst_is_assembly,
+                        inst_trigger_type,
+                        inst_trigger_actor,
+                        inst_trigger_actor_level,
+                        inst_trigger_threshold,
+                        inst_trigger_time_limit,
+                        inst_object_type,
+                        inst_object_author,
+                        inst_object_legal_level,
+                        inst_object_revision_extent,
+                        inst_object_revision_modes,
+                        inst_object_revision_divisibility,
+                        inst_topics_only,
+                        inst_topics_excluded,
+                        inst_quorum_turnout,
+                        inst_quorum_approval,
+                        inst_has_precondition,
+                        inst_precondition_actor,
+                        inst_precondition_decision)
       
       # correct known errors
       # TODO: correct this upstream using `edit_referendums()` once [issue #29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved
@@ -2013,16 +2064,6 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
                                  "size"       = "file_size",
                                  "deleted"    = "is_deleted"))
 
-
-
-
-
-
-
-
-
-
-
 #' Get referendum data
 #'
 #' Downloads the referendum data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
@@ -2671,7 +2712,6 @@ search_referendums <- function(term) {
 #' @format `r pkgsnip::return_label("data")`
 #' @aliases codebook
 #' @family metadata
-#' @export
 "data_codebook"
 
 #' Get the set of possible *value labels* of a referendum data variable

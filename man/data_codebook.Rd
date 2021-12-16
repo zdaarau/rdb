@@ -155,6 +155,14 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 Whether or not the country where the referendum took place ceased to
 exist and thus has a \code{country_code_historical} instead of a
 \code{country_code} assigned.
+\subsection{Possible values}{\tabular{l}{
+   Value \cr
+   \code{TRUE} \cr
+   \code{FALSE} \cr
+}
+
+}
+
 \subsection{Level of measurement}{
 
 This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
@@ -374,6 +382,12 @@ national level.
 
 This variable is only applicable under the following condition:\if{html}{\out{<div class="sourceCode r">}}\preformatted{level != 'local'
 }\if{html}{\out{</div>}}
+}
+
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{ratio} level.
 }
 
 }
@@ -1020,6 +1034,12 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 \subsection{\code{remarks}}{
 
 A free text field with additional information about the referendum.
+\subsection{Level of measurement}{
+
+This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
+\strong{nominal} level.
+}
+
 }
 
 \subsection{\code{files}}{
