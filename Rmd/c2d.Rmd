@@ -100,7 +100,6 @@ utils::globalVariables(names = c(".",
                                  "country_code_historical",
                                  "country_name",
                                  "country_name_de",
-                                 "data_codebook",
                                  "date_last_edited",
                                  "date_time_created",
                                  "date_time_last_active",
@@ -1114,7 +1113,7 @@ tidy_referendums <- function(data,
         ## based on codebook
         dplyr::mutate(dplyr::across(.fns = ~ {
           
-          metadata <- data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
+          metadata <- c2d::data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
           if (nrow(metadata) != 1L) cli::cli_abort("Missing codebook metadata! Please debug")
           
           if (is.factor(unlist(metadata$ptype))) {
@@ -1147,7 +1146,7 @@ tidy_referendums <- function(data,
                                       .strict = FALSE) %>%
         # add vars which aren't always included and coerce to proper types
         vctrs::tib_cast(to =
-                          data_codebook %$%
+                          c2d::data_codebook %$%
                           magrittr::set_names(x = ptype,
                                               value = variable_name) %>%
                           tibble::as_tibble()) %>%
@@ -2438,7 +2437,8 @@ mime_error_suffix <- "This indicates either some network issue or a change in th
 sudd_years <-
   xml2::read_html("https://sudd.ch/index.php") %>%
   rvest::html_element(css = "select[id='first']") %>%
-  rvest::html_elements("option") %>% rvest::html_attr("value") %>%
+  rvest::html_elements("option") %>%
+  rvest::html_attr("value") %>%
   as.integer()
 
 sudd_max_year <- pal::safe_max(sudd_years)
@@ -3036,7 +3036,7 @@ validate_referendums <- function(data,
   checkmate::assert_data_frame(data,
                                min.rows = 1L)
   checkmate::assert_subset(colnames(data),
-                           choices = data_codebook$variable_name)
+                           choices = c2d::data_codebook$variable_name)
   checkmate::assert_flag(check_applicability_constraint)
   checkmate::assert_flag(check_id_sudd_prefix)
   
@@ -3059,7 +3059,7 @@ validate_referendums <- function(data,
                            msg_failed = paste(status_msg, "failed"))
     
     v_names_violated <-
-      data_codebook %>%
+      c2d::data_codebook %>%
       dplyr::filter(variable_name %in% colnames(data)
                     & !is.na(applicability_constraint)) %$%
       purrr::map2_lgl(.x = magrittr::set_names(x = variable_name,
@@ -3093,17 +3093,21 @@ validate_referendums <- function(data,
       cli::cli({
         cli::cli_text("\nTo get the applicability constraint of e.g. {.var {first_v_name_violated}}, run:")
         cli::cli_text("")
-        cli::cli_code(c("data_codebook %>%",
+        cli::cli_code(c("c2d::data_codebook %>%",
                         glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
                         "  applicability_constraint"))
         cli::cli_text("")
         cli::cli_text("To inspect the entries in violation of the above applicability constraint, run:")
         cli::cli_text("")
-        cli::cli_code(c("data_codebook %>%",
-                        glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
-                        "  dplyr::filter(.data = data,",
-                        "                !eval(parse(text = applicability_constraint))) %$%",
-                        glue::glue("  {first_v_name_violated}")))
+        cli::cli_code(c("data %>%",
+                        glue::glue("  dplyr::filter(c2d::data_codebook %>%\n",
+                                   "                  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%\n",
+                                   "                  applicability_constraint %>%\n",
+                                   "                  parse(text = .) %>%\n",
+                                   "                  eval() %>%\n",
+                                   "                  magrittr::not()) %>%\n",
+                                   "  dplyr::select(id, {first_v_name_violated})",
+                                   .trim = FALSE)))
       })
     }
   }
@@ -3308,8 +3312,8 @@ search_referendums <- function(term) {
 val_lbls <- function(v_name,
                      incl_affixes = TRUE) {
   v_name <- rlang::arg_match(arg = v_name,
-                             values = data_codebook$variable_name)
-  metadata <- data_codebook %>% dplyr::filter(variable_name == !!v_name)
+                             values = c2d::data_codebook$variable_name)
+  metadata <- c2d::data_codebook %>% dplyr::filter(variable_name == !!v_name)
   result <- metadata$value_labels %>% purrr::flatten_chr()
   
   if (incl_affixes) {
@@ -3347,8 +3351,8 @@ val_lbls <- function(v_name,
 v_vals <- function(v_name) {
   
   v_name <- rlang::arg_match(arg = v_name,
-                             values = data_codebook$variable_name)
-  data_codebook %>%
+                             values = c2d::data_codebook$variable_name)
+  c2d::data_codebook %>%
     dplyr::filter(variable_name == !!v_name) %$%
     variable_values %>%
     unlist()

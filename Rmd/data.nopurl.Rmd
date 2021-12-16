@@ -86,9 +86,15 @@ usethis::use_data(data_tags,
 
 # Exported data
 
+NOTES:
+
+-   When used internally, other than internal data, exported data must always be referred to by its explicit namespace, i.e. e.g. `c2d::data_codebook`.
+
 ## `data_codebook`
 
-TODO: Once the toml\* package is finished, use it instead to do the stuff below more generically.
+TODO:
+
+-   Once the toml\* package is finished, use it instead to do the stuff below more generically.
 
 NOTES:
 
