@@ -2900,6 +2900,20 @@ add_referendums <- function(data,
 
 ### `edit_referendums`
 
+TODO:
+
+-   Recent changes made the following variables mandatory even for edits:
+
+    -   `total_electorate`
+    -   `citizens_abroad`
+    -   `votes_yes`
+    -   `votes_no`
+    -   `votes_empty`
+    -   `votes_invalid`
+
+    This is annoying, thus I [asked to change it](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-996196362) -> decide on what to do after CCM
+    Design replied.
+
 NOTES:
 
 -   For edits, the only mandatory JSON field is `draft`. Only the fields that are supposed to change need to be supplied. Nested fields like `categories` can be
