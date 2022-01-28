@@ -2,7 +2,7 @@
 # See `README.md#r-markdown-format` for more information on the literate programming approach used applying the R Markdown format.
 
 # c2d: Download Data from the C2D Database, Which Covers Direct Democratic Votes Worldwide
-# Copyright (C) 2021 Centre for Democracy Studies Aarau (ZDA)
+# Copyright (C) 2022 Centre for Democracy Studies Aarau (ZDA)
 # 
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or any later version.
@@ -120,10 +120,10 @@ utils::globalVariables(names = c(".",
 
 .onLoad <- function(libname, pkgname) {
   
-  rlang::with_handlers(.expr = pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
-                                                    max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
-                                                                        default = "30 days")),
-                       error = ~ cli::cli_alert_warning(text = "Failed to clear pkgpins cache on load of {.pkg pkgname}. Error message: {.x$message}"))
+  tryCatch(expr = pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
+                                       max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
+                                                           default = "30 days")),
+           error = function(e) cli::cli_alert_warning(text = "Failed to clear pkgpins cache on load of {.pkg pkgname}. Error message: {e$message}"))
 }
 
 
@@ -2939,23 +2939,30 @@ is_online <- function(quiet = FALSE) {
   
   checkmate::assert_flag(quiet)
   result <- FALSE
-  response <-
-    rlang::with_handlers(.expr = httr::RETRY(verb = "GET",
-                                             url = "https://services.c2d.ch/health",
-                                             times = 5L),
-                         error = ~ paste0("Error: ", .x$message)) %>%
-    # ensure we actually got a plaintext response
-    pal::assert_mime_type(mime_type = "text/plain",
-                          msg_suffix = mime_error_suffix) %>%
-    # parse response
-    httr::content(as = "text",
-                  encoding = "UTF-8")
+  response <- tryCatch(expr = httr::RETRY(verb = "GET",
+                                          url = "https://services.c2d.ch/health",
+                                          times = 5L),
+                       error = function(e) e$message)
   
-  if (response == "OK") {
-    result <- TRUE
+  if ("response" %in% class(response)) {
     
-  } else if (!quiet) {
-    cli::cli_warn("C2D API server responded with: {.val {response}}")
+    response %<>%
+      # ensure we actually got a plaintext response
+      pal::assert_mime_type(mime_type = "text/plain",
+                            msg_suffix = mime_error_suffix) %>%
+      # parse response
+      httr::content(as = "text",
+                    encoding = "UTF-8")
+    
+    if (response == "OK") {
+      result <- TRUE
+      
+    } else if (!quiet) {
+      cli::cli_alert_warning("C2D API server responded with: {.val {response}}")
+    }
+    
+  } else {
+    cli::cli_alert_warning(response)
   }
   
   result
