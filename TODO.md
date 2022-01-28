@@ -148,8 +148,8 @@
 -   MongoDB/API: Track atomic edit history, traceable by author, and make it visually inspectable (some kind off diff viewer would be cool). On top of this,
     some method to easily undo specific or all edits by a specific user account should be added.
 
-    See [issue #34](https://github.com/ccmdesign/c2d-app/issues/34) (point 3) for a tentative request and \[@liviass
-    answer\](<https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636>) about an already existing events collection (with no API endpoint so far).
+    See [issue #34](https://github.com/ccmdesign/c2d-app/issues/34) (point 3) for a tentative request and [@liviass'
+    answer](<https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636>) about an already existing events collection (with no API endpoint so far).
 
 -   MongoDB: optimize order of subvariables (`files` and `context.votes_per_canton`); doing this post-hoc in R is slow/inefficient, so getting the JSON in the
     desired order directly from the API would be cool...
@@ -298,6 +298,8 @@
 -   Implement fn to delete referendums once [issue #45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
 
 -   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook)
+
+-   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
 
 -   Automated vote entry creation by feeding scraped sudd.ch data to `c2d::add_referendums()`.
 
