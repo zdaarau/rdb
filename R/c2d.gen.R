@@ -920,7 +920,11 @@ tidy_referendums <- function(data,
         dplyr::mutate(dplyr::across(.fns = ~ {
           
           metadata <- c2d::data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
-          if (nrow(metadata) != 1L) cli::cli_abort("Missing codebook metadata! Please debug")
+          
+          if (nrow(metadata) != 1L) {
+            cli::cli_abort("Missing codebook metadata! Please debug",
+                           .internal = TRUE)
+          }
           
           if (is.factor(unlist(metadata$ptype))) {
             
@@ -1082,9 +1086,10 @@ untidy_date <- function(x) {
 #' Converts from the tidied [referendums()] to the "raw" MongoDB schema used by the C2D API. Basically reverts [tidy_referendums()].
 #'
 #' @param data The data to untidy as returned by [referendums()].
+#' @param as_tibble Whether or not to return the result as a [tibble][tibble::tbl_df]. If `FALSE`, a list is returned.
 #'
 #' @return
-#' If `as_tibble = FALSE`, a list with one element per referendum, suitable to convert [jsonlite::toJSON()] and then feed to the C2D API.
+#' If `as_tibble = FALSE`, a list with one element per referendum, suitable to be converted [jsonlite::toJSON()] and then fed to the C2D API.
 #'
 #' Otherwise a [tibble][tibble::tbl_df] of the same format as returned by [`referendums(tidy = FALSE)`][referendums].
 #' @keywords internal
@@ -1254,8 +1259,9 @@ untidy_referendums <- function(data,
     
     if (!all(tags_vx_present)) {
       tags_vx_missing <- tags_v_names %>% setdiff(tags_vx_present)
-      cli::cli_abort("There are only part of all {.var tags_tier_#} variables present. ",
-                     "{cli::qty(tags_vx_missing)} The following variable{?s} are missing: {.var {tags_vx_missing}}")
+      # TODO: as soon as cli 3.2.0 is available, remove the `#` workaround; cf. https://github.com/r-lib/cli/issues/370#issuecomment-1033761076
+      cli::cli_abort(paste0("{cli::qty(tags_vx_missing)}The following {.var {'tags_tier_#'}} variable{?s} {?is/are} missing from {.arg data}: ",
+                            "{.var {tags_vx_missing}}"))
     }
     
     data %<>%
@@ -1475,7 +1481,10 @@ sudd_referendum <- function(id_sudd) {
         rvest::html_elements(css = "td.feld strong") %>%
         rvest::html_text()
       
-      if (length(option_names) < 2L) cli::cli_abort("Unknown table layout detected for referendum with {.arg id_sudd = {id_sudd}}. Please debug.")
+      if (length(option_names) < 2L) {
+        cli::cli_abort("Unknown table layout detected for referendum with {.arg id_sudd = {id_sudd}}. Please debug.",
+                       .internal = TRUE)
+      }
       
       i_option_names <- which(field_names %in% option_names)
       option_names_counter <- c("Gegenentwurf", "Gegenvorschlag")
@@ -1678,7 +1687,8 @@ sudd_referendum <- function(id_sudd) {
   
   if (length(i_field_names_unknown)) {
     cli::cli_abort(paste0("Unknown {cli::qty(length(i_field_names_unknown))} field{?s} {.field {field_names[i_field_names_unknown]}} present in data for ",
-                          "referendum with {.arg id_sudd = {id_sudd}}."))
+                          "referendum with {.arg id_sudd = {id_sudd}}."),
+                   .internal = TRUE)
   }
   
   purrr::map2_dfc(.x = html,
@@ -2380,7 +2390,7 @@ add_referendums <- function(data,
   purrr::walk2(.x = seq_along(responses),
                .y = responses,
                .f = ~ if (!isTRUE(jsonlite::fromJSON(.y)$ok)) {
-                 cli::cli_warn("Failed to add the {.x}. referendum. The API server responded with error {.field {.y}}.")
+                 cli::cli_alert_warning("Failed to add the {.x}. referendum. The API server responded with error {.field {.y}}.")
                })
   
   invisible(data)
@@ -2465,7 +2475,7 @@ edit_referendums <- function(data,
   purrr::walk2(.x = ids,
                .y = responses,
                .f = ~ if (!isTRUE(jsonlite::fromJSON(.y)$ok)) {
-                 cli::cli_warn("Failed to edit referendum with {.var id} {.val {.x}}. The API server responded with {.field {.y}}.")
+                 cli::cli_alert_warning("Failed to edit referendum with {.var id} {.val {.x}}. The API server responded with {.field {.y}}.")
                })
   
   invisible(data)

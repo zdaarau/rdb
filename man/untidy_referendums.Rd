@@ -8,9 +8,11 @@ untidy_referendums(data, as_tibble = FALSE)
 }
 \arguments{
 \item{data}{The data to untidy as returned by \code{\link[=referendums]{referendums()}}.}
+
+\item{as_tibble}{Whether or not to return the result as a \link[tibble:tbl_df-class]{tibble}. If \code{FALSE}, a list is returned.}
 }
 \value{
-If \code{as_tibble = FALSE}, a list with one element per referendum, suitable to convert \code{\link[jsonlite:fromJSON]{jsonlite::toJSON()}} and then feed to the C2D API.
+If \code{as_tibble = FALSE}, a list with one element per referendum, suitable to be converted \code{\link[jsonlite:fromJSON]{jsonlite::toJSON()}} and then fed to the C2D API.
 
 Otherwise a \link[tibble:tbl_df-class]{tibble} of the same format as returned by \code{\link[=referendums]{referendums(tidy = FALSE)}}.
 }
