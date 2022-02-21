@@ -2,22 +2,22 @@
 
 ## Reported to [CCM Design](https://github.com/ccmdesign/c2d-app/issues/)
 
--   Publish code under AGPL >= 3, see [issue #26](https://github.com/ccmdesign/c2d-app/issues/26)
+-   Publish code under AGPL \>= 3, see [issue #26](https://github.com/ccmdesign/c2d-app/issues/26)
 
     We should then make the repository public!
 
--   C2D Admin Front-end: Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange) -> see [issue
+-   C2D Admin Front-end: Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange) -\> see [issue
     #26](https://github.com/ccmdesign/c2d-app/issues/27)
 
 -   C2D Website: Lizenzierung der Daten fehlt (betrifft auch den Download via c2d-Paket)! [ODC-ODbL](https://opendatacommons.org/licenses/odbl/summary/) würde
-    sich anbieten. -> see [issue #37](https://github.com/ccmdesign/c2d-app/issues/37)
+    sich anbieten. -\> see [issue #37](https://github.com/ccmdesign/c2d-app/issues/37)
 
     Once this is implemented, the same license terms should be added to the c2d package documentation!
 
--   Introduce `date_time_last_edited` holding the timestamp of a referendum entry's last edit. -> see [issue
+-   Introduce `date_time_last_edited` holding the timestamp of a referendum entry's last edit. -\> see [issue
     #29](https://github.com/ccmdesign/c2d-app/issues/29)
 
--   Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted. -> see
+-   Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted. -\> see
     [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
 
 -   Introduce `subnational_entity_code`; [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) codes seem perfectly suitable
@@ -36,20 +36,20 @@
     -   (I think introducing dedicated variables to capture the administrative division hierarchy below the national level in a more fine-grained way makes
         little sense since [administrative division levels vary widely across the globe](https://en.wikipedia.org/wiki/Administrative_division).)
 
-    -> see [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
+    -\> see [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
 
 -   Introduce `is_past_jurisdiction` signifying if the relevant [jurisdiction](https://en.wikipedia.org/wiki/Jurisdiction_(area)) where the referendum took
-    place still exists (`FALSE`) or not (`TRUE`) -> see [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
+    place still exists (`FALSE`) or not (`TRUE`) -\> see [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
 
 -   Introduce `country_code_historical` that holds the [ISO 3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) code for referendums in countries that don't exist
     anymore (see also [this site by Statistics Canada](https://www.statcan.gc.ca/eng/subjects/standard/sccai/2011/scountry-desc); also informative:
     <https://en.wikipedia.org/wiki/United_Nations_list_of_Non-Self-Governing_Territories>); ISO 3166-3 seems to only assign codes for countries that ceased to
-    exist since 1974 -> is there any classification for older historical entities? -> see [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
+    exist since 1974 -\> is there any classification for older historical entities? -\> see [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
 
 -   Introduce `question` holding the referendum question 1:1 as it was asked and `question_en` containing an English translation; open question: what to do when
-    the question was officially asked in multiple languages like in CH? -> see [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
+    the question was officially asked in multiple languages like in CH? -\> see [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
 
--   Outsource institutional variables into separate database/MongoDB collection and adapt everything. -> see [issue
+-   Outsource institutional variables into separate database/MongoDB collection and adapt everything. -\> see [issue
     #42](https://github.com/ccmdesign/c2d-app/issues/42)
 
 -   Extend the set of variables so the `remarks` field isn't overloaded anymore. Possible extensions (taken from Louis' `remarks` structure (cf.
@@ -72,14 +72,14 @@
         structure](https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json) and all the tags should be assigned to the 3 variables
         `tags_tier_1`, `tags_tier_2`, `tags_tier_3`.
 
-    -> see [issue #41](https://github.com/ccmdesign/c2d-app/issues/41)
+    -\> see [issue #41](https://github.com/ccmdesign/c2d-app/issues/41)
 
 -   Standardize `subnational_entity_name`; [ISO 3166-2 country subdivision names](https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en) (definition in
-    chap. 3.29) seem suitable (mapping codes \<-> names in R via `ISOcodes::ISO_3166_2`; note that for some subdivisions, different names exist for multiple
+    chap. 3.29) seem suitable (mapping codes \<-\> names in R via `ISOcodes::ISO_3166_2`; note that for some subdivisions, different names exist for multiple
     languages, e.g. some [Swiss cantons](https://www.iso.org/obp/ui/#iso:code:3166:CH); `ISOcodes::ISO_3166_2` only tracks one name (the most "native" one per
     subdivision, I guess))
 
-    -> see [issue #44](https://github.com/ccmdesign/c2d-app/issues/44)
+    -\> see [issue #44](https://github.com/ccmdesign/c2d-app/issues/44)
 
 -   Rethink standardization of `country_name`. Current problem: standardization happens only when creating/editing entries. Thus, it's not consistent, e.g. for
     `country_code == "GB"` there are entries from before the relaunch with `country_name = "United Kingdom"`, and there are newer entries with the auto-deduced
@@ -90,7 +90,7 @@
 
     Ideally, this would be done in the API back-end so `country_name` is determined at request time if possible.
 
-    -> see [issue #43](https://github.com/ccmdesign/c2d-app/issues/43) for a closed (and partially invalid) first problem report and
+    -\> see [issue #43](https://github.com/ccmdesign/c2d-app/issues/43) for a closed (and partially invalid) first problem report and
     [#51](https://github.com/ccmdesign/c2d-app/issues/51) for a follow-up requesting an improved UX.
 
 ## Internal (at least for now)
@@ -148,8 +148,8 @@
 -   MongoDB/API: Track atomic edit history, traceable by author, and make it visually inspectable (some kind off diff viewer would be cool). On top of this,
     some method to easily undo specific or all edits by a specific user account should be added.
 
-    See [issue #34](https://github.com/ccmdesign/c2d-app/issues/34) (point 3) for a tentative request and [@liviass'
-    answer](<https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636>) about an already existing events collection (with no API endpoint so far).
+    See [issue #34](https://github.com/ccmdesign/c2d-app/issues/34) (point 3) for a tentative request and [\@liviass'
+    answer](https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636) about an already existing events collection (with no API endpoint so far).
 
 -   MongoDB: optimize order of subvariables (`files` and `context.votes_per_canton`); doing this post-hoc in R is slow/inefficient, so getting the JSON in the
     desired order directly from the API would be cool...
@@ -192,14 +192,14 @@
     stattgefunden](https://sudd.ch/event.php?lang=de&id=nf011979). Falls sudd.ch Recht hat, sollte das korrigiert werden.
 
 -   [Silagadze & Gherghina (2019)](https://link.springer.com/content/pdf/10.1057/s41304-019-00230-4.pdf) (S. 467) detected some referendums that are missing in
-    the database -> systematically check/add these!
+    the database -\> systematically check/add these!
 
     They include Italy ~~1929~~ and 1934, ~~Andorra 1933~~, ~~Austria 1938~~, Romania 2009, ~~Slovenia 2015~~, ~~Bulgaria 2016~~, ~~Netherlands 2016~~, ~~UK
     2016~~.
 
 #### Other
 
--   A total of 860 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -> the missing `type`s should be
+-   A total of 860 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
     traced and added ASAP!
 
 -   Complete and add [Aargau cantonal referendums 1888--1971](https://docs.google.com/spreadsheets/d/108CXVcVISDb8Z9R_fn7S82brXOE8dfIY0VKp3QTc0uU/) once [issue
@@ -209,7 +209,7 @@
     [Szeklerland](https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land), therefore `subnational_entity` should be set to `Székely Land`
 
 -   Sobald via Admin-Interface [nach Draft-Status gefiltert werden kann](https://github.com/ccmdesign/c2d-app/issues/27), sollten die existierenden Drafts
-    geprüft werden -> entweder vervollständigen und freischalten oder löschen!
+    geprüft werden -\> entweder vervollständigen und freischalten oder löschen!
 
 -   Clean `id_official`; there are likely erroneous entries or ones that don't designate an `id_official` but another kind of ID; entries to double-check:
 
@@ -267,12 +267,12 @@
     If the "completely dependent" property of these variables really holds, we should auto-fill them in the back-end and avoid the possibility of manual
     changes.
 
--   Systematically check if all votes in the `sudd.ch` database are included in the C2D database -> parse `https://sudd.ch/list.php?mode=allrefs` (the `id_sudd`
-    is part of the link in the last column)
+-   Systematically check if all votes in the `sudd.ch` database are included in the C2D database -\> parse `https://sudd.ch/list.php?mode=allrefs` (the
+    `id_sudd` is part of the link in the last column)
 
 -   According to the guidelines in `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx`, the PDF `files` of
     `country_code == "CH"` entries must be named consistently `Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag` ("Abstimmungsbroschüre"") and
-    `Results_CH/Kantonskürzel_Jahr_Monat_Tag` (results) -> check if this is actually always the case!
+    `Results_CH/Kantonskürzel_Jahr_Monat_Tag` (results) -\> check if this is actually always the case!
 
 -   check `country_code` for obsolete codes, i.e. check if
 
@@ -308,7 +308,7 @@
     ![scan](https://i.imgur.com/88H2TZz.jpeg)
 
     [`countrycode::codelist$region23`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) (Weltbankregionen) oder
-    `countrycode::codelist$un.regionsub.name` ([UN-Regionen](https://en.wikipedia.org/wiki/United_Nations_geoscheme)) scheint eine guter Start -> dann einfach
+    `countrycode::codelist$un.regionsub.name` ([UN-Regionen](https://en.wikipedia.org/wiki/United_Nations_geoscheme)) scheint eine guter Start -\> dann einfach
     noch abändern, sodass Uwe's Spezialwünsche erfüllt sind!
 
 ### Miscellaneous
@@ -345,6 +345,9 @@
         Politik-Bereich ist `D3` bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch
         die JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
 
+        Als Alternative böte sich **3DB** für ***D**irect **D**emocracy* **D**atabase an. Die Domain `3db.vote` wäre noch frei. (TODO: Bisherige Nutzung von
+        *3DB* recherchieren.)
+
     -   oder -- falls *Direct Democracy* vermieden werden soll im Namen (bspw. wegen [starker Vereinnahmung durch politische
         Bewegungen](https://en.wikipedia.org/wiki/Direct_democracy_(disambiguation))) -- **RDB** für ***R**eferendum **D**ata**b**ase*. Die Domain `rdb.vote`
         wäre noch zu haben (USD 95.34/Jahr), wie auch `rdb.report` oder `referendum.report` (je USD 26.96/Jahr) für den Jahresbericht. Im Politik-Bereich ist
@@ -365,7 +368,7 @@
     -   `committee_name`
     -   `type` und alle `inst_*`-Variablen
 
--   `inst_quorum_turnout` sollte standardisiert werden -> was wäre eine geeignete, abschliessende Menge an Werten?
+-   `inst_quorum_turnout` sollte standardisiert werden -\> was wäre eine geeignete, abschliessende Menge an Werten?
 
 -   Was ist der Nutzen/zusätzliche Informationsgehalt von `inst_is_counter_proposal` sowie `inst_is_assembly`? Ob ein Referendum ein `"counter proposal"` bzw.
     ein `"citizens' assembly"` ist, wird ja bereits in `type` erfasst.
