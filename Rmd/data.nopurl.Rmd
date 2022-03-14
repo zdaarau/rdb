@@ -100,8 +100,8 @@ NOTES:
 
 -   In the following cases, a variable's prototype (`ptype`) has to be explicitly set in the raw `codebook.Rmd`:
 
-    -   It's a floating point number. -> Set `ptype = "numeric()"`.
-    -   It's a complex number. -> Set `ptype = "complex()"`.
+    -   It's a floating point number. -\> Set `ptype = "numeric()"`.
+    -   It's a complex number. -\> Set `ptype = "complex()"`.
     -   It's non-basic data type, i.e. a structure like a date. Set `ptype` to the proper value like `ptype = "vctrs::new_date()"`.
 
 ```{r}
