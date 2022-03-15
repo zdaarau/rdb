@@ -2997,27 +2997,10 @@ add_world_regions <- function(data) {
   }
   
   # add UN regions to input data
-  ISOcodes::ISO_3166_1 %>%
-    # temporarily add ISO 3166-1 alpha-3 codes for matching with M49 codes
-    dplyr::select(country_code = Alpha_2,
-                  Alpha_3) %>%
-    dplyr::left_join(x = data,
-                     by = "country_code") %>%
-    # temporarily add M49 code for matching with actual UN region codes and names
-    dplyr::left_join(y = ISOcodes::UN_M.49_Countries %>% dplyr::select(un_code = Code,
-                                                                       Alpha_3 = ISO_Alpha_3),
-                     by = "Alpha_3") %>%
-    dplyr::select(-Alpha_3) %>%
-    # manually assign China's M49 code to Taiwan, cf. https://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Asia#Note_on_Taiwan
-    dplyr::mutate(un_code = dplyr::if_else(country_code == "TW",
-                                           "156",
-                                           un_code)) %>%
-    # ensure there are no NAs left
-    assertr::assert(predicate = assertr::not_na,
-                    un_code) %>%
+  data %>%
     # add UN regions
     dplyr::left_join(y = un_regions,
-                     by = "un_code") %>%
+                     by = "country_code") %>%
     # ensure every row got at least a UN tier-1 region assigned
     assertr::assert(predicate = assertr::not_na,
                     un_region_tier_1_code)

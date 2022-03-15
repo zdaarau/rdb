@@ -57,6 +57,22 @@ months_de <-
 ## `un_regions`
 
 ```{r}
+# compile `country_code` <-> `un_code` dict
+codes <-
+  ISOcodes::ISO_3166_1 %>%
+  # temporarily add ISO 3166-1 alpha-3 codes for matching with M49 codes
+  dplyr::select(country_code = Alpha_2,
+                Alpha_3) %>%
+  # temporarily add M49 code for matching with actual UN region codes and names
+  dplyr::left_join(y = ISOcodes::UN_M.49_Countries %>% dplyr::select(un_code = Code,
+                                                                     Alpha_3 = ISO_Alpha_3),
+                   by = "Alpha_3") %>%
+  dplyr::select(-Alpha_3) %>%
+  # manually assign China's M49 code to Taiwan, cf. https://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Asia#Note_on_Taiwan
+  dplyr::mutate(un_code = dplyr::if_else(country_code == "TW",
+                                         "156",
+                                         un_code))
+
 # extract UN regions of the 3 different tiers
 un_regions_tier_1 <-
   ISOcodes::UN_M.49_Regions %>%
@@ -83,7 +99,7 @@ un_regions_tier_3 <-
                    un_region_tier_3_code = Code,
                    children_tier_3 = Children)
 
-# combine UN regions of different tiers into single dataset
+# combine UN regions of different tiers into single dataset and add `country_code`
 un_regions <-
   un_regions_tier_1 %>%
   dplyr::full_join(y = un_regions_tier_2,
@@ -102,7 +118,13 @@ un_regions <-
   dplyr::select(un_code,
                 starts_with("un_region_tier_1_"),
                 starts_with("un_region_tier_2_"),
-                starts_with("un_region_tier_3_"))
+                starts_with("un_region_tier_3_")) %>%
+  dplyr::left_join(y = codes,
+                   by = "un_code") %>%
+  dplyr::relocate(country_code) %>%
+  # ensure there are no NAs left
+  assertr::assert(predicate = assertr::not_na,
+                  un_code)
 ```
 
 ## `var_lbls`
