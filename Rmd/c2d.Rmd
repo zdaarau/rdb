@@ -92,8 +92,14 @@ utils::globalVariables(names = c(".",
                                  "where",
                                  # other
                                  "Alpha_2",
+                                 "Alpha_3",
                                  "applicability_constraint",
                                  "archive",
+                                 "Children",
+                                 "children_tier_1",
+                                 "children_tier_2",
+                                 "children_tier_3",
+                                 "Code",
                                  "committee_name",
                                  "content-disposition",
                                  "country_code",
@@ -138,6 +144,7 @@ utils::globalVariables(names = c(".",
                                  "inst_trigger_type",
                                  "is_draft",
                                  "is_past_jurisdiction",
+                                 "ISO_Alpha_3",
                                  "items",
                                  "level",
                                  "lower_house_abstentions",
@@ -148,6 +155,7 @@ utils::globalVariables(names = c(".",
                                  "n",
                                  "Name",
                                  "number",
+                                 "Parent",
                                  "position_government",
                                  "ptype",
                                  "question",
@@ -172,6 +180,11 @@ utils::globalVariables(names = c(".",
                                  "title_fr",
                                  "title_en",
                                  "type",
+                                 "Type",
+                                 "un_code",
+                                 "un_region_tier_1_code",
+                                 "un_region_tier_2_name",
+                                 "un_region_tier_3_name",
                                  "upper_house_abstentions",
                                  "upper_house_no",
                                  "upper_house_yes",
@@ -373,7 +386,6 @@ assert_cols_valid <- function(data,
     
     check <- checkmate::check_subset(as.character(data$level),
                                      choices = v_vals("level"))
-    
     if (!isTRUE(check)) {
       cli::cli_progress_done(id = cli_progress_id,
                              result = "failed")
@@ -386,7 +398,6 @@ assert_cols_valid <- function(data,
     
     check <- checkmate::check_subset(as.character(data$country_code),
                                      choices = ISOcodes::ISO_3166_1$Alpha_2)
-    
     if (!isTRUE(check)) {
       cli::cli_progress_done(id = cli_progress_id,
                              result = "failed")
@@ -647,7 +658,6 @@ country_code_to_name <- function(country_code,
 derive_country_vx <- function(country_code,
                               date) {
   
-  pal::assert_pkg("assertr")
   country_code %<>% as.character()
   
   data_historical <-
@@ -717,7 +727,7 @@ flatten_array_as_is <- function(x) {
 }
 ```
 
-### `httr_config`
+### !`httr_config`
 
 [Before 2021-05-25](https://github.com/ccmdesign/c2d-app/issues/10), the C2D API server didn't provide the [intermediate *R3*
 certificate](https://crt.sh/?q=+730c1bdcd85f57ce5dc0bba733e5f1ba5a925b2a771d640a26f7a454224dad3b) (issued by Let's Encrypt) and since [curl doesn't support
@@ -1634,8 +1644,6 @@ NOTES:
 
 ```{r, purl = FALSE}
 add_sudd_country_name_de <- function(data) {
-  
-  pal::assert_pkg("assertr")
   
   data %>%
     dplyr::mutate(territory_name_de_short = shorten_sudd_territory_name_de(territory_name_de)) %>%
@@ -2666,6 +2674,7 @@ referendum <- function(id,
   data <-
     httr::RETRY(verb = "GET",
                 url = paste0("https://services.c2d.ch/referendums/", id),
+                config = httr::add_headers(Origin = "https://admin.c2d.ch"),
                 times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -2921,7 +2930,7 @@ TODO:
     -   `votes_empty`
     -   `votes_invalid`
 
-    This is annoying, thus I [asked to change it](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-996196362) -> decide on what to do after CCM
+    This is annoying, thus I [asked to change it](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-996196362) -\> decide on what to do after CCM
     Design replied.
 
 NOTES:
@@ -3241,6 +3250,7 @@ count_referendums <- function(is_draft = FALSE,
                                                           date_time_created_min = date_time_created_min,
                                                           date_time_created_max = date_time_created_max,
                                                           query_filter = query_filter)),
+              config = httr::add_headers(Origin = "https://admin.c2d.ch"),
               times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -3280,6 +3290,7 @@ search_referendums <- function(term) {
               url = "https://services.c2d.ch/referendums",
               query = list(mode = "search",
                            term = checkmate::assert_string(term)),
+              config = httr::add_headers(Origin = "https://admin.c2d.ch"),
               times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -3540,6 +3551,86 @@ infer_tags <- function(tags,
   if (tier == 1L) result %<>% c(tags[tags %in% tags(tiers = 1L)])
   
   unique(result)
+}
+```
+
+## Augmentation
+
+### `add_world_regions`
+
+```{r}
+#' Add UN world regions
+#'
+#' @description
+#' Augments `data` with information about the [United Nations (UN) geoscheme](https://en.wikipedia.org/wiki/United_Nations_geoscheme) on three different
+#' grouping tiers based on the [UN M49 area code hierarchy](https://en.wikipedia.org/wiki/UN_M49#Code_lists).
+#' 
+#' In total, six different columns are added:
+#' - `un_region_tier_1_code`: UN tier-1 region's M49 area code
+#' - `un_region_tier_1_name`: UN tier-1 region's English name
+#' - `un_region_tier_2_code`: UN tier-2 region's M49 area code
+#' - `un_region_tier_2_name`: UN tier-2 region's English name
+#' - `un_region_tier_3_code`: UN tier-3 region's M49 area code
+#' - `un_region_tier_3_name`: UN tier-3 region's English name
+#'
+#' Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as "subregions" and tier-3
+#' regions as "sub-subregions".
+#'
+#' @param data A data frame containing at least the column `country_code` with two-letter [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+#'   codes.
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @export
+#'
+#' @examples
+#' c2d::referendum(id = "5bbbe26a92a21351232dd73f") |>
+#'   add_world_regions() |>
+#'   dplyr::select(country_name,
+#'                 starts_with("un_"))
+add_world_regions <- function(data) {
+  
+  # ensure minimal validity
+  checkmate::assert_data_frame(data,
+                               min.rows = 1L)
+  
+  if (!("country_code" %in% colnames(data))) {
+    cli::cli_abort("{.arg data} must contain a column {.var country_code} with two-letter ISO 3166-1 alpha-2 codes.")
+  }
+  
+  unknown_country_codes <-
+    data$country_code %>%
+    unique() %>%
+    setdiff(ISOcodes::ISO_3166_1$Alpha_2)
+  
+  if (length(unknown_country_codes)) {
+    cli::cli_abort("Column {.var country_code} of {.arg data} contains unknown ISO 3166-1 alpha-2 codes: {.val {unknown_country_codes}}")
+  }
+  
+  # add UN regions to input data
+  ISOcodes::ISO_3166_1 %>%
+    # temporarily add ISO 3166-1 alpha-3 codes for matching with M49 codes
+    dplyr::select(country_code = Alpha_2,
+                  Alpha_3) %>%
+    dplyr::left_join(x = data,
+                     by = "country_code") %>%
+    # temporarily add M49 code for matching with actual UN region codes and names
+    dplyr::left_join(y = ISOcodes::UN_M.49_Countries %>% dplyr::select(un_code = Code,
+                                                                       Alpha_3 = ISO_Alpha_3),
+                     by = "Alpha_3") %>%
+    dplyr::select(-Alpha_3) %>%
+    # manually assign China's M49 code to Taiwan, cf. https://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Asia#Note_on_Taiwan
+    dplyr::mutate(un_code = dplyr::if_else(country_code == "TW",
+                                           "156",
+                                           un_code)) %>%
+    # ensure there are no NAs left
+    assertr::assert(predicate = assertr::not_na,
+                    un_code) %>%
+    # add UN regions
+    dplyr::left_join(y = un_regions,
+                     by = "un_code") %>%
+    # ensure every row got at least a UN tier-1 region assigned
+    assertr::assert(predicate = assertr::not_na,
+                    un_region_tier_1_code)
 }
 ```
 

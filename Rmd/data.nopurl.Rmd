@@ -33,14 +33,14 @@ data_tags <-
   # create tidy data version
   dplyr::rename(tag_tier_1 = name,
                 tag_tier_2 = children) %>%
-  tidyr::unnest_longer(col = tag_tier_2) %$%
-  dplyr::bind_cols(tag_tier_1 = tag_tier_1,
-                   tag_tier_2) %>%
+  tidyr::unnest(cols = tag_tier_2,
+                keep_empty = TRUE) %>%
   dplyr::rename(tag_tier_2 = name,
                 tag_tier_3 = children) %>%
   # ensure consistent col subtypes
   dplyr::mutate(tag_tier_3 = tag_tier_3 %>% purrr::map(~ { if (is.list(.x)) character() else .x })) %>%
-  tidyr::unnest_longer(col = tag_tier_3)
+  tidyr::unnest(cols = tag_tier_3,
+                keep_empty = TRUE)
 ```
 
 ## `months_de`
@@ -52,6 +52,57 @@ months_de <-
   1:12 %>%
   magrittr::set_names(clock::clock_labels_lookup("de")$month) %>%
   as.list()
+```
+
+## `un_regions`
+
+```{r}
+# extract UN regions of the 3 different tiers
+un_regions_tier_1 <-
+  ISOcodes::UN_M.49_Regions %>%
+  dplyr::filter(Type == "Region" & Parent == "001") %>%
+  tidyr::separate_rows(Children,
+                       sep = ", ") %>%
+  dplyr::transmute(un_region_tier_1_name = Name,
+                   un_region_tier_1_code = Code,
+                   children_tier_1 = Children)
+un_regions_tier_2 <-
+  ISOcodes::UN_M.49_Regions %>%
+  dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_1$un_region_tier_1_code) %>%
+  tidyr::separate_rows(Children,
+                       sep = ", ") %>%
+  dplyr::transmute(un_region_tier_2_name = Name,
+                   un_region_tier_2_code = Code,
+                   children_tier_2 = Children)
+un_regions_tier_3 <-
+  ISOcodes::UN_M.49_Regions %>%
+  dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_2$un_region_tier_2_code) %>%
+  tidyr::separate_rows(Children,
+                       sep = ", ") %>%
+  dplyr::transmute(un_region_tier_3_name = Name,
+                   un_region_tier_3_code = Code,
+                   children_tier_3 = Children)
+
+# combine UN regions of different tiers into single dataset
+un_regions <-
+  un_regions_tier_1 %>%
+  dplyr::full_join(y = un_regions_tier_2,
+                   by = c("children_tier_1" = "un_region_tier_2_code")) %>%
+  dplyr::full_join(y = un_regions_tier_3,
+                   by = c("children_tier_2" = "un_region_tier_3_code")) %>%
+  dplyr::mutate(un_region_tier_2_code = dplyr::if_else(is.na(un_region_tier_2_name),
+                                                       NA_character_,
+                                                       children_tier_1),
+                un_region_tier_3_code = dplyr::if_else(is.na(un_region_tier_3_name),
+                                                       NA_character_,
+                                                       children_tier_2),
+                un_code = dplyr::if_else(is.na(children_tier_3),
+                                         children_tier_2,
+                                         children_tier_3)) %>%
+  dplyr::select(un_code,
+                starts_with("un_region_tier_1_"),
+                starts_with("un_region_tier_2_"),
+                starts_with("un_region_tier_3_"))
 ```
 
 ## `var_lbls`
@@ -77,6 +128,7 @@ to package users.
 ```{r}
 usethis::use_data(data_tags,
                   months_de,
+                  un_regions,
                   var_lbls,
                   internal = TRUE,
                   overwrite = TRUE,

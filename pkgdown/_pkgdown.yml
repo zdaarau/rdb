@@ -48,6 +48,8 @@ reference:
 - contents:
   - hierarchize_tags
   - infer_tags
+- title: Augmentation
+- contents: add_world_regions
 - title: C2D API Status
 - contents: is_online
 - title: sudd.ch scraping
