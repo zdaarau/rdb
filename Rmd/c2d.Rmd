@@ -3576,6 +3576,10 @@ infer_tags <- function(tags,
 #' Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as "subregions" and tier-3
 #' regions as "sub-subregions".
 #'
+#' @details
+#' Note that only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a
+#' country doesn't belong to any UN tier-3 region, the corresponding `un_region_tier_3_*` values will simply be `NA`.
+#'
 #' @param data A data frame containing at least the column `country_code` with two-letter [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
 #'   codes.
 #'

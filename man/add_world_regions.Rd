@@ -30,6 +30,10 @@ In total, six different columns are added:
 Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as "subregions" and tier-3
 regions as "sub-subregions".
 }
+\details{
+Note that only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a
+country doesn't belong to any UN tier-3 region, the corresponding \verb{un_region_tier_3_*} values will simply be \code{NA}.
+}
 \examples{
 c2d::referendum(id = "5bbbe26a92a21351232dd73f") |>
   add_world_regions() |>
