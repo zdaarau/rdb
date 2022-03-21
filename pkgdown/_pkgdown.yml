@@ -46,6 +46,7 @@ reference:
 - title: Tags
   desc: Functions to work with referendum [tags](https://rpkg.dev/c2d/articles/codebook.html#tags).
 - contents:
+  - tags
   - hierarchize_tags
   - infer_tags
 - title: Augmentation

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hierarchize Tags — hierarchize_tags • c2d</title>
+<title>Hierarchize tags — hierarchize_tags • c2d</title>
 
 
 
@@ -44,7 +44,7 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Hierarchize Tags — hierarchize_tags" />
+<meta property="og:title" content="Hierarchize tags — hierarchize_tags" />
 <meta name="description" content="Reconstructs the hierarchical relations between the three tag variables tags_tier_1, tags_tier_2 and tags_tier_3. Can also be used to simply determine the parent tag(s) of any tag.">
 <meta property="og:description" content="Reconstructs the hierarchical relations between the three tag variables tags_tier_1, tags_tier_2 and tags_tier_3. Can also be used to simply determine the parent tag(s) of any tag." />
 <meta name="twitter:card" content="summary" />
@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9030</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9031</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Hierarchize Tags</h1>
+    <h1>Hierarchize tags</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
     <div class="hidden name"><code>hierarchize_tags.Rd</code></div>
     </div>
@@ -146,7 +146,8 @@ and <code>tags_tier_3</code>.</p></td>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other tag-related functions:
-<code><a href='infer_tags.html'>infer_tags</a>()</code></p></div>
+<code><a href='infer_tags.html'>infer_tags</a>()</code>,
+<code><a href='tags.html'>tags</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>hierarchize_tags</span><span class='op'>(</span><span class='st'>"territorial questions"</span><span class='op'>)</span></span>
@@ -159,16 +160,6 @@ and <code>tags_tier_3</code>.</p></td>
 <span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='referendums.html'>referendums</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_split.html'>group_split</a></span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>hierarchize_tags</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching JSON data from C2D API...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Downloading: 16 kB     Downloading: 16 kB     Downloading: 16 kB     Downloading: 16 kB     Downloading: 27 kB     Downloading: 27 kB     Downloading: 27 kB     Downloading: 27 kB     </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Fetching JSON data from C2D API... done <span style='color: #B2B2B2;'>[162ms]</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Converting JSON to list data...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Converting JSON to list data... done <span style='color: #B2B2B2;'>[14ms]</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Tidying data...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✓</span> Tidying data... done <span style='color: #B2B2B2;'>[444ms]</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 2 × 3</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   tag_tier_1         tag_tier_2        tag_tier_3           </span>

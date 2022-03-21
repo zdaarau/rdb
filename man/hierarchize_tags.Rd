@@ -2,7 +2,7 @@
 % Please edit documentation in R/c2d.gen.R
 \name{hierarchize_tags}
 \alias{hierarchize_tags}
-\title{Hierarchize Tags}
+\title{Hierarchize tags}
 \usage{
 hierarchize_tags(x)
 }
@@ -27,6 +27,7 @@ c2d::referendums(country_code = "AT") |>
 }
 \seealso{
 Other tag-related functions:
-\code{\link{infer_tags}()}
+\code{\link{infer_tags}()},
+\code{\link{tags}()}
 }
 \concept{tags}
