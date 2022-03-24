@@ -421,18 +421,26 @@ assert_cols_valid <- function(data,
 #' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, a [tibble][tibble::tbl_df] with the columns
 #' `email`, `token` and `date_time_last_active`.
 #' 
-#' By default, the `email` and `password` are read from the first element of the R option `c2d.credentials` (a named character vector where names are e-mail
-#' addresses and values are passwords).
+#' By default, `email` and `password` are read from the [environment variables](https://en.wikipedia.org/wiki/Environment_variable) `C2D_API_EMAIL` and
+#' `C2D_API_PW` respectively.
 #'
 #' User session tokens expire automatically after 15 days of inactivity.
 #'
 #' @param email The e-mail address of the user for which a session should be created. A character scalar.
 #' @param password The password of the user for which a session should be created. A character scalar.
+#' @param quiet `r pkgsnip::param_label("quiet")`
 #'
 #' @return The user session token as a character scalar, invisibly.
 #' @keywords internal
-auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
-                         password = getOption("c2d.credentials")[1L]) {
+auth_session <- function(email = Sys.getenv("C2D_API_USER"),
+                         password = Sys.getenv("C2D_API_PW"),
+                         quiet = FALSE) {
+  
+  checkmate::assert_string(email,
+                           min.chars = 3L)
+  checkmate::assert_string(password,
+                           min.chars = 1L)
+  checkmate::assert_flag(quiet)
   
   # get existing tokens or initialize empty tibble
   tokens <-
@@ -440,8 +448,7 @@ auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
     purrr::when(all(c("email", "token", "date_time_last_active") %in% colnames(.)) ~ .,
                 ~ tibble::tibble(email = character(),
                                  token = character(),
-                                 date_time_last_active = lubridate::as_datetime(NULL)))
-  
+                                 date_time_last_active = as.POSIXct(NULL)))
   # extract latest token
   token <- tokens %>% dplyr::filter(email == !!email)
   if (nrow(token)) token %<>% dplyr::filter(date_time_last_active == max(date_time_last_active))
@@ -449,35 +456,42 @@ auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
   # ensure token is not expired (checked if older than 14 days), else set to `NULL`
   if (nrow(token) &&
       checkmate::test_string(token$token, min.chars = 1L) &&
-      ((token$date_time_last_active > (lubridate::now() - lubridate::duration(14L, units = "days"))) || !is_session_expired(token$token))) {
+      ((token$date_time_last_active > clock::add_days(clock::date_now(zone = "UTC"), -14L)) || !is_session_expired(token$token))) {
     
     token <- token$token
     
   } else {
-    
     token <- NULL
   }
   
   # create new session if necessary
   if (is.null(token)) {
     
-    pal::cli_process_expr(msg = "Authenticating new user session",
-                          expr = {
-                            
-                            token <-
-                              httr::RETRY(verb = "POST",
-                                          url = "https://services.c2d.ch/users/session",
-                                          times = 5L,
-                                          encode = "json",
-                                          body = list(email = checkmate::assert_string(email),
-                                                      password = checkmate::assert_string(password))) %>%
-                              # ensure we actually got a JSON response
-                              pal::assert_mime_type(mime_type = "application/json",
-                                                    msg_suffix = mime_error_suffix) %>%
-                              # parse response
-                              httr::content(as = "parsed") %$%
-                              token
-                          })
+    if (!quiet) {
+      status_msg <- "Authenticating new user session"
+      cli::cli_progress_step(msg = status_msg,
+                             msg_done = paste(status_msg, "done"),
+                             msg_failed = paste(status_msg, "failed"))
+    }
+    
+    token <-
+      httr::RETRY(verb = "POST",
+                  url = "https://services.c2d.ch/users/session",
+                  config = httr::add_headers(Origin = "https://admin.c2d.ch"),
+                  times = 5L,
+                  encode = "json",
+                  body = list(email = email,
+                              password = password)) %>%
+      # ensure we actually got a JSON response
+      pal::assert_mime_type(mime_type = "application/json",
+                            msg_suffix = mime_error_suffix) %>%
+      # parse response
+      httr::content(as = "parsed") %$%
+      token
+    
+    if (!quiet) {
+      cli::cli_progress_done()
+    }
   }
   
   # update `c2d.user_session_tokens` option
@@ -486,7 +500,7 @@ auth_session <- function(email = names(getOption("c2d.credentials")[1L]),
             dplyr::filter(token != !!token) %>%
             tibble::add_row(email = email,
                             token = token,
-                            date_time_last_active = lubridate::now()))
+                            date_time_last_active = clock::date_now(zone = "UTC")))
   # return token
   invisible(token)
 }
@@ -601,7 +615,7 @@ is_session_expired <- function(token) {
     httr::RETRY(verb = "GET",
                 url = "https://services.c2d.ch/users/profile",
                 config = httr::add_headers(Authorization = paste("Bearer", token),
-                                           Connection = "keep-alive"),
+                                           Origin = "https://admin.c2d.ch"),
                 times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -666,14 +680,14 @@ tidy_date <- function(x) {
   x %>%
     unlist(use.names = FALSE) %>%
     magrittr::divide_by(1000L) %>%
-    lubridate::as_datetime()
+    as.POSIXct(origin = "1970-01-01")
 }
 
 #' Tidy "raw" C2D API referendum data
 #'
-#' Converts the "raw" MongoDB data from the C2D API to the tidied [referendums()] schema.
+#' Converts the "raw" MongoDB data from the C2D API to the tidied [rfrnds()] schema.
 #'
-#' You can reverse this function again using [untidy_referendums()].
+#' You can reverse this function again using [untidy_rfrnds()].
 #'
 #' @param data The MongoDB data as a list (converted from the JSON returned by the C2D API using [jsonlite::fromJSON()]).
 #' @param tidy Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If `FALSE`, the raw MongoDB
@@ -682,8 +696,8 @@ tidy_date <- function(x) {
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @keywords internal
-tidy_referendums <- function(data,
-                             tidy = TRUE) {
+tidy_rfrnds <- function(data,
+                        tidy = TRUE) {
   
   checkmate::assert_flag(tidy)
   
@@ -900,7 +914,7 @@ tidy_referendums <- function(data,
                                     "(\\s+)?%(\\s+)?$" = "\u202f%")),
           ## ordinal
           ## interval
-          date = lubridate::as_date(date),
+          date = clock::date_parse(date),
           date_time_created = tidy_date(date_time_created),
           date_time_last_edited = tidy_date(date_time_last_edited),
           ## undefined
@@ -961,9 +975,6 @@ tidy_referendums <- function(data,
                                                      "subnational_entity_name",
                                                      "municipality")),
                                     .fns = as.factor)) %>%
-        # add variable labels
-        labelled::set_variable_labels(.labels = var_lbls,
-                                      .strict = FALSE) %>%
         # add vars which aren't always included and coerce to proper types
         vctrs::tib_cast(to =
                           c2d::data_codebook %$%
@@ -1043,7 +1054,7 @@ tidy_referendums <- function(data,
                         inst_precondition_decision)
       
       # correct known errors
-      # TODO: correct this upstream using `edit_referendums()` once [issue #29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved
+      # TODO: correct this upstream using `edit_rfrnds()` once [issue #29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved
       ## wrong `id_sudd`
       data$id_sudd[data$id == "5bbbffa992a21351232e50e7"] <- "az022009"
       data$id_sudd[data$id == "5bbbfb7c92a21351232e4185"] <- "bs022002"
@@ -1074,12 +1085,15 @@ tidy_referendums <- function(data,
   }
   
   # convert nested list cols to tibbles
-  data %>% dplyr::mutate(dplyr::across(any_of(c("context.votes_per_canton",
-                                                "files",
-                                                "votes_per_subterritory")),
-                                       ~ .x %>% purrr::map(~ { if (length(.x)) .x %>% purrr::map_dfr(tibble::as_tibble) else NULL })),
-                         dplyr::across(any_of("archive"),
-                                       ~ .x %>% purrr::map(~ { if (length(.x)) tibble::as_tibble(.x) else NULL })))
+  data %>%
+    dplyr::mutate(dplyr::across(any_of(c("files",
+                                         "votes_per_subterritory")),
+                                ~ .x %>% purrr::map(~ { if (length(.x)) .x %>% purrr::map_dfr(tibble::as_tibble) else NULL })),
+                  dplyr::across(any_of("archive"),
+                                ~ .x %>% purrr::map(~ { if (length(.x)) tibble::as_tibble(.x) else NULL }))) %>%
+    # add variable labels (must be done at last since mutations above drop attrs)
+    labelled::set_variable_labels(.labels = var_lbls,
+                                  .strict = FALSE)
 }
 
 untidy_date <- function(x) {
@@ -1093,18 +1107,18 @@ untidy_date <- function(x) {
 
 #' Untidy into "raw" C2D API referendum data
 #'
-#' Converts from the tidied [referendums()] to the "raw" MongoDB schema used by the C2D API. Basically reverts [tidy_referendums()].
+#' Converts from the tidied [rfrnds()] to the "raw" MongoDB schema used by the C2D API. Basically reverts [tidy_rfrnds()].
 #'
-#' @param data The data to untidy as returned by [referendums()].
+#' @param data The data to untidy as returned by [rfrnds()].
 #' @param as_tibble Whether or not to return the result as a [tibble][tibble::tbl_df]. If `FALSE`, a list is returned.
 #'
 #' @return
 #' If `as_tibble = FALSE`, a list with one element per referendum, suitable to be converted [jsonlite::toJSON()] and then fed to the C2D API.
 #'
-#' Otherwise a [tibble][tibble::tbl_df] of the same format as returned by [`referendums(tidy = FALSE)`][referendums].
+#' Otherwise a [tibble][tibble::tbl_df] of the same format as returned by [`rfrnds(tidy = FALSE)`][rfrnds].
 #' @keywords internal
-untidy_referendums <- function(data,
-                               as_tibble = FALSE) {
+untidy_rfrnds <- function(data,
+                          as_tibble = FALSE) {
   
   checkmate::assert_flag(as_tibble)
   v_names_inverse <- names(v_names) %>% magrittr::set_names(purrr::flatten_chr(v_names))
@@ -1283,7 +1297,7 @@ untidy_referendums <- function(data,
   
   data %<>%
     # remove unknown columns
-    dplyr::select(any_of(referendum_fields$all_flat)) %>%
+    dplyr::select(any_of(rfrnd_fields$all_flat)) %>%
     # remove variable labels
     labelled::remove_var_label()
   
@@ -1378,8 +1392,8 @@ untidy_referendums <- function(data,
 query_filter_date <- function(min,
                               max) {
   
-  list(`$gte` = list(`$date` = lubridate::as_datetime(min)) %>% purrr::compact(),
-       `$lte` = list(`$date` = lubridate::as_datetime(max)) %>% purrr::compact()) %>%
+  list(`$gte` = purrr::compact(list(`$date` = min)),
+       `$lte` = purrr::compact(list(`$date` = max))) %>%
     purrr::compact()
 }
 
@@ -1410,14 +1424,18 @@ complete_sudd_url <- function(x) {
 
 parse_sudd_date <- function(x) {
   
-  components <-
-    x %>%
-    stringr::str_split(pattern = "-") %>%
-    dplyr::first()
+  x_split <- stringr::str_split(string = x,
+                                pattern = "-",
+                                simplify = TRUE)
+  to_int <- function(x) {
+    x %<>% as.integer()
+    x[x == 0L] <- NA_integer_
+    x
+  }
   
-  list(day = components[3L] %>% dplyr::recode("00" = NA_character_) %>% as.integer(),
-       month = components[2L] %>% as.integer(),
-       year = components[1L] %>% as.integer())
+  list(year = to_int(x_split[, 1L]),
+       month = to_int(x_split[, 2L]),
+       day = to_int(x_split[, 3L]))
 }
 
 parse_sudd_date_de <- function(x) {
@@ -1442,9 +1460,9 @@ parse_sudd_id <- function(id_sudd) {
     stringr::str_to_upper()
   
   derive_country_vx(country_code = sudd_country_code,
-                    date = lubridate::make_date(year = sudd_year,
-                                                month = 1L,
-                                                day = 1L))
+                    date = clock::date_build(year = sudd_year,
+                                             month = 1L,
+                                             day = 1L))
 }
 
 shorten_sudd_territory_name_de <- function(x) {
@@ -1455,7 +1473,7 @@ shorten_sudd_territory_name_de <- function(x) {
 
 
 
-sudd_referendum <- function(id_sudd) {
+sudd_rfrnd <- function(id_sudd) {
   
   checkmate::assert_string(id_sudd)
   
@@ -1792,7 +1810,7 @@ sudd_referendum <- function(id_sudd) {
                                          cells[[2L]] %>%
                                          rvest::html_element(css = "time") %>%
                                          rvest::html_attr(name = "datetime") %>%
-                                         lubridate::as_date(),
+                                         clock::date_parse(),
                                        
                                        # lists (multi-value cols)
                                        . == "remarks" ~
@@ -1886,37 +1904,37 @@ restore_tags <- function(tags_tier_1,
 
 this_pkg <- utils::packageName()
 
-referendum_fields <- list()
+rfrnd_fields <- list()
 
-referendum_fields$all <- c("_id",
-                           "archive",
-                           "canton",
-                           "categories",
-                           "citizens_abroad",
-                           "committee_name",
-                           "context",
-                           "country_code",
-                           "country_name",
-                           "created_on",
-                           "date",
-                           "draft",
-                           "files",
-                           "institution",
-                           "level",
-                           "municipality",
-                           "number",
-                           "remarks",
-                           "result",
-                           "tags",
-                           "title",
-                           "total_electorate",
-                           "votes_empty",
-                           "votes_invalid",
-                           "votes_no",
-                           "votes_yes")
+rfrnd_fields$all <- c("_id",
+                      "archive",
+                      "canton",
+                      "categories",
+                      "citizens_abroad",
+                      "committee_name",
+                      "context",
+                      "country_code",
+                      "country_name",
+                      "created_on",
+                      "date",
+                      "draft",
+                      "files",
+                      "institution",
+                      "level",
+                      "municipality",
+                      "number",
+                      "remarks",
+                      "result",
+                      "tags",
+                      "title",
+                      "total_electorate",
+                      "votes_empty",
+                      "votes_invalid",
+                      "votes_no",
+                      "votes_yes")
 
-referendum_fields$all_flat <-
-  referendum_fields$all %>%
+rfrnd_fields$all_flat <-
+  rfrnd_fields$all %>%
   setdiff(c("categories", "context", "title")) %>%
   union(c("categories.action",
           "categories.author_of_the_vote_object",
@@ -1955,34 +1973,34 @@ referendum_fields$all_flat <-
           "title.en",
           "title.fr"))
 
-referendum_fields$required_for_edits <- c("draft")
+rfrnd_fields$required_for_edits <- c("draft")
 
-referendum_fields$required_for_additions <- c("country_code",
-                                              "level",
-                                              "date",
-                                              "title.en",
-                                              "result",
-                                              "total_electorate",
-                                              "citizens_abroad",
-                                              "votes_yes",
-                                              "votes_no",
-                                              "votes_empty",
-                                              "votes_invalid",
-                                              "draft",
-                                              "institution")
+rfrnd_fields$required_for_additions <- c("country_code",
+                                         "level",
+                                         "date",
+                                         "title.en",
+                                         "result",
+                                         "total_electorate",
+                                         "citizens_abroad",
+                                         "votes_yes",
+                                         "votes_no",
+                                         "votes_empty",
+                                         "votes_invalid",
+                                         "draft",
+                                         "institution")
 
-referendum_fields$never_empty <- c("_id",
-                                   "country_code",
-                                   "country_name",
-                                   "created_on",
-                                   "level",
-                                   "total_electorate",
-                                   "citizens_abroad",
-                                   "votes_yes",
-                                   "votes_no",
-                                   "votes_empty",
-                                   "votes_invalid",
-                                   "draft")
+rfrnd_fields$never_empty <- c("_id",
+                              "country_code",
+                              "country_name",
+                              "created_on",
+                              "level",
+                              "total_electorate",
+                              "citizens_abroad",
+                              "votes_yes",
+                              "votes_no",
+                              "votes_empty",
+                              "votes_invalid",
+                              "draft")
 
 data_iso_3166_3 <-
   ISOcodes::ISO_3166_3 %>%
@@ -1991,8 +2009,15 @@ data_iso_3166_3 <-
                 Alpha_2_New = Alpha_4 %>% stringr::str_sub(start = 3L),
                 Date_withdrawn =
                   Date_withdrawn %>%
-                  lubridate::parse_date_time2(orders = c("%Y-%m-%d", "%Y")) %>%
-                  lubridate::as_date()) %>%
+                      purrr::map(~ {
+                          if (nchar(.x) == 4L) {
+                              clock::date_build(year = as.integer(.x))
+                          } else {
+                              clock::date_parse(x = .x,
+                                                format = "%F")
+                          }
+                          }) %>%
+                      purrr::reduce(c)) %>%
   dplyr::relocate(Alpha_2, Alpha_2_New,
                   .after = Alpha_3)
 
@@ -2065,41 +2090,41 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
 #' Downloads the referendum data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
 #'
 #' @inheritParams assemble_query_filter
-#' @inheritParams tidy_referendums
+#' @inheritParams tidy_rfrnds
 #' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the C2D database.
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
 #'
 #' @return `r pkgsnip::return_label("data")`
-#' @family referendum
+#' @family rfrnd
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' # get all referendums (excl. drafts)
-#' c2d::referendums()}
+#' c2d::rfrnds()}
 #' 
 #' # get only referendums in Austria and Australia on subnational level
-#' c2d::referendums(country_code = c("AT", "AU"),
-#'                  level = "subnational")
+#' c2d::rfrnds(country_code = c("AT", "AU"),
+#'             level = "subnational")
 #' 
 #' # provide custom `query_filter` for more complex queries like regex matches
 #' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-#' c2d::referendums(query_filter = '{"country_code":{"$regex":"A."}}')
-referendums <- function(country_code = NULL,
-                        subnational_entity_name = NULL,
-                        municipality = NULL,
-                        level = NULL,
-                        type = NULL,
-                        date = NULL,
-                        is_draft = FALSE,
-                        date_time_created_min = NULL,
-                        date_time_created_max = NULL,
-                        query_filter = NULL,
-                        incl_archive = FALSE,
-                        tidy = TRUE,
-                        use_cache = TRUE,
-                        cache_lifespan = "1 week") {
+#' c2d::rfrnds(query_filter = '{"country_code":{"$regex":"A."}}')
+rfrnds <- function(country_code = NULL,
+                   subnational_entity_name = NULL,
+                   municipality = NULL,
+                   level = NULL,
+                   type = NULL,
+                   date = NULL,
+                   is_draft = FALSE,
+                   date_time_created_min = NULL,
+                   date_time_created_max = NULL,
+                   query_filter = NULL,
+                   incl_archive = FALSE,
+                   tidy = TRUE,
+                   use_cache = TRUE,
+                   cache_lifespan = "1 week") {
   
   checkmate::assert_flag(incl_archive)
   
@@ -2151,10 +2176,10 @@ referendums <- function(country_code = NULL,
                            msg_done = paste(status_msg, "done"),
                            msg_failed = paste(status_msg, "failed"))
     
-    data %>% tidy_referendums(tidy = tidy)
+    data %>% tidy_rfrnds(tidy = tidy)
   },
   pkg = this_pkg,
-  from_fn = "referendums",
+  from_fn = "rfrnds",
   country_code,
   subnational_entity_name,
   municipality,
@@ -2175,22 +2200,26 @@ referendums <- function(country_code = NULL,
   result
 }
 
+#' @rdname rfrnds
+#' @export
+referendums <- rfrnds
+
 #' Get a single referendum's data
 #'
 #' Downloads a single referendum's data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
 #'
 #' @param id The referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
-#' @inheritParams referendums
+#' @inheritParams rfrnds
 #'
-#' @inherit referendums return
-#' @family referendum
+#' @inherit rfrnds return
+#' @family rfrnd
 #' @export
 #'
 #' @examples
-#' c2d::referendum(id = "5bbbe26a92a21351232dd73f")
-referendum <- function(id,
-                       incl_archive = FALSE,
-                       tidy = TRUE) {
+#' c2d::rfrnd(id = "5bbbe26a92a21351232dd73f")
+rfrnd <- function(id,
+                  incl_archive = FALSE,
+                  tidy = TRUE) {
   
   checkmate::assert_string(id,
                            min.chars = 1L)
@@ -2216,7 +2245,7 @@ referendum <- function(id,
                        simplifyMatrix = FALSE,
                        flatten = FALSE) %>%
     # tidy data
-    tidy_referendums(tidy = tidy)
+    tidy_rfrnds(tidy = tidy)
   
   # exclude `archive` if requested
   if (!incl_archive) data %<>% dplyr::select(-any_of("archive"))
@@ -2228,19 +2257,19 @@ referendum <- function(id,
 #' Download file attachment
 #'
 #' Downloads a file attachment from the C2D database. The necessary `s3_object_key`s identifying individual files are found in the `files` list column returned
-#' by [referendums()].
+#' by [rfrnds()].
 #'
 #' @param s3_object_key The key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design). A character scalar.
 #' @param path The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.
 #'
 #' @return A [response object][httr::response], invisibly.
-#' @family referendum
+#' @family rfrnd
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' # get all file object keys...
-#' c2d::referendums()$files |>
+#' c2d::rfrnds()$files |>
 #'   purrr::map_depth(2L, purrr::pluck, "s3_object_key") |>
 #'   purrr::flatten() |>
 #'   purrr::flatten_chr() |>
@@ -2301,7 +2330,7 @@ download_file_attachment <- function(s3_object_key,
 #' - `files`
 #'
 #' @param data The new referendum data. A [tibble][tibble::tbl_df] that in any case must contain the columns
-#' `r referendum_fields$required_for_additions %>% dplyr::recode(!!!v_names) %>% paste0("[\x60", ., "\x60](https://rpkg.dev/c2d/articles/codebook.html#", ., ")") %>% pal::as_md_list()`
+#' `r rfrnd_fields$required_for_additions %>% dplyr::recode(!!!v_names) %>% paste0("[\x60", ., "\x60](https://rpkg.dev/c2d/articles/codebook.html#", ., ")") %>% pal::as_md_list()`
 #'   
 #' plus the column [`subnational_entity_name`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) for referendums of
 #' [`level`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) below `"national"`, and the column
@@ -2312,19 +2341,20 @@ download_file_attachment <- function(s3_object_key,
 #' @param password The password of the C2D API user account to be used for authentication. A character scalar.
 #'
 #' @return `data`, invisibly.
-#' @family referendum
+#' @family rfrnd
 #' @export
-add_referendums <- function(data,
-                            email = names(getOption("c2d.credentials")[1L]),
-                            password = getOption("c2d.credentials")[1L]) {
-  # ensure `data` is valid
+add_rfrnds <- function(data,
+                       email = Sys.getenv("C2D_API_USER"),
+                       password = Sys.getenv("C2D_API_PW")) {
+  
+  # ensure `data` is a non-empty df
   checkmate::assert_data_frame(data,
                                min.rows = 1L)
   
   ## ensure forbidden columns are absent
   if ("id" %in% colnames(data)) {
     cli::cli_abort(paste0("{.arg data} mustn't contain an {.var id} column. It is automatically set by the C2D API back-end. Did you mean to {.fun ",
-                          "edit_referendums} instead?"))
+                          "edit_rfrnds} instead?"))
   }
   if ("created_on" %in% colnames(data)) {
     cli::cli_abort("{.arg data} mustn't contain a {.var created_on} column. This date is automatically set by the C2D API back-end.")
@@ -2334,7 +2364,7 @@ add_referendums <- function(data,
   }
   
   ## ensure mandatory columns are present
-  referendum_fields$required_for_additions %>%
+  rfrnd_fields$required_for_additions %>%
     dplyr::recode(!!!v_names) %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
@@ -2349,7 +2379,7 @@ add_referendums <- function(data,
   json_items <-
     data %>%
     # restore MongoDB fields
-    untidy_referendums() %>%
+    untidy_rfrnds() %>%
     # convert to JSON
     purrr::map(jsonlite::toJSON,
                auto_unbox = TRUE,
@@ -2361,8 +2391,7 @@ add_referendums <- function(data,
     purrr::map(~ httr::RETRY(verb = "POST",
                              url = "https://services.c2d.ch/referendums",
                              config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
-                                                                                                     password = password)),
-                                                        Connection = "keep-alive"),
+                                                                                                     password = password))),
                              body = .x,
                              times = 3L,
                              httr::content_type_json()) %>%
@@ -2387,18 +2416,18 @@ add_referendums <- function(data,
 #'
 #' Edits existing referendum entries in the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
 #'
-#' @inherit add_referendums details
+#' @inherit add_rfrnds details
 #' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
 #'   identifying the referendums to be edited, an [`is_draft`](https://rpkg.dev/c2d/articles/codebook.html#is_draft) column setting their updated draft status,
 #'   plus a [valid][codebook] column containing the new values for each additional database field that should be updated.
-#' @inheritParams add_referendums
+#' @inheritParams add_rfrnds
 #'
-#' @inherit add_referendums return
-#' @family referendum
+#' @inherit add_rfrnds return
+#' @family rfrnd
 #' @export
-edit_referendums <- function(data,
-                             email = names(getOption("c2d.credentials")[1L]),
-                             password = getOption("c2d.credentials")[1L]) {
+edit_rfrnds <- function(data,
+                        email = Sys.getenv("C2D_API_USER"),
+                        password = Sys.getenv("C2D_API_PW")) {
   # ensure `data` is valid
   checkmate::assert_data_frame(data,
                                min.rows = 1L)
@@ -2413,7 +2442,7 @@ edit_referendums <- function(data,
   }
   
   ## ensure mandatory columns are present
-  referendum_fields$required_for_edits %>%
+  rfrnd_fields$required_for_edits %>%
     dplyr::recode(!!!v_names) %>%
     c("id") %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
@@ -2433,7 +2462,7 @@ edit_referendums <- function(data,
     # drop `id`
     dplyr::select(-id) %>%
     # restore MongoDB fields
-    untidy_referendums() %>%
+    untidy_rfrnds() %>%
     # convert to JSON
     purrr::map(jsonlite::toJSON,
                auto_unbox = TRUE,
@@ -2446,8 +2475,7 @@ edit_referendums <- function(data,
                              httr::RETRY(verb = "PUT",
                                          url = paste0("https://services.c2d.ch/referendums/",.x),
                                          config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
-                                                                                                                 password = password)),
-                                                                    Connection = "keep-alive"),
+                                                                                                                 password = password))),
                                          body = .y,
                                          times = 3L,
                                          httr::content_type_json()) %>%
@@ -2470,16 +2498,16 @@ edit_referendums <- function(data,
 
 #' Validate referendum data
 #'
-#' @param data The referendum data to validate, as returned by [referendums()].
+#' @param data The referendum data to validate, as returned by [rfrnds()].
 #' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
 #' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
 #'
 #' @return `data`, invisibly.
-#' @family referendum
+#' @family rfrnd
 #' @export
-validate_referendums <- function(data,
-                                 check_applicability_constraint = TRUE,
-                                 check_id_sudd_prefix = TRUE) {
+validate_rfrnds <- function(data,
+                            check_applicability_constraint = TRUE,
+                            check_id_sudd_prefix = TRUE) {
   
   checkmate::assert_data_frame(data,
                                min.rows = 1L)
@@ -2625,30 +2653,30 @@ validate_referendums <- function(data,
 #' @inheritParams assemble_query_filter
 #'
 #' @return A named list with `level` as names and referendum counts as values.
-#' @family referendum
+#' @family rfrnd
 #' @export
 #'
 #' @examples
 #' # the whole database (excl. drafts)
-#' c2d::count_referendums()
+#' c2d::count_rfrnds()
 #' 
 #' # only Swiss and Austrian referendums
-#' c2d::count_referendums(country_code = c("CH", "AT"))
+#' c2d::count_rfrnds(country_code = c("CH", "AT"))
 #' 
 #' # only Swiss referendums created between 2020 and 2021
-#' c2d::count_referendums(country_code = "CH",
-#'                        date_time_created_min = "2020-01-01",
-#'                        date_time_created_max = "2021-01-01")
-count_referendums <- function(is_draft = FALSE,
-                              country_code = NULL,
-                              subnational_entity_name = NULL,
-                              municipality = NULL,
-                              level = NULL,
-                              type = NULL,
-                              date = NULL,
-                              date_time_created_min = NULL,
-                              date_time_created_max = NULL,
-                              query_filter = NULL) {
+#' c2d::count_rfrnds(country_code = "CH",
+#'                   date_time_created_min = "2020-01-01",
+#'                   date_time_created_max = "2021-01-01")
+count_rfrnds <- function(is_draft = FALSE,
+                         country_code = NULL,
+                         subnational_entity_name = NULL,
+                         municipality = NULL,
+                         level = NULL,
+                         type = NULL,
+                         date = NULL,
+                         date_time_created_min = NULL,
+                         date_time_created_max = NULL,
+                         query_filter = NULL) {
   httr::RETRY(verb = "GET",
               url = "https://services.c2d.ch/referendums/stats",
               query = list(filter = assemble_query_filter(country_code = country_code,
@@ -2683,12 +2711,12 @@ count_referendums <- function(is_draft = FALSE,
 #' @param term The Search term. A character scalar.
 #'
 #' @return A character vector of English referendum titles matching the search `term`.
-#' @family referendum
+#' @family rfrnd
 #' @export
 #'
 #' @examples
-#' c2d::search_referendums("freedom")
-search_referendums <- function(term) {
+#' c2d::search_rfrnds("freedom")
+search_rfrnds <- function(term) {
   
   httr::RETRY(verb = "GET",
               url = "https://services.c2d.ch/referendums",
@@ -2707,7 +2735,7 @@ search_referendums <- function(term) {
 
 #' C2D Codebook
 #'
-#' A tibble containing the complete metadata of all [referendums()] variables. The Codebook below is also available
+#' A tibble containing the complete metadata of all [rfrnds()] variables. The Codebook below is also available
 #' [online](https://rpkg.dev/c2d/articles/codebook.html).
 #'
 #' @includeRmd vignettes/codebook.Rmd
@@ -2719,7 +2747,7 @@ search_referendums <- function(term) {
 
 #' Get the set of possible *value labels* of a referendum data variable
 #'
-#' Returns a character vector of value labels of a specific [referendums()] column, in the same order as [v_vals()], or of length `0` if `v_name`'s values are
+#' Returns a character vector of value labels of a specific [rfrnds()] column, in the same order as [v_vals()], or of length `0` if `v_name`'s values are
 #' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
 #'
 #' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
@@ -2755,7 +2783,7 @@ val_lbls <- function(v_name,
 
 #' Get the set of possible *values* of a referendum data variable
 #'
-#' Returns a vector of the possible predefined values a specific column in [referendums()] can hold. If the variable values aren't restricted to a predefined
+#' Returns a vector of the possible predefined values a specific column in [rfrnds()] can hold. If the variable values aren't restricted to a predefined
 #' set, `NULL` is returned.
 #'
 #' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
@@ -2835,7 +2863,7 @@ tags <- function(tiers = 1:3) {
 #' c2d::hierarchize_tags("territorial questions")
 #'
 #' # hierarchize the tags of all Austrian referendums
-#' c2d::referendums(country_code = "AT") |>
+#' c2d::rfrnds(country_code = "AT") |>
 #'   dplyr::group_split(id) |>
 #'   purrr::map(c2d::hierarchize_tags)
 hierarchize_tags <- function(x) {
@@ -2982,14 +3010,15 @@ infer_tags <- function(tags,
 #' Note that only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a
 #' country doesn't belong to any UN tier-3 region, the corresponding `un_region_tier_3_*` values will simply be `NA`.
 #'
-#' @param data A data frame containing at least the column `country_code` with two-letter [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
-#'   codes.
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `country_code` (with two-letter [ISO 3166-1
+#'   alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) codes).
 #'
 #' @return `r pkgsnip::return_label("data")`
+#' @family augment
 #' @export
 #'
 #' @examples
-#' c2d::referendum(id = "5bbbe26a92a21351232dd73f") |>
+#' c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
 #'   add_world_regions() |>
 #'   dplyr::select(country_name,
 #'                 starts_with("un_"))
@@ -3020,6 +3049,78 @@ add_world_regions <- function(data) {
     # ensure every row got at least a UN tier-1 region assigned
     assertr::assert(predicate = assertr::not_na,
                     un_region_tier_1_code)
+}
+
+#' Count number of referendums per year
+#'
+#' Counts number of C2D referendums per year, optionally by an additional column specified via `group_by`.
+#'
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date` plus the one specified via `group_by`
+#'   (if any).
+#' @param group_by Optional `data` column to [group by][dplyr::group_by] before counting number of referendums. A [symbol][is.symbol].
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family transform
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(country_code = "AT") |> c2d::rfrnds_per_year()
+#' c2d::rfrnds(country_code = "AT") |> c2d::rfrnds_per_year(group_by = level)
+rfrnds_per_year <- function(data,
+                            group_by = NULL) {
+  
+  # ensure `data` is a non-empty df
+  checkmate::assert_data_frame(data,
+                               min.rows = 1L)
+  
+  # ensure `group_by` is a symbol
+  defused_group_by <- rlang::enquo(group_by)
+  
+  if (!(rlang::quo_is_null(defused_group_by) || rlang::quo_is_symbol(defused_group_by))) {
+    cli::cli_abort("{.arg group_by} must be {.code NULL} or a symbol, but is {.code {rlang::as_label(defused_group_by)}}.")
+  }
+  
+  # add year if necessary
+  if (!("year" %in% colnames(data))) {
+    data %<>% dplyr::mutate(year = clock::get_year(date))
+  }
+  
+  if (rlang::quo_is_null(defused_group_by)) {
+    
+    result <-
+      data %>%
+      dplyr::group_by(year) %>%
+      dplyr::summarise(n = dplyr::n(),
+                       .groups = "drop") %>%
+      # fill gaps
+      dplyr::full_join(tibble::tibble(year = pal::safe_min(.$year):pal::safe_max(.$year)),
+                       by = "year") %>%
+      tidyr::replace_na(replace = list(n = 0L)) %>%
+      dplyr::arrange(year)
+    
+  } else {
+    
+    result <-
+      data %>%
+      dplyr::group_by({{ group_by }}, year) %>%
+      dplyr::summarise(n = dplyr::n(),
+                       .groups = "drop") %>%
+      # fill gaps
+      ## add missing years for 1st `group_by` value
+      dplyr::full_join(tibble::tibble(year = pal::safe_min(.$year):pal::safe_max(.$year),
+                                      {{ group_by }} := .[[1L]][1L]),
+                       by = c("year", rlang::as_name(defused_group_by))) %>%
+      tidyr::replace_na(replace = list(n = 0L)) %>%
+      ## add missing years for all other `group_by` values
+      purrr::when(is.factor(.[[rlang::as_name(defused_group_by)]]) ~ dplyr::mutate(.data = .,
+                                                                                   {{ group_by }} := forcats::fct_drop({{ group_by }})),
+                  ~ .) %>%
+      tidyr::complete({{ group_by }}, year,
+                      fill = list(n = 0L)) %>%
+      dplyr::arrange({{ group_by }}, year)
+  }
+  
+  result
 }
 
 #' Test C2D API availability
@@ -3070,10 +3171,10 @@ is_online <- function(quiet = FALSE) {
 #' `territory_name_de`, their search URL and their number of occurrences.
 #'
 #' Note that the values in the `territory_name_de` column returned by this function can differ from those in the `territory_name_de` column of
-#' [sudd_referendums()] and [list_sudd_referendums()]. The latter is often more extensive and usually includes the `country_name_de` (in parentheses) for
+#' [sudd_rfrnds()] and [list_sudd_rfrnds()]. The latter is often more extensive and usually includes the `country_name_de` (in parentheses) for
 #' subnational referendums.
 #'
-#' @inheritSection sudd_referendums About [sudd.ch](https://sudd.ch/)
+#' @inheritSection sudd_rfrnds About [sudd.ch](https://sudd.ch/)
 #' @return `r pkgsnip::return_label("data")`
 #' @family sudd
 #' @export
@@ -3119,9 +3220,8 @@ list_sudd_territories <- function() {
 #' List referendum titles from [sudd.ch](https://sudd.ch/)
 #'
 #' Lists [all referendum titles from sudd.ch](https://sudd.ch/list.php?mode=alltopics), together with their search URLs and number of occurrences.
-#'_referendums()].
 #'
-#' @inheritSection sudd_referendums About [sudd.ch](https://sudd.ch/)
+#' @inheritSection sudd_rfrnds About [sudd.ch](https://sudd.ch/)
 #' @return `r pkgsnip::return_label("data")`
 #' @family sudd
 #' @export
@@ -3155,9 +3255,9 @@ list_sudd_titles <- function() {
 #'
 #' @description
 #' Lists the referendum data from [sudd.ch](https://sudd.ch/) in various ways its [`list.php`](https://sudd.ch/list.php) endpoint allows. The output of this
-#' function can be directly fed to [sudd_referendums()].
+#' function can be directly fed to [sudd_rfrnds()].
 #'
-#' @inheritSection sudd_referendums About [sudd.ch](https://sudd.ch/)
+#' @inheritSection sudd_rfrnds About [sudd.ch](https://sudd.ch/)
 #' @param mode The listing mode. One of
 #' - `"by_date"`: Lists [all referendums in the sudd.ch database **by `date`**](https://sudd.ch/list.php?mode=allrefs), together with their `id_sudd`,
 #'   `country_code`, `territory_name_de` and `title_de`. Specifying the sorting order of the results via the `order` parameter is supported.
@@ -3183,32 +3283,32 @@ list_sudd_titles <- function() {
 #'
 #' @examples
 #' # list all referendums by modification date
-#' c2d::list_sudd_referendums(mode = "by_mod_date")
+#' c2d::list_sudd_rfrnds(mode = "by_mod_date")
 #' 
 #' # list all referendums whose title matches "AHV"
-#' c2d::list_sudd_referendums(mode = "filter",
+#' c2d::list_sudd_rfrnds(mode = "filter",
 #'                            filter = list(title_de = "AHV"))
 #' 
 #' # get sudd.ch referendum data from all referendums from 2020 onwards
-#' c2d::list_sudd_referendums(mode = "filter",
-#'                            filter = list(year_min = 2020)) |>
-#'   c2d::sudd_referendums()
+#' c2d::list_sudd_rfrnds(mode = "filter",
+#'                       filter = list(year_min = 2020)) |>
+#'   c2d::sudd_rfrnds()
 #' 
 #' # get sudd.ch referendum data from five randomly picked referendums
-#' c2d::list_sudd_referendums(mode = "random") |>
-#'   c2d::sudd_referendums()
-list_sudd_referendums <- function(mode = c("by_date",
-                                           "by_mod_date",
-                                           "filter",
-                                           "random"),
-                                  order = c("ascending",
-                                            "descending"),
-                                  filter = list(territory_name_de = NULL,
-                                                title_de = NULL,
-                                                year_min = NULL,
-                                                year_max = NULL),
-                                  use_cache = TRUE,
-                                  cache_lifespan = "1 week") {
+#' c2d::list_sudd_rfrnds(mode = "random") |>
+#'   c2d::sudd_rfrnds()
+list_sudd_rfrnds <- function(mode = c("by_date",
+                                      "by_mod_date",
+                                      "filter",
+                                      "random"),
+                             order = c("ascending",
+                                       "descending"),
+                             filter = list(territory_name_de = NULL,
+                                           title_de = NULL,
+                                           year_min = NULL,
+                                           year_max = NULL),
+                             use_cache = TRUE,
+                             cache_lifespan = "1 week") {
   # check args
   mode <- rlang::arg_match(mode)
   order <-
@@ -3318,9 +3418,10 @@ list_sudd_referendums <- function(mode = c("by_date",
                        !!!(col_3 %>% purrr::map_chr(rvest::html_text) %>% parse_sudd_date_de()),
                        title_de = col_4 %>% purrr::map_chr(rvest::html_text)) %>%
         # add `date`
-        dplyr::mutate(date = lubridate::make_date(year = year,
-                                                  month = month,
-                                                  day = day)) %>%
+        dplyr::mutate(date = clock::date_build(year = year,
+                                               month = month,
+                                               day = day,
+                                               invalid = "NA")) %>%
         dplyr::relocate(date,
                         .before = year)
       
@@ -3332,7 +3433,7 @@ list_sudd_referendums <- function(mode = c("by_date",
                                purrr::map_chr(~ .x %>%
                                                 rvest::html_element(css = "time") %>%
                                                 rvest::html_attr(name = "datetime")) %>%
-                               lubridate::as_date()) %>%
+                               clock::date_parse()) %>%
           tidyr::fill(date_last_edited,
                       .direction = "down")
       }
@@ -3348,7 +3449,7 @@ list_sudd_referendums <- function(mode = c("by_date",
                     everything())
   },
   pkg = this_pkg,
-  from_fn = "list_sudd_referendums",
+  from_fn = "list_sudd_rfrnds",
   mode,
   order,
   filter,
@@ -3371,18 +3472,18 @@ list_sudd_referendums <- function(mode = c("by_date",
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
 #'
-#' @return `r pkgsnip::return_label("data")` The column names are aligned with those of [referendums()] as closely as possible.
+#' @return `r pkgsnip::return_label("data")` The column names are aligned with those of [rfrnds()] as closely as possible.
 #' @family sudd
 #' @importFrom rlang :=
 #' @export
 #'
 #' @examples
-#' c2d::referendum(id = "5bbc045192a21351232e596f")$id_sudd |> c2d::sudd_referendums()
+#' c2d::rfrnd(id = "5bbc045192a21351232e596f")$id_sudd |> c2d::sudd_rfrnds()
 #' 
-#' c2d::referendums(country_code = "AT") |> c2d::sudd_referendums()
-sudd_referendums <- function(ids_sudd,
-                             use_cache = TRUE,
-                             cache_lifespan = "1 week") {
+#' c2d::rfrnds(country_code = "AT") |> c2d::sudd_rfrnds()
+sudd_rfrnds <- function(ids_sudd,
+                        use_cache = TRUE,
+                        cache_lifespan = "1 week") {
   
   if (purrr::vec_depth(ids_sudd) > 1L) {
     
@@ -3403,12 +3504,13 @@ sudd_referendums <- function(ids_sudd,
     
     ids_sudd %>%
       cli::cli_progress_along(name = "Scraping referendum data from sudd.ch") %>%
-      purrr::map_dfr(~ sudd_referendum(ids_sudd[.x])) %>%
+      purrr::map_dfr(~ sudd_rfrnd(ids_sudd[.x])) %>%
       # properly parse `date`
       dplyr::bind_cols(.$date %>% purrr::map_dfr(parse_sudd_date)) %>%
-      dplyr::mutate(date = lubridate::make_date(year = year,
-                                                month = month,
-                                                day = day)) %>%
+      dplyr::mutate(date = clock::date_build(year = year,
+                                             month = month,
+                                             day = day,
+                                             invalid = "NA")) %>%
       # add `id_sudd`
       tibble::add_column(id_sudd = ids_sudd,
                          .before = 1L) %>%
@@ -3454,7 +3556,7 @@ sudd_referendums <- function(ids_sudd,
                                "date_last_edited")))
   },
   pkg = this_pkg,
-  from_fn = "sudd_referendums",
+  from_fn = "sudd_rfrnds",
   ids_sudd,
   use_cache = use_cache,
   cache_lifespan = cache_lifespan)

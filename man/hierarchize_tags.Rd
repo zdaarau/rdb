@@ -21,7 +21,7 @@ the parent tag(s) of any tag.
 c2d::hierarchize_tags("territorial questions")
 
 # hierarchize the tags of all Austrian referendums
-c2d::referendums(country_code = "AT") |>
+c2d::rfrnds(country_code = "AT") |>
   dplyr::group_split(id) |>
   purrr::map(c2d::hierarchize_tags)
 }

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Edit existing referendums in the C2D database — edit_referendums • c2d</title>
+<title>Add new referendums to the C2D database — add_rfrnds • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Edit existing referendums in the C2D database — edit_referendums" />
-<meta name="description" content="Edits existing referendum entries in the C2D database via its API.">
-<meta property="og:description" content="Edits existing referendum entries in the C2D database via its API." />
+<meta property="og:title" content="Add new referendums to the C2D database — add_rfrnds" />
+<meta name="description" content="Adds new referendum entries to the C2D database via its API.">
+<meta property="og:description" content="Adds new referendum entries to the C2D database via its API." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9031</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9032</span>
       </span>
     </div>
 
@@ -118,19 +118,19 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Edit existing referendums in the C2D database</h1>
+    <h1>Add new referendums to the C2D database</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
-    <div class="hidden name"><code>edit_referendums.Rd</code></div>
+    <div class="hidden name"><code>add_rfrnds.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Edits existing referendum entries in the C2D database via <a href='https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes'>its API</a>.</p>
+    <p>Adds new referendum entries to the C2D database via <a href='https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes'>its API</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>edit_referendums</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>add_rfrnds</span><span class='op'>(</span>
   <span class='va'>data</span>,
-  email <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"c2d.credentials"</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span><span class='op'>)</span>,
-  password <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"c2d.credentials"</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span>
+  email <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='op'>(</span><span class='st'>"C2D_API_USER"</span><span class='op'>)</span>,
+  password <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='op'>(</span><span class='st'>"C2D_API_PW"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -138,9 +138,26 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>The updated referendum data. A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> that must contain an <a href='https://rpkg.dev/c2d/articles/codebook.html#id'><code>id</code></a> column
-identifying the referendums to be edited, an <a href='https://rpkg.dev/c2d/articles/codebook.html#is_draft'><code>is_draft</code></a> column setting their updated draft status,
-plus a <a href='data_codebook.html'>valid</a> column containing the new values for each additional database field that should be updated.</p></td>
+      <td><p>The new referendum data. A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> that in any case must contain the columns</p><ul>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#level'><code>level</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#date'><code>date</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#title_en'><code>title_en</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#result'><code>result</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#electorate_total'><code>electorate_total</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#electorate_abroad'><code>electorate_abroad</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_yes'><code>votes_yes</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_no'><code>votes_no</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_empty'><code>votes_empty</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_invalid'><code>votes_invalid</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#is_draft'><code>is_draft</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#type'><code>type</code></a></p></li>
+</ul>
+
+<p>plus the column <a href='https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name'><code>subnational_entity_name</code></a> for referendums of
+<a href='https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name'><code>level</code></a> below <code>"national"</code>, and the column
+<a href='https://rpkg.dev/c2d/articles/codebook.html#municipality'><code>municipality</code></a> for referendums of <code>level = "local"</code>,</p>
+<p>plus any additional <a href='data_codebook.html'>valid</a> columns containing the values for the corresponding database fields.</p></td>
     </tr>
     <tr>
       <th>email</th>
@@ -166,13 +183,13 @@ plus a <a href='data_codebook.html'>valid</a> column containing the new values f
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other referendum data functions:
-<code><a href='add_referendums.html'>add_referendums</a>()</code>,
-<code><a href='count_referendums.html'>count_referendums</a>()</code>,
+<code><a href='count_rfrnds.html'>count_rfrnds</a>()</code>,
 <code><a href='download_file_attachment.html'>download_file_attachment</a>()</code>,
-<code><a href='referendums.html'>referendums</a>()</code>,
-<code><a href='referendum.html'>referendum</a>()</code>,
-<code><a href='search_referendums.html'>search_referendums</a>()</code>,
-<code><a href='validate_referendums.html'>validate_referendums</a>()</code></p></div>
+<code><a href='edit_rfrnds.html'>edit_rfrnds</a>()</code>,
+<code><a href='rfrnds.html'>rfrnds</a>()</code>,
+<code><a href='rfrnd.html'>rfrnd</a>()</code>,
+<code><a href='search_rfrnds.html'>search_rfrnds</a>()</code>,
+<code><a href='validate_rfrnds.html'>validate_rfrnds</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

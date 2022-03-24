@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>List referendum territories from sudd.ch — list_sudd_territories • c2d</title>
+<title>Validate referendum data — validate_rfrnds • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="List referendum territories from sudd.ch — list_sudd_territories" />
-<meta name="description" content="Lists all referendum territories from sudd.ch, which means each country_name_de together with all the associated territory_name_de, their search URL and their number of occurrences.">
-<meta property="og:description" content="Lists all referendum territories from sudd.ch, which means each country_name_de together with all the associated territory_name_de, their search URL and their number of occurrences." />
+<meta property="og:title" content="Validate referendum data — validate_rfrnds" />
+<meta name="description" content="Validate referendum data">
+<meta property="og:description" content="Validate referendum data" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -118,37 +118,51 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>List referendum territories from <a href='https://sudd.ch/'>sudd.ch</a></h1>
+    <h1>Validate referendum data</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
-    <div class="hidden name"><code>list_sudd_territories.Rd</code></div>
+    <div class="hidden name"><code>validate_rfrnds.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Lists <a href='https://sudd.ch/list.php?mode=allareas'>all referendum territories from sudd.ch</a>, which means each <code>country_name_de</code> together with all the associated
-<code>territory_name_de</code>, their search URL and their number of occurrences.</p>
+    <p>Validate referendum data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>list_sudd_territories</span><span class='op'>(</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>validate_rfrnds</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  check_applicability_constraint <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  check_id_sudd_prefix <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>data</th>
+      <td><p>The referendum data to validate, as returned by <code><a href='rfrnds.html'>rfrnds()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>check_applicability_constraint</th>
+      <td><p>Whether or not to check that no applicability constraints as defined in the <a href='data_codebook.html'>codebook</a> are violated.</p></td>
+    </tr>
+    <tr>
+      <th>check_id_sudd_prefix</th>
+      <td><p>Whether or not to check that all <a href='https://rpkg.dev/c2d/articles/codebook.html#id-sudd'><code>id_sudd</code></a> prefixes are valid.</p></td>
+    </tr>
+    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Note that the values in the <code>territory_name_de</code> column returned by this function can differ from those in the <code>territory_name_de</code> column of
-<code><a href='sudd_rfrnds.html'>sudd_rfrnds()</a></code> and <code><a href='list_sudd_rfrnds.html'>list_sudd_rfrnds()</a></code>. The latter is often more extensive and usually includes the <code>country_name_de</code> (in parentheses) for
-subnational referendums.</p>
-    <h2 class="hasAnchor" id="about-sudd-ch"><a class="anchor" href="#about-sudd-ch"></a>About <a href='https://sudd.ch/'>sudd.ch</a></h2>
-
-    <p><strong>sudd</strong> stands for <em><strong>Su</strong>chmaschine für <strong>d</strong>irekte <strong>D</strong>emokratie</em> (German) and is operated by <a href='mailto:beat@sudd.ch'>Beat Müller</a>. Its database content is
-licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>.</p>
+    <p><code>data</code>, invisibly.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other sudd.ch scraping functions:
-<code><a href='list_sudd_rfrnds.html'>list_sudd_rfrnds</a>()</code>,
-<code><a href='list_sudd_titles.html'>list_sudd_titles</a>()</code>,
-<code><a href='sudd_rfrnds.html'>sudd_rfrnds</a>()</code></p></div>
+    <div class='dont-index'><p>Other referendum data functions:
+<code><a href='add_rfrnds.html'>add_rfrnds</a>()</code>,
+<code><a href='count_rfrnds.html'>count_rfrnds</a>()</code>,
+<code><a href='download_file_attachment.html'>download_file_attachment</a>()</code>,
+<code><a href='edit_rfrnds.html'>edit_rfrnds</a>()</code>,
+<code><a href='rfrnds.html'>rfrnds</a>()</code>,
+<code><a href='rfrnd.html'>rfrnd</a>()</code>,
+<code><a href='search_rfrnds.html'>search_rfrnds</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

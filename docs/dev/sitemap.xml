@@ -4,7 +4,7 @@
     <loc>https://rpkg.dev/c2d/index.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/add_referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/add_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/add_world_regions.html</loc>
@@ -19,7 +19,7 @@
     <loc>https://rpkg.dev/c2d/reference/c2d-package.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/count_referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/count_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/data_codebook.html</loc>
@@ -28,7 +28,7 @@
     <loc>https://rpkg.dev/c2d/reference/download_file_attachment.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/edit_referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/edit_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/hierarchize_tags.html</loc>
@@ -40,7 +40,7 @@
     <loc>https://rpkg.dev/c2d/reference/is_online.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/list_sudd_referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/list_sudd_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/list_sudd_territories.html</loc>
@@ -55,25 +55,28 @@
     <loc>https://rpkg.dev/c2d/reference/read_toml.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/referendum.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/rfrnd.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/search_referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/rfrnds_per_year.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/sudd_referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/search_rfrnds.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/sudd_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/tags.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/tidy_referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/tidy_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/untidy_referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/untidy_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/v_vals.html</loc>
@@ -82,7 +85,7 @@
     <loc>https://rpkg.dev/c2d/reference/val_lbls.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/validate_referendums.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/validate_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/articles/codebook.html</loc>

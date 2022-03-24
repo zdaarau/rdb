@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Search in English referendum titles — search_referendums • c2d</title>
+<title>Edit existing referendums in the C2D database — edit_rfrnds • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Search in English referendum titles — search_referendums" />
-<meta name="description" content="Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no fuzzy search is performed (i.e. only exact matches are returned).">
-<meta property="og:description" content="Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no fuzzy search is performed (i.e. only exact matches are returned)." />
+<meta property="og:title" content="Edit existing referendums in the C2D database — edit_rfrnds" />
+<meta name="description" content="Edits existing referendum entries in the C2D database via its API.">
+<meta property="og:description" content="Edits existing referendum entries in the C2D database via its API." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9031</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9032</span>
       </span>
     </div>
 
@@ -118,52 +118,62 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Search in English referendum titles</h1>
+    <h1>Edit existing referendums in the C2D database</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
-    <div class="hidden name"><code>search_referendums.Rd</code></div>
+    <div class="hidden name"><code>edit_rfrnds.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no <a href='https://en.wikipedia.org/wiki/Approximate_string_matching'>fuzzy search</a> is performed (i.e. only exact matches are returned).</p>
+    <p>Edits existing referendum entries in the C2D database via <a href='https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes'>its API</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>search_referendums</span><span class='op'>(</span><span class='va'>term</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>edit_rfrnds</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  email <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='op'>(</span><span class='st'>"C2D_API_USER"</span><span class='op'>)</span>,
+  password <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='op'>(</span><span class='st'>"C2D_API_PW"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>term</th>
-      <td><p>The Search term. A character scalar.</p></td>
+      <th>data</th>
+      <td><p>The updated referendum data. A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> that must contain an <a href='https://rpkg.dev/c2d/articles/codebook.html#id'><code>id</code></a> column
+identifying the referendums to be edited, an <a href='https://rpkg.dev/c2d/articles/codebook.html#is_draft'><code>is_draft</code></a> column setting their updated draft status,
+plus a <a href='data_codebook.html'>valid</a> column containing the new values for each additional database field that should be updated.</p></td>
+    </tr>
+    <tr>
+      <th>email</th>
+      <td><p>The e-mail address of the C2D API user account to be used for authentication. A character scalar.</p></td>
+    </tr>
+    <tr>
+      <th>password</th>
+      <td><p>The password of the C2D API user account to be used for authentication. A character scalar.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A character vector of English referendum titles matching the search <code>term</code>.</p>
+    <p><code>data</code>, invisibly.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
-titles.</p>
+    <p>Note that the following variables are not supported, i.e. simply dropped from <code>data</code>:</p><ul>
+<li><p><code>id_official</code></p></li>
+<li><p><code>id_sudd</code></p></li>
+<li><p><code>files</code></p></li>
+</ul>
+
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other referendum data functions:
-<code><a href='add_referendums.html'>add_referendums</a>()</code>,
-<code><a href='count_referendums.html'>count_referendums</a>()</code>,
+<code><a href='add_rfrnds.html'>add_rfrnds</a>()</code>,
+<code><a href='count_rfrnds.html'>count_rfrnds</a>()</code>,
 <code><a href='download_file_attachment.html'>download_file_attachment</a>()</code>,
-<code><a href='edit_referendums.html'>edit_referendums</a>()</code>,
-<code><a href='referendums.html'>referendums</a>()</code>,
-<code><a href='referendum.html'>referendum</a>()</code>,
-<code><a href='validate_referendums.html'>validate_referendums</a>()</code></p></div>
+<code><a href='rfrnds.html'>rfrnds</a>()</code>,
+<code><a href='rfrnd.html'>rfrnd</a>()</code>,
+<code><a href='search_rfrnds.html'>search_rfrnds</a>()</code>,
+<code><a href='validate_rfrnds.html'>validate_rfrnds</a>()</code></p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>search_referendums</span><span class='op'>(</span><span class='st'>"freedom"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Amendment of the law on demolition, conversion and renovation of residential buildings (\"more freedom for renters\") of 13 November 2015"</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [2] "Constitutional proposal 2-267: Guarantee of academic freedom in any institution of higher learning"                                       </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [3] "Constitutional reform (freedom of information)"                                                                                           </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "Constitutional reform (human and civil rights and freedoms)"                                                                              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [5] "Extension of personal rights and freedoms"                                                                                                </span>
-</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

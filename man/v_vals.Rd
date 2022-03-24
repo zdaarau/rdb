@@ -19,7 +19,7 @@ If \code{v_name}'s values are restricted to a predefined set and
 Else \code{NULL}.
 }
 \description{
-Returns a vector of the possible predefined values a specific column in \code{\link[=referendums]{referendums()}} can hold. If the variable values aren't restricted to a predefined
+Returns a vector of the possible predefined values a specific column in \code{\link[=rfrnds]{rfrnds()}} can hold. If the variable values aren't restricted to a predefined
 set, \code{NULL} is returned.
 }
 \examples{

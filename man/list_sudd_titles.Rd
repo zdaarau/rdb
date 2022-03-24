@@ -11,7 +11,6 @@ A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Lists \href{https://sudd.ch/list.php?mode=alltopics}{all referendum titles from sudd.ch}, together with their search URLs and number of occurrences.
-_referendums()].
 }
 \section{About \href{https://sudd.ch/}{sudd.ch}}{
 \strong{sudd} stands for \emph{\strong{Su}chmaschine für \strong{d}irekte \strong{D}emokratie} (German) and is operated by \href{mailto:beat@sudd.ch}{Beat Müller}. Its database content is
@@ -23,8 +22,8 @@ c2d::list_sudd_titles() |> dplyr::filter(n > 1)
 }
 \seealso{
 Other sudd.ch scraping functions:
-\code{\link{list_sudd_referendums}()},
+\code{\link{list_sudd_rfrnds}()},
 \code{\link{list_sudd_territories}()},
-\code{\link{sudd_referendums}()}
+\code{\link{sudd_rfrnds}()}
 }
 \concept{sudd}

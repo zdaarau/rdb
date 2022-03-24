@@ -16,7 +16,7 @@ A character vector. Of length \code{0} if \code{v_name}'s values are not restric
 \link[=data_codebook]{codebook}.
 }
 \description{
-Returns a character vector of value labels of a specific \code{\link[=referendums]{referendums()}} column, in the same order as \code{\link[=v_vals]{v_vals()}}, or of length \code{0} if \code{v_name}'s values are
+Returns a character vector of value labels of a specific \code{\link[=rfrnds]{rfrnds()}} column, in the same order as \code{\link[=v_vals]{v_vals()}}, or of length \code{0} if \code{v_name}'s values are
 not restricted to a predefined set or no value labels are defined in the \link[=data_codebook]{codebook}.
 }
 \examples{

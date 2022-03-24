@@ -30,14 +30,14 @@ navbar:
 reference:
 - title: Referendum data
 - contents:
-  - referendums
-  - referendum
+  - rfrnds
+  - rfrnd
   - download_file_attachment
-  - add_referendums
-  - edit_referendums
-  - validate_referendums
-  - count_referendums
-  - search_referendums
+  - add_rfrnds
+  - edit_rfrnds
+  - validate_rfrnds
+  - count_rfrnds
+  - search_rfrnds
 - title: Referendum metadata
 - contents:
   - data_codebook
@@ -50,7 +50,12 @@ reference:
   - hierarchize_tags
   - infer_tags
 - title: Augmentation
+  desc: Functions to augment the C2D referendum data by additional information (columns).
 - contents: add_world_regions
+- title: Transformation
+  desc: Functions to transform the C2D referendum data into other shapes, each with
+    a specific purpose.
+- contents: rfrnds_per_year
 - title: C2D API Status
 - contents: is_online
 - title: sudd.ch scraping
@@ -58,5 +63,5 @@ reference:
 - contents:
   - list_sudd_territories
   - list_sudd_titles
-  - list_sudd_referendums
-  - sudd_referendums
+  - list_sudd_rfrnds
+  - sudd_rfrnds

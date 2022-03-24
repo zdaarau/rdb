@@ -15,7 +15,7 @@ Lists \href{https://sudd.ch/list.php?mode=allareas}{all referendum territories f
 }
 \details{
 Note that the values in the \code{territory_name_de} column returned by this function can differ from those in the \code{territory_name_de} column of
-\code{\link[=sudd_referendums]{sudd_referendums()}} and \code{\link[=list_sudd_referendums]{list_sudd_referendums()}}. The latter is often more extensive and usually includes the \code{country_name_de} (in parentheses) for
+\code{\link[=sudd_rfrnds]{sudd_rfrnds()}} and \code{\link[=list_sudd_rfrnds]{list_sudd_rfrnds()}}. The latter is often more extensive and usually includes the \code{country_name_de} (in parentheses) for
 subnational referendums.
 }
 \section{About \href{https://sudd.ch/}{sudd.ch}}{
@@ -25,8 +25,8 @@ licensed under \href{https://creativecommons.org/licenses/by-nc-sa/4.0/}{Creativ
 
 \seealso{
 Other sudd.ch scraping functions:
-\code{\link{list_sudd_referendums}()},
+\code{\link{list_sudd_rfrnds}()},
 \code{\link{list_sudd_titles}()},
-\code{\link{sudd_referendums}()}
+\code{\link{sudd_rfrnds}()}
 }
 \concept{sudd}

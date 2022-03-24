@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Untidy into "raw" C2D API referendum data — untidy_referendums • c2d</title>
+<title>Untidy into "raw" C2D API referendum data — untidy_rfrnds • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Untidy into "raw" C2D API referendum data — untidy_referendums" />
-<meta name="description" content="Converts from the tidied referendums() to the &quot;raw&quot; MongoDB schema used by the C2D API. Basically reverts tidy_referendums().">
-<meta property="og:description" content="Converts from the tidied referendums() to the &quot;raw&quot; MongoDB schema used by the C2D API. Basically reverts tidy_referendums()." />
+<meta property="og:title" content="Untidy into "raw" C2D API referendum data — untidy_rfrnds" />
+<meta name="description" content="Converts from the tidied rfrnds() to the &quot;raw&quot; MongoDB schema used by the C2D API. Basically reverts tidy_rfrnds().">
+<meta property="og:description" content="Converts from the tidied rfrnds() to the &quot;raw&quot; MongoDB schema used by the C2D API. Basically reverts tidy_rfrnds()." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9031</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9032</span>
       </span>
     </div>
 
@@ -120,21 +120,21 @@
     <div class="page-header">
     <h1>Untidy into "raw" C2D API referendum data</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
-    <div class="hidden name"><code>untidy_referendums.Rd</code></div>
+    <div class="hidden name"><code>untidy_rfrnds.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Converts from the tidied <code><a href='referendums.html'>referendums()</a></code> to the "raw" MongoDB schema used by the C2D API. Basically reverts <code><a href='tidy_referendums.html'>tidy_referendums()</a></code>.</p>
+    <p>Converts from the tidied <code><a href='rfrnds.html'>rfrnds()</a></code> to the "raw" MongoDB schema used by the C2D API. Basically reverts <code><a href='tidy_rfrnds.html'>tidy_rfrnds()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>untidy_referendums</span><span class='op'>(</span><span class='va'>data</span>, as_tibble <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>untidy_rfrnds</span><span class='op'>(</span><span class='va'>data</span>, as_tibble <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>The data to untidy as returned by <code><a href='referendums.html'>referendums()</a></code>.</p></td>
+      <td><p>The data to untidy as returned by <code><a href='rfrnds.html'>rfrnds()</a></code>.</p></td>
     </tr>
     <tr>
       <th>as_tibble</th>
@@ -145,7 +145,7 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>If <code>as_tibble = FALSE</code>, a list with one element per referendum, suitable to be converted <code><a href='https://rdrr.io/pkg/jsonlite/man/fromJSON.html'>jsonlite::toJSON()</a></code> and then fed to the C2D API.</p>
-<p>Otherwise a <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> of the same format as returned by <code><a href='referendums.html'>referendums(tidy = FALSE)</a></code>.</p>
+<p>Otherwise a <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> of the same format as returned by <code><a href='rfrnds.html'>rfrnds(tidy = FALSE)</a></code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

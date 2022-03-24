@@ -17,7 +17,7 @@ remotes::install_gitlab(repo = "zdaarau/rpkgs/c2d")
 
 ## Usage
 
-The (function) reference is found [here](https:/rpkg.dev/c2d/reference).
+The (function) reference is found [here](https://rpkg.dev/c2d/reference).
 
 ## Development
 

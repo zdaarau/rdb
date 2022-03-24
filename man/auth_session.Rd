@@ -5,14 +5,17 @@
 \title{Authenticate a user session for the \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes}{C2D API}}
 \usage{
 auth_session(
-  email = names(getOption("c2d.credentials")[1L]),
-  password = getOption("c2d.credentials")[1L]
+  email = Sys.getenv("C2D_API_USER"),
+  password = Sys.getenv("C2D_API_PW"),
+  quiet = FALSE
 )
 }
 \arguments{
 \item{email}{The e-mail address of the user for which a session should be created. A character scalar.}
 
 \item{password}{The password of the user for which a session should be created. A character scalar.}
+
+\item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 The user session token as a character scalar, invisibly.
@@ -22,8 +25,8 @@ Creates a new user session token if necessary. The token is stored in the R opti
 \code{email}, \code{token} and \code{date_time_last_active}.
 }
 \details{
-By default, the \code{email} and \code{password} are read from the first element of the R option \code{c2d.credentials} (a named character vector where names are e-mail
-addresses and values are passwords).
+By default, \code{email} and \code{password} are read from the \href{https://en.wikipedia.org/wiki/Environment_variable}{environment variables} \code{C2D_API_EMAIL} and
+\code{C2D_API_PW} respectively.
 
 User session tokens expire automatically after 15 days of inactivity.
 }

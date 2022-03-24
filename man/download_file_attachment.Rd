@@ -16,12 +16,12 @@ A \link[httr:response]{response object}, invisibly.
 }
 \description{
 Downloads a file attachment from the C2D database. The necessary \code{s3_object_key}s identifying individual files are found in the \code{files} list column returned
-by \code{\link[=referendums]{referendums()}}.
+by \code{\link[=rfrnds]{rfrnds()}}.
 }
 \examples{
 \dontrun{
 # get all file object keys...
-c2d::referendums()$files |>
+c2d::rfrnds()$files |>
   purrr::map_depth(2L, purrr::pluck, "s3_object_key") |>
   purrr::flatten() |>
   purrr::flatten_chr() |>
@@ -32,12 +32,12 @@ c2d::referendums()$files |>
 }
 \seealso{
 Other referendum data functions:
-\code{\link{add_referendums}()},
-\code{\link{count_referendums}()},
-\code{\link{edit_referendums}()},
-\code{\link{referendums}()},
-\code{\link{referendum}()},
-\code{\link{search_referendums}()},
-\code{\link{validate_referendums}()}
+\code{\link{add_rfrnds}()},
+\code{\link{count_rfrnds}()},
+\code{\link{edit_rfrnds}()},
+\code{\link{rfrnds}()},
+\code{\link{rfrnd}()},
+\code{\link{search_rfrnds}()},
+\code{\link{validate_rfrnds}()}
 }
-\concept{referendum}
+\concept{rfrnd}

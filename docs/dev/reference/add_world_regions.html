@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9031</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9032</span>
       </span>
     </div>
 
@@ -146,8 +146,7 @@ regions as "sub-subregions".</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>A data frame containing at least the column <code>country_code</code> with two-letter <a href='https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>ISO 3166-1 alpha-2</a>
-codes.</p></td>
+      <td><p>C2D referendum data as returned by <code><a href='rfrnds.html'>rfrnds()</a></code>. A data frame that at minimum contains the column <code>country_code</code> (with two-letter <a href='https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>ISO 3166-1 alpha-2</a> codes).</p></td>
     </tr>
     </table>
 
@@ -160,7 +159,7 @@ codes.</p></td>
 country doesn't belong to any UN tier-3 region, the corresponding <code>un_region_tier_3_*</code> values will simply be <code>NA</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='referendum.html'>referendum</a></span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"5bbbe26a92a21351232dd73f"</span><span class='op'>)</span> |&gt;</span>
+    <pre class="examples"><span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnd.html'>rfrnd</a></span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"5bbbe26a92a21351232dd73f"</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>add_world_regions</span><span class='op'>(</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>country_name</span>,</span>
 <span class='r-in'>                <span class='fu'>starts_with</span><span class='op'>(</span><span class='st'>"un_"</span><span class='op'>)</span><span class='op'>)</span></span>

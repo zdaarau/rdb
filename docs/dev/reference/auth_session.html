@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9031</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9032</span>
       </span>
     </div>
 
@@ -129,8 +129,9 @@
     </div>
 
     <pre class="usage"><span class='fu'>auth_session</span><span class='op'>(</span>
-  email <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"c2d.credentials"</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span><span class='op'>)</span>,
-  password <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"c2d.credentials"</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span>
+  email <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='op'>(</span><span class='st'>"C2D_API_USER"</span><span class='op'>)</span>,
+  password <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='op'>(</span><span class='st'>"C2D_API_PW"</span><span class='op'>)</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -144,6 +145,10 @@
       <th>password</th>
       <td><p>The password of the user for which a session should be created. A character scalar.</p></td>
     </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>Whether or not to suppress printing status output from internal processing.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -151,8 +156,8 @@
     <p>The user session token as a character scalar, invisibly.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>By default, the <code>email</code> and <code>password</code> are read from the first element of the R option <code>c2d.credentials</code> (a named character vector where names are e-mail
-addresses and values are passwords).</p>
+    <p>By default, <code>email</code> and <code>password</code> are read from the <a href='https://en.wikipedia.org/wiki/Environment_variable'>environment variables</a> <code>C2D_API_EMAIL</code> and
+<code>C2D_API_PW</code> respectively.</p>
 <p>User session tokens expire automatically after 15 days of inactivity.</p>
 
   </div>

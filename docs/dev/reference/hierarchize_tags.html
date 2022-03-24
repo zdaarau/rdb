@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9031</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9032</span>
       </span>
     </div>
 
@@ -157,7 +157,7 @@ and <code>tags_tier_3</code>.</p></td>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> state organisation federalism territorial questions</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># hierarchize the tags of all Austrian referendums</span></span>
-<span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='referendums.html'>referendums</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> |&gt;</span>
+<span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_split.html'>group_split</a></span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span> |&gt;</span>
 <span class='r-in'>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>hierarchize_tags</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>

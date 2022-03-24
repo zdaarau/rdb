@@ -12,7 +12,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 data_codebook
 }
 \description{
-A tibble containing the complete metadata of all \code{\link[=referendums]{referendums()}} variables. The Codebook below is also available
+A tibble containing the complete metadata of all \code{\link[=rfrnds]{rfrnds()}} variables. The Codebook below is also available
 \href{https://rpkg.dev/c2d/articles/codebook.html}{online}.
 }
 \details{

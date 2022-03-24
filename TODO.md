@@ -52,7 +52,7 @@
 -   Outsource institutional variables into separate database/MongoDB collection and adapt everything. -\> see [issue
     #42](https://github.com/ccmdesign/c2d-app/issues/42)
 
--   Extend the set of variables so the `remarks` field isn't overloaded anymore. Possible extensions (taken from Louis' `remarks` structure (cf.
+-   Extend the set of variables, so the `remarks` field isn't overloaded anymore. Possible extensions (taken from Louis' `remarks` structure (cf.
     `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx`)):
 
     -   [ ] Background information on the vote (most important actors and events (sudd.ch, Wikipedia, NZZ etc.), content/main points)
@@ -197,9 +197,13 @@
     They include Italy ~~1929~~ and 1934, ~~Andorra 1933~~, ~~Austria 1938~~, Romania 2009, ~~Slovenia 2015~~, ~~Bulgaria 2016~~, ~~Netherlands 2016~~, ~~UK
     2016~~.
 
+#### An Joey delegiert
+
+-   [x] [Nationale Referenden ohne Resultat (`NA`)](https://hackmd.io/1tNPglerTTaBGpv1FRramQ) nachprüfen.
+
 #### Other
 
--   A total of 860 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
+-   A total of 858 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
     traced and added ASAP!
 
 -   Complete and add [Aargau cantonal referendums 1888--1971](https://docs.google.com/spreadsheets/d/108CXVcVISDb8Z9R_fn7S82brXOE8dfIY0VKp3QTc0uU/) once [issue
@@ -256,7 +260,7 @@
 
 ### Validation
 
--   Systematically inspect/handle all `applicability_constraint` violations (see `validate_referendums(check_applicability_constraint = TRUE)`).
+-   Systematically inspect/handle all `applicability_constraint` violations (see `validate_rfrnds(check_applicability_constraint = TRUE)`).
 
 -   Systematically check if variables that are "completely dependent" on other variables (like `inst_trigger_actor` on `inst_trigger_type`) are correctly
     filled.
@@ -269,6 +273,9 @@
 
 -   Systematically check if all votes in the `sudd.ch` database are included in the C2D database -\> parse `https://sudd.ch/list.php?mode=allrefs` (the
     `id_sudd` is part of the link in the last column)
+
+    A challenge is to identify the bogus referendums included on sudd.ch like [this one](https://sudd.ch/event.php?id=mb011902) (totally fabricated by [Gregor
+    von Rezzori](https://de.wikipedia.org/wiki/Maghrebinische_Geschichten))
 
 -   According to the guidelines in `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx`, the PDF `files` of
     `country_code == "CH"` entries must be named consistently `Voting_brochure_CH/Kantonskürzel_Jahr_Monat_Tag` ("Abstimmungsbroschüre"") and
@@ -295,21 +302,15 @@
 
 ### c2d R package
 
+-   Remove deprecated `rfrnds()` and announce it in Element room!
+
 -   Implement fn to delete referendums once [issue #45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
 
 -   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook)
 
 -   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
 
--   Automated vote entry creation by feeding scraped sudd.ch data to `c2d::add_referendums()`.
-
--   Funktion schreiben zum Hinzufügen der von Uwe favorisierten Weltregionen:
-
-    ![scan](https://i.imgur.com/88H2TZz.jpeg)
-
-    [`countrycode::codelist$region23`](https://vincentarelbundock.github.io/countrycode/reference/codelist.html) (Weltbankregionen) oder
-    `countrycode::codelist$un.regionsub.name` ([UN-Regionen](https://en.wikipedia.org/wiki/United_Nations_geoscheme)) scheint eine guter Start -\> dann einfach
-    noch abändern, sodass Uwe's Spezialwünsche erfüllt sind!
+-   Automated vote entry creation by feeding scraped sudd.ch data to `c2d::add_rfrnds()`.
 
 ### Miscellaneous
 
