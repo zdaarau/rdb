@@ -3672,6 +3672,8 @@ Functions to transform the C2D referendum data into other shapes, each with a sp
 
 ### `rfrnds_per_year`
 
+TODO: Implement a complete [tidyselect interface](https://tidyselect.r-lib.org/articles/tidyselect.html).
+
 ```{r}
 #' Count number of referendums per year
 #'
@@ -3691,9 +3693,8 @@ Functions to transform the C2D referendum data into other shapes, each with a sp
 rfrnds_per_year <- function(data,
                             group_by = NULL) {
   
-  # ensure `data` is a non-empty df
-  checkmate::assert_data_frame(data,
-                               min.rows = 1L)
+  # ensure `data` is a df
+  checkmate::assert_data_frame(data)
   
   # ensure `group_by` is a symbol
   defused_group_by <- rlang::enquo(group_by)
@@ -3713,12 +3714,16 @@ rfrnds_per_year <- function(data,
       data %>%
       dplyr::group_by(year) %>%
       dplyr::summarise(n = dplyr::n(),
-                       .groups = "drop") %>%
-      # fill gaps
-      dplyr::full_join(tibble::tibble(year = pal::safe_min(.$year):pal::safe_max(.$year)),
-                       by = "year") %>%
-      tidyr::replace_na(replace = list(n = 0L)) %>%
-      dplyr::arrange(year)
+                       .groups = "drop")
+    # fill gaps
+    if (nrow(result)) {
+      
+      result %<>%
+        dplyr::full_join(tibble::tibble(year = pal::safe_min(.$year):pal::safe_max(.$year)),
+                         by = "year") %>%
+        tidyr::replace_na(replace = list(n = 0L)) %>%
+        dplyr::arrange(year)
+    }
     
   } else {
     
@@ -3726,20 +3731,24 @@ rfrnds_per_year <- function(data,
       data %>%
       dplyr::group_by({{ group_by }}, year) %>%
       dplyr::summarise(n = dplyr::n(),
-                       .groups = "drop") %>%
-      # fill gaps
-      ## add missing years for 1st `group_by` value
-      dplyr::full_join(tibble::tibble(year = pal::safe_min(.$year):pal::safe_max(.$year),
-                                      {{ group_by }} := .[[1L]][1L]),
-                       by = c("year", rlang::as_name(defused_group_by))) %>%
-      tidyr::replace_na(replace = list(n = 0L)) %>%
-      ## add missing years for all other `group_by` values
-      purrr::when(is.factor(.[[rlang::as_name(defused_group_by)]]) ~ dplyr::mutate(.data = .,
-                                                                                   {{ group_by }} := forcats::fct_drop({{ group_by }})),
-                  ~ .) %>%
-      tidyr::complete({{ group_by }}, year,
-                      fill = list(n = 0L)) %>%
-      dplyr::arrange({{ group_by }}, year)
+                       .groups = "drop")
+    # fill gaps
+    if (nrow(result)) {
+      
+      result %<>%
+        ## add missing years for 1st `group_by` value
+        dplyr::full_join(tibble::tibble(year = pal::safe_min(.$year):pal::safe_max(.$year),
+                                        {{ group_by }} := .[[1L]][1L]),
+                         by = c("year", rlang::as_name(defused_group_by))) %>%
+        tidyr::replace_na(replace = list(n = 0L)) %>%
+        ## add missing years for all other `group_by` values
+        purrr::when(is.factor(.[[rlang::as_name(defused_group_by)]]) ~ dplyr::mutate(.data = .,
+                                                                                     {{ group_by }} := forcats::fct_drop({{ group_by }})),
+                    ~ .) %>%
+        tidyr::complete({{ group_by }}, year,
+                        fill = list(n = 0L)) %>%
+        dplyr::arrange({{ group_by }}, year)
+    }
   }
   
   result
