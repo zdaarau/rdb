@@ -120,6 +120,8 @@
     Additionally,
 
     -   the `result` variable needs to be changed to hold the option that won the referendum and
+    -   the `position_government` variable needs to be changed to hold the option the government favors
+    -   we might wanna introduce another variable `position_status_quo` indicating which (if any) option preserves the status quo (i.e. against any change)
     -   the `votes_yes` and `votes_no` (as well as the same sub-vars in `votes_per_subterritory`) variables need to be replaced by a single nested (list-type)
         variable `votes_substantive` that holds a subfield with the number of votes per option (named by the option?).
 
@@ -304,6 +306,8 @@
 
 -   Remove deprecated `rfrnds()` and announce it in Element room!
 
+-   Add fn to add turnout(s) (maybe based on different definitions (with/without invalid votes etc.)).
+
 -   Implement fn to delete referendums once [issue #45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
 
 -   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook)
@@ -333,6 +337,7 @@
 
     -   [Brudi](https://www.brudi.com/), Zürich
     -   [Liip](https://www.liip.ch/), Zürich (und weitere CH-Städte)
+    -   [Ops One](https://opsone.ch/), Zürich
 
 ### Database renaming
 
