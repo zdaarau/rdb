@@ -893,6 +893,7 @@ tidy_rfrnds <- function(data,
                         tidy = TRUE) {
   
   checkmate::assert_flag(tidy)
+  this_env <- rlang::current_env()
   
   data %<>%
     # unnest columns and ensure list type for multi-value columns
@@ -1173,7 +1174,8 @@ tidy_rfrnds <- function(data,
                           c2d::data_codebook %$%
                           magrittr::set_names(x = ptype,
                                               value = variable_name) %>%
-                          tibble::as_tibble()) %>%
+                          tibble::as_tibble(),
+                        call = this_env) %>%
         # reorder columns
         dplyr::relocate(id,
                         id_official,
