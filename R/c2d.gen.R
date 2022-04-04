@@ -2813,6 +2813,18 @@ v_vals <- function(v_name) {
     unlist()
 }
 
+#' Tag hierarchy
+#'
+#' A tibble reflecting the complete [referendum tags hierarchy](https://rpkg.dev/c2d/articles/codebook.html#tags).
+#'
+#' @format `r pkgsnip::return_label("data")`
+#' @seealso [`tags`][tags] [`hierarchize_tags`][hierarchize_tags] [`infer_tags`][infer_tags]
+#' @export
+#'
+#' @examples
+#' c2d::data_tags
+"data_tags"
+
 #' List available tags
 #'
 #' Lists the set of available [referendum tags](https://rpkg.dev/c2d/articles/codebook.html#tags) on the specified `tiers`.
@@ -2846,7 +2858,9 @@ tags <- function(tiers = 1:3) {
     tag_set %<>% c(data_tags$tag_tier_3)
   }
   
-  tag_set %>% setdiff(NA_character_) %>% unique()
+  tag_set %>%
+    setdiff(NA_character_) %>%
+    unique()
 }
 
 #' Hierarchize tags
@@ -2885,16 +2899,13 @@ hierarchize_tags <- function(x) {
                             "{.field tags_tier_1}, {.field tags_tier_2} and {.field tags_tier_3}."))
     }
     
-    x %<>%
-      .[, tag_v_names] %>%
-      purrr::pmap(~ as.character(c(..1, ..2, ..3))) %>%
-      purrr::flatten_chr()
+    x <- unlist(x[, tag_v_names],
+                use.names = FALSE)
   }
   
   checkmate::assert_subset(x,
                            choices = tags(),
-                           empty.ok = TRUE,
-                           .var.name = "tags")
+                           empty.ok = TRUE)
   
   tags_tier_1 <- x[x %in% tags(tiers = 1L)]
   tags_tier_2 <- x[x %in% tags(tiers = 2L)]
@@ -2903,8 +2914,8 @@ hierarchize_tags <- function(x) {
                                      tier = 1L)
   inferred_tags_tier_2 <- infer_tags(tags = tags_tier_3,
                                      tier = 2L)
-  non_parent_tags_tier_1 <- tags_tier_1 %>% setdiff(inferred_tags_tier_1)
-  non_parent_tags_tier_2 <- tags_tier_2 %>% setdiff(inferred_tags_tier_2)
+  non_parent_tags_tier_1 <- setdiff(tags_tier_1, inferred_tags_tier_1)
+  non_parent_tags_tier_2 <- setdiff(tags_tier_2, inferred_tags_tier_2)
   
   # 0. initialize empty tibble
   result <- tibble::tibble(tag_tier_1 = character(),
@@ -2922,36 +2933,30 @@ hierarchize_tags <- function(x) {
     dplyr::bind_rows(result)
   
   # 2. add remaining second-tier tags
-  if (length(non_parent_tags_tier_2)) {
-    
-    result <-
-      non_parent_tags_tier_2 %>%
-      purrr::map_dfr(~ tibble::tibble(tag_tier_1 = infer_tags(tags = .x,
-                                                              tier = 1L),
-                                      tag_tier_2 = .x,
-                                      tag_tier_3 = NA_character_)) %>%
-      dplyr::bind_rows(result)
-  }
+  result <-
+    non_parent_tags_tier_2 %>%
+    purrr::map_dfr(~ tibble::tibble(tag_tier_1 = infer_tags(tags = .x,
+                                                            tier = 1L),
+                                    tag_tier_2 = .x,
+                                    tag_tier_3 = NA_character_)) %>%
+    dplyr::bind_rows(result)
   
   # 3. add remaining top-tier tags
-  if (length(non_parent_tags_tier_1)) {
-    
-    result %<>% dplyr::bind_rows(tibble::tibble(tag_tier_1 = non_parent_tags_tier_1,
-                                                tag_tier_2 = NA_character_,
-                                                tag_tier_3 = NA_character_))
-  }
-  
-  # sort result
-  result %>% dplyr::arrange(tag_tier_1, tag_tier_2, tag_tier_3)
+  result %>%
+    dplyr::bind_rows(tibble::tibble(tag_tier_1 = non_parent_tags_tier_1,
+                                    tag_tier_2 = NA_character_,
+                                    tag_tier_3 = NA_character_)) %>%
+    # sort result
+    dplyr::arrange(tag_tier_1, tag_tier_2, tag_tier_3)
 }
 
 #' Infer higher-tier tags
 #'
-#' Determines the top-tier (`tier = 1L`) or second-tier (`tier = 2L`) tags that are the parents or grandparents of `tags` in the
-#' [hierarchy](https://rpkg.dev/c2d/articles/codebook.html#tags).
+#' Determines the top-tier (`tier = 1L`) or second-tier (`tier = 2L`) tags corresponding to `tags` in the
+#' [hierarchy](https://rpkg.dev/c2d/articles/codebook.html#tags), i.e. either `tags` themselves or their (grand)parent tags.
 #'
-#' @param tags The tags to determine the corresponding (grand)parent tags of. A factor or character vector.
-#' @param tier The tier of the inferred tags. Should be >= than the tier of the `tags`. An integer scalar.
+#' @param tags Tags from which the corresponding tags are to be determined. A factor or character vector.
+#' @param tier Tier of the inferred tags. Either `1L` or `2L`.
 #'
 #' @return A character vector.
 #' @family tags

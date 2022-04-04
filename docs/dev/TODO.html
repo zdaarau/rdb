@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9032</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9034</span>
       </span>
     </div>
 
@@ -318,6 +318,11 @@ to the “sibling” entries.</p>
 <ul>
 <li>the <code>result</code> variable needs to be changed to hold the
 option that won the referendum and</li>
+<li>the <code>position_government</code> variable needs to be changed to
+hold the option the government favors</li>
+<li>we might wanna introduce another variable
+<code>position_status_quo</code> indicating which (if any) option
+preserves the status quo (i.e. against any change)</li>
 <li>the <code>votes_yes</code> and <code>votes_no</code> (as well as the
 same sub-vars in <code>votes_per_subterritory</code>) variables need to
 be replaced by a single nested (list-type) variable
@@ -606,6 +611,8 @@ country we shall assign has to be hard-coded)`</p>
 <ul>
 <li><p>Remove deprecated <code><a href="reference/rfrnds.html">rfrnds()</a></code> and announce it in
 Element room!</p></li>
+<li><p>Add fn to add turnout(s) (maybe based on different definitions
+(with/without invalid votes etc.)).</p></li>
 <li><p>Implement fn to delete referendums once <a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a> is
 resolved.</p></li>
 <li><p>As soon as <a href="https://github.com/ccmdesign/c2d-app/issues/57" class="external-link">issue #57</a> is
@@ -648,6 +655,8 @@ kämen:</p>
 <li>
 <a href="https://www.liip.ch/" class="external-link">Liip</a>, Zürich (und weitere
 CH-Städte)</li>
+<li>
+<a href="https://opsone.ch/" class="external-link">Ops One</a>, Zürich</li>
 </ul>
 </li>
 </ul>

@@ -7,16 +7,16 @@
 infer_tags(tags, tier = 1L)
 }
 \arguments{
-\item{tags}{The tags to determine the corresponding (grand)parent tags of. A factor or character vector.}
+\item{tags}{Tags from which the corresponding tags are to be determined. A factor or character vector.}
 
-\item{tier}{The tier of the inferred tags. Should be >= than the tier of the \code{tags}. An integer scalar.}
+\item{tier}{Tier of the inferred tags. Either \code{1L} or \code{2L}.}
 }
 \value{
 A character vector.
 }
 \description{
-Determines the top-tier (\code{tier = 1L}) or second-tier (\code{tier = 2L}) tags that are the parents or grandparents of \code{tags} in the
-\href{https://rpkg.dev/c2d/articles/codebook.html#tags}{hierarchy}.
+Determines the top-tier (\code{tier = 1L}) or second-tier (\code{tier = 2L}) tags corresponding to \code{tags} in the
+\href{https://rpkg.dev/c2d/articles/codebook.html#tags}{hierarchy}, i.e. either \code{tags} themselves or their (grand)parent tags.
 }
 \examples{
 c2d::infer_tags(tags = c("EU", "animal protection"),

@@ -45,8 +45,8 @@
   
 
 <meta property="og:title" content="Infer higher-tier tags — infer_tags" />
-<meta name="description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) tags that are the parents or grandparents of tags in the hierarchy.">
-<meta property="og:description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) tags that are the parents or grandparents of tags in the hierarchy." />
+<meta name="description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) tags corresponding to tags in the hierarchy, i.e. either tags themselves or their (grand)parent tags.">
+<meta property="og:description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) tags corresponding to tags in the hierarchy, i.e. either tags themselves or their (grand)parent tags." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9032</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9034</span>
       </span>
     </div>
 
@@ -124,8 +124,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Determines the top-tier (<code>tier = 1L</code>) or second-tier (<code>tier = 2L</code>) tags that are the parents or grandparents of <code>tags</code> in the
-<a href='https://rpkg.dev/c2d/articles/codebook.html#tags'>hierarchy</a>.</p>
+    <p>Determines the top-tier (<code>tier = 1L</code>) or second-tier (<code>tier = 2L</code>) tags corresponding to <code>tags</code> in the
+<a href='https://rpkg.dev/c2d/articles/codebook.html#tags'>hierarchy</a>, i.e. either <code>tags</code> themselves or their (grand)parent tags.</p>
     </div>
 
     <pre class="usage"><span class='fu'>infer_tags</span><span class='op'>(</span><span class='va'>tags</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></pre>
@@ -135,11 +135,11 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>tags</th>
-      <td><p>The tags to determine the corresponding (grand)parent tags of. A factor or character vector.</p></td>
+      <td><p>Tags from which the corresponding tags are to be determined. A factor or character vector.</p></td>
     </tr>
     <tr>
       <th>tier</th>
-      <td><p>The tier of the inferred tags. Should be &gt;= than the tier of the <code>tags</code>. An integer scalar.</p></td>
+      <td><p>Tier of the inferred tags. Either <code>1L</code> or <code>2L</code>.</p></td>
     </tr>
     </table>
 

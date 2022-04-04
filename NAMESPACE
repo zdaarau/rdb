@@ -3,6 +3,7 @@
 export(add_rfrnds)
 export(add_world_regions)
 export(count_rfrnds)
+export(data_tags)
 export(download_file_attachment)
 export(edit_rfrnds)
 export(hierarchize_tags)
