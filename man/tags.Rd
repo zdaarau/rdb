@@ -20,6 +20,7 @@ c2d::tags(tiers = 1:2)
 }
 \seealso{
 Other tag-related functions:
+\code{\link{hierarchize_tags_fast}()},
 \code{\link{hierarchize_tags}()},
 \code{\link{infer_tags}()}
 }

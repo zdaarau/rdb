@@ -54,6 +54,16 @@ months_de <-
   as.list()
 ```
 
+## `tags_tier_#_`
+
+Only for performance-reasons.
+
+```{r}
+tags_tier_1_ <- c2d::tags(tiers = 1L)
+tags_tier_2_ <- c2d::tags(tiers = 2L)
+tags_tier_3_ <- c2d::tags(tiers = 3L)
+```
+
 ## `un_regions`
 
 ```{r}
@@ -150,6 +160,9 @@ to package users.
 ```{r}
 usethis::use_data(data_tags,
                   months_de,
+                  tags_tier_1_,
+                  tags_tier_2_,
+                  tags_tier_3_,
                   un_regions,
                   var_lbls,
                   internal = TRUE,

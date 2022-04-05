@@ -11,7 +11,7 @@ hierarchize_tags(x)
 and \code{tags_tier_3}.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+A \link[tibble:tbl_df-class]{tibble} with the columns \code{tag_tier_1}, \code{tag_tier_2} and \code{tag_tier_3}.
 }
 \description{
 Reconstructs the hierarchical relations between the three tag variables \code{tags_tier_1}, \code{tags_tier_2} and \code{tags_tier_3}. Can also be used to simply determine
@@ -27,6 +27,7 @@ c2d::rfrnds(country_code = "AT") |>
 }
 \seealso{
 Other tag-related functions:
+\code{\link{hierarchize_tags_fast}()},
 \code{\link{infer_tags}()},
 \code{\link{tags}()}
 }

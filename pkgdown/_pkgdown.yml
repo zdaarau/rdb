@@ -49,6 +49,7 @@ reference:
   - data_tags
   - tags
   - hierarchize_tags
+  - hierarchize_tags_fast
   - infer_tags
 - title: Augmentation
   desc: Functions to augment the C2D referendum data by additional information (columns).
