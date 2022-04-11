@@ -321,7 +321,7 @@
 -   Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons [generiert werden](https://realfavicongenerator.net/)!)
 
 -   Harvard Dataverse näher anschauen (Uwe meint, die C2D-Datenbank dort "aufzunehmen", könnte passen) und vergleichen mit [Zenodo](https://zenodo.org/) (siehe
-    FA-Notizen).
+    FA-Notizen) und [Datahub](https://datahub.io/).
 
     Abklären:
 

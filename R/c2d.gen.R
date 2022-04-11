@@ -3003,7 +3003,7 @@ hierarchize_tags_fast <- function(tags_tier_1 = character(),
 #' Infer higher-tier tags
 #'
 #' Determines the top-tier (`tier = 1L`) or second-tier (`tier = 2L`) tags corresponding to `tags` in the
-#' [hierarchy](https://rpkg.dev/c2d/articles/codebook.html#tags), i.e. either `tags` themselves or their (grand)parent tags.
+#' [hierarchy][data_tags], i.e. either `tags` themselves or their (grand)parent tags.
 #'
 #' @param tags Tags from which the corresponding tags are to be determined. A factor or character vector.
 #' @param tier Tier of the inferred tags. Either `1L` or `2L`.

@@ -16,7 +16,7 @@ A character vector.
 }
 \description{
 Determines the top-tier (\code{tier = 1L}) or second-tier (\code{tier = 2L}) tags corresponding to \code{tags} in the
-\href{https://rpkg.dev/c2d/articles/codebook.html#tags}{hierarchy}, i.e. either \code{tags} themselves or their (grand)parent tags.
+\link[=data_tags]{hierarchy}, i.e. either \code{tags} themselves or their (grand)parent tags.
 }
 \examples{
 c2d::infer_tags(tags = c("EU", "animal protection"),
