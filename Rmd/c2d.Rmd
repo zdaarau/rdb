@@ -2641,10 +2641,6 @@ rfrnds <- function(country_code = NULL,
   
   result
 }
-
-#' @rdname rfrnds
-#' @export
-referendums <- rfrnds
 ```
 
 ### `rfrnd`

@@ -2,27 +2,9 @@
 % Please edit documentation in R/c2d.gen.R
 \name{rfrnds}
 \alias{rfrnds}
-\alias{referendums}
 \title{Get referendum data}
 \usage{
 rfrnds(
-  country_code = NULL,
-  subnational_entity_name = NULL,
-  municipality = NULL,
-  level = NULL,
-  type = NULL,
-  date = NULL,
-  is_draft = FALSE,
-  date_time_created_min = NULL,
-  date_time_created_max = NULL,
-  query_filter = NULL,
-  incl_archive = FALSE,
-  tidy = TRUE,
-  use_cache = TRUE,
-  cache_lifespan = "1 week"
-)
-
-referendums(
   country_code = NULL,
   subnational_entity_name = NULL,
   municipality = NULL,

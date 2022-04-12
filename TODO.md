@@ -304,7 +304,9 @@
 
 ### c2d R package
 
--   Remove deprecated `rfrnds()` and announce it in Element room!
+-   Ensure `add_world_regions()` is idempotent.
+
+-   Standardize/harmonize col names of C2D data via sep. fn `arrange_cols()` and use it in `tidy_rfrnds()`, `add_world_regions()` etc.
 
 -   Add fn to add turnout(s) (maybe based on different definitions (with/without invalid votes etc.)).
 

@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9034</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9035</span>
       </span>
     </div>
 
@@ -480,7 +480,7 @@ löschen!</p></li>
 entries or ones that don’t designate an <code>id_official</code> but
 another kind of ID; entries to double-check:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/rfrnds.html">referendums</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span>string <span class="op">=</span> <span class="va">id_official</span>, pattern <span class="op">=</span> <span class="st">"\\D"</span><span class="op">)</span> <span class="op">|</span> <span class="op">!</span><span class="op">(</span><span class="va">country_code</span> <span class="op">==</span> <span class="st">"CH"</span> <span class="op">&amp;</span> <span class="va">level</span> <span class="op">==</span> <span class="st">"national"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">id_official</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">c2d</span><span class="fu">::</span><span class="fu">referendums</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span>string <span class="op">=</span> <span class="va">id_official</span>, pattern <span class="op">=</span> <span class="st">"\\D"</span><span class="op">)</span> <span class="op">|</span> <span class="op">!</span><span class="op">(</span><span class="va">country_code</span> <span class="op">==</span> <span class="st">"CH"</span> <span class="op">&amp;</span> <span class="va">level</span> <span class="op">==</span> <span class="st">"national"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">id_official</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Plus: Nobody knows what <code>id_official = "0"</code> means, so it
 should be replaced with <code>NA</code> (if no proper
 <code>id_official</code> can be determined).</p>
@@ -609,8 +609,10 @@ country we shall assign has to be hard-coded)`</p>
 <h3 class="hasAnchor">
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h3>
 <ul>
-<li><p>Remove deprecated <code><a href="reference/rfrnds.html">rfrnds()</a></code> and announce it in
-Element room!</p></li>
+<li><p>Ensure <code><a href="reference/add_world_regions.html">add_world_regions()</a></code> is idempotent.</p></li>
+<li><p>Standardize/harmonize col names of C2D data via sep. fn
+<code>arrange_cols()</code> and use it in <code><a href="reference/tidy_rfrnds.html">tidy_rfrnds()</a></code>,
+<code><a href="reference/add_world_regions.html">add_world_regions()</a></code> etc.</p></li>
 <li><p>Add fn to add turnout(s) (maybe based on different definitions
 (with/without invalid votes etc.)).</p></li>
 <li><p>Implement fn to delete referendums once <a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a> is

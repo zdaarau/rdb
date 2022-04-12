@@ -2202,10 +2202,6 @@ rfrnds <- function(country_code = NULL,
   result
 }
 
-#' @rdname rfrnds
-#' @export
-referendums <- rfrnds
-
 #' Get a single referendum's data
 #'
 #' Downloads a single referendum's data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
