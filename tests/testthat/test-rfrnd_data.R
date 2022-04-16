@@ -1,8 +1,12 @@
 # Referendum data ----
+
+# define some repeatedly used test data
+single_rfrnd <- rfrnd(id = "5bbbe26a92a21351232dd73f")
+
 ## rfrnd ----
 test_that("All variables in `rfrnd()` contain labels", {
 
-  rfrnd(id = "5bbbe26a92a21351232dd73f") %>%
+  single_rfrnd %>%
     purrr::map(.f = attr,
                which = "label",
                exact = TRUE) %>%

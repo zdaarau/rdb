@@ -10,6 +10,107 @@ NOTES:
 
 -   The chunks below have to be manually executed in order to regenerate the package data.
 
+# Exported data
+
+NOTES:
+
+-   When used internally, other than internal data, exported data must always be referred to by its explicit namespace, i.e. e.g. `c2d::data_codebook`.
+
+## `data_codebook`
+
+TODO:
+
+-   Once the toml\* package is finished, use it instead to do the stuff below more generically.
+
+NOTES:
+
+-   In the following cases, a variable's prototype (`ptype`) has to be explicitly set in the raw `codebook.Rmd`:
+
+    -   It's a floating point number. -\> Set `ptype = "numeric()"`.
+    -   It's a complex number. -\> Set `ptype = "complex()"`.
+    -   It's non-basic data type, i.e. a structure like a date. Set `ptype` to the proper value like `ptype = "vctrs::new_date()"`.
+
+```{r}
+data_codebook <- {
+  
+  codebook <- c2d:::read_toml("data-raw/c2d_codebook.toml")
+  
+  c(codebook$`01_main`$item,
+    codebook$`02_institutional`$`01_status`$item,
+    codebook$`02_institutional`$`02_trigger`$item,
+    codebook$`02_institutional`$`03_object`$item,
+    codebook$`02_institutional`$`04_other`$item) %>%
+    purrr::map_dfr(~ tibble::tibble(variable_name = .x$variable_name %||% NA_character_,
+                                    variable_label = .x$variable_label %||% NA_character_,
+                                    is_multi_valued = .x$is_multi_valued %||% FALSE,
+                                    is_nested = .x$is_nested %||% FALSE,
+                                    applicability_constraint = .x$applicability_constraint %||% NA_character_,
+                                    variable_values = list(.x$variable_values %||% character()),
+                                    value_label_prefix = .x$value_label_prefix %||% NA_character_,
+                                    value_labels = list(.x$value_labels %||% character()),
+                                    value_label_suffix = .x$value_label_suffix %||% NA_character_,
+                                    value_default = list(.x$value_default),
+                                    value_scale = .x$value_scale %||% NA_character_,
+                                    ptype =
+                                      .x$ptype %>%
+                                      purrr::when(!is.null(.) ~ eval(parse(text = .)),
+                                                  ~ .) %>%
+                                      list())) %>%
+    # infer missing prototypes
+    dplyr::mutate(ptype = purrr::pmap(.l = list(variable_name,
+                                                is_multi_valued,
+                                                is_nested,
+                                                variable_values,
+                                                value_labels,
+                                                value_scale,
+                                                ptype),
+                                      .f = function(variable_name,
+                                                    is_multi_valued,
+                                                    is_nested,
+                                                    variable_values,
+                                                    value_labels,
+                                                    value_scale,
+                                                    ptype) {
+                                        
+                                        value_scale %>%
+                                          purrr::when(!is.null(ptype) ~
+                                                        ptype,
+                                                      . == "undefined" || is_multi_valued || is_nested ~
+                                                        list(),
+                                                      . == "binary" && (length(value_labels) == 0L || all(is.logical(unlist(variable_values)))) ~
+                                                        logical(),
+                                                      . %in% c("nominal") && length(value_labels) == 0L ~
+                                                        character(),
+                                                      . %in% c("nominal", "binary", "ordinal_ascending", "ordinal_descending") ~
+                                                        factor(levels = variable_values,
+                                                               ordered = . %in% c("ordinal_ascending", "ordinal_descending")),
+                                                      . %in% c("interval", "ratio") ~
+                                                        integer())
+                                      })) %>%
+    # integrity checks
+    assertr::assert(predicate = assertr::not_na,
+                    variable_name,
+                    variable_label,
+                    value_scale,
+                    is_multi_valued,
+                    is_nested,
+                    ptype)
+}
+```
+
+## Write data
+
+Save all the bigger data objects to separate files under `data/*.rda`. Note that when documenting them, they mustn't be explicitly `@export`ed since they're
+already automatically exported and thus available to package users.
+
+```{r}
+usethis::use_data(data_codebook,
+                  internal = FALSE,
+                  overwrite = TRUE,
+                  compress = "xz",
+                  version = 3L)
+```
+
 # Internal data
 
 NOTES:
@@ -18,6 +119,15 @@ NOTES:
     and documented (in the main `.Rmd` document), something [not explicitly
     mentioned](https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/) in the book [R
     Packages](https://r-pkgs.org/data.html#data-data).
+
+## `colnames_un_regions`
+
+```{r}
+colnames_un_regions <-
+  1:3 %>%
+  purrr::map(~ paste0("un_region_tier_", .x, c("_code", "_name"))) %>%
+  purrr::flatten_chr()
+```
 
 ## `data_tags`
 
@@ -52,6 +162,19 @@ months_de <-
   1:12 %>%
   magrittr::set_names(clock::clock_labels_lookup("de")$month) %>%
   as.list()
+```
+
+## `rfrnd_cols_order`
+
+```{r}
+rfrnd_cols_order <-
+  data_codebook$variable_name %>%
+  ## col `year` after `date`
+  c2d:::insert_after(new = "year",
+                     after = "date") %>%
+  ## cols `un_tier_*` after `municipality`
+  c2d:::insert_after(new = colnames_un_regions,
+                     after = "municipality")
 ```
 
 ## `tags_tier_#_`
@@ -158,116 +281,16 @@ Save all the small data objects as a single internal file `R/sysdata.rda`. Note 
 to package users.
 
 ```{r}
-usethis::use_data(data_tags,
+usethis::use_data(colnames_un_regions,
+                  data_tags,
                   months_de,
+                  rfrnd_cols_order,
                   tags_tier_1_,
                   tags_tier_2_,
                   tags_tier_3_,
                   un_regions,
                   var_lbls,
                   internal = TRUE,
-                  overwrite = TRUE,
-                  compress = "xz",
-                  version = 3L)
-```
-
-# Exported data
-
-NOTES:
-
--   When used internally, other than internal data, exported data must always be referred to by its explicit namespace, i.e. e.g. `c2d::data_codebook`.
-
-## `data_codebook`
-
-TODO:
-
--   Once the toml\* package is finished, use it instead to do the stuff below more generically.
-
-NOTES:
-
--   In the following cases, a variable's prototype (`ptype`) has to be explicitly set in the raw `codebook.Rmd`:
-
-    -   It's a floating point number. -\> Set `ptype = "numeric()"`.
-    -   It's a complex number. -\> Set `ptype = "complex()"`.
-    -   It's non-basic data type, i.e. a structure like a date. Set `ptype` to the proper value like `ptype = "vctrs::new_date()"`.
-
-```{r}
-data_codebook <- {
-  
-  pal::assert_pkg("assertr")
-  codebook <- c2d:::read_toml("data-raw/c2d_codebook.toml")
-  
-  c(codebook$`01_main`$item,
-    codebook$`02_institutional`$`01_status`$item,
-    codebook$`02_institutional`$`02_trigger`$item,
-    codebook$`02_institutional`$`03_object`$item,
-    codebook$`02_institutional`$`04_other`$item) %>%
-    purrr::map_dfr(~ tibble::tibble(variable_name = .x$variable_name %||% NA_character_,
-                                    variable_label = .x$variable_label %||% NA_character_,
-                                    is_multi_valued = .x$is_multi_valued %||% FALSE,
-                                    is_nested = .x$is_nested %||% FALSE,
-                                    applicability_constraint = .x$applicability_constraint %||% NA_character_,
-                                    variable_values = list(.x$variable_values %||% character()),
-                                    value_label_prefix = .x$value_label_prefix %||% NA_character_,
-                                    value_labels = list(.x$value_labels %||% character()),
-                                    value_label_suffix = .x$value_label_suffix %||% NA_character_,
-                                    value_default = list(.x$value_default),
-                                    value_scale = .x$value_scale %||% NA_character_,
-                                    ptype =
-                                      .x$ptype %>%
-                                      purrr::when(!is.null(.) ~ eval(parse(text = .)),
-                                                  ~ .) %>%
-                                      list())) %>%
-    # infer missing prototypes
-    dplyr::mutate(ptype = purrr::pmap(.l = list(variable_name,
-                                                is_multi_valued,
-                                                is_nested,
-                                                variable_values,
-                                                value_labels,
-                                                value_scale,
-                                                ptype),
-                                      .f = function(variable_name,
-                                                    is_multi_valued,
-                                                    is_nested,
-                                                    variable_values,
-                                                    value_labels,
-                                                    value_scale,
-                                                    ptype) {
-                                        
-                                        value_scale %>%
-                                          purrr::when(!is.null(ptype) ~
-                                                        ptype,
-                                                      . == "undefined" || is_multi_valued || is_nested ~
-                                                        list(),
-                                                      . == "binary" && (length(value_labels) == 0L || all(is.logical(unlist(variable_values)))) ~
-                                                        logical(),
-                                                      . %in% c("nominal") && length(value_labels) == 0L ~
-                                                        character(),
-                                                      . %in% c("nominal", "binary", "ordinal_ascending", "ordinal_descending") ~
-                                                        factor(levels = variable_values,
-                                                               ordered = . %in% c("ordinal_ascending", "ordinal_descending")),
-                                                      . %in% c("interval", "ratio") ~
-                                                        integer())
-                                      })) %>%
-    # integrity checks
-    assertr::assert(predicate = assertr::not_na,
-                    variable_name,
-                    variable_label,
-                    value_scale,
-                    is_multi_valued,
-                    is_nested,
-                    ptype)
-}
-```
-
-## Write data
-
-Save all the bigger data objects to separate files under `data/*.rda`. Note that when documenting them, they mustn't be explicitly `@export`ed since they're
-already automatically exported and thus available to package users.
-
-```{r}
-usethis::use_data(data_codebook,
-                  internal = FALSE,
                   overwrite = TRUE,
                   compress = "xz",
                   version = 3L)

@@ -757,6 +757,23 @@ httr_config <- function() {
 }
 ```
 
+### `insert_after`
+
+Inserts element(s) `new` after element `after` in a vector or list `x`.
+
+```{r}
+insert_after <- function(x,
+                         new,
+                         after) {
+  
+  i_after <- which(x == after)
+  
+  c(x[1:i_after],
+    new,
+    x[(i_after + 1L):length(x)])
+}
+```
+
 ### `is_session_expired`
 
 ```{r}
@@ -797,6 +814,15 @@ lower_non_abbrs <- function(x) {
                                     .,
                                     stringr::str_to_lower(.)) %>%
                      paste0(collapse = " "))
+}
+```
+
+### `order_rfrnd_cols`
+
+```{r}
+order_rfrnd_cols <- function(data) {
+  
+  data %>% dplyr::relocate(any_of(rfrnd_cols_order))
 }
 ```
 
@@ -1176,77 +1202,8 @@ tidy_rfrnds <- function(data,
                                               value = variable_name) %>%
                           tibble::as_tibble(),
                         call = this_env) %>%
-        # reorder columns
-        dplyr::relocate(id,
-                        id_official,
-                        id_sudd,
-                        country_code,
-                        country_code_historical,
-                        country_name,
-                        subnational_entity_name,
-                        municipality,
-                        level,
-                        is_past_jurisdiction,
-                        date,
-                        title_de,
-                        title_fr,
-                        title_en,
-                        question,
-                        question_en,
-                        committee_name,
-                        result,
-                        subterritories_yes,
-                        subterritories_no,
-                        electorate_total,
-                        electorate_abroad,
-                        votes_yes,
-                        votes_no,
-                        votes_empty,
-                        votes_invalid,
-                        votes_per_subterritory,
-                        lower_house_yes,
-                        lower_house_no,
-                        lower_house_abstentions,
-                        upper_house_yes,
-                        upper_house_no,
-                        upper_house_abstentions,
-                        position_government,
-                        tags_tier_1,
-                        tags_tier_2,
-                        tags_tier_3,
-                        remarks,
-                        files,
-                        url_sudd,
-                        url_swissvotes,
-                        sources,
-                        is_draft,
-                        date_time_created,
-                        date_time_last_edited,
-                        archive,
-                        type,
-                        inst_legal_basis_type,
-                        inst_has_urgent_legal_basis,
-                        inst_is_binding,
-                        inst_is_counter_proposal,
-                        inst_is_assembly,
-                        inst_trigger_type,
-                        inst_trigger_actor,
-                        inst_trigger_actor_level,
-                        inst_trigger_threshold,
-                        inst_trigger_time_limit,
-                        inst_object_type,
-                        inst_object_author,
-                        inst_object_legal_level,
-                        inst_object_revision_extent,
-                        inst_object_revision_modes,
-                        inst_object_revision_divisibility,
-                        inst_topics_only,
-                        inst_topics_excluded,
-                        inst_quorum_turnout,
-                        inst_quorum_approval,
-                        inst_has_precondition,
-                        inst_precondition_actor,
-                        inst_precondition_decision)
+        # harmonize col order
+        order_rfrnd_cols()
       
       # correct known errors
       # TODO: correct this upstream using `edit_rfrnds()` once [issue #29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved
@@ -3724,6 +3681,11 @@ add_world_regions <- function(data) {
     cli::cli_abort("{.arg data} must contain a column {.var country_code} with two-letter ISO 3166-1 alpha-2 codes.")
   }
   
+  # skip if all UN region vx are already present
+  if (all(colnames_un_regions %in% colnames(data))) {
+    return(data)
+  }
+  
   unknown_country_codes <-
     data$country_code %>%
     unique() %>%
@@ -3735,12 +3697,16 @@ add_world_regions <- function(data) {
   
   # add UN regions to input data
   data %>%
+    # remove possibly existing UN region vx
+    dplyr::select(-any_of(colnames_un_regions)) %>%
     # add UN regions
     dplyr::left_join(y = un_regions,
                      by = "country_code") %>%
     # ensure every row got at least a UN tier-1 region assigned
     assertr::assert(predicate = assertr::not_na,
-                    un_region_tier_1_code)
+                    un_region_tier_1_code) %>%
+    # harmonize col order
+    order_rfrnd_cols()
 }
 ```
 
