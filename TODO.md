@@ -95,6 +95,8 @@
 
 ## Internal (at least for now)
 
+-   We might wanna add yet another database field: `description`, holding a short prosa description of the referendum.
+
 -   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
     one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
 
@@ -303,10 +305,6 @@
 -   check `electorate_abroad` for obvious errors (e.g. `id == "5f99b6c8d1291cc3961f1c2c"` is one)
 
 ### c2d R package
-
--   Ensure `add_world_regions()` is idempotent.
-
--   Standardize/harmonize col names of C2D data via sep. fn `arrange_cols()` and use it in `tidy_rfrnds()`, `add_world_regions()` etc.
 
 -   Add fn to add turnout(s) (maybe based on different definitions (with/without invalid votes etc.)).
 
