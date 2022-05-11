@@ -278,6 +278,9 @@ follow-up requesting an improved UX.</p>
 <h2 class="hasAnchor">
 <a href="#internal-at-least-for-now" class="anchor"></a>Internal (at least for now)</h2>
 <ul>
+<li><p>We might wanna add yet another database field:
+<code>description</code>, holding a short prosa description of the
+referendum.</p></li>
 <li>
 <p>According to Uwe, we only capture “official”/“authorized”
 votings, but there are already inofficial ones present in the database
@@ -609,10 +612,6 @@ country we shall assign has to be hard-coded)`</p>
 <h3 class="hasAnchor">
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h3>
 <ul>
-<li><p>Ensure <code><a href="reference/add_world_regions.html">add_world_regions()</a></code> is idempotent.</p></li>
-<li><p>Standardize/harmonize col names of C2D data via sep. fn
-<code>arrange_cols()</code> and use it in <code><a href="reference/tidy_rfrnds.html">tidy_rfrnds()</a></code>,
-<code><a href="reference/add_world_regions.html">add_world_regions()</a></code> etc.</p></li>
 <li><p>Add fn to add turnout(s) (maybe based on different definitions
 (with/without invalid votes etc.)).</p></li>
 <li><p>Implement fn to delete referendums once <a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a> is

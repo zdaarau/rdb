@@ -4,6 +4,9 @@
     <loc>https://rpkg.dev/c2d/index.html</loc>
   </url>
   <url>
+    <loc>https://rpkg.dev/c2d/reference/add_period.html</loc>
+  </url>
+  <url>
     <loc>https://rpkg.dev/c2d/reference/add_rfrnds.html</loc>
   </url>
   <url>
@@ -67,7 +70,7 @@
     <loc>https://rpkg.dev/c2d/reference/rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/rfrnds_per_year.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/rfrnds_per_period.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/search_rfrnds.html</loc>

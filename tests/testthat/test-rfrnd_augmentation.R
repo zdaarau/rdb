@@ -9,3 +9,10 @@ test_that("`add_world_regions()` is idempotent", {
   expect_identical(single_rfrnd %>% add_world_regions(),
                    single_rfrnd %>% add_world_regions() %>% add_world_regions())
 })
+
+## add_period ----
+test_that("`add_period()` is idempotent", {
+
+  expect_identical(single_rfrnd %>% add_period(),
+                   single_rfrnd %>% add_period() %>% add_period())
+})

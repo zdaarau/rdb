@@ -53,11 +53,13 @@ reference:
   - infer_tags
 - title: Augmentation
   desc: Functions to augment the C2D referendum data by additional information (columns).
-- contents: add_world_regions
+- contents:
+  - add_period
+  - add_world_regions
 - title: Transformation
   desc: Functions to transform the C2D referendum data into other shapes, each with
     a specific purpose.
-- contents: rfrnds_per_year
+- contents: rfrnds_per_period
 - title: C2D API Status
 - contents: is_online
 - title: sudd.ch scraping

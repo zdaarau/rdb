@@ -39,4 +39,8 @@ c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
   dplyr::select(country_name,
                 starts_with("un_"))
 }
+\seealso{
+Other referendum data augmentation functions:
+\code{\link{add_period}()}
+}
 \concept{augment}

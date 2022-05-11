@@ -169,8 +169,8 @@ months_de <-
 ```{r}
 rfrnd_cols_order <-
   data_codebook$variable_name %>%
-  ## col `year` after `date`
-  c2d:::insert_after(new = "year",
+  ## period cols after `date`
+  c2d:::insert_after(new = c("week", "month", "quarter", "year", "decade", "century"),
                      after = "date") %>%
   ## cols `un_tier_*` after `municipality`
   c2d:::insert_after(new = colnames_un_regions,
