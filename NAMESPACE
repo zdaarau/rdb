@@ -2,6 +2,7 @@
 
 export(add_period)
 export(add_rfrnds)
+export(add_turnout)
 export(add_world_regions)
 export(count_rfrnds)
 export(data_tags)

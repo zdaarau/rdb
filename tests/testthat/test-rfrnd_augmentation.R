@@ -16,3 +16,16 @@ test_that("`add_period()` is idempotent", {
   expect_identical(single_rfrnd %>% add_period(),
                    single_rfrnd %>% add_period() %>% add_period())
 })
+
+## add_turnout ----
+test_that("`add_turnout()` is idempotent", {
+
+  expect_identical(single_rfrnd %>% add_turnout(),
+                   single_rfrnd %>% add_turnout() %>% add_turnout())
+})
+
+test_that("`add_turnout()` throws an error when required input col is missing", {
+
+  expect_error(object = single_rfrnd %>% dplyr::select(-votes_invalid) %>% add_turnout(),
+               regexp = "votes_invalid.*is missing")
+})

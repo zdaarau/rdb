@@ -120,15 +120,6 @@ NOTES:
     mentioned](https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/) in the book [R
     Packages](https://r-pkgs.org/data.html#data-data).
 
-## `colnames_un_regions`
-
-```{r}
-colnames_un_regions <-
-  1:3 %>%
-  purrr::map(~ paste0("un_region_tier_", .x, c("_code", "_name"))) %>%
-  purrr::flatten_chr()
-```
-
 ## `data_tags`
 
 ```{r, purl = FALSE}
@@ -164,19 +155,6 @@ months_de <-
   as.list()
 ```
 
-## `rfrnd_cols_order`
-
-```{r}
-rfrnd_cols_order <-
-  data_codebook$variable_name %>%
-  ## period cols after `date`
-  c2d:::insert_after(new = c("week", "month", "quarter", "year", "decade", "century"),
-                     after = "date") %>%
-  ## cols `un_tier_*` after `municipality`
-  c2d:::insert_after(new = colnames_un_regions,
-                     after = "municipality")
-```
-
 ## `tags_tier_#_`
 
 Only for performance-reasons.
@@ -190,22 +168,21 @@ tags_tier_3_ <- c2d::tags(tiers = 3L)
 ## `un_regions`
 
 ```{r}
-# compile `country_code` <-> `un_code` dict
+# compile `country_code` <-> `un_country_code` dict
 codes <-
   ISOcodes::ISO_3166_1 %>%
   # temporarily add ISO 3166-1 alpha-3 codes for matching with M49 codes
   dplyr::select(country_code = Alpha_2,
                 Alpha_3) %>%
   # temporarily add M49 code for matching with actual UN region codes and names
-  dplyr::left_join(y = ISOcodes::UN_M.49_Countries %>% dplyr::select(un_code = Code,
+  dplyr::left_join(y = ISOcodes::UN_M.49_Countries %>% dplyr::select(un_country_code = Code,
                                                                      Alpha_3 = ISO_Alpha_3),
                    by = "Alpha_3") %>%
   dplyr::select(-Alpha_3) %>%
   # manually assign China's M49 code to Taiwan, cf. https://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Asia#Note_on_Taiwan
-  dplyr::mutate(un_code = dplyr::if_else(country_code == "TW",
-                                         "156",
-                                         un_code))
-
+  dplyr::mutate(un_country_code = dplyr::if_else(country_code == "TW",
+                                                 "156",
+                                                 un_country_code))
 # extract UN regions of the 3 different tiers
 un_regions_tier_1 <-
   ISOcodes::UN_M.49_Regions %>%
@@ -245,19 +222,19 @@ un_regions <-
                 un_region_tier_3_code = dplyr::if_else(is.na(un_region_tier_3_name),
                                                        NA_character_,
                                                        children_tier_2),
-                un_code = dplyr::if_else(is.na(children_tier_3),
-                                         children_tier_2,
-                                         children_tier_3)) %>%
-  dplyr::select(un_code,
+                un_country_code = dplyr::if_else(is.na(children_tier_3),
+                                                 children_tier_2,
+                                                 children_tier_3)) %>%
+  dplyr::select(un_country_code,
                 starts_with("un_region_tier_1_"),
                 starts_with("un_region_tier_2_"),
                 starts_with("un_region_tier_3_")) %>%
   dplyr::left_join(y = codes,
-                   by = "un_code") %>%
+                   by = "un_country_code") %>%
   dplyr::relocate(country_code) %>%
   # ensure there are no NAs left
   assertr::assert(predicate = assertr::not_na,
-                  un_code)
+                  un_country_code)
 ```
 
 ## `var_lbls`
@@ -275,14 +252,30 @@ var_lbls <-
   magrittr::set_names(value = data_codebook$variable_name)
 ```
 
+## `rfrnd_cols_order`
+
+```{r}
+rfrnd_cols_order <-
+  data_codebook$variable_name %>%
+  ## period cols after `date`
+  c2d:::insert_after(new = c("week", "month", "quarter", "year", "decade", "century"),
+                     after = "date") %>%
+  ## cols `un_tier_*` after `municipality`
+  c2d:::insert_after(new = setdiff(colnames(un_regions),
+                                   "country_code"),
+                     after = "municipality") %>%
+  ## `turnout` after `votes_per_subterritory`
+  c2d:::insert_after(new = "turnout",
+                     after = "votes_per_subterritory")
+```
+
 ## Write data
 
 Save all the small data objects as a single internal file `R/sysdata.rda`. Note that when documenting them, they must be explicitly `@export`ed to be available
 to package users.
 
 ```{r}
-usethis::use_data(colnames_un_regions,
-                  data_tags,
+usethis::use_data(data_tags,
                   months_de,
                   rfrnd_cols_order,
                   tags_tier_1_,

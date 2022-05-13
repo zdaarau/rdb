@@ -109,6 +109,7 @@ utils::globalVariables(names = c(".",
                                  "title_de",
                                  "title_fr",
                                  "title_en",
+                                 "turnout",
                                  "type",
                                  "Type",
                                  "un_code",
@@ -3015,29 +3016,71 @@ add_period <- function(data,
   checkmate::assert_data_frame(data)
   period <- rlang::arg_match(period)
   
-  if (!(period %in% colnames(data))) {
-    
-    # ensure date col is present
-    if (!("date" %in% colnames(data))) {
-      cli::cli_abort("Unable to compute {.var {period}} period since no {.var {date}} column is present in {.arg data}.")
-    }
-    
-    # define necessary date transformations
-    get_period <- switch(EXPR    = period,
-                         week    = function(x) clock::as_iso_year_week_day(x) %>% clock::get_week(),
-                         month   = function(x) clock::get_month(x),
-                         quarter = function(x) clock::as_year_quarter_day(x) %>% clock::get_quarter(),
-                         year    = function(x) clock::get_year(x),
-                         decade  = function(x) (clock::get_year(x) %/% 10L) * 10L,
-                         century = function(x) (clock::get_year(x) %/% 100L) * 100L)
-    
-    data %<>%
-      dplyr::mutate(!!as.symbol(period) := get_period(date)) %>%
-      # harmonize col order
-      order_rfrnd_cols()
+  # ensure date col is present
+  if (!("date" %in% colnames(data))) {
+    cli::cli_abort("Unable to compute {.var {period}} period since no {.var {date}} column is present in {.arg data}.")
   }
   
-  data
+  # define necessary date transformations
+  get_period <- switch(EXPR    = period,
+                       week    = function(x) clock::as_iso_year_week_day(x) %>% clock::get_week(),
+                       month   = function(x) clock::get_month(x),
+                       quarter = function(x) clock::as_year_quarter_day(x) %>% clock::get_quarter(),
+                       year    = function(x) clock::get_year(x),
+                       decade  = function(x) (clock::get_year(x) %/% 10L) * 10L,
+                       century = function(x) (clock::get_year(x) %/% 100L) * 100L)
+  
+  data %>%
+    dplyr::mutate(!!as.symbol(period) := get_period(date)) %>%
+    # harmonize col order
+    order_rfrnd_cols()
+}
+
+#' Add turnout
+#'
+#' Adds an additional column `turnout` with the voter turnout calculated as `sum(votes_*) / electorate_total`.
+#'
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns `electorate_total`, `votes_yes`, `votes_no`,
+#'   `votes_empty` and `votes_invalid`.
+#' @param rough Whether to fall back on a "rough" calculation of the turnout in case any of the variables `votes_empty` or `votes_invalid` is unknown (`NA`), or
+#'   to be strict and return `NA` in such a case.
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family augment
+#' @export
+#'
+#' @examples
+#' # rough turnout numbers
+#' c2d::rfrnds(country_code = "IT") |>
+#'   c2d::add_turnout() |>
+#'   dplyr::select(id, electorate_total, starts_with("votes_"), turnout)
+#'
+#' # strict turnout numbers
+#' c2d::rfrnds(country_code = "IT") |>
+#'   c2d::add_turnout(rough = FALSE) |>
+#'   dplyr::select(id, electorate_total, starts_with("votes_"), turnout)
+add_turnout <- function(data,
+                        rough = TRUE) {
+  
+  checkmate::assert_data_frame(data)
+  checkmate::assert_flag(rough)
+  
+  # ensure necessary cols are present
+  if (!all(c("electorate_total", "votes_yes", "votes_no", "votes_empty", "votes_invalid") %in% colnames(data))) {
+    cli::cli_abort(paste0("Unable to compute {.var turnout} since at least one of the required columns {.var electorate_total}, {.var votes_yes}, {.var ",
+                   "votes_no}, {.var votes_empty} or {.var votes_invalid} is missing from {.arg data}."))
+  }
+  
+  data %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(turnout = sum(votes_yes, votes_no, votes_empty, votes_invalid, na.rm = rough) / electorate_total) %>%
+    dplyr::ungroup() %>%
+    # ensure we got only sensible turnout numbers
+    assertr::assert(predicate = function(x) !isTRUE(x > 1.0),
+                    turnout,
+                    description = "Turnout cannot be > 100%") %>%
+    # harmonize col order
+    order_rfrnd_cols()
 }
 
 #' Add UN world regions
@@ -3046,7 +3089,8 @@ add_period <- function(data,
 #' Augments `data` with information about the [United Nations (UN) geoscheme](https://en.wikipedia.org/wiki/United_Nations_geoscheme) on three different
 #' grouping tiers based on the [UN M49 area code hierarchy](https://en.wikipedia.org/wiki/UN_M49#Code_lists).
 #' 
-#' In total, six different columns are added:
+#' In total, seven different columns are added:
+#' - `un_country_code`: UN M49 country code
 #' - `un_region_tier_1_code`: UN tier-1 region's M49 area code
 #' - `un_region_tier_1_name`: UN tier-1 region's English name
 #' - `un_region_tier_2_code`: UN tier-2 region's M49 area code
@@ -3071,21 +3115,14 @@ add_period <- function(data,
 #' @examples
 #' c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
 #'   add_world_regions() |>
-#'   dplyr::select(country_name,
-#'                 starts_with("un_"))
+#'   dplyr::select(id, country_name, starts_with("un_"))
 add_world_regions <- function(data) {
   
   # ensure minimal validity
-  checkmate::assert_data_frame(data,
-                               min.rows = 1L)
+  checkmate::assert_data_frame(data)
   
   if (!("country_code" %in% colnames(data))) {
     cli::cli_abort("{.arg data} must contain a column {.var country_code} with two-letter ISO 3166-1 alpha-2 codes.")
-  }
-  
-  # skip if all UN region vx are already present
-  if (all(colnames_un_regions %in% colnames(data))) {
-    return(data)
   }
   
   unknown_country_codes <-
@@ -3100,7 +3137,8 @@ add_world_regions <- function(data) {
   # add UN regions to input data
   data %>%
     # remove possibly existing UN region vx
-    dplyr::select(-any_of(colnames_un_regions)) %>%
+    dplyr::select(-any_of(setdiff(colnames(un_regions),
+                                  "country_code"))) %>%
     # add UN regions
     dplyr::left_join(y = un_regions,
                      by = "country_code") %>%

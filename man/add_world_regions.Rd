@@ -16,8 +16,9 @@ A \link[tibble:tbl_df-class]{tibble}.
 Augments \code{data} with information about the \href{https://en.wikipedia.org/wiki/United_Nations_geoscheme}{United Nations (UN) geoscheme} on three different
 grouping tiers based on the \href{https://en.wikipedia.org/wiki/UN_M49#Code_lists}{UN M49 area code hierarchy}.
 
-In total, six different columns are added:
+In total, seven different columns are added:
 \itemize{
+\item \code{un_country_code}: UN M49 country code
 \item \code{un_region_tier_1_code}: UN tier-1 region's M49 area code
 \item \code{un_region_tier_1_name}: UN tier-1 region's English name
 \item \code{un_region_tier_2_code}: UN tier-2 region's M49 area code
@@ -36,11 +37,11 @@ country doesn't belong to any UN tier-3 region, the corresponding \verb{un_regio
 \examples{
 c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
   add_world_regions() |>
-  dplyr::select(country_name,
-                starts_with("un_"))
+  dplyr::select(id, country_name, starts_with("un_"))
 }
 \seealso{
 Other referendum data augmentation functions:
-\code{\link{add_period}()}
+\code{\link{add_period}()},
+\code{\link{add_turnout}()}
 }
 \concept{augment}

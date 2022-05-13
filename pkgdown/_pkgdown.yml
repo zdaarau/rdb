@@ -55,6 +55,7 @@ reference:
   desc: Functions to augment the C2D referendum data by additional information (columns).
 - contents:
   - add_period
+  - add_turnout
   - add_world_regions
 - title: Transformation
   desc: Functions to transform the C2D referendum data into other shapes, each with

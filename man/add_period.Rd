@@ -32,6 +32,7 @@ c2d::rfrnds(country_code = "AT") |>
 }
 \seealso{
 Other referendum data augmentation functions:
+\code{\link{add_turnout}()},
 \code{\link{add_world_regions}()}
 }
 \concept{augment}
