@@ -214,8 +214,30 @@
 -   A total of 858 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
     traced and added ASAP!
 
+-   For the following referendums, the `votes_*` and `electorate_*` numbers have to be double-checked and possibly corrected since
+    `electorate_total < sum(votes_*)`, which should by definition be impossible:
+
+    ``` r
+    c2d::rfrnds() %>%
+      c2d::add_tunrout(excl_dubious = FALSE) %>%
+      dplyr::filter(turnout > 1.0) %>%
+      dplyr::select(id, electorate_total, matches("^votes_(yes|no|empty|invalid)"), turnout)
+    ```
+
+    We should probably also double-check improbably high turnout numbers, e.g. those \> 0.9:
+
+    ``` r
+    c2d::rfrnds() %>%
+      c2d::add_turnout(excl_dubious = FALSE) %>%
+      dplyr::filter(dplyr::between(turnout, 0.9, 1.0)) %>%
+      dplyr::select(id, electorate_total, matches("^votes_(yes|no|empty|invalid)"), turnout)
+    ```
+
 -   Complete and add [Aargau cantonal referendums 1888--1971](https://docs.google.com/spreadsheets/d/108CXVcVISDb8Z9R_fn7S82brXOE8dfIY0VKp3QTc0uU/) once [issue
     #29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved.
+
+    Also add the referendums from the [similar Excel sheets for the remaining 25 cantons we
+    got](https://drive.google.com/drive/folders/1tZVg-ZQ8bi6KeSyofzngV2Qq3LNfE6Rc).
 
 -   Voting with `id == "5bbbfee992a21351232e4f37"` (Romania 2008-02-01) was limited to the region
     [Szeklerland](https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land), therefore `subnational_entity` should be set to `Székely Land`
@@ -226,7 +248,7 @@
 -   Clean `id_official`; there are likely erroneous entries or ones that don't designate an `id_official` but another kind of ID; entries to double-check:
 
     ``` r
-    c2d::referendums() %>% dplyr::filter(stringr::str_detect(string = id_official, pattern = "\\D") | !(country_code == "CH" & level == "national") & !is.na(id_official))
+    c2d::rfrnds() %>% dplyr::filter(stringr::str_detect(string = id_official, pattern = "\\D") | !(country_code == "CH" & level == "national") & !is.na(id_official))
     ```
 
     Plus: Nobody knows what `id_official = "0"` means, so it should be replaced with `NA` (if no proper `id_official` can be determined).
@@ -309,8 +331,6 @@
 -   check `electorate_abroad` for obvious errors (e.g. `id == "5f99b6c8d1291cc3961f1c2c"` is one)
 
 ### c2d R package
-
--   Add fn to add turnout(s) (maybe based on different definitions (with/without invalid votes etc.)).
 
 -   Implement fn to delete referendums once [issue #45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
 
@@ -425,4 +445,3 @@
     könnte womöglich ganz aufschlussreich sein!
 
 -   C2D Website: Ditch the `by ccm.design` promo in the footer?
-

@@ -2,7 +2,7 @@
 % Please edit documentation in R/c2d.gen.R
 \name{add_world_regions}
 \alias{add_world_regions}
-\title{Add UN world regions}
+\title{Add UN world regions to referendum data}
 \usage{
 add_world_regions(data)
 }

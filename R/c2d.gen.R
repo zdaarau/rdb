@@ -2990,10 +2990,10 @@ infer_tags <- function(tags,
   unique(result)
 }
 
-#' Add period
+#' Add period to referendum data
 #'
-#' Adds an additional column holding the specified period in which the referendum took place. The new column is named after `period` and its values are always
-#' of type integer.
+#' Augments `data` with an additional column holding the specified period in which the referendum took place. The new column is named after `period` and its
+#' values are always of type integer.
 #'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
 #' @param period Type of period to add. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
@@ -3036,14 +3036,17 @@ add_period <- function(data,
     order_rfrnd_cols()
 }
 
-#' Add turnout
+#' Add turnout to referendum data
 #'
-#' Adds an additional column `turnout` with the voter turnout calculated as `sum(votes_*) / electorate_total`.
+#' Augments `data` with an additional column `turnout` containing the voter turnout calculated as
+#' `(votes_yes + votes_no + votes_empty + votes_invalid) / electorate_total`.
 #'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns `electorate_total`, `votes_yes`, `votes_no`,
 #'   `votes_empty` and `votes_invalid`.
 #' @param rough Whether to fall back on a "rough" calculation of the turnout in case any of the variables `votes_empty` or `votes_invalid` is unknown (`NA`), or
 #'   to be strict and return `NA` in such a case.
+#' @param excl_dubious Whether or not to exclude obviously dubious turnout numbers (those > 1.0) by setting them to `NA`. Such numbers stem either from
+#'   data errors or (officially) tampered numbers.
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @family augment
@@ -3060,10 +3063,12 @@ add_period <- function(data,
 #'   c2d::add_turnout(rough = FALSE) |>
 #'   dplyr::select(id, electorate_total, starts_with("votes_"), turnout)
 add_turnout <- function(data,
-                        rough = TRUE) {
+                        rough = TRUE,
+                        excl_dubious = TRUE) {
   
   checkmate::assert_data_frame(data)
   checkmate::assert_flag(rough)
+  checkmate::assert_flag(excl_dubious)
   
   # ensure necessary cols are present
   if (!all(c("electorate_total", "votes_yes", "votes_no", "votes_empty", "votes_invalid") %in% colnames(data))) {
@@ -3075,15 +3080,15 @@ add_turnout <- function(data,
     dplyr::rowwise() %>%
     dplyr::mutate(turnout = sum(votes_yes, votes_no, votes_empty, votes_invalid, na.rm = rough) / electorate_total) %>%
     dplyr::ungroup() %>%
-    # ensure we got only sensible turnout numbers
-    assertr::assert(predicate = function(x) !isTRUE(x > 1.0),
-                    turnout,
-                    description = "Turnout cannot be > 100%") %>%
+    # set dubious turnout numbers to NA if requested
+    dplyr::mutate(turnout = dplyr::if_else(excl_dubious & turnout > 1.0,
+                                           NA_real_,
+                                           turnout)) %>%
     # harmonize col order
     order_rfrnd_cols()
 }
 
-#' Add UN world regions
+#' Add UN world regions to referendum data
 #'
 #' @description
 #' Augments `data` with information about the [United Nations (UN) geoscheme](https://en.wikipedia.org/wiki/United_Nations_geoscheme) on three different

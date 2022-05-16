@@ -2,7 +2,7 @@
 % Please edit documentation in R/c2d.gen.R
 \name{add_period}
 \alias{add_period}
-\title{Add period}
+\title{Add period to referendum data}
 \usage{
 add_period(
   data,
@@ -18,8 +18,8 @@ add_period(
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Adds an additional column holding the specified period in which the referendum took place. The new column is named after \code{period} and its values are always
-of type integer.
+Augments \code{data} with an additional column holding the specified period in which the referendum took place. The new column is named after \code{period} and its
+values are always of type integer.
 }
 \examples{
 c2d::rfrnds(country_code = "AT") |>

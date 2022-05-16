@@ -2,9 +2,9 @@
 % Please edit documentation in R/c2d.gen.R
 \name{add_turnout}
 \alias{add_turnout}
-\title{Add turnout}
+\title{Add turnout to referendum data}
 \usage{
-add_turnout(data, rough = TRUE)
+add_turnout(data, rough = TRUE, excl_dubious = TRUE)
 }
 \arguments{
 \item{data}{C2D referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the columns \code{electorate_total}, \code{votes_yes}, \code{votes_no},
@@ -12,12 +12,16 @@ add_turnout(data, rough = TRUE)
 
 \item{rough}{Whether to fall back on a "rough" calculation of the turnout in case any of the variables \code{votes_empty} or \code{votes_invalid} is unknown (\code{NA}), or
 to be strict and return \code{NA} in such a case.}
+
+\item{excl_dubious}{Whether or not to exclude obviously dubious turnout numbers (those > 1.0) by setting them to \code{NA}. Such numbers stem either from
+data errors or (officially) tampered numbers.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Adds an additional column \code{turnout} with the voter turnout calculated as \verb{sum(votes_*) / electorate_total}.
+Augments \code{data} with an additional column \code{turnout} containing the voter turnout calculated as
+\code{(votes_yes + votes_no + votes_empty + votes_invalid) / electorate_total}.
 }
 \examples{
 # rough turnout numbers
