@@ -23,6 +23,9 @@ subnational referendums.
 licensed under \href{https://creativecommons.org/licenses/by-nc-sa/4.0/}{Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)}.
 }
 
+\examples{
+c2d::list_sudd_territories()
+}
 \seealso{
 Other sudd.ch scraping functions:
 \code{\link{list_sudd_rfrnds}()},

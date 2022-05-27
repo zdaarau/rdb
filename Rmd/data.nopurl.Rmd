@@ -122,7 +122,7 @@ NOTES:
 
 ## `data_tags`
 
-```{r, purl = FALSE}
+```{r}
 data_tags <-
   # download file from private CCM Design repo
   pal::gh_text_file(owner = "ccmdesign",
@@ -146,7 +146,7 @@ data_tags <-
 
 ## `months_de`
 
-```{r, purl = FALSE}
+```{r}
 pal::assert_pkg("clock")
 
 months_de <-
@@ -237,15 +237,12 @@ un_regions <-
                   un_country_code)
 ```
 
-## `var_lbls`
+## `v_lbls`
 
-NOTES:
+Only for performance-reasons.
 
--   `var_lbls` is assigned here because when inlined, it somehow breaks `devtools::run_examples()` during pkg check ("C stack usage (...) is too close to the
-    limit"); maybe too large fn stack? (modifying `pal::strip_md()` to minimize the fn stack was tried but didn't help)
-
-```{r, purl = FALSE}
-var_lbls <-
+```{r}
+v_lbls <-
   data_codebook$variable_label %>%
   pal::strip_md() %>%
   as.list() %>%
@@ -282,7 +279,7 @@ usethis::use_data(data_tags,
                   tags_tier_2_,
                   tags_tier_3_,
                   un_regions,
-                  var_lbls,
+                  v_lbls,
                   internal = TRUE,
                   overwrite = TRUE,
                   compress = "xz",

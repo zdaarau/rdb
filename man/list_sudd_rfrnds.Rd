@@ -57,7 +57,7 @@ c2d::list_sudd_rfrnds(mode = "by_mod_date")
 
 # list all referendums whose title matches "AHV"
 c2d::list_sudd_rfrnds(mode = "filter",
-                           filter = list(title_de = "AHV"))
+                      filter = list(title_de = "AHV"))
 
 # get sudd.ch referendum data from all referendums from 2020 onwards
 c2d::list_sudd_rfrnds(mode = "filter",

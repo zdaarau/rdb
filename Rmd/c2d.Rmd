@@ -771,7 +771,7 @@ insert_after <- function(x,
                          new,
                          after) {
   
-  i_after <- which(x == after)
+  i_after <- which(x == after) %>% checkmate::assert_int()
   
   c(x[1:i_after],
     new,
@@ -1265,7 +1265,7 @@ tidy_rfrnds <- function(data,
                   dplyr::across(any_of("archive"),
                                 ~ .x %>% purrr::map(~ { if (length(.x)) tibble::as_tibble(.x) else NULL }))) %>%
     # add variable labels (must be done at last since mutations above drop attrs)
-    labelled::set_variable_labels(.labels = var_lbls,
+    labelled::set_variable_labels(.labels = v_lbls,
                                   .strict = FALSE)
 }
 ```
@@ -1830,12 +1830,13 @@ sudd_rfrnd <- function(id_sudd) {
   # handle fields with duplicated/ambiguous names
   if (anyDuplicated(field_names)) {
     
-    ## simple duplicates (errors)
+    ## simple duplicates (probably data errors)
     if (id_sudd == "gr011862") {
       
-      i_to_drop <- which(field_names == "\u2517\u2501 Republik")[2L]
-      html %<>% .[-i_to_drop]
-      field_names %<>% .[-i_to_drop]
+      ix_to_drop <- c(which(field_names == "\u2517\u2501 Republik")[2L],
+                      which(field_names == "\u2517\u2501 Russischer Prinz")[2L])
+      html %<>% .[-ix_to_drop]
+      field_names %<>% .[-ix_to_drop]
       
       ## competing / mutually exclusive proposals, e.g. proposals with direct counter proposal and (optionally) tie-breaker question (CH and LI)
     } else {
@@ -1850,7 +1851,7 @@ sudd_rfrnd <- function(id_sudd) {
                        .internal = TRUE)
       }
       
-      i_option_names <- which(field_names %in% option_names)
+      ix_option_names <- which(field_names %in% option_names)
       option_names_counter <- c("Gegenentwurf", "Gegenvorschlag")
       option_names_tie_breaker <- "Stichfrage"
       option_names_special <- c(option_names_counter, option_names_tie_breaker)
@@ -1860,10 +1861,10 @@ sudd_rfrnd <- function(id_sudd) {
         setdiff(option_names_special) %>%
         length()
       
-      i_option_field_names <-
-        i_option_names[-length(i_option_names)] %>%
-        purrr::imap(~ (.x + 1L):(i_option_names[.y + 1L] - 1L)) %>%
-        c(list((dplyr::last(i_option_names) + 1L):(min(length(field_names), which(field_names %in% c("Medien",
+      ix_option_field_names <-
+        ix_option_names[-length(ix_option_names)] %>%
+        purrr::imap(~ (.x + 1L):(ix_option_names[.y + 1L] - 1L)) %>%
+        c(list((dplyr::last(ix_option_names) + 1L):(min(length(field_names), which(field_names %in% c("Medien",
                                                                                                      "Bemerkungen",
                                                                                                      "Gleichzeitig mit",
                                                                                                      "Quellen",
@@ -1887,7 +1888,7 @@ sudd_rfrnd <- function(id_sudd) {
       
       for (i in seq_along(option_names)) {
         
-        field_names[i_option_field_names[[i]]] %<>%
+        field_names[ix_option_field_names[[i]]] %<>%
           dplyr::recode(!!!c(renamings,
                              list("Abgegebene Stimmen"                              = glue::glue("votes_{option_suffixes[i]}_total"),
                                   "Stimmen ausser Betracht"                         = glue::glue("votes_{option_suffixes[i]}_invalid"),
@@ -1903,8 +1904,8 @@ sudd_rfrnd <- function(id_sudd) {
       }
       
       # drop obsolete fields
-      html %<>% .[-i_option_names]
-      field_names %<>% .[-i_option_names]
+      html %<>% .[-ix_option_names]
+      field_names %<>% .[-ix_option_names]
       
     }
   }
@@ -1936,7 +1937,7 @@ sudd_rfrnd <- function(id_sudd) {
                                   xml2::xml_contents() %>%
                                   as.character() %>%
                                   paste0(collapse = "")))
-  i_fields_to_remarks <-
+  ix_fields_to_remarks <-
     field_names %>%
     stringr::str_detect(pattern = paste0("^",
                                          pal::fuse_regex("\u2517\u2501\u2501\u2501 .+Stimmen( .+)?",
@@ -1946,13 +1947,13 @@ sudd_rfrnd <- function(id_sudd) {
                                          "$")) %>%
     which()
   
-  if (length(i_fields_to_remarks)) {
+  if (length(ix_fields_to_remarks)) {
     
     addendum <-
-      field_names[i_fields_to_remarks] %>%
+      field_names[ix_fields_to_remarks] %>%
       stringr::str_extract("\\w.*") %>%
       paste0(": ",
-             html[i_fields_to_remarks] %>%
+             html[ix_fields_to_remarks] %>%
                rvest::html_elements(css = "td") %>%
                magrittr::extract2(2L) %>%
                rvest::html_elements(css = "data") %>%
@@ -1961,18 +1962,18 @@ sudd_rfrnd <- function(id_sudd) {
     
     remarks_list_col[[1]]$text %<>% paste0(addendum, "\n\n", .)
     remarks_list_col[[1]]$html %<>% paste0("<p>\n", addendum, "\n</p>", .)
-    html %<>% .[-i_fields_to_remarks]
-    field_names %<>% .[-i_fields_to_remarks]
+    html %<>% .[-ix_fields_to_remarks]
+    field_names %<>% .[-ix_fields_to_remarks]
   }
   
   # remove unnecessary fields
-  i_to_drop <- which(field_names %in% c("Nicht eingelegte Stimmzettel",
-                                        "Nicht eingelegte Stimmenzettel",
-                                        "Nicht teilgenommen"))
+  ix_to_drop <- which(field_names %in% c("Nicht eingelegte Stimmzettel",
+                                         "Nicht eingelegte Stimmenzettel",
+                                         "Nicht teilgenommen"))
   
-  if (length(i_to_drop)) {
-    html %<>% .[-i_to_drop]
-    field_names %<>% .[-i_to_drop]
+  if (length(ix_to_drop)) {
+    html %<>% .[-ix_to_drop]
+    field_names %<>% .[-ix_to_drop]
   }
   
   field_names %<>%
@@ -2047,13 +2048,13 @@ sudd_rfrnd <- function(id_sudd) {
     purrr::flatten_chr()
 
   # assert no original uppercase field names are left over
-  i_field_names_unknown <-
+  ix_field_names_unknown <-
     field_names %>%
     stringr::str_detect(pattern = "[:upper:]") %>%
     which()
   
-  if (length(i_field_names_unknown)) {
-    cli::cli_abort(paste0("Unknown {cli::qty(length(i_field_names_unknown))} field{?s} {.field {field_names[i_field_names_unknown]}} present in data for ",
+  if (length(ix_field_names_unknown)) {
+    cli::cli_abort(paste0("Unknown {cli::qty(length(ix_field_names_unknown))} field{?s} {.field {field_names[ix_field_names_unknown]}} present in data for ",
                           "referendum with {.arg {paste0('id_sudd = ', id_sudd)}}."),
                    .internal = TRUE)
   }
@@ -3158,9 +3159,12 @@ validate_rfrnds <- function(data,
         id_sudd_prefix %>%
         stringr::str_to_upper()
       
-      i_country_codes <- country_codes %>% purrr::map_lgl(~ country_code %in% .x) %>% which()
+      ix_country_codes <-
+        country_codes %>%
+        purrr::map_lgl(~ country_code %in% .x) %>%
+        which()
       
-      for (i in i_country_codes) {
+      for (i in ix_country_codes) {
         country_codes[[i]] <- unique(c(country_codes[[i]], additional_country_codes))
       }
     }
