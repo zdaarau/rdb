@@ -237,7 +237,8 @@
     #29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved.
 
     Also add the referendums from the [similar Excel sheets for the remaining 25 cantons we
-    got](https://drive.google.com/drive/folders/1tZVg-ZQ8bi6KeSyofzngV2Qq3LNfE6Rc).
+    got](https://drive.google.com/drive/folders/1tZVg-ZQ8bi6KeSyofzngV2Qq3LNfE6Rc). See the [HLS R project](~/Arbeit/ZDA/Lokal/Projekte/HLS/hls_r_project) for
+    some partial data cleansing/tidying.
 
 -   Voting with `id == "5bbbfee992a21351232e4f37"` (Romania 2008-02-01) was limited to the region
     [Szeklerland](https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land), therefore `subnational_entity` should be set to `Székely Land`
@@ -331,6 +332,9 @@
 -   check `electorate_abroad` for obvious errors (e.g. `id == "5f99b6c8d1291cc3961f1c2c"` is one)
 
 ### c2d R package
+
+-   Implement convenience fn to `add_country_code_long()` (or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is occasionally needed to merge with
+    data from other sources.
 
 -   Implement fn to delete referendums once [issue #45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
 
@@ -437,6 +441,9 @@
     Was meint Irina?
 
 #### Sonstige
+
+-   There is at least one "Landsgemeinde" referendum (`id = 5bbc004292a21351232e52e7`) with no result (`NA`) where the result should actually be `"no"`
+    (Landsgemeinde rejected proposal) if I'm not mistaken. Do we handle "Landsgemeinde" votes specially or why is that?
 
 -   Are `id_sudd`s stable over time? Maybe contact the creator [Beat Müller](mailto:beat@sudd.ch) and ask?
 

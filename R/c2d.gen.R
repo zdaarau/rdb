@@ -86,6 +86,7 @@ utils::globalVariables(names = c(".",
                                  "Name",
                                  "number",
                                  "Parent",
+                                 "parent_tag",
                                  "position_government",
                                  "ptype",
                                  "question",
@@ -98,6 +99,7 @@ utils::globalVariables(names = c(".",
                                  "subterritories_no",
                                  "subterritories_yes",
                                  "sudd_prefix",
+                                 "tag",
                                  "tag_tier_1",
                                  "tag_tier_2",
                                  "tag_tier_3",
@@ -124,6 +126,8 @@ utils::globalVariables(names = c(".",
                                  "value_labels",
                                  "variable_name",
                                  "variable_values",
+                                 "value",
+                                 "value_total",
                                  "votes",
                                  "votes_empty",
                                  "votes_invalid",
@@ -690,6 +694,16 @@ rename_from_list <- function(x,
   } else {
     x
   }
+}
+
+tag_frequency <- function(tags,
+                          tier) {
+  tags %>%
+    purrr::flatten_chr() %>%
+    factor(levels = c2d::tags(tiers = tier)) %>%
+    tibble::tibble(tag = .) %>%
+    dplyr::group_by(tag) %>%
+    dplyr::summarise(n = dplyr::n())
 }
 
 tidy_date <- function(x) {
@@ -1503,17 +1517,17 @@ sudd_rfrnd <- function(id_sudd) {
         
         field_names[i_option_field_names[[i]]] %<>%
           dplyr::recode(!!!c(renamings,
-                             list("Abgegebene Stimmen"                   = glue::glue("votes_{option_suffixes[i]}_total"),
-                                  "Stimmen ausser Betracht"              = glue::glue("votes_{option_suffixes[i]}_invalid"),
-                                  "Ohne Antwort"                         = glue::glue("votes_{option_suffixes[i]}_empty"),
-                                  "G\u00fcltige (= massgebende) Stimmen" = glue::glue("votes_{option_suffixes[i]}_valid"),
-                                  "\u2517\u2501 Ja-Stimmen"              = glue::glue("votes_{option_suffixes[i]}_yes"),
-                                  "\u2517\u2501 Nein-Stimmen"            = glue::glue("votes_{option_suffixes[i]}_no"),
-                                  "Ja-Stimmen"                           = glue::glue("votes_{option_suffixes[i]}_yes"),
-                                  "Nein-Stimmen"                         = glue::glue("votes_{option_suffixes[i]}_no"),
-                                  "St\u00e4nde (Kantone)"                = glue::glue("subterritories_{option_suffixes[i]}"),
-                                  "\u2517\u2501 Annehmende St\u00e4nde"  = glue::glue("subterritories_{option_suffixes[i]}_yes"),
-                                  "\u2517\u2501 Verwerfende St\u00e4nde" = glue::glue("subterritories_{option_suffixes[i]}_no"))))
+                             list("Abgegebene Stimmen"                              = glue::glue("votes_{option_suffixes[i]}_total"),
+                                  "Stimmen ausser Betracht"                         = glue::glue("votes_{option_suffixes[i]}_invalid"),
+                                  "Ohne Antwort"                                    = glue::glue("votes_{option_suffixes[i]}_empty"),
+                                  "G\u00fcltige (= massgebende) Stimmen"            = glue::glue("votes_{option_suffixes[i]}_valid"),
+                                  "\u2517\u2501 Ja-Stimmen"                         = glue::glue("votes_{option_suffixes[i]}_yes"),
+                                  "\u2517\u2501 Nein-Stimmen"                       = glue::glue("votes_{option_suffixes[i]}_no"),
+                                  "Ja-Stimmen"                                      = glue::glue("votes_{option_suffixes[i]}_yes"),
+                                  "Nein-Stimmen"                                    = glue::glue("votes_{option_suffixes[i]}_no"),
+                                  "St\u00e4nde (Kantone)"                           = glue::glue("subterritories_{option_suffixes[i]}"),
+                                  "\u2517\u2501 Annehmende St\u00e4nde"             = glue::glue("subterritories_{option_suffixes[i]}_yes"),
+                                  "\u2517\u2501 Verwerfende St\u00e4nde"            = glue::glue("subterritories_{option_suffixes[i]}_no"))))
       }
       
       # drop obsolete fields
@@ -1590,60 +1604,63 @@ sudd_rfrnd <- function(id_sudd) {
   }
   
   field_names %<>%
-    dplyr::recode("Gebiet"                                         = "territory_name_de",
-                  "\u2517\u2501 Stellung"                          = "territory_type_de",
-                  "Datum"                                          = "date",
-                  "Titel"                                          = "title_de",
-                  "Vorlage"                                        = "title_de",
-                  "\u2517\u2501 Fragemuster"                       = "question_type_de",
-                  "\u2517\u2501 Abstimmungstyp"                    = "types",
-                  "Ergebnis"                                       = "result_de",
-                  "Vollst\u00e4ndigkeit"                           = "result_status_de",
-                  "\u2517\u2501 Mehrheiten"                        = "adoption_requirements_de",
-                  "Stimmberechtigte"                               = "electorate_total",
-                  "\u2517\u2501 Davon im Ausland"                  = "electorate_abroad",
-                  "Stimmausweise"                                  = "polling_cards",
-                  "Stimmbeteiligung"                               = "votes_total",
-                  "Stimmen ausser Betracht"                        = "votes_invalid",
-                  "Stimmzettel ausser Betracht"                    = "votes_invalid",
-                  "Leere Stimmen"                                  = "votes_empty",
-                  "\u2517\u2501 Leere Stimmen"                     = "votes_empty",
-                  "\u2517\u2501 Leere Stimmzettel"                 = "votes_empty",
-                  "Ung\u00fcltige Stimmen"                         = "votes_void",
-                  "\u2517\u2501 Ung\u00fcltige Stimmen"            = "votes_void",
-                  "\u2517\u2501 Ung\u00fcltige Stimmzettel"        = "votes_void",
-                  "Ganz ung\u00fcltige Stimmzettel"                = "votes_void",
-                  "G\u00fcltige (= massgebende) Stimmen"           = "votes_valid",
-                  "\u2517\u2501 Ja-Stimmen"                        = "votes_yes",
-                  "\u2517\u2501 Nein-Stimmen"                      = "votes_no",
-                  "\u2517\u2501 Nein zu beiden Vorschl\u00e4gen"   = "votes_option_none",
-                  "\u2517\u2501 Stimmen ausser Betracht"           = "votes_invalid",
-                  "Staaten"                                        = "subterritories",
-                  "\u2517\u2501 Annehmende Staaten"                = "subterritories_yes",
-                  "\u2517\u2501 Verwerfende Staaten"               = "subterritories_no",
-                  "Gebiete"                                        = "subterritories",
-                  "\u2517\u2501 Annehmende Gebiete"                = "subterritories_yes",
-                  "\u2517\u2501 Verwerfende Gebiete"               = "subterritories_no",
-                  "Provinzen"                                      = "subterritories",
-                  "\u2517\u2501 Annehmende Provinzen"              = "subterritories_yes",
-                  "\u2517\u2501 Verwerfende Provinzen"             = "subterritories_no",
-                  "Inseln"                                         = "subterritories",
-                  "\u2517\u2501 Annehmende Inseln"                 = "subterritories_yes",
-                  "\u2517\u2501 Verwerfende Inseln"                = "subterritories_no",
-                  "St\u00e4nde (Kantone)"                          = "subterritories",
-                  "\u2517\u2501 Annehmende St\u00e4nde"            = "subterritories_yes",
-                  "\u2517\u2501 Verwerfende St\u00e4nde"           = "subterritories_no",
-                  "Wahlkreise"                                     = "subterritories",
-                  "\u2517\u2501 Annehmende Wahlkreise"             = "subterritories_yes",
-                  "\u2517\u2501 Verwerfende Wahlkreise"            = "subterritories_no",
-                  "Senatswahlkreise"                               = "subterritories",
-                  "\u2517\u2501 Annehmende Senatswahlkreise"       = "subterritories_yes",
-                  "\u2517\u2501 Verwerfende Senatswahlkreise"      = "subterritories_no",
-                  "Medien"                                         = "files",
-                  "Bemerkungen"                                    = "remarks",
-                  "Gleichzeitig mit"                               = "ids_sudd_simultaneous",
-                  "Quellen"                                        = "sources",
-                  "Letzte \u00c4nderung"                           = "date_last_edited") %>%
+    dplyr::recode("Gebiet"                                          = "territory_name_de",
+                  "\u2517\u2501 Stellung"                           = "territory_type_de",
+                  "Datum"                                           = "date",
+                  "Titel"                                           = "title_de",
+                  "Vorlage"                                         = "title_de",
+                  "\u2517\u2501 Fragemuster"                        = "question_type_de",
+                  "\u2517\u2501 Abstimmungstyp"                     = "types",
+                  "Ergebnis"                                        = "result_de",
+                  "Vollst\u00e4ndigkeit"                            = "result_status_de",
+                  "\u2517\u2501 Mehrheiten"                         = "adoption_requirements_de",
+                  "Stimmberechtigte"                                = "electorate_total",
+                  "\u2517\u2501 Davon im Ausland"                   = "electorate_abroad",
+                  "Stimmausweise"                                   = "polling_cards",
+                  "Stimmbeteiligung"                                = "votes_total",
+                  "Stimmen ausser Betracht"                         = "votes_invalid",
+                  "Stimmzettel ausser Betracht"                     = "votes_invalid",
+                  "Leere Stimmen"                                   = "votes_empty",
+                  "\u2517\u2501 Leere Stimmen"                      = "votes_empty",
+                  "\u2517\u2501 Leere Stimmzettel"                  = "votes_empty",
+                  "Ung\u00fcltige Stimmen"                          = "votes_void",
+                  "\u2517\u2501 Ung\u00fcltige Stimmen"             = "votes_void",
+                  "\u2517\u2501 Ung\u00fcltige Stimmzettel"         = "votes_void",
+                  "Ganz ung\u00fcltige Stimmzettel"                 = "votes_void",
+                  "G\u00fcltige (= massgebende) Stimmen"            = "votes_valid",
+                  "\u2517\u2501 Ja-Stimmen"                         = "votes_yes",
+                  "\u2517\u2501 Nein-Stimmen"                       = "votes_no",
+                  "\u2517\u2501 Nein zu beiden Vorschl\u00e4gen"    = "votes_option_none",
+                  "\u2517\u2501 Stimmen ausser Betracht"            = "votes_invalid",
+                  "Staaten"                                         = "subterritories",
+                  "\u2517\u2501 Annehmende Staaten"                 = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Staaten"                = "subterritories_no",
+                  "Gebiete"                                         = "subterritories",
+                  "\u2517\u2501 Annehmende Gebiete"                 = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Gebiete"                = "subterritories_no",
+                  "Provinzen"                                       = "subterritories",
+                  "\u2517\u2501 Annehmende Provinzen"               = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Provinzen"              = "subterritories_no",
+                  "Inseln"                                          = "subterritories",
+                  "\u2517\u2501 Annehmende Inseln"                  = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Inseln"                 = "subterritories_no",
+                  "St\u00e4nde (Kantone)"                           = "subterritories",
+                  "\u2517\u2501 Annehmende St\u00e4nde"             = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende St\u00e4nde"            = "subterritories_no",
+                  "Regionen / St\u00e4dte"                          = "subterritories",
+                  "\u2517\u2501 Annehmende Regionen / St\u00e4dte"  = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Regionen / St\u00e4dte" = "subterritories_no",
+                  "Wahlkreise"                                      = "subterritories",
+                  "\u2517\u2501 Annehmende Wahlkreise"              = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Wahlkreise"             = "subterritories_no",
+                  "Senatswahlkreise"                                = "subterritories",
+                  "\u2517\u2501 Annehmende Senatswahlkreise"        = "subterritories_yes",
+                  "\u2517\u2501 Verwerfende Senatswahlkreise"       = "subterritories_no",
+                  "Medien"                                          = "files",
+                  "Bemerkungen"                                     = "remarks",
+                  "Gleichzeitig mit"                                = "ids_sudd_simultaneous",
+                  "Quellen"                                         = "sources",
+                  "Letzte \u00c4nderung"                            = "date_last_edited") %>%
     # assert field names are unique
     checkmate::assert_character(any.missing = FALSE,
                                 unique = TRUE,
@@ -1665,7 +1682,7 @@ sudd_rfrnd <- function(id_sudd) {
   
   if (length(i_field_names_unknown)) {
     cli::cli_abort(paste0("Unknown {cli::qty(length(i_field_names_unknown))} field{?s} {.field {field_names[i_field_names_unknown]}} present in data for ",
-                          "referendum with {.arg id_sudd = {id_sudd}}."),
+                          "referendum with {.arg {paste0('id_sudd = ', id_sudd)}}."),
                    .internal = TRUE)
   }
   
@@ -3246,6 +3263,168 @@ rfrnds_per_period <- function(data,
   }
   
   result
+}
+
+#' Tag segmentation sunburst chart
+#'
+#' Creates a [Plotly sunburst chart](https://plotly.com/r/sunburst-charts/) that visualizes the hierarchical segmentation of referendum tag occurences.
+#'
+#' A *tag line* is the hierarchical compound of a `tag_tier_1` and optionally a grandchild `tag_tier_3` and/or a child `tag_tier_2`.
+#'
+#' Note that tags can be assigned on any tier to referendums (i.e. in one case, a `tag_tier_1` plus a child `tag_tier_2` is assigned, and in another case only a
+#' `tag_tier_1` without any further child tag).
+#'
+#' Furthermore, it should be noted that not every `tag_tier_2` has potential child `tag_tier_3`s. See the [full tag
+#' hierarchy](https://rpkg.dev/c2d/articles/codebook.html#tags) for details.
+#'
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns `tags_tier_1`, `tags_tier_2` and
+#'   `tags_tier_3`.
+#' @param method Applied method to count the number of tag occurences. One of
+#'   - **`"per_rfrnd"`**: All *referendums* have the same weight. For a referendum with n different tags of the same tier, every tag is counted 1/n.
+#'   - **`"per_tag_line"`**: All *tag lines* have the same weight. For a referendum with n different tags of the same tier, every tag is fully counted, meaning
+#'     that e.g. a referendum with three different tier-3 tags has a tripled impact on the result compared to a referendum that only has a single one.
+#'     Noticeably faster than `"per_rfrnd"`.
+#'   - **`"naive"`**: Naive procedure which doesn't properly reflect tag proportions on tier 2 and 3. Based on the (wrong) assumptions that a) all referendums
+#'     have the same number of tag lines assigned and b) tags are not deduplicated per tier. By far the fastest method, though.
+#'
+#' @return `r pkgsnip::param_label("plotly_obj")`
+#' @family visualize
+#' @export
+#'
+#' @examples
+#' # count each referendum equally
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_rfrnd")
+#'
+#' # count each tag line equally
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_tag_line")
+#'
+#' # naive count (way faster, but with misleading proportions on tier 2 and 3)
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "naive")
+plot_tag_segmentation <- function(data,
+                                  method = c("per_rfrnd", "per_tag_line", "naive")) {
+
+  method <- rlang::arg_match(method)
+  pal::assert_pkg("plotly")
+  is_naive <- method == "naive"
+
+  # assemble necessary data structure
+  if (is_naive) {
+
+    ## naively
+    data_plot <-
+      dplyr::bind_rows(
+        data$tags_tier_1 %>%
+          tag_frequency(tier = 1L) %>%
+          dplyr::mutate(parent_tag = ""),
+        data$tags_tier_2 %>%
+          tag_frequency(tier = 2L) %>%
+          dplyr::mutate(parent_tag = purrr::map_chr(.x = as.character(tag),
+                                                    .f = infer_tags,
+                                                    tier = 1L)),
+        data$tags_tier_3 %>%
+          tag_frequency(tier = 3L) %>%
+          dplyr::mutate(parent_tag = purrr::map_chr(.x = as.character(tag),
+                                                    .f = infer_tags,
+                                                    tier = 2L))
+      ) %>%
+      dplyr::rename(value = n)
+
+  } else {
+
+    is_per_rfrnd <- method == "per_rfrnd"
+    data_plot <- data %>% dplyr::select(starts_with("tags_tier_"))
+
+    ### per rfrnd, i.e. in fractional numbers
+    if (is_per_rfrnd) {
+
+      data_plot %<>%
+        purrr::pmap_dfr(~ hierarchize_tags_fast(unlist(..1),
+                                                unlist(..2),
+                                                unlist(..3)) %>%
+                          dplyr::mutate(value = 1 / nrow(.)))
+
+      ### per tag line
+    } else {
+
+      data_plot %<>%
+        purrr::pmap_dfr(~ hierarchize_tags_fast(unlist(..1),
+                                                unlist(..2),
+                                                unlist(..3))) %>%
+        dplyr::mutate(value = 1)
+    }
+
+    data_plot <-
+      dplyr::bind_rows(
+        data_plot %>%
+          dplyr::group_by(tag_tier_1) %>%
+          dplyr::summarise(value = sum(value)) %>%
+          dplyr::transmute(tag = tag_tier_1,
+                           parent_tag = "",
+                           value),
+        data_plot %>%
+          dplyr::group_by(tag_tier_2) %>%
+          dplyr::summarise(value = sum(value)) %>%
+          dplyr::transmute(tag = tag_tier_2,
+                           parent_tag =
+                             tag %>%
+                             purrr::map_chr(~ {
+                               if (is.na(.x)) {
+                                 NA_character_
+                               } else {
+                                 infer_tags(tags = .x,
+                                            tier = 1L)
+                               }}),
+                           value),
+        data_plot %>%
+          dplyr::group_by(tag_tier_3) %>%
+          dplyr::summarise(value = sum(value)) %>%
+          dplyr::transmute(tag = tag_tier_3,
+                           parent_tag =
+                             tag %>%
+                             purrr::map_chr(~ {
+                               if (is.na(.x)) {
+                                 NA_character_
+                               } else {
+                                 infer_tags(tags = .x,
+                                            tier = 2L)
+                               }}),
+                           value)
+      ) %>%
+      dplyr::filter(!is.na(tag))
+
+    ### add NA rows filling the gaps
+    data_plot %<>%
+      dplyr::filter(parent_tag != "") %>%
+      dplyr::group_by(parent_tag) %>%
+      dplyr::summarise(value_total = sum(value),
+                       .groups = "drop") %>%
+      dplyr::transmute(tag = "<i>not defined</i>",
+                       value = purrr::map2_dbl(.x = value_total,
+                                               .y = parent_tag,
+                                               .f = ~
+                                                 data_plot %>%
+                                                 dplyr::filter(tag == .y) %$%
+                                                 value %>%
+                                                 checkmate::assert_number() %>%
+                                                 magrittr::subtract(.x)),
+                       parent_tag) %>%
+      dplyr::bind_rows(data_plot, .) %>%
+      dplyr::mutate(id = ifelse(tag == "<i>not defined</i>",
+                                paste0("NA_", parent_tag),
+                                tag))
+  }
+
+  # create plot
+  plotly::plot_ly(data = data_plot,
+                  type = "sunburst",
+                  labels = ~tag,
+                  parents = ~parent_tag,
+                  ids = if (is_naive) ~tag else ~id,
+                  values = ~value,
+                  branchvalues = ifelse(is_naive,
+                                        "remainder",
+                                        "total"),
+                  insidetextorientation = "radial")
 }
 
 #' Test C2D API availability

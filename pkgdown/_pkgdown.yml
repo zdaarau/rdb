@@ -61,6 +61,8 @@ reference:
   desc: Functions to transform the C2D referendum data into other shapes, each with
     a specific purpose.
 - contents: rfrnds_per_period
+- title: Visualization
+- contents: plot_tag_segmentation
 - title: C2D API Status
 - contents: is_online
 - title: sudd.ch scraping

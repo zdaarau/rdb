@@ -499,7 +499,8 @@ e.g. those &gt; 0.9:</p>
 cantonal referendums 1888–1971</a> once <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a> is
 resolved.</p>
 <p>Also add the referendums from the <a href="https://drive.google.com/drive/folders/1tZVg-ZQ8bi6KeSyofzngV2Qq3LNfE6Rc" class="external-link">similar
-Excel sheets for the remaining 25 cantons we got</a>.</p>
+Excel sheets for the remaining 25 cantons we got</a>. See the <a href="~/Arbeit/ZDA/Lokal/Projekte/HLS/hls_r_project">HLS R project</a>
+for some partial data cleansing/tidying.</p>
 </li>
 <li><p>Voting with <code>id == "5bbbfee992a21351232e4f37"</code>
 (Romania 2008-02-01) was limited to the region <a href="https://en.wikipedia.org/wiki/Sz%C3%A9kely_Land" class="external-link">Szeklerland</a>,
@@ -643,6 +644,9 @@ country we shall assign has to be hard-coded)`</p>
 <h3 class="hasAnchor">
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h3>
 <ul>
+<li><p>Implement convenience fn to <code>add_country_code_long()</code>
+(or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is
+occasionally needed to merge with data from other sources.</p></li>
 <li><p>Implement fn to delete referendums once <a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a> is
 resolved.</p></li>
 <li><p>As soon as <a href="https://github.com/ccmdesign/c2d-app/issues/57" class="external-link">issue #57</a> is
@@ -825,6 +829,11 @@ format.</p>
 <h4 class="hasAnchor">
 <a href="#sonstige" class="anchor"></a>Sonstige</h4>
 <ul>
+<li><p>There is at least one “Landsgemeinde” referendum
+(<code>id = 5bbc004292a21351232e52e7</code>) with no result
+(<code>NA</code>) where the result should actually be <code>"no"</code>
+(Landsgemeinde rejected proposal) if I’m not mistaken. Do we handle
+“Landsgemeinde” votes specially or why is that?</p></li>
 <li><p>Are <code>id_sudd</code>s stable over time? Maybe contact the
 creator <a href="mailto:beat@sudd.ch">Beat Müller</a> and ask?</p></li>
 <li><p>Genauer abklären, inwieweit man Angaben von Swissvotes
