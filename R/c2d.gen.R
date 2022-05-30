@@ -3428,9 +3428,7 @@ plot_tag_segmentation <- function(data,
                   branchvalues = ifelse(is_naive,
                                         "remainder",
                                         "total"),
-                  insidetextorientation = "radial") %>%
-    plotly::layout(paper_bgcolor = "#00000000",
-                   plot_bgcolor = "#00000000")
+                  insidetextorientation = "radial")
 }
 
 #' Test C2D API availability
