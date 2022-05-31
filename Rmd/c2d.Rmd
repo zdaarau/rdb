@@ -2446,8 +2446,19 @@ rm(sudd_years)
 
 ### Variable renamings
 
-This maps the field names of the back-end's MongoDB to the final variable names as found in the [C2D codebook](https://rpkg.dev/c2d/articles/codebook.html). The
-renamings should eventually all be upstreamed and this mapping shall become superfluous.
+NOTES:
+
+-   This maps the field names of the back-end's MongoDB to the final variable names as found in the [C2D codebook](https://rpkg.dev/c2d/articles/codebook.html).
+    The renamings should eventually all be upstreamed and this mapping shall become superfluous.
+
+-   To convert `v_names` (or any other similar list like `sub_v_names`) to a tibble, use:
+
+    ``` r
+    v_names %>%
+      unlist() %>%
+      tibble::enframe(name = "v_name_old",
+                      value = "v_name_new")
+    ```
 
 ```{r}
                 # old name                                               new name
