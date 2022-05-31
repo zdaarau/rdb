@@ -442,6 +442,12 @@
 
 #### Sonstige
 
+-   The referendum `type` **`"governmental referendum"`** should be renamed since it's used (and most probably intended, too) to catch all kinds of top-down
+    referendums, not only ones that originate from the government (executive) but also ones that originate from the parliament (legislative).
+
+    Additionally, it should be allowed to assign more than one `type` since in reality this happens sometimes (example: Robin found an example where a
+    referendum in the canton of Zurich was both a `"governmental referendum"` and an `"optional referendum"`).
+
 -   There is at least one "Landsgemeinde" referendum (`id = 5bbc004292a21351232e52e7`) with no result (`NA`) where the result should actually be `"no"`
     (Landsgemeinde rejected proposal) if I'm not mistaken. Do we handle "Landsgemeinde" votes specially or why is that?
 
