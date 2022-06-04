@@ -66,6 +66,7 @@ v_sections <- function(data,
                        strip_anchors = FALSE) {
   
   data %>% purrr::pmap(function(variable_name,
+                                variable_name_print,
                                 variable_label,
                                 is_multi_valued,
                                 is_nested,

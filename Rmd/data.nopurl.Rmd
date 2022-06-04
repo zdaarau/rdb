@@ -41,6 +41,7 @@ data_codebook <- {
     codebook$`02_institutional`$`03_object`$item,
     codebook$`02_institutional`$`04_other`$item) %>%
     purrr::map_dfr(~ tibble::tibble(variable_name = .x$variable_name %||% NA_character_,
+                                    variable_name_print = .x$variable_name_print %||% NA_character_,
                                     variable_label = .x$variable_label %||% NA_character_,
                                     is_multi_valued = .x$is_multi_valued %||% FALSE,
                                     is_nested = .x$is_nested %||% FALSE,
@@ -88,13 +89,21 @@ data_codebook <- {
                                                         integer())
                                       })) %>%
     # integrity checks
+    ## not NA
     assertr::assert(predicate = assertr::not_na,
                     variable_name,
+                    variable_name_print,
                     variable_label,
                     value_scale,
                     is_multi_valued,
                     is_nested,
-                    ptype)
+                    ptype) %>%
+    ## not empty string
+    assertr::assert(predicate = function(x) if (x == "") FALSE else TRUE,
+                    variable_name,
+                    variable_name_print,
+                    variable_label,
+                    value_scale)
 }
 ```
 

@@ -3960,6 +3960,35 @@ rfrnds_per_period <- function(data,
 }
 ```
 
+### `prettify_col_names`
+
+```{r}
+#' Prettify referendum data column names
+#'
+#' Rename referendum data column names to be ready to print. Useful e.g. to create tables for publication.
+#'
+#' @param data C2D referendum data as returned by [rfrnds()].
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family transform
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(country_code = "IT") |> c2d::prettify_col_names()
+prettify_col_names <- function(data) {
+  
+  data %>% dplyr::rename_with(~ c2d::data_codebook %>%
+                                dplyr::filter(variable_name %in% .x) %>%
+                                dplyr::left_join(y =
+                                                   colnames(data) %>%
+                                                   tibble::tibble(variable_name = .) %>%
+                                                   tibble::rowid_to_column(),
+                                                 by = "variable_name") %>%
+                                dplyr::arrange(rowid) %$%
+                                variable_name_print)
+}
+```
+
 ## Visualization
 
 ### `plot_tag_segmentation`
@@ -4318,9 +4347,9 @@ list_sudd_titles <- function() {
   
   rows <-
     httr::RETRY(verb = "GET",
-              url = "https://sudd.ch/list.php",
-              query = list(mode = "alltopics"),
-              times = 5L) %>%
+                url = "https://sudd.ch/list.php",
+                query = list(mode = "alltopics"),
+                times = 5L) %>%
     xml2::read_html() %>%
     rvest::html_elements(css = "main table tr") %>%
     purrr::map(rvest::html_elements,

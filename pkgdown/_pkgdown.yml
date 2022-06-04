@@ -60,7 +60,9 @@ reference:
 - title: Transformation
   desc: Functions to transform the C2D referendum data into other shapes, each with
     a specific purpose.
-- contents: rfrnds_per_period
+- contents:
+  - rfrnds_per_period
+  - prettify_col_names
 - title: Visualization
 - contents: plot_tag_segmentation
 - title: C2D API Status

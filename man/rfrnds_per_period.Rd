@@ -29,4 +29,8 @@ c2d::rfrnds(country_code = "AT") |> c2d::rfrnds_per_period()
 c2d::rfrnds(country_code = "AT") |> c2d::rfrnds_per_period(group_by = level)
 c2d::rfrnds(country_code = "AT") |> c2d::rfrnds_per_period(period = "decade", group_by = level)
 }
+\seealso{
+Other referendum data transformation functions:
+\code{\link{prettify_col_names}()}
+}
 \concept{transform}

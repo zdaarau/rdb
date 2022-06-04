@@ -4,40 +4,49 @@ title = "C2D Codebook"
 [01_main]
 [[01_main.item]]
 variable_name = "id"
+variable_name_print = "C2D ID"
 variable_label = "a 24-character value that uniquely identifies the referendum and corresponds to the [MongoDB `ObjectId`](https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid) in the C2D database"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "id_official"
+variable_name_print = "Official ID"
 variable_label = "the referendum's official identifier assigned by the authorities; this is only guaranteed to be unique per respective jurisdiction"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "id_sudd"
+variable_name_print = "sudd.ch ID"
 variable_label = "the referendum's identifier assigned by [sudd.ch](https://sudd.ch/); multiple referendum's might share the same identifier"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "country_code"
+variable_name_print = "ISO 3166-1 alpha-2"
 variable_label = "the two-letter [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code identifying the country in which the referendum took place; only set if `is_past_jurisdiction = FALSE`"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "country_code_historical"
+variable_name_print = "ISO 3166-3"
 variable_label = "the four-letter [ISO 3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) code identifying the *historical* (i.e. ceased to exist) country in which the referendum took place; only set if `is_past_jurisdiction = TRUE`"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "country_name"
+variable_name_print = "Country"
 variable_label = "the English name of the country in which the referendum took place"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "subnational_entity_name"
+variable_name_print = "Subnational entity name"
 variable_label = "the English name of the [subnational political entity](https://en.wikipedia.org/wiki/Administrative_division) in which the referendum took place"
 applicability_constraint = "level %in% c('local', 'subnational')"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "municipality"
+variable_name_print = "Municipality"
 variable_label = "the municipality in which the referendum took place"
 applicability_constraint = "level == 'local'"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "level"
+variable_name_print = "Political level"
 variable_label = "the political level at which the referendum took place"
 variable_values = [ "local", "subnational", "national" ]
 value_label_prefix = "The referendum took place at the"
@@ -45,40 +54,49 @@ value_labels = [ "local political level", "subnational political level", "nation
 value_scale = "ordinal_ascending"
 [[01_main.item]]
 variable_name = "is_past_jurisdiction"
+variable_name_print = "Past jurisdiction?"
 variable_label = "whether or not the country where the referendum took place ceased to exist and thus has a [`country_code_historical`](#country_code_historical) instead of a [`country_code`](#country_code) assigned"
 variable_values = [ true, false]
 value_scale = "binary"
 [[01_main.item]]
 variable_name = "date"
+variable_name_print = "Date"
 variable_label = "the date on which the referendum took place"
 value_scale = "interval"
 ptype = "vctrs::new_date()"
 [[01_main.item]]
 variable_name = "title_de"
+variable_name_print = "Titel"
 variable_label = "the referendum's German title"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "title_fr"
+variable_name_print = "Titre"
 variable_label = "the referendum's French title"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "title_en"
+variable_name_print = "Title"
 variable_label = "the referendum's English title"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "question"
+variable_name_print = "Original question"
 variable_label = "the question exactly as it was asked in the referendum"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "question_en"
+variable_name_print = "Question"
 variable_label = "an English translation of [`question`](#question) if it wasn't officially asked in English, otherwise the same as [`question`](#question)"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "committee_name"
+variable_name_print = "Committee name"
 variable_label = "the name of the committee that initiated the referendum"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "result"
+variable_name_print = "Result"
 variable_label = "the result of the referendum"
 variable_values = [ "yes", "no" ]
 value_label_prefix = "The referendum proposal was"
@@ -86,72 +104,88 @@ value_labels = [ "approved", "rejected" ]
 value_scale = "binary"
 [[01_main.item]]
 variable_name = "subterritories_yes"
+variable_name_print = "Approving subterritories"
 variable_label = "the number of [administrative divisions](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level) that approved the referendum"
 applicability_constraint = "level != 'local'"
 ptype = "numeric()"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "subterritories_no"
+variable_name_print = "Rejecting subterritories"
 variable_label = "the number of [administrative divisions](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level) that rejected the referendum"
 applicability_constraint = "level != 'local'"
 ptype = "numeric()"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "electorate_total"
+variable_name_print = "Total electorate"
 variable_label = "the total number of people entitled to vote in the referendum"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "electorate_abroad"
+variable_name_print = "Electorate abroad"
 variable_label = "the number of people entitled to vote in the referendum _who are living abroad_; by definition a subset of [`electorate_total`](#electorate_total)"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "votes_yes"
+variable_name_print = "Yes votes"
 variable_label = "the number of votes approving the referendum proposal"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "votes_no"
+variable_name_print = "No votes"
 variable_label = "the number of votes rejecting the referendum proposal"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "votes_empty"
+variable_name_print = "Empty votes"
 variable_label = "the number of votes that did not specify any preference on the referendum proposal"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "votes_invalid"
+variable_name_print = "Invalid votes"
 variable_label = "the number of votes that were invalid"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "votes_per_subterritory"
+variable_name_print = "Subterritorial votes"
 variable_label = "the number of [`votes_yes`](#votes_yes), [`votes_no`](#votes_no), [`votes_empty`](#votes_empty) and [`votes_invalid`](#votes_invalid) per [administrative division](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level); currently only filled for Swiss referendums on the national level"
 is_nested = true
 applicability_constraint = "level != 'local'"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "lower_house_yes"
+variable_name_print = "Lower house yes votes"
 variable_label = "the number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; in [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism), this number includes only members of the _lower house_, in [unicameral legislatures](https://en.wikipedia.org/wiki/Unicameralism) all parliamentarians; currently only filled for Swiss referendums on the national level ([National Council](https://en.wikipedia.org/wiki/National_Council_(Switzerland)))"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "lower_house_no"
+variable_name_print = "Lower house no votes"
 variable_label = "the number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; in [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism), this number includes only members of the _lower house_, in [unicameral legislatures](https://en.wikipedia.org/wiki/Unicameralism) all parliamentarians; currently only filled for Swiss referendums on the national level ([National Council](https://en.wikipedia.org/wiki/National_Council_(Switzerland)))"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "lower_house_abstentions"
+variable_name_print = "Lower house abstentions"
 variable_label = "the number of parliamentarians that abstained from the corresponding parliamentary voting on the referendum proposal; in [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism), this number includes only members of the _lower house_, in [unicameral legislatures](https://en.wikipedia.org/wiki/Unicameralism) all parliamentarians; currently only filled for Swiss referendums on the national level ([National Council](https://en.wikipedia.org/wiki/National_Council_(Switzerland)))"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "upper_house_yes"
+variable_name_print = "Upper house yes"
 variable_label = "the number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the _upper house_; currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)))"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "upper_house_no"
+variable_name_print = "Upper house No"
 variable_label = "the number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the _upper house_; currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)))"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "upper_house_abstentions"
+variable_name_print = "Upper house abstentions"
 variable_label = "the number of parliamentarians that abstained from the corresponding parliamentary voting on the referendum proposal; applies only to [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism) and includes only members of the [upper house](https://en.wikipedia.org/wiki/Upper_house); currently only filled for Swiss referendums on the national level ([Council of States](https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)))"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "position_government"
+variable_name_print = "Government's position"
 variable_label = "the government's recommendation on how to vote in the referendum"
 variable_values = [ "yes", "no" ]
 value_label_prefix = "The government recommends to"
@@ -161,6 +195,7 @@ value_scale = "binary"
 # tags intro: On each of the following three tiers, coders can assign a maximum of 3 predefined political topics that best classify the referendum.
 [[01_main.item]]
 variable_name = "tags_tier_1"
+variable_name_print = "Top-tier political topics"
 variable_label = "a maximum of 3 predefined top-tier political topics that best classify the referendum"
 is_multi_valued = true
 variable_values = [
@@ -180,6 +215,7 @@ variable_values = [
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "tags_tier_2"
+variable_name_print = "Second-tier political topics"
 variable_label = "a maximum of 3 predefined second-tier political topics that best classify the referendum; the presence of a second-tier topic always implies presence of its parent [top-tier topic](#tags_tier_1)"
 is_multi_valued = true
 applicability_constraint = "purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_2, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) %in% .x))"
@@ -246,6 +282,7 @@ variable_values = [
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "tags_tier_3"
+variable_name_print = "Third-tier political topics"
 variable_label = "a maximum of 3 predefined third-tier political topics that best classify the referendum; the presence of a third-tier topic always implies presence of its parent [second-tier topic](#tags_tier_2) and grandparent [top-tier topic](#tags_tier_1)"
 is_multi_valued = true
 applicability_constraint = "purrr::map2_lgl(.x = tags_tier_2, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 2L) %in% .x)) & purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) %in% .x))"
@@ -359,10 +396,12 @@ variable_values = [
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "remarks"
+variable_name_print = "Remarks"
 variable_label = "a free text field with additional information about the referendum"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "files"
+variable_name_print = "File metadata"
 variable_label = """
 metadata about files attached to the referendum, including
 
@@ -375,18 +414,22 @@ is_nested = true
 value_scale = "undefined"
 [[01_main.item]]
 variable_name = "url_sudd"
+variable_name_print = "sudd.ch URL"
 variable_label = "the URL of the corresponding entry on [sudd.ch](https://sudd.ch/)"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "url_swissvotes"
+variable_name_print = "Swissvotes URL"
 variable_label = "the URL of the corresponding entry on [swissvotes.ch](https://swissvotes.ch/)"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "sources"
+variable_name_print = "Sources"
 variable_label = "information about the source(s) of the referendum data like additional URLs or other references"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "is_draft"
+variable_name_print = "Draft?"
 variable_label = "whether or not the entry is marked as a draft in the database"
 variable_values = [ true, false]
 value_label_prefix = "The entry is"
@@ -394,21 +437,25 @@ value_labels = [ "marked as a draft", "not marked as a draft" ]
 value_scale = "binary"
 [[01_main.item]]
 variable_name = "date_time_created"
+variable_name_print = "Creation date/time"
 variable_label = "the date and time on which the referendum's data entry was created"
 value_scale = "interval"
 ptype = "vctrs::new_datetime()"
 [[01_main.item]]
 variable_name = "date_time_last_edited"
+variable_name_print = "Updated date/time"
 variable_label = "the date and time on which the referendum's data entry was last modified"
 value_scale = "interval"
 ptype = "vctrs::new_datetime()"
 [[01_main.item]]
 variable_name = "archive"
+variable_name_print = "Archived data"
 variable_label = "the referendum's data from an earlier, obsolete state of the C2D database"
 is_nested = true
 value_scale = "undefined"
 [[01_main.item]]
 variable_name = "type"
+variable_name_print = "Type"
 variable_label = "the institutional type of direct democracy which the referendum is an instance of"
 variable_values = [
   "mandatory referendum",
@@ -434,6 +481,7 @@ value_scale = "nominal"
 title = "Official Status"
 [[02_institutional.01_status.item]]
 variable_name = "inst_legal_basis_type"
+variable_name_print = "Legal basis type"
 variable_label = "the type of the legal basis of the referendum [`type`](#type)"
 variable_values = [ "non-official", "ad-hoc", "official" ]
 value_label_prefix = "The referendum [`type`](#type) has"
@@ -446,6 +494,7 @@ value_default = "official"
 value_scale = "ordinal_ascending"
 [[02_institutional.01_status.item]]
 variable_name = "inst_has_urgent_legal_basis"
+variable_name_print = "Urgent legal basis?"
 variable_label = "whether or not the legal basis of the referendum [`type`](#type) was adopted urgently, i.e. in an abridged procedure"
 applicability_constraint = "inst_trigger_actor %in% c('government', 'president', 'monarch', 'parliament')"
 variable_values = [ true, false]
@@ -455,6 +504,7 @@ value_default = false
 value_scale = "binary"
 [[02_institutional.01_status.item]]
 variable_name = "inst_is_binding"
+variable_name_print = "Binding?"
 variable_label = "whether the result of the referendum [`type`](#type) has binding force or the decision of the voters may be disregarded"
 variable_values = [ true, false]
 value_label_prefix = "The result of the referendum [`type`](#type) is"
@@ -466,6 +516,7 @@ value_default = true
 value_scale = "binary"
 [[02_institutional.01_status.item]]
 variable_name = "inst_is_counter_proposal"
+variable_name_print = "Counterproposal?"
 variable_label = "whether or not the referendum [`type`](#type) is a counterproposal to a citizen’s (or other) initiative"
 variable_values = [ true, false]
 value_label_prefix = "The referendum [`type`](#type) is"
@@ -476,6 +527,7 @@ value_labels = [
 value_scale = "binary"
 [[02_institutional.01_status.item]]
 variable_name = "inst_is_assembly"
+variable_name_print = "Assembly?"
 variable_label = "whether or not the referendum [`type`](#type) is held as an assembly (all voters at the same time and place; physical presence at the assembly is required to be able to vote; usually voting means raising one’s hand)"
 variable_values = [ true, false]
 value_label_prefix = "The referendum [`type`](#type) is"
@@ -490,6 +542,7 @@ value_scale = "binary"
 title = "Trigger"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_type"
+variable_name_print = "Trigger type"
 variable_label = "the way the referendum [`type`](#type) is triggered; completely dependent on [`inst_trigger_actor`](#inst_trigger_actor)"
 variable_values = [ "automatic", "top down", "bottom up" ]
 value_label_prefix = "The referendum [`type`](#type) is triggered by"
@@ -500,6 +553,7 @@ value_labels = [
 value_scale = "nominal"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_actor"
+variable_name_print = "Trigger actor"
 variable_label = "the actor that triggers the referendum [`type`](#type)"
 variable_values = [ "citizens", "constitution", "law", "parliament", "government", "president", "monarch", "territorial unit", "UN", "other institution" ]
 value_label_prefix = "The referendum [`type`](#type) is triggered by"
@@ -519,6 +573,7 @@ value_default = "constitution"
 value_scale = "nominal"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_actor_level"
+variable_name_print = "Tigger actor's political level"
 variable_label = "the political [`level`](#level) of [`inst_trigger_actor`](#inst_trigger_actor) in comparison to [`level`](#level)"
 variable_values = [ "lower", "equal", "higher" ]
 value_labels = [
@@ -530,11 +585,13 @@ value_default = "equal"
 value_scale = "ordinal_ascending"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_threshold"
+variable_name_print = "Trigger threshold"
 variable_label = "the threshold of support among [`inst_trigger_actor`](#inst_trigger_actor) that has to be reached in order to trigger the referendum [`type`](#type)"
 applicability_constraint = "inst_trigger_actor %in% c('citizens', 'parliament', 'territorial unit')"
 value_scale = "nominal"
 [[02_institutional.02_trigger.item]]
 variable_name = "inst_trigger_time_limit"
+variable_name_print = "Trigger time limit"
 variable_label = "the time limit in which [`inst_trigger_threshold`](#inst_trigger_threshold) (usually a minimum number of signatures) has to be reached in order to trigger the referendum [`type`](#type)"
 applicability_constraint = "inst_trigger_actor %in% c('citizens', 'territorial unit')"
 value_default = "none"
@@ -545,6 +602,7 @@ value_scale = "nominal"
 title = "Object"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_type"
+variable_name_print = "Object type"
 variable_label = "the type of the object the referendum [`type`](#type) refers to"
 variable_values = [ "question", "legal text (general proposal)", "legal text (formulated proposal)", "institution", "person", "principle" ]
 value_labels = [
@@ -559,6 +617,7 @@ value_default = "legal text (formulated proposal)"
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_author"
+variable_name_print = "Object "
 variable_label = "the actor that defines the text/content of [`inst_object_type`](#inst_object_type)"
 applicability_constraint = "inst_object_type %in% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)', 'principle')"
 variable_values = [ "citizens", "parliament", "government", "president", "monarch", "territorial unit", "UN", "other institution" ]
@@ -575,6 +634,7 @@ value_labels = [
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_legal_level"
+variable_name_print = "Object's legal level"
 variable_label = "the legal level of [`inst_object_type`](#inst_object_type)"
 applicability_constraint = "inst_object_type %in% c('legal text (general proposal)', 'legal text (formulated proposal)')"
 variable_values = [ "ordinance", "treaty", "law", "constitution", "international treaty" ]
@@ -589,6 +649,7 @@ value_default = "constitution"
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_revision_extent"
+variable_name_print = "Object revision extent"
 variable_label = "the extent of revision of [`inst_object_type`](#inst_object_type) which can be achieved within one referendum"
 applicability_constraint = "inst_object_type %in% c('legal text (general proposal)', 'legal text (formulated proposal)')"
 variable_values = [ "partial", "total", "both" ]
@@ -601,6 +662,7 @@ value_default = "partial"
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_revision_modes"
+variable_name_print = "Object revision modes"
 variable_label = "the mode(s) of revision that [`inst_object_type`](#inst_object_type) allows"
 is_multi_valued = true
 variable_values = [ "introduce", "revise", "abrogate" ]
@@ -614,6 +676,7 @@ value_default = [ "introduce", "revise", "abrogate" ]
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
 variable_name = "inst_object_revision_divisibility"
+variable_name_print = "Object divisibility"
 variable_label = "the divisibility of [`inst_object_type`](#inst_object_type)"
 applicability_constraint = "inst_object_type %in% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')"
 variable_values = [ "as a whole", "split up", "as variants", "both split up and as variants" ]
@@ -628,6 +691,7 @@ value_default = "as a whole"
 value_scale = "nominal"
 [[02_institutional.04_other.item]]
 variable_name = "inst_topics_only"
+variable_name_print = "Allowed topics"
 variable_label = "the legal topic(s) to which the referendum [`type`](#type) is limited"
 applicability_constraint = "inst_topics_excluded %>% purrr::map_lgl(rlang::is_empty)"
 is_multi_valued = true
@@ -658,6 +722,7 @@ value_default = [ "{NA_character}" ]
 value_scale = "nominal"
 [[02_institutional.04_other.item]]
 variable_name = "inst_topics_excluded"
+variable_name_print = "Excluded topics"
 variable_label = "the legal topic(s) that are excluded from the referendum [`type`](#type)"
 applicability_constraint = "inst_topics_only %>% purrr::map_lgl(rlang::is_empty)"
 is_multi_valued = true
@@ -684,10 +749,12 @@ value_default = [ "jus cogens" ]
 value_scale = "nominal"
 [[02_institutional.04_other.item]]
 variable_name = "inst_quorum_turnout"
+variable_name_print = "Turnout quorum"
 variable_label = "the minimum percentage of the [`electorate_total`](#electorate_total) that have to participate in the referendum [`type`](#type) in order for it to be passed"
 value_scale = "nominal" # should actually be "ratio" but we'd have to properly recode the values first
 [[02_institutional.04_other.item]]
 variable_name = "inst_quorum_approval"
+variable_name_print = "Approval quorum"
 variable_label = "the minimum number of voters that have to approve the referendum [`type`](#type) in order for it to be passed"
 variable_values = [ "simple majority", "qualified majority", "double majority" ]
 value_labels = [
@@ -699,6 +766,7 @@ value_default = "simple majority"
 value_scale = "nominal"
 [[02_institutional.04_other.item]]
 variable_name = "inst_has_precondition"
+variable_name_print = "Institutional precondition?"
 variable_label = "whether or not an institutional actor must take a preconditional decision in order for the referendum [`type`](#type) to be held"
 variable_values = [ true, false ]
 value_labels = [
@@ -709,6 +777,7 @@ value_label_suffix = "in order for the referendum [`type`](#type) to be held"
 value_scale = "binary"
 [[02_institutional.04_other.item]]
 variable_name = "inst_precondition_actor"
+variable_name_print = "Institutional precondition actor"
 variable_label = "the actor that must take a preconditional decision in order for the referendum [`type`](#type) to be held"
 applicability_constraint = "isTRUE(inst_has_precondition)"
 variable_values = [ "parliament", "government", "president", "UN", "parliament and government", "parliament and president", "central government and SPLM" ]
@@ -725,6 +794,7 @@ value_default = "parliament"
 value_scale = "nominal"
 [[02_institutional.04_other.item]]
 variable_name = "inst_precondition_decision"
+variable_name_print = "Institutional precondition decision"
 variable_label = "the decision that [`inst_precondition_actor`](#inst_precondition_actor) has taken"
 variable_values = [ "yes", "no" ]
 value_labels = [
