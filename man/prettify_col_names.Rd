@@ -13,7 +13,10 @@ prettify_col_names(data)
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Rename referendum data column names to be ready to print. Useful e.g. to create tables for publication.
+Renames referendum data column names to be ready to print. Useful e.g. to create publication tables.
+}
+\details{
+Column names unknown to this function are not changed.
 }
 \examples{
 c2d::rfrnds(country_code = "IT") |> c2d::prettify_col_names()

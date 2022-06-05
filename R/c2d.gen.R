@@ -3271,7 +3271,9 @@ rfrnds_per_period <- function(data,
 
 #' Prettify referendum data column names
 #'
-#' Rename referendum data column names to be ready to print. Useful e.g. to create tables for publication.
+#' Renames referendum data column names to be ready to print. Useful e.g. to create publication tables.
+#'
+#' Column names unknown to this function are not changed.
 #'
 #' @param data C2D referendum data as returned by [rfrnds()].
 #'
