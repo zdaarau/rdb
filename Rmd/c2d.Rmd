@@ -3977,13 +3977,35 @@ rfrnds_per_period <- function(data,
 #' c2d::rfrnds(country_code = "IT") |> c2d::prettify_col_names()
 prettify_col_names <- function(data) {
   
-  data %>% dplyr::rename_with(~ c2d::data_codebook %>%
-                                dplyr::filter(variable_name %in% .x) %>%
+  data %>% dplyr::rename_with(~ tibble::tibble(variable_name = .x) %>%
+                                tibble::rowid_to_column()%>%
                                 dplyr::left_join(y =
-                                                   colnames(data) %>%
-                                                   tibble::tibble(variable_name = .) %>%
-                                                   tibble::rowid_to_column(),
+                                                   c2d::data_codebook %>%
+                                                   # add `variable_name_print` for vx missing from codebook
+                                                   dplyr::bind_rows(tibble::tribble(
+                                                     ~variable_name, ~variable_name_print,
+                                                     # periods
+                                                     "week",                  "Week",
+                                                     "month",                 "Month",
+                                                     "quarter",               "Quarter",
+                                                     "year",                  "Year",
+                                                     "decade",                "Decade",
+                                                     "century",               "Century",
+                                                     # turnout
+                                                     "turnout",               "Turnout",
+                                                     # world regions
+                                                     "un_country_code",       "UN M49 country code",
+                                                     "un_region_tier_1_code", "UN tier-1 region's M49 area code",
+                                                     "un_region_tier_1_name", "UN tier-1 region's English name",
+                                                     "un_region_tier_2_code", "UN tier-2 region's M49 area code",
+                                                     "un_region_tier_2_name", "UN tier-2 region's English name",
+                                                     "un_region_tier_3_code", "UN tier-3 region's M49 area code",
+                                                     "un_region_tier_3_name", "UN tier-3 region's English name",
+                                                   )),
                                                  by = "variable_name") %>%
+                                dplyr::mutate(variable_name_print = dplyr::if_else(is.na(variable_name_print),
+                                                                                   variable_name,
+                                                                                   variable_name_print)) %>%
                                 dplyr::arrange(rowid) %$%
                                 variable_name_print)
 }
