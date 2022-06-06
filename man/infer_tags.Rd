@@ -34,6 +34,7 @@ c2d::infer_tags(tags = "foreign policy",
 }
 \seealso{
 Other tag-related functions:
+\code{\link{data_tags}},
 \code{\link{hierarchize_tags_fast}()},
 \code{\link{hierarchize_tags}()},
 \code{\link{tags}()}

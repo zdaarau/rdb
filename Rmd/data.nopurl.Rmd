@@ -16,6 +16,28 @@ NOTES:
 
 -   When used internally, other than internal data, exported data must always be referred to by its explicit namespace, i.e. e.g. `c2d::data_codebook`.
 
+## Write data
+
+Save all the bigger data objects to separate files under `data/*.rda`. Note that when documenting them, they mustn't be explicitly `@export`ed since they're
+already automatically exported and thus available to package users.
+
+```{r}
+# usethis::use_data(,
+#                   internal = FALSE,
+#                   overwrite = TRUE,
+#                   compress = "xz",
+#                   version = 3L)
+```
+
+# Internal data
+
+NOTES:
+
+-   Although the datasets below are saved as ["internal data" in `R/sysdata.rda`](https://r-pkgs.org/data.html#data-sysdata), some of them are still exported
+    and documented (in the main `.Rmd` document), something [not explicitly
+    mentioned](https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/) in the book [R
+    Packages](https://r-pkgs.org/data.html#data-data).
+
 ## `data_codebook`
 
 TODO:
@@ -106,28 +128,6 @@ data_codebook <- {
                     value_scale)
 }
 ```
-
-## Write data
-
-Save all the bigger data objects to separate files under `data/*.rda`. Note that when documenting them, they mustn't be explicitly `@export`ed since they're
-already automatically exported and thus available to package users.
-
-```{r}
-usethis::use_data(data_codebook,
-                  internal = FALSE,
-                  overwrite = TRUE,
-                  compress = "xz",
-                  version = 3L)
-```
-
-# Internal data
-
-NOTES:
-
--   Although the datasets below are saved as ["internal data" in `R/sysdata.rda`](https://r-pkgs.org/data.html#data-sysdata), some of them are still exported
-    and documented (in the main `.Rmd` document), something [not explicitly
-    mentioned](https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/) in the book [R
-    Packages](https://r-pkgs.org/data.html#data-data).
 
 ## `data_tags`
 
@@ -281,7 +281,8 @@ Save all the small data objects as a single internal file `R/sysdata.rda`. Note 
 to package users.
 
 ```{r}
-usethis::use_data(data_tags,
+usethis::use_data(data_codebook,
+                  data_tags,
                   months_de,
                   rfrnd_cols_order,
                   tags_tier_1_,

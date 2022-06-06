@@ -17,6 +17,11 @@ A tibble reflecting the complete \href{https://rpkg.dev/c2d/articles/codebook.ht
 c2d::data_tags
 }
 \seealso{
-\code{\link{tags}} \code{\link{hierarchize_tags}} \code{\link{infer_tags}}
+Other tag-related functions:
+\code{\link{hierarchize_tags_fast}()},
+\code{\link{hierarchize_tags}()},
+\code{\link{infer_tags}()},
+\code{\link{tags}()}
 }
+\concept{tags}
 \keyword{datasets}

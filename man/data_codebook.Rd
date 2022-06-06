@@ -1764,8 +1764,12 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 }
 }
+\examples{
+c2d::data_codebook
+}
 \seealso{
 Other referendum metadata functions:
+\code{\link{printify_v_names}()},
 \code{\link{v_vals}()},
 \code{\link{val_lbls}()}
 }

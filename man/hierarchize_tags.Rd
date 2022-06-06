@@ -27,6 +27,7 @@ c2d::rfrnds(country_code = "AT") |>
 }
 \seealso{
 Other tag-related functions:
+\code{\link{data_tags}},
 \code{\link{hierarchize_tags_fast}()},
 \code{\link{infer_tags}()},
 \code{\link{tags}()}

@@ -125,6 +125,7 @@ utils::globalVariables(names = c(".",
                                  "url_swissvotes",
                                  "value_labels",
                                  "variable_name",
+                                 "variable_name_print",
                                  "variable_values",
                                  "value",
                                  "value_total",
@@ -606,6 +607,30 @@ drop_disabled_vx <- function(data,
   data
 }
 
+extend_data_codebook <- function(data) {
+  
+  data %>% dplyr::bind_rows(tibble::tribble(
+    ~variable_name, ~variable_name_print,
+    # periods
+    "week",                  "Week",
+    "month",                 "Month",
+    "quarter",               "Quarter",
+    "year",                  "Year",
+    "decade",                "Decade",
+    "century",               "Century",
+    # turnout
+    "turnout",               "Turnout",
+    # world regions
+    "un_country_code",       "UN M49 country code",
+    "un_region_tier_1_code", "UN tier-1 region's M49 area code",
+    "un_region_tier_1_name", "UN tier-1 region's English name",
+    "un_region_tier_2_code", "UN tier-2 region's M49 area code",
+    "un_region_tier_2_name", "UN tier-2 region's English name",
+    "un_region_tier_3_code", "UN tier-3 region's M49 area code",
+    "un_region_tier_3_name", "UN tier-3 region's English name",
+  ))
+}
+
 flatten_array_as_is <- function(x) {
   
   unlist(x) %>% purrr::when(is.null(.) ~ .,
@@ -975,7 +1000,7 @@ tidy_rfrnds <- function(data,
         ## based on codebook
         dplyr::mutate(dplyr::across(.fns = ~ {
           
-          metadata <- c2d::data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
+          metadata <- data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
           
           if (nrow(metadata) != 1L) {
             cli::cli_abort("Missing codebook metadata! Please debug",
@@ -1009,7 +1034,7 @@ tidy_rfrnds <- function(data,
                                     .fns = as.factor)) %>%
         # add vars which aren't always included and coerce to proper types
         vctrs::tib_cast(to =
-                          c2d::data_codebook %$%
+                          data_codebook %$%
                           magrittr::set_names(x = ptype,
                                               value = variable_name) %>%
                           tibble::as_tibble(),
@@ -2476,7 +2501,7 @@ validate_rfrnds <- function(data,
   checkmate::assert_data_frame(data,
                                min.rows = 1L)
   checkmate::assert_subset(colnames(data),
-                           choices = c2d::data_codebook$variable_name)
+                           choices = data_codebook$variable_name)
   checkmate::assert_flag(check_applicability_constraint)
   checkmate::assert_flag(check_id_sudd_prefix)
   
@@ -2499,7 +2524,7 @@ validate_rfrnds <- function(data,
                            msg_failed = paste(status_msg, "failed"))
     
     v_names_violated <-
-      c2d::data_codebook %>%
+      data_codebook %>%
       dplyr::filter(variable_name %in% colnames(data)
                     & !is.na(applicability_constraint)) %$%
       purrr::map2_lgl(.x = magrittr::set_names(x = variable_name,
@@ -2710,6 +2735,10 @@ search_rfrnds <- function(term) {
 #' @format `r pkgsnip::return_label("data")`
 #' @aliases codebook
 #' @family metadata
+#' @export
+#'
+#' @examples
+#' c2d::data_codebook
 "data_codebook"
 
 #' Get the set of possible *value labels* of a referendum data variable
@@ -2722,7 +2751,6 @@ search_rfrnds <- function(term) {
 #'
 #' @return A character vector. Of length `0` if `v_name`'s values are not restricted to a predefined set or no value labels are defined in the
 #'   [codebook][data_codebook].
-#' @seealso [`data_codebook`][data_codebook]
 #' @family metadata
 #' @export
 #'
@@ -2736,8 +2764,8 @@ search_rfrnds <- function(term) {
 val_lbls <- function(v_name,
                      incl_affixes = TRUE) {
   v_name <- rlang::arg_match(arg = v_name,
-                             values = c2d::data_codebook$variable_name)
-  metadata <- c2d::data_codebook %>% dplyr::filter(variable_name == !!v_name)
+                             values = data_codebook$variable_name)
+  metadata <- data_codebook %>% dplyr::filter(variable_name == !!v_name)
   result <- metadata$value_labels %>% purrr::flatten_chr()
   
   if (incl_affixes) {
@@ -2753,7 +2781,7 @@ val_lbls <- function(v_name,
 #' Returns a vector of the possible predefined values a specific column in [rfrnds()] can hold. If the variable values aren't restricted to a predefined
 #' set, `NULL` is returned.
 #'
-#' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
+#' @param v_name Variable name present in [`data_codebook`]. A character scalar.
 #'
 #' @return
 #' If `v_name`'s values are restricted to a predefined set and
@@ -2761,7 +2789,6 @@ val_lbls <- function(v_name,
 #' - `v_name` is of type list, a vector of the same type as the elements of `v_name`.
 #'
 #' Else `NULL`.
-#' @seealso [`data_codebook`][data_codebook]
 #' @family metadata
 #' @export
 #'
@@ -2771,11 +2798,37 @@ val_lbls <- function(v_name,
 v_vals <- function(v_name) {
   
   v_name <- rlang::arg_match(arg = v_name,
-                             values = c2d::data_codebook$variable_name)
-  c2d::data_codebook %>%
+                             values = data_codebook$variable_name)
+  data_codebook %>%
     dplyr::filter(variable_name == !!v_name) %$%
     variable_values %>%
     unlist()
+}
+
+#' Convert referendum data variables to their printable version
+#'
+#' Converts referendum data variables to their ready-to-print version.
+#'
+#' @param v_names A character vector of C2D referendum data variable name(s). They must be either present in [`data_codebook`] or added by one of the [data
+#'   augmentation functions](https://rpkg.dev/c2d/reference/#section-augmentation).
+#'
+#' @return A character vector of the same length as `v_names`.
+#' @seealso [printify_col_names()]
+#' @family metadata
+#' @export
+#'
+#' @examples
+#' c2d::printify_v_names("type")
+printify_v_names <- function(v_names) {
+  
+  data_codebook_ <- extend_data_codebook(data_codebook)
+  checkmate::assert_subset(v_names,
+                           choices = data_codebook_$variable_name)
+  
+  tibble::tibble(variable_name = !!v_names) %>%
+    dplyr::left_join(data_codebook_,
+                     by = "variable_name") %$%
+    variable_name_print
 }
 
 #' Tag hierarchy
@@ -2783,7 +2836,7 @@ v_vals <- function(v_name) {
 #' A tibble reflecting the complete [referendum tags hierarchy](https://rpkg.dev/c2d/articles/codebook.html#tags).
 #'
 #' @format `r pkgsnip::return_label("data")`
-#' @seealso [`tags`][tags] [`hierarchize_tags`][hierarchize_tags] [`infer_tags`][infer_tags]
+#' @family tags
 #' @export
 #'
 #' @examples
@@ -3263,7 +3316,7 @@ n_rfrnds_per_period <- function(data,
   result
 }
 
-#' Prettify referendum data column names
+#' Printify referendum data column names
 #'
 #' Renames referendum data column names to be ready to print. Useful e.g. to create publication tables.
 #'
@@ -3276,34 +3329,12 @@ n_rfrnds_per_period <- function(data,
 #' @export
 #'
 #' @examples
-#' c2d::rfrnds(country_code = "IT") |> c2d::prettify_col_names()
-prettify_col_names <- function(data) {
+#' c2d::rfrnds(country_code = "IT") |> c2d::printify_col_names()
+printify_col_names <- function(data) {
   
   data %>% dplyr::rename_with(~ tibble::tibble(variable_name = .x) %>%
                                 tibble::rowid_to_column()%>%
-                                dplyr::left_join(y =
-                                                   c2d::data_codebook %>%
-                                                   # add `variable_name_print` for vx missing from codebook
-                                                   dplyr::bind_rows(tibble::tribble(
-                                                     ~variable_name, ~variable_name_print,
-                                                     # periods
-                                                     "week",                  "Week",
-                                                     "month",                 "Month",
-                                                     "quarter",               "Quarter",
-                                                     "year",                  "Year",
-                                                     "decade",                "Decade",
-                                                     "century",               "Century",
-                                                     # turnout
-                                                     "turnout",               "Turnout",
-                                                     # world regions
-                                                     "un_country_code",       "UN M49 country code",
-                                                     "un_region_tier_1_code", "UN tier-1 region's M49 area code",
-                                                     "un_region_tier_1_name", "UN tier-1 region's English name",
-                                                     "un_region_tier_2_code", "UN tier-2 region's M49 area code",
-                                                     "un_region_tier_2_name", "UN tier-2 region's English name",
-                                                     "un_region_tier_3_code", "UN tier-3 region's M49 area code",
-                                                     "un_region_tier_3_name", "UN tier-3 region's English name",
-                                                   )),
+                                dplyr::left_join(y = extend_data_codebook(data_codebook),
                                                  by = "variable_name") %>%
                                 dplyr::mutate(variable_name_print = dplyr::if_else(is.na(variable_name_print),
                                                                                    variable_name,

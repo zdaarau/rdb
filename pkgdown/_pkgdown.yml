@@ -43,6 +43,7 @@ reference:
   - data_codebook
   - val_lbls
   - v_vals
+  - printify_v_names
 - title: Tags
   desc: Functions to work with referendum [tags](https://rpkg.dev/c2d/articles/codebook.html#tags).
 - contents:
@@ -62,7 +63,7 @@ reference:
     a specific purpose.
 - contents:
   - n_rfrnds_per_period
-  - prettify_col_names
+  - printify_col_names
 - title: Visualization
 - contents: plot_tag_segmentation
 - title: C2D API Status

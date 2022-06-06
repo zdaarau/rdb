@@ -7,7 +7,7 @@
 v_vals(v_name)
 }
 \arguments{
-\item{v_name}{A variable name. Must be one of the column names of \code{\link{data_codebook}}.}
+\item{v_name}{Variable name present in \code{\link{data_codebook}}. A character scalar.}
 }
 \value{
 If \code{v_name}'s values are restricted to a predefined set and
@@ -27,10 +27,9 @@ v_vals("result")
 v_vals("id")
 }
 \seealso{
-\code{\link{data_codebook}}
-
 Other referendum metadata functions:
 \code{\link{data_codebook}},
+\code{\link{printify_v_names}()},
 \code{\link{val_lbls}()}
 }
 \concept{metadata}

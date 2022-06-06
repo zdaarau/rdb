@@ -48,6 +48,6 @@ c2d::rfrnds(country_code = "AT") |>
 }
 \seealso{
 Other referendum data transformation functions:
-\code{\link{prettify_col_names}()}
+\code{\link{printify_col_names}()}
 }
 \concept{transform}
