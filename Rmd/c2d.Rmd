@@ -3868,12 +3868,13 @@ Functions to transform the C2D referendum data into other shapes, each with a sp
 ```{r}
 #' Count number of referendums per period
 #'
-#' Counts the number of C2D referendums per desired period, optionally by additional columns specified via `group_by`.
+#' Counts the number of C2D referendums per desired period, optionally by additional columns specified via `by`.
 #'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
-#'   compute the [period column][add_period]), plus the one specified via `group_by` (if any).
+#'   compute the [period column][add_period]), plus the one(s) specified via `by` (if any).
 #' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
-#' @param group_by Optional `data` column(s) to [group by][dplyr::group_by] before counting number of referendums.
+#' @param fill_gaps Whether or not to add zero-value rows to the result for `period` gaps in `data`.
+#' @param by Optional `data` column(s) to group by before counting number of referendums.
 #' `r pkgsnip::param_label("tidy_select_support")`
 #'
 #' @inherit add_period details
@@ -3883,21 +3884,30 @@ Functions to transform the C2D referendum data into other shapes, each with a sp
 #'
 #' @examples
 #' c2d::rfrnds(country_code = "AT") |> c2d::n_rfrnds_per_period()
-#' c2d::rfrnds(country_code = "AT") |> c2d::n_rfrnds_per_period(group_by = level)
+#' c2d::rfrnds(country_code = "AT") |> c2d::n_rfrnds_per_period(by = level)
+#' 
+#' # without filling gaps
+#' c2d::rfrnds(country_code = "AT") |>
+#'   c2d::n_rfrnds_per_period(by = level,
+#'                            fill_gaps = FALSE)
 #'
+#' # per decade and by multiple columns
 #' c2d::rfrnds(country_code = "AT") |>
 #'   c2d::n_rfrnds_per_period(period = "decade",
-#'                            group_by = c(level, type))
+#'                            by = c(level, type))
 n_rfrnds_per_period <- function(data,
                                 period = c("week", "month", "quarter", "year", "decade", "century"),
-                                group_by = NULL) {
+                                fill_gaps = TRUE,
+                                by = NULL) {
   # arg checks
   checkmate::assert_data_frame(data)
   period <- rlang::arg_match(period)
-  defused_group_by <- rlang::enquo(group_by)
-  ix_group_by <- tidyselect::eval_select(expr = defused_group_by,
-                                         data = data)
-  names_group_by <- names(ix_group_by)
+  checkmate::assert_flag(fill_gaps)
+  # tidy selection
+  defused_by <- rlang::enquo(by)
+  ix_by <- tidyselect::eval_select(expr = defused_by,
+                                   data = data)
+  names_by <- names(ix_by)
   
   # add period col if necessary
   if (!(period %in% colnames(data))) {
@@ -3906,13 +3916,13 @@ n_rfrnds_per_period <- function(data,
   
   result <-
     data %>%
-    dplyr::group_by(!!!rlang::syms(names_group_by), !!as.symbol(period)) %>%
+    dplyr::group_by(!!!rlang::syms(names_by), !!as.symbol(period)) %>%
     dplyr::summarise(n = dplyr::n(),
                      .groups = "drop")
   
   # fill gaps
   # (only if input data (and thus result) is non-empty since otherwise we can't infer a sensible period range for year/decade/century)
-  if (nrow(result)) {
+  if (fill_gaps && nrow(result)) {
     
     # define sensible min/max period vals
     period_min <- period %>% purrr::when(. %in% c("year", "decade", "century") ~ pal::safe_min(data[[period]]),
@@ -3932,7 +3942,7 @@ n_rfrnds_per_period <- function(data,
       dplyr::mutate(!!as.symbol(period) := factor(x = !!as.symbol(period),
                                                   levels = period_seq,
                                                   ordered = TRUE)) %>%
-      tidyr::complete(!!!rlang::syms(names_group_by), !!as.symbol(period),
+      tidyr::complete(!!!rlang::syms(names_by), !!as.symbol(period),
                       fill = list(n = 0L)) %>%
       # convert period col back to int
       dplyr::mutate(!!as.symbol(period) := as.integer(as.character(!!as.symbol(period))))

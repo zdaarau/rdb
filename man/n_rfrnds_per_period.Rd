@@ -7,23 +7,26 @@
 n_rfrnds_per_period(
   data,
   period = c("week", "month", "quarter", "year", "decade", "century"),
-  group_by = NULL
+  fill_gaps = TRUE,
+  by = NULL
 )
 }
 \arguments{
 \item{data}{C2D referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column specified in \code{period} or the column \code{date} (to
-compute the \link[=add_period]{period column}), plus the one specified via \code{group_by} (if any).}
+compute the \link[=add_period]{period column}), plus the one(s) specified via \code{by} (if any).}
 
 \item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
 
-\item{group_by}{Optional \code{data} column(s) to \link[dplyr:group_by]{group by} before counting number of referendums.
+\item{fill_gaps}{Whether or not to add zero-value rows to the result for \code{period} gaps in \code{data}.}
+
+\item{by}{Optional \code{data} column(s) to group by before counting number of referendums.
 \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Counts the number of C2D referendums per desired period, optionally by additional columns specified via \code{group_by}.
+Counts the number of C2D referendums per desired period, optionally by additional columns specified via \code{by}.
 }
 \details{
 Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are not, as they are
@@ -31,11 +34,17 @@ Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"cent
 }
 \examples{
 c2d::rfrnds(country_code = "AT") |> c2d::n_rfrnds_per_period()
-c2d::rfrnds(country_code = "AT") |> c2d::n_rfrnds_per_period(group_by = level)
+c2d::rfrnds(country_code = "AT") |> c2d::n_rfrnds_per_period(by = level)
 
+# without filling gaps
+c2d::rfrnds(country_code = "AT") |>
+  c2d::n_rfrnds_per_period(by = level,
+                           fill_gaps = FALSE)
+
+# per decade and by multiple columns
 c2d::rfrnds(country_code = "AT") |>
   c2d::n_rfrnds_per_period(period = "decade",
-                           group_by = c(level, type))
+                           by = c(level, type))
 }
 \seealso{
 Other referendum data transformation functions:
