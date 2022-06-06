@@ -64,6 +64,9 @@
     <loc>https://rpkg.dev/c2d/reference/lower_non_abbrs.html</loc>
   </url>
   <url>
+    <loc>https://rpkg.dev/c2d/reference/n_rfrnds_per_period.html</loc>
+  </url>
+  <url>
     <loc>https://rpkg.dev/c2d/reference/plot_tag_segmentation.html</loc>
   </url>
   <url>
@@ -77,9 +80,6 @@
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/rfrnds.html</loc>
-  </url>
-  <url>
-    <loc>https://rpkg.dev/c2d/reference/rfrnds_per_period.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/search_rfrnds.html</loc>

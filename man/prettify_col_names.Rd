@@ -23,6 +23,6 @@ c2d::rfrnds(country_code = "IT") |> c2d::prettify_col_names()
 }
 \seealso{
 Other referendum data transformation functions:
-\code{\link{rfrnds_per_period}()}
+\code{\link{n_rfrnds_per_period}()}
 }
 \concept{transform}

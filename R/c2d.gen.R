@@ -3016,6 +3016,9 @@ infer_tags <- function(tags,
 #' Augments `data` with an additional column holding the specified period in which the referendum took place. The new column is named after `period` and its
 #' values are always of type integer.
 #'
+#' Note that the `period` types `"year"`, `"decade"` and `"century"` are *unique* timespans, while `"week"`, `"month"` and `"quarter"` are not, as they are
+#' *recurring* by nature (e.g. every year has a week 1).
+#'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
 #' @param period Type of period to add. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
 #'
@@ -3177,93 +3180,74 @@ add_world_regions <- function(data) {
 
 #' Count number of referendums per period
 #'
-#' Counts the number of C2D referendums per desired period, optionally by an additional column specified via `group_by`.
+#' Counts the number of C2D referendums per desired period, optionally by additional columns specified via `group_by`.
 #'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
 #'   compute the [period column][add_period]), plus the one specified via `group_by` (if any).
 #' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
-#' @param group_by Optional `data` column to [group by][dplyr::group_by] before counting number of referendums. A [symbol][is.symbol].
+#' @param group_by Optional `data` column(s) to [group by][dplyr::group_by] before counting number of referendums.
+#' `r pkgsnip::param_label("tidy_select_support")`
 #'
+#' @inherit add_period details
 #' @return `r pkgsnip::return_label("data")`
 #' @family transform
 #' @export
 #'
 #' @examples
-#' c2d::rfrnds(country_code = "AT") |> c2d::rfrnds_per_period()
-#' c2d::rfrnds(country_code = "AT") |> c2d::rfrnds_per_period(group_by = level)
-#' c2d::rfrnds(country_code = "AT") |> c2d::rfrnds_per_period(period = "decade", group_by = level)
-rfrnds_per_period <- function(data,
-                              period = c("week", "month", "quarter", "year", "decade", "century"),
-                              group_by = NULL) {
+#' c2d::rfrnds(country_code = "AT") |> c2d::n_rfrnds_per_period()
+#' c2d::rfrnds(country_code = "AT") |> c2d::n_rfrnds_per_period(group_by = level)
+#'
+#' c2d::rfrnds(country_code = "AT") |>
+#'   c2d::n_rfrnds_per_period(period = "decade",
+#'                            group_by = c(level, type))
+n_rfrnds_per_period <- function(data,
+                                period = c("week", "month", "quarter", "year", "decade", "century"),
+                                group_by = NULL) {
   # arg checks
   checkmate::assert_data_frame(data)
   period <- rlang::arg_match(period)
-  
-  ## ensure `group_by` is a symbol
   defused_group_by <- rlang::enquo(group_by)
-  
-  if (!(rlang::quo_is_null(defused_group_by) || rlang::quo_is_symbol(defused_group_by))) {
-    cli::cli_abort("{.arg group_by} must be {.code NULL} or a symbol, but is {.code {rlang::as_label(defused_group_by)}}.")
-  }
+  ix_group_by <- tidyselect::eval_select(expr = defused_group_by,
+                                         data = data)
+  names_group_by <- names(ix_group_by)
   
   # add period col if necessary
-  data %<>% add_period(period = period)
+  if (!(period %in% colnames(data))) {
+    data %<>% add_period(period = period)
+  }
   
-  # define sensible min/max period vals
-  period_min <- period %>% purrr::when(. %in% c("year", "decade", "century") ~ pal::safe_min(data[[period]]),
-                                       ~ 1L)
-  period_max <- period %>% purrr::when(. %in% c("year", "decade", "century") ~ pal::safe_max(data[[period]]),
-                                       . == "week" ~ 53L,
-                                       . == "month" ~ 12L,
-                                       . == "quarter" ~ 4L)
-  period_step <- period %>% purrr::when(. == "century" ~ 100L,
-                                        . == "decade" ~ 10L,
-                                        ~ 1L)
-  period_seq <- seq(from = period_min,
-                    to = period_max,
-                    by = period_step)
+  result <-
+    data %>%
+    dplyr::group_by(!!!rlang::syms(names_group_by), !!as.symbol(period)) %>%
+    dplyr::summarise(n = dplyr::n(),
+                     .groups = "drop")
   
-  if (rlang::quo_is_null(defused_group_by)) {
+  # fill gaps
+  # (only if input data (and thus result) is non-empty since otherwise we can't infer a sensible period range for year/decade/century)
+  if (nrow(result)) {
     
-    result <-
-      data %>%
-      dplyr::group_by(!!as.symbol(period)) %>%
-      dplyr::summarise(n = dplyr::n(),
-                       .groups = "drop")
-    # fill gaps
-    if (nrow(result)) {
-      
-      result %<>%
-        dplyr::full_join(tibble::tibble(!!as.symbol(period) := period_seq),
-                         by = period) %>%
-        tidyr::replace_na(replace = list(n = 0L)) %>%
-        dplyr::arrange(!!as.symbol(period))
-    }
-    
-  } else {
-    
-    result <-
-      data %>%
-      dplyr::group_by({{ group_by }}, !!as.symbol(period)) %>%
-      dplyr::summarise(n = dplyr::n(),
-                       .groups = "drop")
-    # fill gaps
-    if (nrow(result)) {
-      
-      result %<>%
-        ## add missing periods for 1st `group_by` value
-        dplyr::full_join(tibble::tibble(!!as.symbol(period) := period_seq,
-                                        {{ group_by }} := .[[1L]][1L]),
-                         by = c(period, rlang::as_name(defused_group_by))) %>%
-        tidyr::replace_na(replace = list(n = 0L)) %>%
-        ## add missing periods for all other `group_by` values
-        purrr::when(is.factor(.[[rlang::as_name(defused_group_by)]]) ~ dplyr::mutate(.data = .,
-                                                                                     {{ group_by }} := forcats::fct_drop({{ group_by }})),
-                    ~ .) %>%
-        tidyr::complete({{ group_by }}, !!as.symbol(period),
-                        fill = list(n = 0L)) %>%
-        dplyr::arrange({{ group_by }}, !!as.symbol(period))
-    }
+    # define sensible min/max period vals
+    period_min <- period %>% purrr::when(. %in% c("year", "decade", "century") ~ pal::safe_min(data[[period]]),
+                                         ~ 1L)
+    period_max <- period %>% purrr::when(. %in% c("year", "decade", "century") ~ pal::safe_max(data[[period]]),
+                                         . == "week" ~ 53L,
+                                         . == "month" ~ 12L,
+                                         . == "quarter" ~ 4L)
+    period_step <- period %>% purrr::when(. == "century" ~ 100L,
+                                          . == "decade" ~ 10L,
+                                          ~ 1L)
+    period_seq <- seq(from = period_min,
+                      to = period_max,
+                      by = period_step)
+    result %<>%
+      # convert period col to fct, so `tidyr::complete()` knows the missing vals
+      dplyr::mutate(!!as.symbol(period) := factor(x = !!as.symbol(period),
+                                                  levels = period_seq,
+                                                  ordered = TRUE)) %>%
+      tidyr::complete(!!!rlang::syms(names_group_by), !!as.symbol(period),
+                      fill = list(n = 0L)) %>%
+      # convert period col back to int
+      dplyr::mutate(!!as.symbol(period) := as.integer(as.character(!!as.symbol(period))))
   }
   
   result
