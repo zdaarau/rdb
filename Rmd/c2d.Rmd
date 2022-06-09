@@ -3937,8 +3937,7 @@ Functions to transform the C2D referendum data into other shapes, each with a sp
 #'   compute the [period column][add_period]), plus the one(s) specified via `by` (if any).
 #' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
 #' @param fill_gaps Whether or not to add zero-value rows to the result for `period` gaps in `data`.
-#' @param by Optional `data` column(s) to group by before counting number of referendums.
-#' `r pkgsnip::param_label("tidy_select_support")`
+#' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
 #'
 #' @inherit add_period details
 #' @return `r pkgsnip::return_label("data")`
