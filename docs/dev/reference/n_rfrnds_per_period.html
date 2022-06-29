@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9037</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9038</span>
       </span>
     </div>
 
@@ -127,12 +127,12 @@
     <p>Counts the number of C2D referendums per desired period, optionally by additional columns specified via <code>by</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>
-  <span class='va'>data</span>,
-  period <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"week"</span>, <span class='st'>"month"</span>, <span class='st'>"quarter"</span>, <span class='st'>"year"</span>, <span class='st'>"decade"</span>, <span class='st'>"century"</span><span class='op'>)</span>,
-  fill_gaps <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  by <span class='op'>=</span> <span class='cn'>NULL</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span></span>
+<span>  <span class='va'>data</span>,</span>
+<span>  period <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"week"</span>, <span class='st'>"month"</span>, <span class='st'>"quarter"</span>, <span class='st'>"year"</span>, <span class='st'>"decade"</span>, <span class='st'>"century"</span><span class='op'>)</span>,</span>
+<span>  fill_gaps <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span>  by <span class='op'>=</span> <span class='cn'>NULL</span></span>
+<span><span class='op'>)</span></span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -152,8 +152,7 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
     </tr>
     <tr>
       <th>by</th>
-      <td><p>Optional <code>data</code> column(s) to group by before counting number of referendums.
-<a href='https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html'>Tidy selections</a> are supported.</p></td>
+      <td><p>Optional <code>data</code> column(s) to group by before counting number of referendums. <a href='https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html'>Tidy selections</a> are supported.</p></td>
     </tr>
     </table>
 
@@ -170,7 +169,7 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <code><a href='printify_col_names.html'>printify_col_names</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> |&gt; <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span><span class='op'>)</span></span>
+    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 53 × 2</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     week     n</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
@@ -185,7 +184,7 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span>     9     0</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span>    10     0</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 43 more rows</span></span>
-<span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> |&gt; <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>by <span class='op'>=</span> <span class='va'>level</span><span class='op'>)</span></span>
+<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>by <span class='op'>=</span> <span class='va'>level</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 159 × 3</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    level  week     n</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
@@ -200,11 +199,11 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> local     9     0</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> local    10     0</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 149 more rows</span></span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># without filling gaps</span></span>
-<span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> |&gt;</span>
-<span class='r-in'>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>by <span class='op'>=</span> <span class='va'>level</span>,</span>
-<span class='r-in'>                           fill_gaps <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'><span></span></span>
+<span class='r-in'><span><span class='co'># without filling gaps</span></span></span>
+<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
+<span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>by <span class='op'>=</span> <span class='va'>level</span>,</span></span>
+<span class='r-in'><span>                           fill_gaps <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 8 × 3</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   level        week     n</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
@@ -216,11 +215,11 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>6</span> national       14     1</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>7</span> national       23     1</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>8</span> national       44     1</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># per decade and by multiple columns</span></span>
-<span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> |&gt;</span>
-<span class='r-in'>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>period <span class='op'>=</span> <span class='st'>"decade"</span>,</span>
-<span class='r-in'>                           by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>level</span>, <span class='va'>type</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span></span></span>
+<span class='r-in'><span><span class='co'># per decade and by multiple columns</span></span></span>
+<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
+<span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>period <span class='op'>=</span> <span class='st'>"decade"</span>,</span></span>
+<span class='r-in'><span>                           by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>level</span>, <span class='va'>type</span><span class='op'>)</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 264 × 4</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    level type                 decade     n</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>                 <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>

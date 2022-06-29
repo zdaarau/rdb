@@ -4,7 +4,10 @@
 \alias{plot_tag_segmentation}
 \title{Tag segmentation sunburst chart}
 \usage{
-plot_tag_segmentation(data, method = c("per_rfrnd", "per_tag_line", "naive"))
+plot_tag_segmentation(
+  data,
+  method = c("per_rfrnd", "per_tag_lineage", "naive")
+)
 }
 \arguments{
 \item{data}{C2D referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the columns \code{tags_tier_1}, \code{tags_tier_2} and
@@ -13,11 +16,11 @@ plot_tag_segmentation(data, method = c("per_rfrnd", "per_tag_line", "naive"))
 \item{method}{Applied method to count the number of tag occurences. One of
 \itemize{
 \item \strong{\code{"per_rfrnd"}}: All \emph{referendums} have the same weight. For a referendum with n different tags of the same tier, every tag is counted 1/n.
-\item \strong{\code{"per_tag_line"}}: All \emph{tag lines} have the same weight. For a referendum with n different tags of the same tier, every tag is fully counted, meaning
-that e.g. a referendum with three different tier-3 tags has a tripled impact on the result compared to a referendum that only has a single one.
+\item \strong{\code{"per_tag_lineage"}}: All \emph{tag lineages} have the same weight. For a referendum with n different tags of the same tier, every tag is fully counted,
+meaning that e.g. a referendum with three different tier-3 tags has a tripled impact on the result compared to a referendum that only has a single one.
 Noticeably faster than \code{"per_rfrnd"}.
 \item \strong{\code{"naive"}}: Naive procedure which doesn't properly reflect tag proportions on tier 2 and 3. Based on the (wrong) assumptions that a) all referendums
-have the same number of tag lines assigned and b) tags are not deduplicated per tier. By far the fastest method, though.
+have the same number of tag lineages assigned and b) tags are not deduplicated per tier. By far the fastest method, though.
 }}
 }
 \value{
@@ -27,7 +30,7 @@ A \link[plotly:plot_ly]{plotly object}.
 Creates a \href{https://plotly.com/r/sunburst-charts/}{Plotly sunburst chart} that visualizes the hierarchical segmentation of referendum tag occurences.
 }
 \details{
-A \emph{tag line} is the hierarchical compound of a \code{tag_tier_1} and optionally a grandchild \code{tag_tier_3} and/or a child \code{tag_tier_2}.
+A \emph{tag lineage} is the hierarchical compound of a \code{tag_tier_1} and optionally a grandchild \code{tag_tier_3} and/or a child \code{tag_tier_2}.
 
 Note that tags can be assigned on any tier to referendums (i.e. in one case, a \code{tag_tier_1} plus a child \code{tag_tier_2} is assigned, and in another case only a
 \code{tag_tier_1} without any further child tag).
@@ -38,10 +41,14 @@ Furthermore, it should be noted that not every \code{tag_tier_2} has potential c
 # count each referendum equally
 c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_rfrnd")
 
-# count each tag line equally
-c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_tag_line")
+# count each tag lineage equally
+c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_tag_lineage")
 
 # naive count (way faster, but with misleading proportions on tier 2 and 3)
 c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "naive")
+}
+\seealso{
+Other visualization functions:
+\code{\link{plot_tag_share_per_period}()}
 }
 \concept{visualize}

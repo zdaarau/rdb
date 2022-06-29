@@ -1,7 +1,7 @@
 Package: c2d
 Title: Download Data from the C2D Database, Which Covers Direct Democratic
     Votes Worldwide
-Version: 0.0.9037
+Version: 0.0.9038
 Authors@R: c(
     person("Salim", "Brüggemann", , "salim-b@pm.me", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5329-5987")),
@@ -24,6 +24,7 @@ Imports:
     cli (>= 3.1.1),
     clock (>= 0.6.0),
     dplyr (>= 1.0.4),
+    forcats (>= 0.5.1),
     fs (>= 1.5.2),
     glue (>= 1.4.2),
     httr (>= 1.4.2),
@@ -46,6 +47,7 @@ Imports:
 Suggests: 
     brio (>= 1.1.2),
     gh (>= 1.3.0),
+    gt (>= 0.6.0),
     knitr,
     pkgsnip (>= 0.0.9031),
     plotly (>= 4.10.0),

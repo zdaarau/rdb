@@ -65,7 +65,11 @@ reference:
   - n_rfrnds_per_period
   - printify_col_names
 - title: Visualization
-- contents: plot_tag_segmentation
+- contents:
+  - plot_tag_segmentation
+  - plot_tag_share_per_period
+- title: Tabulation
+- contents: tbl_n_rfrnds_per_period
 - title: C2D API Status
 - contents: is_online
 - title: sudd.ch scraping

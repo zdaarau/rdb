@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9037</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9038</span>
       </span>
     </div>
 
@@ -127,7 +127,7 @@
     <p>Lists <a href='https://sudd.ch/list.php?mode=alltopics'>all referendum titles from sudd.ch</a>, together with their search URLs and number of occurrences.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>list_sudd_titles</span><span class='op'>(</span><span class='op'>)</span></pre>
+    <pre class="usage"><span><span class='fu'>list_sudd_titles</span><span class='op'>(</span><span class='op'>)</span></span></pre>
 
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -145,7 +145,7 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <code><a href='sudd_rfrnds.html'>sudd_rfrnds</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_titles</span><span class='op'>(</span><span class='op'>)</span> |&gt; <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>n</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span></span>
+    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_titles</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>n</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 206 × 3</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    title_de                              filter_url                        n    </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                                 <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                             <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span></span>

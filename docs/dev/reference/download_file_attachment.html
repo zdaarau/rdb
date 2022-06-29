@@ -85,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">c2d</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9037</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.9038</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@
 by <code><a href='rfrnds.html'>rfrnds()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>download_file_attachment</span><span class='op'>(</span><span class='va'>s3_object_key</span>, path <span class='op'>=</span> <span class='st'>"."</span><span class='op'>)</span></pre>
+    <pre class="usage"><span><span class='fu'>download_file_attachment</span><span class='op'>(</span><span class='va'>s3_object_key</span>, path <span class='op'>=</span> <span class='st'>"."</span><span class='op'>)</span></span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,16 +158,16 @@ by <code><a href='rfrnds.html'>rfrnds()</a></code>.</p>
 <code><a href='validate_rfrnds.html'>validate_rfrnds</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
-<span class='r-in'><span class='co'># get all file object keys...</span></span>
-<span class='r-in'><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>files</span> |&gt;</span>
-<span class='r-in'>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map_if.html'>map_depth</a></span><span class='op'>(</span><span class='fl'>2L</span>, <span class='fu'>purrr</span><span class='fu'>::</span><span class='va'><a href='https://purrr.tidyverse.org/reference/pluck.html'>pluck</a></span>, <span class='st'>"s3_object_key"</span><span class='op'>)</span> |&gt;</span>
-<span class='r-in'>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/flatten.html'>flatten</a></span><span class='op'>(</span><span class='op'>)</span> |&gt;</span>
-<span class='r-in'>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/flatten.html'>flatten_chr</a></span><span class='op'>(</span><span class='op'>)</span> |&gt;</span>
-<span class='r-in'>  <span class='co'># ...select first three keys...</span></span>
-<span class='r-in'>  <span class='fu'>magrittr</span><span class='fu'>::</span><span class='fu'><a href='https://magrittr.tidyverse.org/reference/aliases.html'>extract</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span> |&gt;</span>
-<span class='r-in'>  <span class='co'># ...and download the corresponding files to the current working dir</span></span>
-<span class='r-in'>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>download_file_attachment</span><span class='op'>)</span><span class='op'>}</span></span>
+    <pre class="examples"><span class='r-in'><span><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span></span>
+<span class='r-in'><span><span class='co'># get all file object keys...</span></span></span>
+<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>files</span> <span class='op'>|&gt;</span></span></span>
+<span class='r-in'><span>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map_if.html'>map_depth</a></span><span class='op'>(</span><span class='fl'>2L</span>, <span class='fu'>purrr</span><span class='fu'>::</span><span class='va'><a href='https://purrr.tidyverse.org/reference/pluck.html'>pluck</a></span>, <span class='st'>"s3_object_key"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
+<span class='r-in'><span>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'>flatten</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
+<span class='r-in'><span>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'>flatten_chr</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
+<span class='r-in'><span>  <span class='co'># ...select first three keys...</span></span></span>
+<span class='r-in'><span>  <span class='fu'>magrittr</span><span class='fu'>::</span><span class='fu'><a href='https://magrittr.tidyverse.org/reference/aliases.html'>extract</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
+<span class='r-in'><span>  <span class='co'># ...and download the corresponding files to the current working dir</span></span></span>
+<span class='r-in'><span>  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>download_file_attachment</span><span class='op'>)</span><span class='op'>}</span></span></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

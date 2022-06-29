@@ -70,6 +70,9 @@
     <loc>https://rpkg.dev/c2d/reference/plot_tag_segmentation.html</loc>
   </url>
   <url>
+    <loc>https://rpkg.dev/c2d/reference/plot_tag_share_per_period.html</loc>
+  </url>
+  <url>
     <loc>https://rpkg.dev/c2d/reference/printify_col_names.html</loc>
   </url>
   <url>
@@ -92,6 +95,9 @@
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/tags.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/tbl_n_rfrnds_per_period.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/tidy_rfrnds.html</loc>

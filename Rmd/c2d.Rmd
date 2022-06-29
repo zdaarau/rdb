@@ -102,6 +102,7 @@ utils::globalVariables(names = c(".",
                                  "Code",
                                  "committee_name",
                                  "content-disposition",
+                                 "count",
                                  "country_code",
                                  "country_code_historical",
                                  "country_name",
@@ -4053,7 +4054,7 @@ NOTES:
 
 -   Unless either
 
-    a)  tag assignment is limited to one single *tag line* per referendum (and the existing data cleaned), or
+    a)  tag assignment is limited to one single *tag lineage* per referendum (and the existing data cleaned), or
     b)  tags are stored in a non-deduplicated way per tier (e.g. in a tibble as returned by `c2d::hierarchize_tags()`),
 
     we cannot cheaply create the visualization since we have to restore the full tag hierarchy for every row. For b), it'd probably still be slow for
@@ -4090,7 +4091,7 @@ TODO:
 #'
 #' Creates a [Plotly sunburst chart](https://plotly.com/r/sunburst-charts/) that visualizes the hierarchical segmentation of referendum tag occurences.
 #'
-#' A *tag line* is the hierarchical compound of a `tag_tier_1` and optionally a grandchild `tag_tier_3` and/or a child `tag_tier_2`.
+#' A *tag lineage* is the hierarchical compound of a `tag_tier_1` and optionally a grandchild `tag_tier_3` and/or a child `tag_tier_2`.
 #'
 #' Note that tags can be assigned on any tier to referendums (i.e. in one case, a `tag_tier_1` plus a child `tag_tier_2` is assigned, and in another case only a
 #' `tag_tier_1` without any further child tag).
@@ -4102,11 +4103,11 @@ TODO:
 #'   `tags_tier_3`.
 #' @param method Applied method to count the number of tag occurences. One of
 #'   - **`"per_rfrnd"`**: All *referendums* have the same weight. For a referendum with n different tags of the same tier, every tag is counted 1/n.
-#'   - **`"per_tag_line"`**: All *tag lines* have the same weight. For a referendum with n different tags of the same tier, every tag is fully counted, meaning
-#'     that e.g. a referendum with three different tier-3 tags has a tripled impact on the result compared to a referendum that only has a single one.
+#'   - **`"per_tag_lineage"`**: All *tag lineages* have the same weight. For a referendum with n different tags of the same tier, every tag is fully counted,
+#'     meaning that e.g. a referendum with three different tier-3 tags has a tripled impact on the result compared to a referendum that only has a single one.
 #'     Noticeably faster than `"per_rfrnd"`.
 #'   - **`"naive"`**: Naive procedure which doesn't properly reflect tag proportions on tier 2 and 3. Based on the (wrong) assumptions that a) all referendums
-#'     have the same number of tag lines assigned and b) tags are not deduplicated per tier. By far the fastest method, though.
+#'     have the same number of tag lineages assigned and b) tags are not deduplicated per tier. By far the fastest method, though.
 #'
 #' @return `r pkgsnip::param_label("plotly_obj")`
 #' @family visualize
@@ -4116,13 +4117,13 @@ TODO:
 #' # count each referendum equally
 #' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_rfrnd")
 #'
-#' # count each tag line equally
-#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_tag_line")
+#' # count each tag lineage equally
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_tag_lineage")
 #'
 #' # naive count (way faster, but with misleading proportions on tier 2 and 3)
 #' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "naive")
 plot_tag_segmentation <- function(data,
-                                  method = c("per_rfrnd", "per_tag_line", "naive")) {
+                                  method = c("per_rfrnd", "per_tag_lineage", "naive")) {
 
   method <- rlang::arg_match(method)
   pal::assert_pkg("plotly")
@@ -4164,7 +4165,7 @@ plot_tag_segmentation <- function(data,
                                                 unlist(..3)) %>%
                           dplyr::mutate(value = 1 / nrow(.)))
 
-      ### per tag line
+      ### per tag lineage
     } else {
 
       data_plot %<>%
@@ -4246,6 +4247,234 @@ plot_tag_segmentation <- function(data,
                                         "remainder",
                                         "total"),
                   insidetextorientation = "radial")
+}
+```
+
+### `plot_tag_share_per_period`
+
+```{r}
+#' Tag share per period stacked area chart
+#'
+#' Creates a [Plotly stacked area chart](https://plotly.com/r/filled-area-plots/#stacked-area-chart-with-cumulative-values) that visualizes the share of
+#' referendum tag occurences per period.
+#'
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `tags_tier_#` of the specified `tier`.
+#' @param tier Tier of the tags variable to plot. `1L`, `2L` or `3L`.
+#' @param period Type of period to count tags by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
+#' @param weight_by_n_rfrnds Whether or not to weight tag occurences by number of referendums. If `TRUE`, for a referendum with n different tags of the same
+#'   `tier`, every tag is counted 1/n.
+#'
+#' @return `r pkgsnip::param_label("plotly_obj")`
+#' @family visualize
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_share_per_period()
+plot_tag_share_per_period <- function(data,
+                                      tier = 1L,
+                                      period = c("week", "month", "quarter", "year", "decade", "century"),
+                                      weight_by_n_rfrnds = TRUE) {
+  checkmate::assert_int(tier,
+                        lower = 1L,
+                        upper = 3L)
+  period <- rlang::arg_match(period)
+  checkmate::assert_flag(weight_by_n_rfrnds)
+  pal::assert_pkg("plotly")
+  
+  # add period col if necessary
+  if (!(period %in% colnames(data))) {
+    data %<>% add_period(period = period)
+  }
+  
+  # ensure tags var is present
+  v_name_tags <- glue::glue("tags_tier_{tier}")
+  v_name_tag <- glue::glue("tag_tier_{tier}")
+  
+  if (!(v_name_tags %in% colnames(data))) {
+    cli::cli_abort("Required column {.var {v_name_tags}} is missing from {.arg data}.")
+  }
+  
+  # reduce to necessary cols
+  data %<>% dplyr::select(all_of(c(period, v_name_tags)))
+  
+  data %<>%
+    # add proper count v
+    dplyr::mutate(count = if (weight_by_n_rfrnds) 1 / purrr::map_int(!!as.symbol(v_name_tags), length) else 1) %>%
+    # transform data
+    tidyr::unnest_longer(col = all_of(v_name_tags),
+                         values_to = v_name_tag,
+                         ptype = character()) %>%
+    tidyr::pivot_wider(names_from = all_of(v_name_tag),
+                       values_from = count,
+                       values_fill = 0L,
+                       values_fn = sum) %>%
+    dplyr::group_by(!!as.symbol(period)) %>%
+    dplyr::summarise(dplyr::across(.fns = sum),
+                     .groups = "drop")
+  
+  # init empty plot
+  plot <- plotly::plot_ly(data = data,
+                          type = "scatter",
+                          mode = "none",
+                          stackgroup = "one",
+                          groupnorm = "percent")
+  
+  # add a trace for each tag
+  for (colname in
+       colnames(data) %>%
+       setdiff(period) %>%
+       pal::order_by(v_vals(v_name_tags))) {
+    
+    plot %<>% plotly::add_trace(x = rlang::inject(expr = ~!!as.symbol(period)),
+                                y = rlang::inject(expr = ~!!as.symbol(colname)),
+                                name = colname)
+  }
+  
+  grid_step <- switch(EXPR = period,
+                      week = 4L,
+                      month = 1L,
+                      50L)
+  
+  plot %>% plotly::layout(hovermode = "x",
+                          xaxis = list(dtick = switch(EXPR = period,
+                                                      week = 1L,
+                                                      month = 1L,
+                                                      year = 10L,
+                                                      decade = 10L,
+                                                      century = 100L),
+                                       showgrid = FALSE,
+                                       ticklabelstep = switch(EXPR = period,
+                                                              week = 4L,
+                                                              month = 1L,
+                                                              year = 5L,
+                                                              decade = 5L,
+                                                              century = 1L),
+                                       range = switch(EXPR = period,
+                                                      week = c(1L, 53L),
+                                                      month = c(1L, 12L),
+                                                      NULL),
+                                       ticks = "outside",
+                                       title = list(text = NULL)),
+                          yaxis = list(fixedrange = TRUE,
+                                       hoverformat = ".1f",
+                                       showgrid = FALSE,
+                                       ticksuffix = "\u202f% ",
+                                       title = list(text = NULL)),
+                          # draw custom grid
+                          shapes =
+                            seq(from =
+                                  data[[period]] %>%
+                                  pal::safe_min() %>%
+                                  magrittr::divide_by(grid_step) %>%
+                                  ceiling() %>%
+                                  magrittr::multiply_by(grid_step),
+                                to =
+                                  data[[period]] %>%
+                                  pal::safe_max() %>%
+                                  magrittr::divide_by(grid_step) %>%
+                                  floor() %>%
+                                  magrittr::multiply_by(grid_step),
+                                by = grid_step) %>%
+                            purrr::map(~ list(type = "line",
+                                              y0 = 0,
+                                              y1 = 1,
+                                              yref = "paper",
+                                              x0 = .x,
+                                              x1 = .x,
+                                              line = list(color = "#fff",
+                                                          width = 0.2))))
+}
+```
+
+## Tabulation
+
+### `tbl_n_rfrnds_per_period`
+
+```{r}
+#' Table number of referendums per period
+#'
+#' Creates a ready-to-print [gt][gt::gt] table with the number of referendums per period, optionally counted `by` one or more additional columns.
+#'
+#' @inheritParams n_rfrnds_per_period
+#' @param by Up to two additional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param descending Whether to sort the resulting table by `period` in descending or in ascending order.
+#' @param add_total_row Whether or not to add a summary row at the very end of the table containing column totals.
+#' @param add_total_col Whether or not to add a summary column at the very end of the table containing row totals.
+#'
+#' @return `r pkgsnip::return_lbl("gt_obj")`
+#' @family tabulate
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(period = "decade")
+#'
+#' # grouped by a single additional column
+#' c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(period = "decade",
+#'                                                                  by = level)
+#'
+#' # grouped by two addtional columns
+#' c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(period = "decade",
+#'                                                                  by = c(level, type))
+tbl_n_rfrnds_per_period <- function(data,
+                                    period = c("week", "month", "quarter", "year", "decade", "century"),
+                                    fill_gaps = TRUE,
+                                    by = NULL,
+                                    descending = TRUE,
+                                    add_total_row = TRUE,
+                                    add_total_col = TRUE) {
+  
+  period <- rlang::arg_match(period)
+  checkmate::assert_flag(descending)
+  checkmate::assert_flag(add_total_row)
+  checkmate::assert_flag(add_total_col)
+  pal::assert_pkg("gt")
+  
+  ix_by <- rlang::enquo(by) %>% tidyselect::eval_select(data = data)
+  n_ix <- length(ix_by)
+  has_by <- n_ix > 0L
+  
+  if (n_ix > 2L) {
+    cli::cli_abort("At most {.emph two} additional data columns can be specified in {.arg by}, but {.val {n_ix}} were provided.")
+  }
+  
+  by_names_print <- ifelse(has_by,
+                           ix_by %>%
+                             names() %>%
+                             printify_v_names() %>%
+                             pal::wrap_chr(wrap = "*") %>%
+                             paste0(collapse = "<br><br>"),
+                           "")
+  data %>%
+    n_rfrnds_per_period(period = period,
+                        by = {{ by }},
+                        fill_gaps = fill_gaps) %>%
+    dplyr::mutate(dplyr::across(.cols = where(is.factor),
+                                .fns = forcats::fct_explicit_na,
+                                na_level = "N/A")) %>%
+    dplyr::arrange(if (descending) dplyr::desc(!!as.symbol(period)) else !!as.symbol(period)) %>%
+    purrr::when(has_by ~ tidyr::pivot_wider(data = .,
+                                            names_from = {{ by }},
+                                            names_sort = TRUE,
+                                            values_from = n),
+                ~ .) %>%
+    purrr::when(add_total_col ~ dplyr::mutate(.data = .,
+                                              Total = rowSums(x = dplyr::across(.cols = -!!as.symbol(period)),
+                                                              na.rm = TRUE)),
+                ~ .) %>%
+    dplyr::mutate(dplyr::across(.fns = tidyr::replace_na,
+                                replace = 0L)) %>%
+    gt::gt(rowname_col = period) %>%
+    purrr::when(add_total_row ~ gt::summary_rows(data = .,
+                                                 fns = list(Total = ~ sum(., na.rm = TRUE)),
+                                                 formatter = gt::fmt_integer,
+                                                 sep_mark = ""),
+                ~ .) %>%
+    gt::tab_spanner_delim(delim = "_",
+                          split = "last") %>%
+    gt::tab_stubhead(label = gt::md(by_names_print)) %>%
+    gt::tab_style(style = gt::cell_text(align = "left",
+                                        v_align =  "middle"),
+                  locations = gt::cells_stubhead())
 }
 ```
 

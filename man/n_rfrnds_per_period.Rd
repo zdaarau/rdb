@@ -19,8 +19,7 @@ compute the \link[=add_period]{period column}), plus the one(s) specified via \c
 
 \item{fill_gaps}{Whether or not to add zero-value rows to the result for \code{period} gaps in \code{data}.}
 
-\item{by}{Optional \code{data} column(s) to group by before counting number of referendums.
-\link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
+\item{by}{Optional \code{data} column(s) to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.

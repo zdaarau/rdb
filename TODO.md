@@ -98,8 +98,8 @@
 -   We might wanna add even more database fields:
 
     -   `description`, holding a short prosa description of the referendum.
-    -   `tags_ad_hoc` (maybe we'll find a better name), holding a list of freely definable tags, so we can create ad-hoc collections of referendums that share
-        some common characteristic
+    -   `tags_ad_hoc` (maybe we'll find a better name, e.g. `keywords`?), holding a list of freely definable tags, so we can create ad-hoc collections of
+        referendums that share some common characteristic
 
 -   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
     one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
