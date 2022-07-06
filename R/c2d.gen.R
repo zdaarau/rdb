@@ -3688,11 +3688,10 @@ tbl_n_rfrnds_per_period <- function(data,
   }
   
   by_names_print <- ifelse(has_by,
-                           ix_by %>%
-                             names() %>%
+                           names(ix_by) %>%
                              printify_v_names() %>%
                              pal::wrap_chr(wrap = "*") %>%
-                             paste0(collapse = "<br><br>"),
+                             paste0(collapse = "\n\n"),
                            "")
   data %>%
     n_rfrnds_per_period(period = period,
