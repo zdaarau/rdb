@@ -3722,7 +3722,8 @@ tbl_n_rfrnds_per_period <- function(data,
                           split = "last") %>%
     gt::tab_stubhead(label = gt::md(by_names_print)) %>%
     gt::tab_style(style = gt::cell_text(align = "left",
-                                        v_align =  "middle"),
+                                        v_align =  "middle",
+                                        whitespace = "break-spaces"),
                   locations = gt::cells_stubhead())
 }
 
