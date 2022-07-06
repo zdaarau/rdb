@@ -4442,10 +4442,10 @@ tbl_n_rfrnds_per_period <- function(data,
   }
   
   by_names_print <- ifelse(has_by,
-                           names(ix_by) %>%
-                             printify_v_names() %>%
-                             pal::wrap_chr(wrap = "*") %>%
-                             paste0(collapse = "\n\n"),
+      names(ix_by) %>%
+      printify_v_names() %>%
+      pal::wrap_chr(wrap = "*") %>%
+                             paste0(collapse = "<br><br>"),
                            "")
   data %>%
     n_rfrnds_per_period(period = period,
@@ -4476,8 +4476,7 @@ tbl_n_rfrnds_per_period <- function(data,
                           split = "last") %>%
     gt::tab_stubhead(label = gt::md(by_names_print)) %>%
     gt::tab_style(style = gt::cell_text(align = "left",
-                                        v_align =  "middle",
-                                        whitespace = "break-spaces"),
+                                        v_align = "middle"),
                   locations = gt::cells_stubhead())
 }
 ```
