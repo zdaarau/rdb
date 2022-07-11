@@ -192,21 +192,15 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span><span class='co'># list all referendums by modification date</span></span></span>
 <span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_rfrnds</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"by_mod_date"</span><span class='op'>)</span></span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>... done <span style='color: #B2B2B2;'>[860ms]</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Parsing and tidying raw HTML data...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Parsing and tidying raw HTML data... done <span style='color: #B2B2B2;'>[35.6s]</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 3,067 × 12</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    id_sudd  country_code country_name  country_code_historical is_past_jurisdic…</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> it022022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> it032022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> it042022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> it052022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> it062022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> li012022 LI           Liechtenstein <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> li012022 LI           Liechtenstein <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> it022022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> it032022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> it042022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> it052022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> it062022 IT           Italy         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> in011951 IN           India         <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> uz012002 UZ           Uzbekistan    <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> uz022002 UZ           Uzbekistan    <span style='color: #BB0000;'>NA</span>                      FALSE            </span>
@@ -218,12 +212,6 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='r-in'><span><span class='co'># list all referendums whose title matches "AHV"</span></span></span>
 <span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_rfrnds</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"filter"</span>,</span></span>
 <span class='r-in'><span>                      filter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>title_de <span class='op'>=</span> <span class='st'>"AHV"</span><span class='op'>)</span><span class='op'>)</span></span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>... done <span style='color: #B2B2B2;'>[345ms]</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Parsing and tidying raw HTML data...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Parsing and tidying raw HTML data... done <span style='color: #B2B2B2;'>[175ms]</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 15 × 11</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    id_sudd  country_code country_name country_code_historical is_past_jurisdict…</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>             </span>
@@ -249,22 +237,6 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_rfrnds</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"filter"</span>,</span></span>
 <span class='r-in'><span>                      filter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>year_min <span class='op'>=</span> <span class='fl'>2020</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
 <span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_rfrnds.html'>sudd_rfrnds</a></span><span class='op'>(</span><span class='op'>)</span></span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>... done <span style='color: #B2B2B2;'>[373ms]</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Parsing and tidying raw HTML data...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Parsing and tidying raw HTML data... done <span style='color: #B2B2B2;'>[1.2s]</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■                           </span>  12% | E…</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■                      </span>  29% | E…</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■                    </span>  37% | E…</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■                 </span>  46% | E…</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■               </span>  54% | E…</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■            </span>  62% | E…</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■■          </span>  71% | E…</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■■■■■       </span>  80% | E…</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■■■■■■■     </span>  87% | E…</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> Scraping referendum data from sudd.ch <span style='color: #00BB00;'>■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  </span>  96% | E…</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 119 × 37</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    id_sudd  country_code country_code_historical country_name   territory_name_…</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           </span>
@@ -290,26 +262,26 @@ licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>Crea
 <span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>list_sudd_rfrnds</span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"random"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
 <span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='sudd_rfrnds.html'>sudd_rfrnds</a></span><span class='op'>(</span><span class='op'>)</span></span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>... done <span style='color: #B2B2B2;'>[286ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Fetching raw HTML data from <span style='color: #0000BB; font-style: italic;'>&lt;sudd.ch&gt;</span>... done <span style='color: #B2B2B2;'>[390ms]</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> Parsing and tidying raw HTML data...</span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Parsing and tidying raw HTML data... done <span style='color: #B2B2B2;'>[70ms]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> Parsing and tidying raw HTML data... done <span style='color: #B2B2B2;'>[112ms]</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 5 × 33</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   id_sudd  country_code country_code_historical country_name territory_name_de  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> it011866 IT           <span style='color: #BB0000;'>NA</span>                      Italy        Venedig / Mantua (…</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span> ch041920 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland  Schweiz            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span> nu011974 NU           <span style='color: #BB0000;'>NA</span>                      Niue         Niue               </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span> ch071975 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland  Schweiz            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span> az032016 AZ           <span style='color: #BB0000;'>NA</span>                      Azerbaijan   Aserbaidschan      </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 28 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 5 × 36</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   id_sudd  country_code country_code_historical country_name    territory_name_…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> it021848 IT           <span style='color: #BB0000;'>NA</span>                      Italy           Lombardei (Ital…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span> fm131975 FM           <span style='color: #BB0000;'>NA</span>                      Micronesia, Fe… Yap (Mikronesis…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span> ch031985 CH           <span style='color: #BB0000;'>NA</span>                      Switzerland     Schweiz         </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span> by061996 BY           <span style='color: #BB0000;'>NA</span>                      Belarus         Weissrussland (…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span> ge012001 GE           <span style='color: #BB0000;'>NA</span>                      Georgia         Südossetien (Ge…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 31 more variables: territory_type_de &lt;chr&gt;, date &lt;date&gt;, year &lt;int&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   month &lt;int&gt;, day &lt;int&gt;, title_de &lt;chr&gt;, question_type_de &lt;chr&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   types &lt;list&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;, votes_total &lt;int&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   electorate_abroad &lt;int&gt;, polling_cards &lt;int&gt;, votes_total &lt;int&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_empty &lt;int&gt;, votes_void &lt;int&gt;, votes_invalid &lt;int&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   subterritories &lt;dbl&gt;, subterritories_yes &lt;dbl&gt;, subterritories_no &lt;dbl&gt;, …</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;, …</span></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

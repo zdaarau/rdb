@@ -3584,9 +3584,14 @@ plot_tag_share_per_period <- function(data,
   
   grid_step <- switch(EXPR = period,
                       week = 4L,
-                      month = 1L,
-                      quarter = 1L,
-                      50L)
+                      year = 50L,
+                      decade = 50L,
+                      century = 100L,
+                      1L)
+  
+  grid_x <- seq(from = ceiling(pal::safe_min(data[[period]])[1L] / grid_step) * grid_step,
+                to = floor(pal::safe_max(data[[period]])[1L] / grid_step) * grid_step,
+                by = grid_step)
   
   plot %>% plotly::layout(hovermode = "x",
                           xaxis = list(dtick = switch(EXPR = period,
@@ -3618,19 +3623,7 @@ plot_tag_share_per_period <- function(data,
                                        title = list(text = NULL)),
                           # draw custom grid
                           shapes =
-                            seq(from =
-                                  data[[period]] %>%
-                                  pal::safe_min() %>%
-                                  magrittr::divide_by(grid_step) %>%
-                                  ceiling() %>%
-                                  magrittr::multiply_by(grid_step),
-                                to =
-                                  data[[period]] %>%
-                                  pal::safe_max() %>%
-                                  magrittr::divide_by(grid_step) %>%
-                                  floor() %>%
-                                  magrittr::multiply_by(grid_step),
-                                by = grid_step) %>%
+                            grid_x %>%
                             purrr::map(~ list(type = "line",
                                               y0 = 0,
                                               y1 = 1,
