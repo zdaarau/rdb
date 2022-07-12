@@ -66,6 +66,7 @@ reference:
   - printify_col_names
 - title: Visualization
 - contents:
+  - plot_rfrnd_share_per_period
   - plot_tag_segmentation
   - plot_tag_share_per_period
 - title: Tabulation

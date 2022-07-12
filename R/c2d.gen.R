@@ -1896,6 +1896,70 @@ restore_tags <- function(tags_tier_1,
     })
 }
 
+plot_share_per_period <- function(data_freq,
+                                  x,
+                                  period) {
+  
+  grid_step <- switch(EXPR = period,
+                      week = 4L,
+                      year = 50L,
+                      decade = 50L,
+                      century = 100L,
+                      1L)
+  
+  grid_x <- seq(from = ceiling(pal::safe_min(data_freq[[period]])[1L] / grid_step) * grid_step,
+                to = floor(pal::safe_max(data_freq[[period]])[1L] / grid_step) * grid_step,
+                by = grid_step)
+  
+  plotly::plot_ly(data = data_freq,
+                  type = "scatter",
+                  mode = "none",
+                  stackgroup = "one",
+                  groupnorm = "percent",
+                  x = ~eval(as.symbol(period)),
+                  y = ~n,
+                  name = ~eval(as.symbol(x))) %>%
+    plotly::layout(hovermode = "x",
+                   xaxis = list(dtick = switch(EXPR = period,
+                                               week = 1L,
+                                               month = 1L,
+                                               quarter = 1L,
+                                               year = 10L,
+                                               decade = 10L,
+                                               century = 100L),
+                                showgrid = FALSE,
+                                ticklabelstep = switch(EXPR = period,
+                                                       week = 4L,
+                                                       month = 1L,
+                                                       quarter = 1L,
+                                                       year = 5L,
+                                                       decade = 5L,
+                                                       century = 1L),
+                                range = switch(EXPR = period,
+                                               week = c(1L, 53L),
+                                               month = c(1L, 12L),
+                                               quarter = c(1, 4L),
+                                               NULL),
+                                ticks = "outside",
+                                title = list(text = NULL)),
+                   yaxis = list(fixedrange = TRUE,
+                                hoverformat = ".1f",
+                                showgrid = FALSE,
+                                ticksuffix = "\u202f% ",
+                                title = list(text = NULL)),
+                   # draw custom grid
+                   shapes =
+                     grid_x %>%
+                     purrr::map(~ list(type = "line",
+                                       y0 = 0,
+                                       y1 = 1,
+                                       yref = "paper",
+                                       x0 = .x,
+                                       x1 = .x,
+                                       line = list(color = "#fff",
+                                                   width = 0.2))))
+}
+
 this_pkg <- utils::packageName()
 
 rfrnd_fields <- list()
@@ -3343,6 +3407,55 @@ printify_col_names <- function(data) {
                                 variable_name_print)
 }
 
+#' Referendum share per period stacked area chart
+#'
+#' Creates a [Plotly stacked area chart](https://plotly.com/r/filled-area-plots/#stacked-area-chart-with-cumulative-values) that visualizes the share of
+#' referendums per period, grouped by another column.
+#'
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
+#'   compute the [period column][add_period]), plus the column specified in `by`.
+#' @param by `data` column to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
+#'
+#' @return `r pkgsnip::param_label("plotly_obj")`
+#' @family visualize
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_rfrnd_share_per_period(by = "level")
+plot_rfrnd_share_per_period <- function(data,
+                                        by,
+                                        period = c("week", "month", "quarter", "year", "decade", "century")) {
+  period <- rlang::arg_match(period)
+  pal::assert_pkg("plotly")
+  
+  # add period col if necessary
+  if (!(period %in% colnames(data))) {
+    data %<>% add_period(period = period)
+  }
+  
+  # tidy selection
+  defused_by <- rlang::enquo(by)
+  i_by <- tidyselect::eval_select(expr = defused_by,
+                                  data = data)
+  n_by <- length(i_by)
+  name_by <- names(i_by)
+  
+  # ensure `x` is < 2
+  if (n_by > 1L) {
+    cli::cli_abort("Only {.emph one} column can be specified in {.arg by}, but {.val {n_by}} were provided.")
+  }
+  
+  data %>%
+    # calculate freqs
+    dplyr::group_by(!!as.symbol(name_by), !!as.symbol(period)) %>%
+    dplyr::summarise(n = dplyr::n(),
+                     .groups = "drop") %>%
+    # plot
+    plot_share_per_period(x = name_by,
+                          period = period)
+}
+
 #' Tag segmentation sunburst chart
 #'
 #' Creates a [Plotly sunburst chart](https://plotly.com/r/sunburst-charts/) that visualizes the hierarchical segmentation of referendum tag occurences.
@@ -3538,7 +3651,7 @@ plot_tag_share_per_period <- function(data,
     data %<>% add_period(period = period)
   }
   
-  # ensure tags var is present
+  # ensure tags v is present
   v_name_tags <- glue::glue("tags_tier_{tier}")
   v_name_tag <- glue::glue("tag_tier_{tier}")
   
@@ -3546,92 +3659,22 @@ plot_tag_share_per_period <- function(data,
     cli::cli_abort("Required column {.var {v_name_tags}} is missing from {.arg data}.")
   }
   
-  # reduce to necessary cols
-  data %<>% dplyr::select(all_of(c(period, v_name_tags)))
-  
-  data %<>%
+  data %>%
     # add proper count v
     dplyr::mutate(count = if (weight_by_n_rfrnds) 1 / purrr::map_int(!!as.symbol(v_name_tags), length) else 1) %>%
     # transform data
     tidyr::unnest_longer(col = all_of(v_name_tags),
                          values_to = v_name_tag,
                          ptype = character()) %>%
-    tidyr::pivot_wider(names_from = all_of(v_name_tag),
-                       values_from = count,
-                       values_fill = 0L,
-                       values_fn = sum) %>%
-    dplyr::group_by(!!as.symbol(period)) %>%
-    dplyr::summarise(dplyr::across(.fns = sum),
-                     .groups = "drop")
-  
-  # init empty plot
-  plot <- plotly::plot_ly(data = data,
-                          type = "scatter",
-                          mode = "none",
-                          stackgroup = "one",
-                          groupnorm = "percent")
-  
-  # add a trace for each tag
-  for (colname in
-       colnames(data) %>%
-       setdiff(period) %>%
-       pal::order_by(v_vals(v_name_tags))) {
-    
-    plot %<>% plotly::add_trace(x = rlang::inject(expr = ~!!as.symbol(period)),
-                                y = rlang::inject(expr = ~!!as.symbol(colname)),
-                                name = colname)
-  }
-  
-  grid_step <- switch(EXPR = period,
-                      week = 4L,
-                      year = 50L,
-                      decade = 50L,
-                      century = 100L,
-                      1L)
-  
-  grid_x <- seq(from = ceiling(pal::safe_min(data[[period]])[1L] / grid_step) * grid_step,
-                to = floor(pal::safe_max(data[[period]])[1L] / grid_step) * grid_step,
-                by = grid_step)
-  
-  plot %>% plotly::layout(hovermode = "x",
-                          xaxis = list(dtick = switch(EXPR = period,
-                                                      week = 1L,
-                                                      month = 1L,
-                                                      quarter = 1L,
-                                                      year = 10L,
-                                                      decade = 10L,
-                                                      century = 100L),
-                                       showgrid = FALSE,
-                                       ticklabelstep = switch(EXPR = period,
-                                                              week = 4L,
-                                                              month = 1L,
-                                                              quarter = 1L,
-                                                              year = 5L,
-                                                              decade = 5L,
-                                                              century = 1L),
-                                       range = switch(EXPR = period,
-                                                      week = c(1L, 53L),
-                                                      month = c(1L, 12L),
-                                                      quarter = c(1, 4L),
-                                                      NULL),
-                                       ticks = "outside",
-                                       title = list(text = NULL)),
-                          yaxis = list(fixedrange = TRUE,
-                                       hoverformat = ".1f",
-                                       showgrid = FALSE,
-                                       ticksuffix = "\u202f% ",
-                                       title = list(text = NULL)),
-                          # draw custom grid
-                          shapes =
-                            grid_x %>%
-                            purrr::map(~ list(type = "line",
-                                              y0 = 0,
-                                              y1 = 1,
-                                              yref = "paper",
-                                              x0 = .x,
-                                              x1 = .x,
-                                              line = list(color = "#fff",
-                                                          width = 0.2))))
+    # calculate freqs
+    dplyr::group_by(!!as.symbol(period), !!as.symbol(v_name_tag)) %>%
+    dplyr::summarise(n = sum(count),
+                     .groups = "drop") %>%
+    dplyr::mutate(!!as.symbol(v_name_tag) := factor(x = !!as.symbol(v_name_tag),
+                                                    levels = v_vals(v_name_tags))) %>%
+    # plot
+    plot_share_per_period(x = v_name_tag,
+                          period = period)
 }
 
 #' Table number of referendums per period
