@@ -18,68 +18,53 @@ A tibble containing the complete metadata of all \code{\link[=rfrnds]{rfrnds()}}
 \details{
 \subsection{Referendum-level variables}{
 
-For the following variables, the \href{https://en.wikipedia.org/wiki/Unit_of_observation}{unit of observation} is the
-individual referendum.
+For the following variables, the \href{https://en.wikipedia.org/wiki/Unit_of_observation}{unit of observation} is the individual referendum.
 \subsection{\code{id}}{
 
-A 24-character value that uniquely identifies the referendum and
-corresponds to the \href{https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid}{MongoDB \code{ObjectId}}
-in the C2D database.
+A 24-character value that uniquely identifies the referendum and corresponds to the \href{https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid}{MongoDB \code{ObjectId}} in the C2D database.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{id_official}}{
 
-The referendum’s official identifier assigned by the authorities; this
-is only guaranteed to be unique per respective jurisdiction.
+The referendum's official identifier assigned by the authorities; this is only guaranteed to be unique per respective jurisdiction.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{id_sudd}}{
 
-The referendum’s identifier assigned by \href{https://sudd.ch/}{sudd.ch};
-multiple referendum’s might share the same identifier.
+The referendum's identifier assigned by \href{https://sudd.ch/}{sudd.ch}; multiple referendum's might share the same identifier.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{country_code}}{
 
-The two-letter \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} code
-identifying the country in which the referendum took place; only set if
-\code{is_past_jurisdiction = FALSE}.
+The two-letter \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} code identifying the country in which the referendum took place; only set if \code{is_past_jurisdiction = FALSE}.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{country_code_historical}}{
 
-The four-letter \href{https://en.wikipedia.org/wiki/ISO_3166-3}{ISO 3166-3}
-code identifying the \emph{historical} (i.e. ceased to exist) country in
-which the referendum took place; only set if
-\code{is_past_jurisdiction = TRUE}.
+The four-letter \href{https://en.wikipedia.org/wiki/ISO_3166-3}{ISO 3166-3} code identifying the \emph{historical} (i.e. ceased to exist) country in which the referendum took place; only set if \code{is_past_jurisdiction = TRUE}.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -89,16 +74,14 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The English name of the country in which the referendum took place.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{subnational_entity_name}}{
 
-The English name of the \href{https://en.wikipedia.org/wiki/Administrative_division}{subnational political entity} in which
-the referendum took place.
+The English name of the \href{https://en.wikipedia.org/wiki/Administrative_division}{subnational political entity} in which the referendum took place.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
@@ -109,8 +92,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -128,8 +110,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -148,17 +129,14 @@ The political level at which the referendum took place.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ordinal (ascending)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ordinal (ascending)} level.
 }
 
 }
 
 \subsection{\code{is_past_jurisdiction}}{
 
-Whether or not the country where the referendum took place ceased to
-exist and thus has a \code{country_code_historical} instead of a
-\code{country_code} assigned.
+Whether or not the country where the referendum took place ceased to exist and thus has a \code{country_code_historical} instead of a \code{country_code} assigned.
 \subsection{Possible values}{\tabular{l}{
    Value \cr
    \code{TRUE} \cr
@@ -169,8 +147,7 @@ exist and thus has a \code{country_code_historical} instead of a
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }
@@ -180,41 +157,37 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The date on which the referendum took place.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{interval} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
 }
 
 }
 
 \subsection{\code{title_de}}{
 
-The referendum’s German title.
+The referendum's German title.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{title_fr}}{
 
-The referendum’s French title.
+The referendum's French title.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{title_en}}{
 
-The referendum’s English title.
+The referendum's English title.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -224,20 +197,17 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The question exactly as it was asked in the referendum.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{question_en}}{
 
-An English translation of \code{question} if it wasn’t officially asked in
-English, otherwise the same as \code{question}.
+An English translation of \code{question} if it wasn't officially asked in English, otherwise the same as \code{question}.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -247,8 +217,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The name of the committee that initiated the referendum.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -266,16 +235,14 @@ The result of the referendum.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }
 
 \subsection{\code{subterritories_yes}}{
 
-The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one
-level below \code{level} that approved the referendum.
+The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one level below \code{level} that approved the referendum.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
@@ -286,16 +253,14 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{subterritories_no}}{
 
-The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one
-level below \code{level} that rejected the referendum.
+The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one level below \code{level} that rejected the referendum.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
@@ -306,8 +271,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
@@ -317,20 +281,17 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The total number of people entitled to vote in the referendum.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{electorate_abroad}}{
 
-The number of people entitled to vote in the referendum \emph{who are living
-abroad}; by definition a subset of \code{electorate_total}.
+The number of people entitled to vote in the referendum \emph{who are living abroad}; by definition a subset of \code{electorate_total}.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
@@ -340,8 +301,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The number of votes approving the referendum proposal.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
@@ -351,20 +311,17 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The number of votes rejecting the referendum proposal.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{votes_empty}}{
 
-The number of votes that did not specify any preference on the
-referendum proposal.
+The number of votes that did not specify any preference on the referendum proposal.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
@@ -374,18 +331,14 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The number of votes that were invalid.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{votes_per_subterritory}}{
 
-The number of \code{votes_yes}, \code{votes_no}, \code{votes_empty} and \code{votes_invalid}
-per \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative division} one
-level below \code{level}; currently only filled for Swiss referendums on the
-national level.
+The number of \code{votes_yes}, \code{votes_no}, \code{votes_empty} and \code{votes_invalid} per \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative division} one level below \code{level}; currently only filled for Swiss referendums on the national level.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
@@ -396,103 +349,74 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{lower_house_yes}}{
 
-The number of parliamentarians that approved the referendum proposal in
-the corresponding parliamentary voting; in \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures}, this number
-includes only members of the \emph{lower house}, in \href{https://en.wikipedia.org/wiki/Unicameralism}{unicameral legislatures} all
-parliamentarians; currently only filled for Swiss referendums on the
-national level (\href{https://en.wikipedia.org/wiki/National_Council_(Switzerland)}{National Council}).
+The number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; in \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures}, this number includes only members of the \emph{lower house}, in \href{https://en.wikipedia.org/wiki/Unicameralism}{unicameral legislatures} all parliamentarians; currently only filled for Swiss referendums on the national level (\href{https://en.wikipedia.org/wiki/National_Council_(Switzerland)}{National Council}).
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{lower_house_no}}{
 
-The number of parliamentarians that rejected the referendum proposal in
-the corresponding parliamentary voting; in \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures}, this number
-includes only members of the \emph{lower house}, in \href{https://en.wikipedia.org/wiki/Unicameralism}{unicameral legislatures} all
-parliamentarians; currently only filled for Swiss referendums on the
-national level (\href{https://en.wikipedia.org/wiki/National_Council_(Switzerland)}{National Council}).
+The number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; in \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures}, this number includes only members of the \emph{lower house}, in \href{https://en.wikipedia.org/wiki/Unicameralism}{unicameral legislatures} all parliamentarians; currently only filled for Swiss referendums on the national level (\href{https://en.wikipedia.org/wiki/National_Council_(Switzerland)}{National Council}).
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{lower_house_abstentions}}{
 
-The number of parliamentarians that abstained from the corresponding
-parliamentary voting on the referendum proposal; in \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures}, this number
-includes only members of the \emph{lower house}, in \href{https://en.wikipedia.org/wiki/Unicameralism}{unicameral legislatures} all
-parliamentarians; currently only filled for Swiss referendums on the
-national level (\href{https://en.wikipedia.org/wiki/National_Council_(Switzerland)}{National Council}).
+The number of parliamentarians that abstained from the corresponding parliamentary voting on the referendum proposal; in \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures}, this number includes only members of the \emph{lower house}, in \href{https://en.wikipedia.org/wiki/Unicameralism}{unicameral legislatures} all parliamentarians; currently only filled for Swiss referendums on the national level (\href{https://en.wikipedia.org/wiki/National_Council_(Switzerland)}{National Council}).
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{upper_house_yes}}{
 
-The number of parliamentarians that approved the referendum proposal in
-the corresponding parliamentary voting; applies only to \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures} and includes
-only members of the \emph{upper house}; currently only filled for Swiss
-referendums on the national level (\href{https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)}{Council of States}).
+The number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; applies only to \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures} and includes only members of the \emph{upper house}; currently only filled for Swiss referendums on the national level (\href{https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)}{Council of States}).
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{upper_house_no}}{
 
-The number of parliamentarians that rejected the referendum proposal in
-the corresponding parliamentary voting; applies only to \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures} and includes
-only members of the \emph{upper house}; currently only filled for Swiss
-referendums on the national level (\href{https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)}{Council of States}).
+The number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; applies only to \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures} and includes only members of the \emph{upper house}; currently only filled for Swiss referendums on the national level (\href{https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)}{Council of States}).
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{upper_house_abstentions}}{
 
-The number of parliamentarians that abstained from the corresponding
-parliamentary voting on the referendum proposal; applies only to
-\href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures} and
-includes only members of the \href{https://en.wikipedia.org/wiki/Upper_house}{upper house}; currently only filled
-for Swiss referendums on the national level (\href{https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)}{Council of States}).
+The number of parliamentarians that abstained from the corresponding parliamentary voting on the referendum proposal; applies only to \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures} and includes only members of the \href{https://en.wikipedia.org/wiki/Upper_house}{upper house}; currently only filled for Swiss referendums on the national level (\href{https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)}{Council of States}).
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ratio} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
 }
 
 }
 
 \subsection{\code{position_government}}{
 
-The government’s recommendation on how to vote in the referendum.
+The government's recommendation on how to vote in the referendum.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"yes"} \tab The government recommends to approve the referendum. \cr
@@ -503,16 +427,14 @@ The government’s recommendation on how to vote in the referendum.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }
 
 \subsection{Tags}{
 
-The tags (political topics) are organized on a three-tier hierarchy as
-follows:
+The tags (political topics) are organized on a three-tier hierarchy as follows:
 \itemize{
 \item \if{html}{\out{<span class="color-azure">}}state organisation\if{html}{\out{</span>}}
 \itemize{
@@ -784,16 +706,10 @@ media\if{html}{\out{</span>}}
 }
 }
 
-The hierarchical relations between the three tag variables
-\code{tags_tier_1}, \code{tags_tier_2} and \code{tags_tier_3} can be reconstructed at
-any time using
-\href{https://rpkg.dev/c2d/reference/hierarchize_tags.html}{\code{hierarchize_tags()}}.
-This function can also be used to simply determine the parent tag(s) of
-any tag.
+The hierarchical relations between the three tag variables \code{tags_tier_1}, \code{tags_tier_2} and \code{tags_tier_3} can be reconstructed at any time using \href{https://rpkg.dev/c2d/reference/hierarchize_tags.html}{\code{hierarchize_tags()}}. This function can also be used to simply determine the parent tag(s) of any tag.
 \subsection{\code{tags_tier_1}}{
 
-A maximum of 3 predefined top-tier political topics that best classify
-the referendum.
+A maximum of 3 predefined top-tier political topics that best classify the referendum.
 }
 
 \subsection{Possible values}{\tabular{l}{
@@ -818,15 +734,12 @@ the referendum.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 \subsection{\code{tags_tier_2}}{
 
-A maximum of 3 predefined second-tier political topics that best
-classify the referendum; the presence of a second-tier topic always
-implies presence of its parent top-tier topic.
+A maximum of 3 predefined second-tier political topics that best classify the referendum; the presence of a second-tier topic always implies presence of its parent top-tier topic.
 }
 
 \subsection{Possible values}{\tabular{l}{
@@ -905,15 +818,12 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 \subsection{\code{tags_tier_3}}{
 
-A maximum of 3 predefined third-tier political topics that best classify
-the referendum; the presence of a third-tier topic always implies
-presence of its parent second-tier topic and grandparent top-tier topic.
+A maximum of 3 predefined third-tier political topics that best classify the referendum; the presence of a third-tier topic always implies presence of its parent second-tier topic and grandparent top-tier topic.
 }
 
 \subsection{Possible values}{\tabular{l}{
@@ -1039,8 +949,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1050,8 +959,7 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 A free text field with additional information about the referendum.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1060,16 +968,11 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 Metadata about files attached to the referendum, including
 \itemize{
-\item \code{date_time_attached}: the date and time on which the file was
-attached to the referendum’s data entry
-\item \code{is_deleted}: whether or not the file has been deleted since it was
-attached
+\item \code{date_time_attached}: the date and time on which the file was attached to the referendum's data entry
+\item \code{is_deleted}: whether or not the file has been deleted since it was attached
 \item \code{file_name}: the filename as it appears when the file is downloaded
-\item \code{file_size}: the file’s size in bytes
-\item \code{s3_object_key}: the key uniquely identifying the file in the C2D
-\href{https://en.wikipedia.org/wiki/Amazon_S3#Design}{Amazon S3 bucket};
-the file can be downloaded by feeding this key to
-\href{https://rpkg.dev/c2d/reference/download_file_attachment.html}{\code{c2d::download_file_attachment()}}.
+\item \code{file_size}: the file's size in bytes
+\item \code{s3_object_key}: the key uniquely identifying the file in the C2D \href{https://en.wikipedia.org/wiki/Amazon_S3#Design}{Amazon S3 bucket}; the file can be downloaded by feeding this key to \href{https://rpkg.dev/c2d/reference/download_file_attachment.html}{\code{c2d::download_file_attachment()}}.
 }
 }
 
@@ -1078,32 +981,27 @@ the file can be downloaded by feeding this key to
 The URL of the corresponding entry on \href{https://sudd.ch/}{sudd.ch}.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{url_swissvotes}}{
 
-The URL of the corresponding entry on
-\href{https://swissvotes.ch/}{swissvotes.ch}.
+The URL of the corresponding entry on \href{https://swissvotes.ch/}{swissvotes.ch}.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{sources}}{
 
-Information about the source(s) of the referendum data like additional
-URLs or other references.
+Information about the source(s) of the referendum data like additional URLs or other references.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1121,45 +1019,39 @@ Whether or not the entry is marked as a draft in the database.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }
 
 \subsection{\code{date_time_created}}{
 
-The date and time on which the referendum’s data entry was created.
+The date and time on which the referendum's data entry was created.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{interval} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
 }
 
 }
 
 \subsection{\code{date_time_last_edited}}{
 
-The date and time on which the referendum’s data entry was last
-modified.
+The date and time on which the referendum's data entry was last modified.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{interval} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
 }
 
 }
 
 \subsection{\code{archive}}{
 
-The referendum’s data from an earlier, obsolete state of the C2D
-database.
+The referendum's data from an earlier, obsolete state of the C2D database.
 }
 
 \subsection{\code{type}}{
 
-The institutional type of direct democracy which the referendum is an
-instance of.
+The institutional type of direct democracy which the referendum is an instance of.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"mandatory referendum"} \tab A referendum that was automatically triggered by certain legal conditions, usually found in the constitution. \cr
@@ -1167,7 +1059,7 @@ instance of.
    \code{"counter proposal"} \tab A counter proposal by the government or parliament to another referendum. \cr
    \code{"citizens' initiative"} \tab A referendum launched by citizens, usually via a signature collection. \cr
    \code{"governmental referendum"} \tab A referendum launched by the government. \cr
-   \code{"citizens' assembly"} \tab A citizens’ assembly, usually in person where people vote by raising their hands. \cr
+   \code{"citizens' assembly"} \tab A citizens' assembly, usually in person where people vote by raising their hands. \cr
    \code{"recall"} \tab A recall of all members of a political institution/body. \cr
 }
 
@@ -1175,8 +1067,7 @@ instance of.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1185,12 +1076,10 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 
 \subsection{Institution-level variables}{
 
-For the following variables, the \href{https://en.wikipedia.org/wiki/Unit_of_observation}{unit of observation} is the
-referendum’s \emph{institutional instrument}, a combination of the
-referendum’s \code{type} and the jurisdiction it took place.
+For the following variables, the \href{https://en.wikipedia.org/wiki/Unit_of_observation}{unit of observation} is the referendum's \emph{institutional instrument}, a
+combination of the referendum's \code{type} and the jurisdiction it took place.
 
-The set of variables that constitute the \emph{geographical} component of the
-jurisdiction is dependent on the referendum’s \code{level}:\tabular{ll}{
+The set of variables that constitute the \emph{geographical} component of the jurisdiction is dependent on the referendum's \code{level}:\tabular{ll}{
    \code{level} \tab Geographical jurisdiction is given by \cr
    \code{national} \tab \code{country_code} \cr
    \code{subnational} \tab \code{country_code} + \code{subnational_entity_name} \cr
@@ -1198,11 +1087,9 @@ jurisdiction is dependent on the referendum’s \code{level}:\tabular{ll}{
 }
 
 
-The actual jurisdiction is also dependent on a \emph{temporal} component
-since the legal setting in a geographical jurisdiction can vary over
-time. Thus, the actual jurisdicion is dependent on the geographical
-jurisdiction plus the \code{date} a referendum took place (more specifically
-the date \emph{range} in between a specific legal setting is in force).
+The actual jurisdiction is also dependent on a \emph{temporal} component since the legal setting in a geographical jurisdiction can vary over time. Thus, the actual
+jurisdicion is dependent on the geographical jurisdiction plus the \code{date} a referendum took place (more specifically the date \emph{range} in between a
+specific legal setting is in force).
 \subsection{\code{inst_legal_basis_type}}{
 
 The type of the legal basis of the referendum \code{type}.
@@ -1217,16 +1104,14 @@ The type of the legal basis of the referendum \code{type}.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ordinal (ascending)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ordinal (ascending)} level.
 }
 
 }
 
 \subsection{\code{inst_has_urgent_legal_basis}}{
 
-Whether or not the legal basis of the referendum \code{type} was adopted
-urgently, i.e. in an abridged procedure.
+Whether or not the legal basis of the referendum \code{type} was adopted urgently, i.e. in an abridged procedure.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{TRUE} \tab The legal basis of the referendum \code{type} was adopted in an abridged procedure (urgent). \cr
@@ -1245,36 +1130,32 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }
 
 \subsection{\code{inst_is_binding}}{
 
-Whether the result of the referendum \code{type} has binding force or the
-decision of the voters may be disregarded.
+Whether the result of the referendum \code{type} has binding force or the decision of the voters may be disregarded.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{TRUE} \tab The result of the referendum \code{type} is binding for the legislator. \cr
-   \code{FALSE} \tab The result of the referendum \code{type} is only consultative, i.e. the legislator does not have to follow the decision of the voters. \cr
+   \code{FALSE} \tab The result of the referendum \code{type} is only consultative, i.e. the legislator does not have to follow the decision of the voters. \cr
 }
 
 }
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }
 
 \subsection{\code{inst_is_counter_proposal}}{
 
-Whether or not the referendum \code{type} is a counterproposal to a citizen’s
-(or other) initiative.
+Whether or not the referendum \code{type} is a counterproposal to a citizen’s (or other) initiative.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{TRUE} \tab The referendum \code{type} is a counterproposal to a citizen’s (or other) initiative. \cr
@@ -1285,17 +1166,14 @@ Whether or not the referendum \code{type} is a counterproposal to a citizen’s
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }
 
 \subsection{\code{inst_is_assembly}}{
 
-Whether or not the referendum \code{type} is held as an assembly (all voters
-at the same time and place; physical presence at the assembly is
-required to be able to vote; usually voting means raising one’s hand).
+Whether or not the referendum \code{type} is held as an assembly (all voters at the same time and place; physical presence at the assembly is required to be able to vote; usually voting means raising one’s hand).
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{TRUE} \tab The referendum \code{type} is a counterproposal to a citizen’s (or other) initiative. \cr
@@ -1306,29 +1184,26 @@ required to be able to vote; usually voting means raising one’s hand).
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }
 
 \subsection{\code{inst_trigger_type}}{
 
-The way the referendum \code{type} is triggered; completely dependent on
-\code{inst_trigger_actor}.
+The way the referendum \code{type} is triggered; completely dependent on \code{inst_trigger_actor}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"automatic"} \tab The referendum \code{type} is triggered by a constitutional/legal requirement. \cr
    \code{"top down"} \tab The referendum \code{type} is triggered by an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution. \cr
-   \code{"bottom up"} \tab The referendum \code{type} is triggered by citizen demand (e.g. a signature collection). \cr
+   \code{"bottom up"} \tab The referendum \code{type} is triggered by citizen demand (e.g. a signature collection). \cr
 }
 
 }
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1354,8 +1229,7 @@ The actor that triggers the referendum \code{type}.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1374,16 +1248,14 @@ The political \code{level} of \code{inst_trigger_actor} in comparison to \code{l
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{ordinal (ascending)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ordinal (ascending)} level.
 }
 
 }
 
 \subsection{\code{inst_trigger_threshold}}{
 
-The threshold of support among \code{inst_trigger_actor} that has to be
-reached in order to trigger the referendum \code{type}.
+The threshold of support among \code{inst_trigger_actor} that has to be reached in order to trigger the referendum \code{type}.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
@@ -1394,17 +1266,14 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{inst_trigger_time_limit}}{
 
-The time limit in which \code{inst_trigger_threshold} (usually a minimum
-number of signatures) has to be reached in order to trigger the
-referendum \code{type}.
+The time limit in which \code{inst_trigger_threshold} (usually a minimum number of signatures) has to be reached in order to trigger the referendum \code{type}.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
@@ -1415,8 +1284,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1431,15 +1299,14 @@ The type of the object the referendum \code{type} refers to.
    \code{"legal text (formulated proposal)"} \tab A precisely formulated legal text which, if approved, will directly enter into force. \cr
    \code{"institution"} \tab A recall of all members of a particular institution/body. \cr
    \code{"person"} \tab An appointment of a single person. \cr
-   \code{"principle"} \tab A question about what direction to take on a particular issue/topic, but without a proposed legal text; e.g., “Should there be a total revision of our constitution?”. \cr
+   \code{"principle"} \tab A question about what direction to take on a particular issue/topic, but without a proposed legal text; e.g., "Should there be a total revision of our constitution?". \cr
 }
 
 }
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1471,8 +1338,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1482,11 +1348,11 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The legal level of \code{inst_object_type}.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"ordinance"} \tab An ordinance, i.e. a legal norm based on a law or the constitution. \cr
-   \code{"treaty"} \tab A domestic treaty, e.g. an agreement between the constituent states of a republic. \cr
-   \code{"law"} \tab A law, i.e. a legal norm based on the constitution and created by the legislative. \cr
-   \code{"constitution"} \tab The constitution, i.e. the aggregate of fundamental principles or established precedents that constitute the legal basis of a state and commonly determine how that state is to be governed. \cr
-   \code{"international treaty"} \tab An international treaty, i.e. a bilateral or multilateral agreement or an accession to and international organization. \cr
+   \code{"ordinance"} \tab An ordinance, i.e. a legal norm based on a law or the constitution. \cr
+   \code{"treaty"} \tab A domestic treaty, e.g. an agreement between the constituent states of a republic. \cr
+   \code{"law"} \tab A law, i.e. a legal norm based on the constitution and created by the legislative. \cr
+   \code{"constitution"} \tab The constitution, i.e. the aggregate of fundamental principles or established precedents that constitute the legal basis of a state and commonly determine how that state is to be governed. \cr
+   \code{"international treaty"} \tab An international treaty, i.e. a bilateral or multilateral agreement or an accession to and international organization. \cr
 }
 
 }
@@ -1501,16 +1367,14 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{inst_object_revision_extent}}{
 
-The extent of revision of \code{inst_object_type} which can be achieved
-within one referendum.
+The extent of revision of \code{inst_object_type} which can be achieved within one referendum.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"partial"} \tab Only parts of the concerned legal text can be revised at the same time. \cr
@@ -1530,8 +1394,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1542,7 +1405,7 @@ The mode(s) of revision that \code{inst_object_type} allows.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"introduce"} \tab With this instrument, it is possible to introduce an entirely new text/concept. \cr
-   \code{"revise"} \tab With this instrument, it is possible to change some parts of the legal text/… \cr
+   \code{"revise"} \tab With this instrument, it is possible to change some parts of the legal text/... \cr
    \code{"abrogate"} \tab With this instrument, it is possible to strike parts of the legal text / to recall a person/institution. \cr
 }
 
@@ -1552,8 +1415,7 @@ The mode(s) of revision that \code{inst_object_type} allows.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1581,8 +1443,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1617,8 +1478,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1651,28 +1511,24 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{inst_quorum_turnout}}{
 
-The minimum percentage of the \code{electorate_total} that have to
-participate in the referendum \code{type} in order for it to be passed.
+The minimum percentage of the \code{electorate_total} that have to participate in the referendum \code{type} in order for it to be passed.
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{inst_quorum_approval}}{
 
-The minimum number of voters that have to approve the referendum \code{type}
-in order for it to be passed.
+The minimum number of voters that have to approve the referendum \code{type} in order for it to be passed.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"simple majority"} \tab > 50 \% of the voters have to approve the referendum proposal. \cr
@@ -1684,16 +1540,14 @@ in order for it to be passed.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{inst_has_precondition}}{
 
-Whether or not an institutional actor must take a preconditional
-decision in order for the referendum \code{type} to be held.
+Whether or not an institutional actor must take a preconditional decision in order for the referendum \code{type} to be held.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{TRUE} \tab An institutional actor must take a preconditional decision in order for the referendum \code{type} to be held. \cr
@@ -1704,16 +1558,14 @@ decision in order for the referendum \code{type} to be held.
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }
 
 \subsection{\code{inst_precondition_actor}}{
 
-The actor that must take a preconditional decision in order for the
-referendum \code{type} to be held.
+The actor that must take a preconditional decision in order for the referendum \code{type} to be held.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
    \code{"parliament"} \tab The parliament. \cr
@@ -1722,7 +1574,7 @@ referendum \code{type} to be held.
    \code{"UN"} \tab The United Nations (UN) or one of its organs. \cr
    \code{"parliament and government"} \tab The parliament and the government or prime minister. \cr
    \code{"parliament and president"} \tab The parliament and the president. \cr
-   \code{"central government and SPLM"} \tab The central government and the \href{https://en.wikipedia.org/wiki/Sudan_People's_Liberation_Movement}{Sudan People’s Liberation Movement}. \cr
+   \code{"central government and SPLM"} \tab The central government and the \href{https://en.wikipedia.org/wiki/Sudan_People's_Liberation_Movement}{Sudan People's Liberation Movement}. \cr
 }
 
 }
@@ -1737,8 +1589,7 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
@@ -1748,16 +1599,15 @@ This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scal
 The decision that \code{inst_precondition_actor} has taken.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"yes"} \tab Affirmative answer (e.g. “Yes, we will hold a vote that has been requested by citizens.”). \cr
-   \code{"no"} \tab Negative answer (e.g. “No, we will not implement the demands of a citizens’ initiative voluntarily.”). \cr
+   \code{"yes"} \tab Affirmative answer (e.g. "Yes, we will hold a vote that has been requested by citizens."). \cr
+   \code{"no"} \tab Negative answer (e.g. "No, we will not implement the demands of a citizens’ initiative voluntarily."). \cr
 }
 
 }
 
 \subsection{Level of measurement}{
 
-This variable’s \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the
-\strong{nominal (binary)} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }

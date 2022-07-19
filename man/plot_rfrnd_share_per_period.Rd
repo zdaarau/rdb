@@ -25,6 +25,9 @@ A \link[plotly:plot_ly]{plotly object}.
 Creates a \href{https://plotly.com/r/filled-area-plots/#stacked-area-chart-with-cumulative-values}{Plotly stacked area chart} that visualizes the share of
 referendums per period, grouped by another column.
 }
+\details{
+Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
+}
 \examples{
 c2d::rfrnds(country_code = "AT") |> c2d::plot_rfrnd_share_per_period(by = "level")
 }

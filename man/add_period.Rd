@@ -22,8 +22,7 @@ Augments \code{data} with an additional column holding the specified period in w
 values are always of type integer.
 }
 \details{
-Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are not, as they are
-\emph{recurring} by nature (e.g. every year has a week 1).
+Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
 }
 \examples{
 c2d::rfrnds(country_code = "AT") |>

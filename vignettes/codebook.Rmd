@@ -17,16 +17,16 @@ vignette: >
 
 For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the individual referendum.
 
-```{r, referendum-level-vars, echo = FALSE, results = "asis", message = FALSE}
+```{r, referendum-level-vx, echo = FALSE, results = "asis", message = FALSE}
 # setup
 library(rlang)
 library(magrittr)
 
 pal::assert_pkg("salim")
 
-# determine if we knit to GFM which doesn't support extended Pandoc MD syntax (like footnotes)
-is_gfm <- knitr::pandoc_to() %>% stringr::str_detect(pattern = "^gfm(-|$)")
-
+# determine whether Pandoc rendering is involved which supports extended Pandoc MD syntax (like footnotes)
+to_pandoc <- checkmate::test_string(knitr::pandoc_to(),
+                                    min.chars = 1L)
 # define functions
 ## flatten list column values
 flatten_list_col <- function(x) {
@@ -105,22 +105,32 @@ v_sections <- function(data,
         "",
         unique(c2d:::data_tags$tag_tier_1) %>% purrr::map_chr(function(tag_tier_1) {
           
-          paste0("- [", tag_tier_1, "]{.color-azure}",
-                 c2d:::data_tags %>%
-                   dplyr::filter(tag_tier_1 == !!tag_tier_1) %$%
-                   tag_tier_2 %>%
-                   unique() %>%
-                   purrr::map_chr(function(tag_tier_2) {
-                     
-                     paste0("\n  - [", tag_tier_2, "]{.color-violet}",
-                            c2d:::data_tags %>%
-                              dplyr::filter(tag_tier_2 == !!tag_tier_2) %$%
-                              tag_tier_3 %>%
-                              setdiff(NA_character_) %>%
-                              purrr::map_chr(~ paste0("\n    - [", .x, "]{.color-rose}")) %>%
-                              paste0(collapse = ""))
-                   }) %>%
-                   paste0(collapse = ""))
+          result <- ifelse(strip_extended_pandoc,
+                           paste0("\n- ", tag_tier_1),
+                           paste0("\n- [", tag_tier_1, "]{.color-azure}"))
+          
+          result %<>% paste0(c2d:::data_tags %>%
+                               dplyr::filter(tag_tier_1 == !!tag_tier_1) %$%
+                               tag_tier_2 %>%
+                               unique() %>%
+                               purrr::map_chr(function(tag_tier_2) {
+                                 
+                                 result <- ifelse(strip_extended_pandoc,
+                                                  paste0("\n  - ", tag_tier_2),
+                                                  paste0("\n  - [", tag_tier_2, "]{.color-violet}"))
+                                 
+                                 result %<>% paste0(c2d:::data_tags %>%
+                                                      dplyr::filter(tag_tier_2 == !!tag_tier_2) %$%
+                                                      tag_tier_3 %>%
+                                                      setdiff(NA_character_) %>%
+                                                      purrr::map_chr(~ ifelse(strip_extended_pandoc,
+                                                                              paste0("\n    - ", .x),
+                                                                              paste0("\n    - [", .x, "]{.color-rose}"))) %>%
+                                                      paste0(collapse = ""))
+                                 result
+                               }) %>%
+                               paste0(collapse = ""))
+          result
         }),
         "",
         paste0("<sup>[`tags_tier_1`](#tags_tier_1){.color-azure} are colored in [azure]{.color-azure}, [`tags_tier_2`](#tags_tier_2){.color-violet} in ",
@@ -140,7 +150,7 @@ v_sections <- function(data,
     variable_label %>% pal::sentenceify(),
     "",
     if (length(variable_values)) {
-      c(glue::glue("#### Possible values {{#{variable_name}-values}}"),
+      c(paste0("#### Possible values", glue::glue(" {{#{variable_name}-values}}")[!strip_extended_pandoc]),
         "",
         if (length(value_labels)) {
           c("| Value | Meaning |",
@@ -160,7 +170,7 @@ v_sections <- function(data,
         "")
     },
     if (!is.na(applicability_constraint)) {
-      c(glue::glue("#### Applicability constraint {{#{variable_name}-constraint}}"),
+      c(paste0("#### Applicability constraint", glue::glue(" {{#{variable_name}-constraint}}")[!strip_extended_pandoc]),
         "",
         "This variable is only applicable under the following condition:",
         "",
@@ -170,7 +180,7 @@ v_sections <- function(data,
         "")
     },
     if (value_scale != "undefined") {
-      c(glue::glue("#### Level of measurement {{#{variable_name}-scale}}"),
+      c(paste0("#### Level of measurement", glue::glue(" {{#{variable_name}-scale}}")[!strip_extended_pandoc]),
         "",
         glue::glue("This variable's [scale of measure](https://en.wikipedia.org/wiki/Level_of_measurement) is the **{value_scale}** level."),
         "")
@@ -184,14 +194,14 @@ c2d::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_",
                                     negate = TRUE)) %>%
-  v_sections(strip_extended_pandoc = is_gfm,
-             strip_anchors = is_gfm) %>%
+  v_sections(strip_extended_pandoc = !to_pandoc,
+             strip_anchors = !to_pandoc) %>%
   pal::cat_lines()
 ```
 
 ## Institution-level variables
 
-```{r, institution-level-vars, echo = FALSE, results = "asis"}
+```{r, institution-level-vx, echo = FALSE, results = "asis"}
 "For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the referendum's *institutional instrument*, a
 combination of the referendum's [`type`](#type) and the jurisdiction it took place.
 
@@ -208,19 +218,19 @@ jurisdicion is dependent on the geographical jurisdiction plus the [`date`](#dat
 specific legal setting is in force).
 
 " %>%
-  purrr::when(is_gfm ~ strip_anchors(.),
+  purrr::when(!to_pandoc ~ strip_anchors(.),
               ~ .) %>%
   cat()
 
 c2d::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_")) %>%
-  v_sections(strip_extended_pandoc = is_gfm,
-             strip_anchors = is_gfm) %>%
+  v_sections(strip_extended_pandoc = !to_pandoc,
+             strip_anchors = !to_pandoc) %>%
   pal::cat_lines()
 ```
 
-```{r, footnotes, echo = FALSE, results = "asis", include = !is_gfm}
+```{r, footnotes, echo = FALSE, results = "asis", include = to_pandoc}
 cat("
 [^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/hoist.html) to convert data containing such a variable to long format. To unnest `tags_tier_1` to `tag_tier_1` for example, use:
 

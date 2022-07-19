@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Table number of referendums per period — tbl_n_rfrnds_per_period • c2d</title>
+<title>Tabulate number of referendums per period — tbl_n_rfrnds_per_period • c2d</title>
 
 
 
@@ -44,7 +44,7 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Table number of referendums per period — tbl_n_rfrnds_per_period" />
+<meta property="og:title" content="Tabulate number of referendums per period — tbl_n_rfrnds_per_period" />
 <meta name="description" content="Creates a ready-to-print gt table with the number of referendums per period, optionally counted by one or more additional columns.">
 <meta property="og:description" content="Creates a ready-to-print gt table with the number of referendums per period, optionally counted by one or more additional columns." />
 <meta name="twitter:card" content="summary" />
@@ -118,7 +118,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Table number of referendums per period</h1>
+    <h1>Tabulate number of referendums per period</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
     <div class="hidden name"><code>tbl_n_rfrnds_per_period.Rd</code></div>
     </div>
@@ -129,12 +129,15 @@
 
     <pre class="usage"><span><span class='fu'>tbl_n_rfrnds_per_period</span><span class='op'>(</span></span>
 <span>  <span class='va'>data</span>,</span>
+<span>  by <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
 <span>  period <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"week"</span>, <span class='st'>"month"</span>, <span class='st'>"quarter"</span>, <span class='st'>"year"</span>, <span class='st'>"decade"</span>, <span class='st'>"century"</span><span class='op'>)</span>,</span>
 <span>  fill_gaps <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
-<span>  by <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
+<span>  period_floor <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
+<span>  period_ceiling <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
+<span>  squeeze_zero_rows <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
 <span>  descending <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
 <span>  add_total_row <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
-<span>  add_total_col <span class='op'>=</span> <span class='cn'>TRUE</span></span>
+<span>  add_total_col <span class='op'>=</span> <span class='cn'>NULL</span></span>
 <span><span class='op'>)</span></span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -146,6 +149,10 @@
 compute the <a href='add_period.html'>period column</a>), plus the one(s) specified via <code>by</code> (if any).</p></td>
     </tr>
     <tr>
+      <th>by</th>
+      <td><p>Up to two additional <code>data</code> column(s) to group by before counting number of referendums. <a href='https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html'>Tidy selections</a> are supported.</p></td>
+    </tr>
+    <tr>
       <th>period</th>
       <td><p>Type of period to count referendums by. One of <code>"week"</code>,<code>"month"</code>,<code>"quarter"</code>,<code>"year"</code>,<code>"decade"</code> or <code>"century"</code>.</p></td>
     </tr>
@@ -154,8 +161,18 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
       <td><p>Whether or not to add zero-value rows to the result for <code>period</code> gaps in <code>data</code>.</p></td>
     </tr>
     <tr>
-      <th>by</th>
-      <td><p>Up to two additional <code>data</code> column(s) to group by before counting number of referendums. <a href='https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html'>Tidy selections</a> are supported.</p></td>
+      <th>period_floor</th>
+      <td><p>Lower <code>period</code> limit up to which gaps are filled. If <code>NULL</code>, the lower limit is set to the minimum of <code>period</code> present in <code>data</code>. Only
+relevant if <code>fill_gaps = TRUE</code> and <code>period</code> is set to a unique timespan type (<code>"year"</code>, <code>"decade"</code> or <code>"century"</code>).</p></td>
+    </tr>
+    <tr>
+      <th>period_ceiling</th>
+      <td><p>Upper <code>period</code> limit up to which gaps are filled. If <code>NULL</code>, the upper limit is set to the maximum of <code>period</code> present in <code>data</code>. Only
+relevant if <code>fill_gaps = TRUE</code> and <code>period</code> is set to a unique timespan type (<code>"year"</code>, <code>"decade"</code> or <code>"century"</code>).</p></td>
+    </tr>
+    <tr>
+      <th>squeeze_zero_rows</th>
+      <td><p>Whether or not to compress consecutive zero-sum rows into single period span rows.</p></td>
     </tr>
     <tr>
       <th>descending</th>
@@ -167,13 +184,17 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
     </tr>
     <tr>
       <th>add_total_col</th>
-      <td><p>Whether or not to add a summary column at the very end of the table containing row totals.</p></td>
+      <td><p>Whether or not to add a summary column at the very end of the table containing row totals. If <code>NULL</code>, a total column is added only if
+<code>by</code> is non-empty.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code><a href='https://gt.rstudio.com/reference/gt.html'>gt_tbl</a></code> object.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Note that the <code>period</code> types <code>"year"</code>, <code>"decade"</code> and <code>"century"</code> are <em>unique</em> timespans, while <code>"week"</code>, <code>"month"</code> and <code>"quarter"</code> are <em>recurring</em> timespans (e.g. every year has a week 1).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>tbl_n_rfrnds_per_period</span><span class='op'>(</span>period <span class='op'>=</span> <span class='st'>"decade"</span><span class='op'>)</span></span></span>
@@ -595,45 +616,28 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="text-align: left; vertical-align: middle;"&gt;&lt;/th&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1"&gt;n&lt;/th&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1"&gt;Total&lt;/th&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   &lt;/thead&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   &lt;tbody class="gt_table_body"&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;2010&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;2&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;2&lt;/td&gt;&lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;2000&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1990&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;&lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1980&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1970&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;&lt;/tr&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1960&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1950&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1940&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1940–1960&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1930&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;&lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1920&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;5&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;5&lt;/td&gt;&lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1910&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;&lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row"&gt;Total&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row"&gt;11&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row"&gt;11&lt;/td&gt;&lt;/tr&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   &lt;/tbody&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   </span>
@@ -642,8 +646,8 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;/div&gt;</span>
 <span class='r-in'><span></span></span>
 <span class='r-in'><span><span class='co'># grouped by a single additional column</span></span></span>
-<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>tbl_n_rfrnds_per_period</span><span class='op'>(</span>period <span class='op'>=</span> <span class='st'>"decade"</span>,</span></span>
-<span class='r-in'><span>                                                                 by <span class='op'>=</span> <span class='va'>level</span><span class='op'>)</span></span></span>
+<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>tbl_n_rfrnds_per_period</span><span class='op'>(</span>by <span class='op'>=</span> <span class='va'>level</span>,</span></span>
+<span class='r-in'><span>                                                                 period <span class='op'>=</span> <span class='st'>"decade"</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;div id="eexombwkke" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   &lt;style&gt;html {</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;</span>
@@ -1093,17 +1097,7 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;&lt;/tr&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1960&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1950&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1940&lt;/td&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1940–1960&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
@@ -1135,8 +1129,8 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;/div&gt;</span>
 <span class='r-in'><span></span></span>
 <span class='r-in'><span><span class='co'># grouped by two addtional columns</span></span></span>
-<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>tbl_n_rfrnds_per_period</span><span class='op'>(</span>period <span class='op'>=</span> <span class='st'>"decade"</span>,</span></span>
-<span class='r-in'><span>                                                                 by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>level</span>, <span class='va'>type</span><span class='op'>)</span><span class='op'>)</span></span></span>
+<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>tbl_n_rfrnds_per_period</span><span class='op'>(</span>by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>level</span>, <span class='va'>type</span><span class='op'>)</span>,</span></span>
+<span class='r-in'><span>                                                                 period <span class='op'>=</span> <span class='st'>"decade"</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;div id="ulbfdpbcyv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   &lt;style&gt;html {</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;</span>
@@ -1723,59 +1717,7 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;1&lt;/td&gt;&lt;/tr&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1960&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1950&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1940&lt;/td&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     &lt;tr&gt;&lt;td class="gt_row gt_right gt_stub"&gt;1940–1960&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;td class="gt_row gt_right"&gt;0&lt;/td&gt;</span>

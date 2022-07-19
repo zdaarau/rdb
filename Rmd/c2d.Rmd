@@ -3406,7 +3406,8 @@ search_rfrnds <- function(term) {
 #' A tibble containing the complete metadata of all [rfrnds()] variables. The Codebook below is also available
 #' [online](https://rpkg.dev/c2d/articles/codebook.html).
 #'
-#' @includeRmd vignettes/codebook.Rmd
+#' ```{r, child = "vignettes/codebook.Rmd"}
+#' ```
 #'
 #' @format `r pkgsnip::return_label("data")`
 #' @aliases codebook
@@ -3816,8 +3817,8 @@ Functions to augment the C2D referendum data by additional information (columns)
 #' Augments `data` with an additional column holding the specified period in which the referendum took place. The new column is named after `period` and its
 #' values are always of type integer.
 #'
-#' Note that the `period` types `"year"`, `"decade"` and `"century"` are *unique* timespans, while `"week"`, `"month"` and `"quarter"` are not, as they are
-#' *recurring* by nature (e.g. every year has a week 1).
+#' ```{r, child = "snippets/period_note.Rmd"}
+#' ```
 #'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
 #' @param period Type of period to add. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
@@ -4004,10 +4005,17 @@ Functions to transform the C2D referendum data into other shapes, each with a sp
 #'
 #' Counts the number of C2D referendums per desired period, optionally by additional columns specified via `by`.
 #'
+#' ```{r, child = "snippets/period_note.Rmd"}
+#' ```
+#'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
 #'   compute the [period column][add_period]), plus the one(s) specified via `by` (if any).
 #' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
 #' @param fill_gaps Whether or not to add zero-value rows to the result for `period` gaps in `data`.
+#' @param period_floor Lower `period` limit up to which gaps are filled. If `NULL`, the lower limit is set to the minimum of `period` present in `data`. Only
+#'   relevant if `fill_gaps = TRUE` and `period` is set to a unique timespan type (`"year"`, `"decade"` or `"century"`).
+#' @param period_ceiling Upper `period` limit up to which gaps are filled. If `NULL`, the upper limit is set to the maximum of `period` present in `data`. Only
+#'   relevant if `fill_gaps = TRUE` and `period` is set to a unique timespan type (`"year"`, `"decade"` or `"century"`).
 #' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
 #'
 #' @inherit add_period details
@@ -4026,16 +4034,22 @@ Functions to transform the C2D referendum data into other shapes, each with a sp
 #'
 #' # per decade and by multiple columns
 #' c2d::rfrnds(country_code = "AT") |>
-#'   c2d::n_rfrnds_per_period(period = "decade",
-#'                            by = c(level, type))
+#'   c2d::n_rfrnds_per_period(by = c(level, type),
+#'                            period = "decade")
 n_rfrnds_per_period <- function(data,
+                                by = NULL,
                                 period = c("week", "month", "quarter", "year", "decade", "century"),
                                 fill_gaps = TRUE,
-                                by = NULL) {
+                                period_floor = NULL,
+                                period_ceiling = NULL) {
   # arg checks
   checkmate::assert_data_frame(data)
   period <- rlang::arg_match(period)
   checkmate::assert_flag(fill_gaps)
+  checkmate::assert_int(period_floor,
+                        null.ok = TRUE)
+  checkmate::assert_int(period_ceiling,
+                        null.ok = TRUE)
   # tidy selection
   defused_by <- rlang::enquo(by)
   ix_by <- tidyselect::eval_select(expr = defused_by,
@@ -4052,22 +4066,25 @@ n_rfrnds_per_period <- function(data,
     dplyr::group_by(!!!rlang::syms(names_by), !!as.symbol(period)) %>%
     dplyr::summarise(n = dplyr::n(),
                      .groups = "drop")
-  
   # fill gaps
   # (only if input data (and thus result) is non-empty since otherwise we can't infer a sensible period range for year/decade/century)
   if (fill_gaps && nrow(result)) {
     
     # define sensible min/max period vals
-    period_min <- period %>% purrr::when(. %in% c("year", "decade", "century") ~ pal::safe_min(data[[period]]),
+    is_recurring_period <- period %in% c("week", "month", "quarter")
+    period_step <- switch(EXPR = period,
+                          century = 100L,
+                          decade = 10L,
+                          1L)
+    period_min <- period %>% purrr::when(is.null(period_floor) && !is_recurring_period ~ pal::safe_min(data[[.]]),
+                                         !is_recurring_period ~ period_floor,
                                          ~ 1L)
-    period_max <- period %>% purrr::when(. %in% c("year", "decade", "century") ~ pal::safe_max(data[[period]]),
+    period_max <- period %>% purrr::when(is.null(period_ceiling) && !is_recurring_period ~ pal::safe_max(data[[.]]),
+                                         !is_recurring_period ~ period_ceiling,
                                          . == "week" ~ 53L,
                                          . == "month" ~ 12L,
                                          . == "quarter" ~ 4L)
-    period_step <- period %>% purrr::when(. == "century" ~ 100L,
-                                          . == "decade" ~ 10L,
-                                          ~ 1L)
-    period_seq <- seq(from = period_min,
+    period_seq <- seq(from = (period_min %/% period_step) * period_step,
                       to = period_max,
                       by = period_step)
     result %<>%
@@ -4125,6 +4142,9 @@ printify_col_names <- function(data) {
 #'
 #' Creates a [Plotly stacked area chart](https://plotly.com/r/filled-area-plots/#stacked-area-chart-with-cumulative-values) that visualizes the share of
 #' referendums per period, grouped by another column.
+#'
+#' ```{r, child = "snippets/period_note.Rmd"}
+#' ```
 #'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
 #'   compute the [period column][add_period]), plus the column specified in `by`.
@@ -4381,6 +4401,9 @@ plot_tag_segmentation <- function(data,
 #' Creates a [Plotly stacked area chart](https://plotly.com/r/filled-area-plots/#stacked-area-chart-with-cumulative-values) that visualizes the share of
 #' referendum tag occurences per period.
 #'
+#' ```{r, child = "snippets/period_note.Rmd"}
+#' ```
+#'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `tags_tier_#` of the specified `tier`.
 #' @param tier Tier of the tags variable to plot. `1L`, `2L` or `3L`.
 #' @param period Type of period to count tags by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
@@ -4441,15 +4464,20 @@ plot_tag_share_per_period <- function(data,
 ### `tbl_n_rfrnds_per_period`
 
 ```{r}
-#' Table number of referendums per period
+#' Tabulate number of referendums per period
 #'
 #' Creates a ready-to-print [gt][gt::gt] table with the number of referendums per period, optionally counted `by` one or more additional columns.
 #'
+#' ```{r, child = "snippets/period_note.Rmd"}
+#' ```
+#'
 #' @inheritParams n_rfrnds_per_period
 #' @param by Up to two additional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param squeeze_zero_rows Whether or not to compress consecutive zero-sum rows into single period span rows.
 #' @param descending Whether to sort the resulting table by `period` in descending or in ascending order.
 #' @param add_total_row Whether or not to add a summary row at the very end of the table containing column totals.
-#' @param add_total_col Whether or not to add a summary column at the very end of the table containing row totals.
+#' @param add_total_col Whether or not to add a summary column at the very end of the table containing row totals. If `NULL`, a total column is added only if
+#'   `by` is non-empty.
 #'
 #' @return `r pkgsnip::return_lbl("gt_obj")`
 #' @family tabulate
@@ -4459,24 +4487,29 @@ plot_tag_share_per_period <- function(data,
 #' c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(period = "decade")
 #'
 #' # grouped by a single additional column
-#' c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(period = "decade",
-#'                                                                  by = level)
+#' c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(by = level,
+#'                                                                  period = "decade")
 #'
 #' # grouped by two addtional columns
-#' c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(period = "decade",
-#'                                                                  by = c(level, type))
+#' c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(by = c(level, type),
+#'                                                                  period = "decade")
 tbl_n_rfrnds_per_period <- function(data,
+                                    by = NULL,
                                     period = c("week", "month", "quarter", "year", "decade", "century"),
                                     fill_gaps = TRUE,
-                                    by = NULL,
+                                    period_floor = NULL,
+                                    period_ceiling = NULL,
+                                    squeeze_zero_rows = TRUE,
                                     descending = TRUE,
                                     add_total_row = TRUE,
-                                    add_total_col = TRUE) {
+                                    add_total_col = NULL) {
   
   period <- rlang::arg_match(period)
+  checkmate::assert_flag(squeeze_zero_rows)
   checkmate::assert_flag(descending)
   checkmate::assert_flag(add_total_row)
-  checkmate::assert_flag(add_total_col)
+  checkmate::assert_flag(add_total_col,
+                         null.ok = TRUE)
   pal::assert_pkg("gt")
   
   ix_by <- rlang::enquo(by) %>% tidyselect::eval_select(data = data)
@@ -4487,16 +4520,23 @@ tbl_n_rfrnds_per_period <- function(data,
     cli::cli_abort("At most {.emph two} additional data columns can be specified in {.arg by}, but {.val {n_ix}} were provided.")
   }
   
+  if (is.null(add_total_col)) {
+    add_total_col <- has_by
+  }
+  
   by_names_print <- ifelse(has_by,
       names(ix_by) %>%
       printify_v_names() %>%
       pal::wrap_chr(wrap = "*") %>%
                              paste0(collapse = "<br><br>"),
                            "")
-  data %>%
+  data_to_plot <-
+    data %>%
     n_rfrnds_per_period(period = period,
                         by = {{ by }},
-                        fill_gaps = fill_gaps) %>%
+                        fill_gaps = fill_gaps,
+                        period_floor = period_floor,
+                        period_ceiling = period_ceiling) %>%
     dplyr::mutate(dplyr::across(.cols = where(is.factor),
                                 .fns = forcats::fct_explicit_na,
                                 na_level = "N/A")) %>%
@@ -4511,7 +4551,44 @@ tbl_n_rfrnds_per_period <- function(data,
                                                               na.rm = TRUE)),
                 ~ .) %>%
     dplyr::mutate(dplyr::across(.fns = tidyr::replace_na,
-                                replace = 0L)) %>%
+                                replace = 0L),
+                  dplyr::across(.cols = all_of(period),
+                                .fns = as.character))
+  
+  # squeeze consecutive all-0 rows into single row if requested
+  ix <- integer()
+  ix_rm <- integer()
+  
+  if (squeeze_zero_rows) {
+    
+    for (i in pal::safe_seq_len(nrow(data_to_plot))) {
+      
+      if (data_to_plot %>%
+          dplyr::select(-any_of(c(period, "Total"))) %>%
+          magrittr::extract(i, ) %>%
+          sum() %>%
+          magrittr::equals(0)) {
+        
+        ix %<>% c(i)
+        
+      } else {
+        if (length(ix) > 1L) {
+          
+          data_to_plot[ix[1L], period] <- paste0(data_to_plot[ix[length(ix)], period], "\u2013", data_to_plot[ix[1L], period])
+          ix_rm %<>% c(ix[-1L])
+        }
+        ix <- integer()
+      }
+    }
+    
+    if (length(ix) > 1L) {
+      data_to_plot[ix[1L], period] <- paste0(data_to_plot[ix[length(ix)], period], "\u2013", data_to_plot[ix[1L], period])
+      ix_rm %<>% c(ix[-1L])
+    }
+  }
+  
+  data_to_plot %>%
+    dplyr::filter(!(dplyr::row_number() %in% ix_rm)) %>%
     gt::gt(rowname_col = period) %>%
     purrr::when(add_total_row ~ gt::summary_rows(data = .,
                                                  fns = list(Total = ~ sum(., na.rm = TRUE)),

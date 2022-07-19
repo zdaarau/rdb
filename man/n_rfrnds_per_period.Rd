@@ -6,20 +6,28 @@
 \usage{
 n_rfrnds_per_period(
   data,
+  by = NULL,
   period = c("week", "month", "quarter", "year", "decade", "century"),
   fill_gaps = TRUE,
-  by = NULL
+  period_floor = NULL,
+  period_ceiling = NULL
 )
 }
 \arguments{
 \item{data}{C2D referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column specified in \code{period} or the column \code{date} (to
 compute the \link[=add_period]{period column}), plus the one(s) specified via \code{by} (if any).}
 
+\item{by}{Optional \code{data} column(s) to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
+
 \item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
 
 \item{fill_gaps}{Whether or not to add zero-value rows to the result for \code{period} gaps in \code{data}.}
 
-\item{by}{Optional \code{data} column(s) to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
+\item{period_floor}{Lower \code{period} limit up to which gaps are filled. If \code{NULL}, the lower limit is set to the minimum of \code{period} present in \code{data}. Only
+relevant if \code{fill_gaps = TRUE} and \code{period} is set to a unique timespan type (\code{"year"}, \code{"decade"} or \code{"century"}).}
+
+\item{period_ceiling}{Upper \code{period} limit up to which gaps are filled. If \code{NULL}, the upper limit is set to the maximum of \code{period} present in \code{data}. Only
+relevant if \code{fill_gaps = TRUE} and \code{period} is set to a unique timespan type (\code{"year"}, \code{"decade"} or \code{"century"}).}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
@@ -28,8 +36,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 Counts the number of C2D referendums per desired period, optionally by additional columns specified via \code{by}.
 }
 \details{
-Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are not, as they are
-\emph{recurring} by nature (e.g. every year has a week 1).
+Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
 }
 \examples{
 c2d::rfrnds(country_code = "AT") |> c2d::n_rfrnds_per_period()
@@ -42,8 +49,8 @@ c2d::rfrnds(country_code = "AT") |>
 
 # per decade and by multiple columns
 c2d::rfrnds(country_code = "AT") |>
-  c2d::n_rfrnds_per_period(period = "decade",
-                           by = c(level, type))
+  c2d::n_rfrnds_per_period(by = c(level, type),
+                           period = "decade")
 }
 \seealso{
 Other referendum data transformation functions:

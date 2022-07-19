@@ -129,9 +129,11 @@
 
     <pre class="usage"><span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span></span>
 <span>  <span class='va'>data</span>,</span>
+<span>  by <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
 <span>  period <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"week"</span>, <span class='st'>"month"</span>, <span class='st'>"quarter"</span>, <span class='st'>"year"</span>, <span class='st'>"decade"</span>, <span class='st'>"century"</span><span class='op'>)</span>,</span>
 <span>  fill_gaps <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
-<span>  by <span class='op'>=</span> <span class='cn'>NULL</span></span>
+<span>  period_floor <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
+<span>  period_ceiling <span class='op'>=</span> <span class='cn'>NULL</span></span>
 <span><span class='op'>)</span></span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -143,6 +145,10 @@
 compute the <a href='add_period.html'>period column</a>), plus the one(s) specified via <code>by</code> (if any).</p></td>
     </tr>
     <tr>
+      <th>by</th>
+      <td><p>Optional <code>data</code> column(s) to group by before counting number of referendums. <a href='https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html'>Tidy selections</a> are supported.</p></td>
+    </tr>
+    <tr>
       <th>period</th>
       <td><p>Type of period to count referendums by. One of <code>"week"</code>,<code>"month"</code>,<code>"quarter"</code>,<code>"year"</code>,<code>"decade"</code> or <code>"century"</code>.</p></td>
     </tr>
@@ -151,8 +157,14 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
       <td><p>Whether or not to add zero-value rows to the result for <code>period</code> gaps in <code>data</code>.</p></td>
     </tr>
     <tr>
-      <th>by</th>
-      <td><p>Optional <code>data</code> column(s) to group by before counting number of referendums. <a href='https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html'>Tidy selections</a> are supported.</p></td>
+      <th>period_floor</th>
+      <td><p>Lower <code>period</code> limit up to which gaps are filled. If <code>NULL</code>, the lower limit is set to the minimum of <code>period</code> present in <code>data</code>. Only
+relevant if <code>fill_gaps = TRUE</code> and <code>period</code> is set to a unique timespan type (<code>"year"</code>, <code>"decade"</code> or <code>"century"</code>).</p></td>
+    </tr>
+    <tr>
+      <th>period_ceiling</th>
+      <td><p>Upper <code>period</code> limit up to which gaps are filled. If <code>NULL</code>, the upper limit is set to the maximum of <code>period</code> present in <code>data</code>. Only
+relevant if <code>fill_gaps = TRUE</code> and <code>period</code> is set to a unique timespan type (<code>"year"</code>, <code>"decade"</code> or <code>"century"</code>).</p></td>
     </tr>
     </table>
 
@@ -161,8 +173,7 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
     <p>A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that the <code>period</code> types <code>"year"</code>, <code>"decade"</code> and <code>"century"</code> are <em>unique</em> timespans, while <code>"week"</code>, <code>"month"</code> and <code>"quarter"</code> are not, as they are
-<em>recurring</em> by nature (e.g. every year has a week 1).</p>
+    <p>Note that the <code>period</code> types <code>"year"</code>, <code>"decade"</code> and <code>"century"</code> are <em>unique</em> timespans, while <code>"week"</code>, <code>"month"</code> and <code>"quarter"</code> are <em>recurring</em> timespans (e.g. every year has a week 1).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other referendum data transformation functions:
@@ -218,8 +229,8 @@ compute the <a href='add_period.html'>period column</a>), plus the one(s) specif
 <span class='r-in'><span></span></span>
 <span class='r-in'><span><span class='co'># per decade and by multiple columns</span></span></span>
 <span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
-<span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>period <span class='op'>=</span> <span class='st'>"decade"</span>,</span></span>
-<span class='r-in'><span>                           by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>level</span>, <span class='va'>type</span><span class='op'>)</span><span class='op'>)</span></span></span>
+<span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>level</span>, <span class='va'>type</span><span class='op'>)</span>,</span></span>
+<span class='r-in'><span>                           period <span class='op'>=</span> <span class='st'>"decade"</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 264 × 4</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    level type                 decade     n</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>                 <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>

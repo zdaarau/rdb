@@ -140,68 +140,53 @@
 <h3 class='hasAnchor' id='referendum-level-variables'><a class='anchor' href='#referendum-level-variables'></a>Referendum-level variables</h3>
 
 
-<p>For the following variables, the <a href='https://en.wikipedia.org/wiki/Unit_of_observation'>unit of observation</a> is the
-individual referendum.</p><h4 class='hasAnchor' id='list-id-'><a class='anchor' href='#list-id-'></a><code>id</code></h4>
+<p>For the following variables, the <a href='https://en.wikipedia.org/wiki/Unit_of_observation'>unit of observation</a> is the individual referendum.</p><h4 class='hasAnchor' id='list-id-'><a class='anchor' href='#list-id-'></a><code>id</code></h4>
 
 
-<p>A 24-character value that uniquely identifies the referendum and
-corresponds to the <a href='https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid'>MongoDB <code>ObjectId</code></a>
-in the C2D database.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>A 24-character value that uniquely identifies the referendum and corresponds to the <a href='https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid'>MongoDB <code>ObjectId</code></a> in the C2D database.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-id-official-'><a class='anchor' href='#list-id-official-'></a><code>id_official</code></h4>
 
 
-<p>The referendum’s official identifier assigned by the authorities; this
-is only guaranteed to be unique per respective jurisdiction.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The referendum's official identifier assigned by the authorities; this is only guaranteed to be unique per respective jurisdiction.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-id-sudd-'><a class='anchor' href='#list-id-sudd-'></a><code>id_sudd</code></h4>
 
 
-<p>The referendum’s identifier assigned by <a href='https://sudd.ch/'>sudd.ch</a>;
-multiple referendum’s might share the same identifier.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The referendum's identifier assigned by <a href='https://sudd.ch/'>sudd.ch</a>; multiple referendum's might share the same identifier.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-country-code-'><a class='anchor' href='#list-country-code-'></a><code>country_code</code></h4>
 
 
-<p>The two-letter <a href='https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>ISO 3166-1 alpha-2</a> code
-identifying the country in which the referendum took place; only set if
-<code>is_past_jurisdiction = FALSE</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The two-letter <a href='https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>ISO 3166-1 alpha-2</a> code identifying the country in which the referendum took place; only set if <code>is_past_jurisdiction = FALSE</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-country-code-historical-'><a class='anchor' href='#list-country-code-historical-'></a><code>country_code_historical</code></h4>
 
 
-<p>The four-letter <a href='https://en.wikipedia.org/wiki/ISO_3166-3'>ISO 3166-3</a>
-code identifying the <em>historical</em> (i.e. ceased to exist) country in
-which the referendum took place; only set if
-<code>is_past_jurisdiction = TRUE</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The four-letter <a href='https://en.wikipedia.org/wiki/ISO_3166-3'>ISO 3166-3</a> code identifying the <em>historical</em> (i.e. ceased to exist) country in which the referendum took place; only set if <code>is_past_jurisdiction = TRUE</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -211,16 +196,14 @@ which the referendum took place; only set if
 <p>The English name of the country in which the referendum took place.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-subnational-entity-name-'><a class='anchor' href='#list-subnational-entity-name-'></a><code>subnational_entity_name</code></h4>
 
 
-<p>The English name of the <a href='https://en.wikipedia.org/wiki/Administrative_division'>subnational political entity</a> in which
-the referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The English name of the <a href='https://en.wikipedia.org/wiki/Administrative_division'>subnational political entity</a> in which the referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:</p>
@@ -229,8 +212,7 @@ the referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -246,8 +228,7 @@ the referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -268,17 +249,14 @@ the referendum took place.</p><h5 class='hasAnchor' id='applicability-constraint
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ordinal (ascending)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ordinal (ascending)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-is-past-jurisdiction-'><a class='anchor' href='#list-is-past-jurisdiction-'></a><code>is_past_jurisdiction</code></h4>
 
 
-<p>Whether or not the country where the referendum took place ceased to
-exist and thus has a <code>country_code_historical</code> instead of a
-<code>country_code</code> assigned.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether or not the country where the referendum took place ceased to exist and thus has a <code>country_code_historical</code> instead of a <code>country_code</code> assigned.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td></tr>
 <tr><td><code>TRUE</code></td></tr>
@@ -292,8 +270,7 @@ exist and thus has a <code>country_code_historical</code> instead of a
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
@@ -303,41 +280,37 @@ exist and thus has a <code>country_code_historical</code> instead of a
 <p>The date on which the referendum took place.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>interval</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-title-de-'><a class='anchor' href='#list-title-de-'></a><code>title_de</code></h4>
 
 
-<p>The referendum’s German title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The referendum's German title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-title-fr-'><a class='anchor' href='#list-title-fr-'></a><code>title_fr</code></h4>
 
 
-<p>The referendum’s French title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The referendum's French title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-title-en-'><a class='anchor' href='#list-title-en-'></a><code>title_en</code></h4>
 
 
-<p>The referendum’s English title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The referendum's English title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -347,20 +320,17 @@ exist and thus has a <code>country_code_historical</code> instead of a
 <p>The question exactly as it was asked in the referendum.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-question-en-'><a class='anchor' href='#list-question-en-'></a><code>question_en</code></h4>
 
 
-<p>An English translation of <code>question</code> if it wasn’t officially asked in
-English, otherwise the same as <code>question</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>An English translation of <code>question</code> if it wasn't officially asked in English, otherwise the same as <code>question</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -370,8 +340,7 @@ English, otherwise the same as <code>question</code>.</p><h5 class='hasAnchor' i
 <p>The name of the committee that initiated the referendum.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -391,16 +360,14 @@ English, otherwise the same as <code>question</code>.</p><h5 class='hasAnchor' i
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-subterritories-yes-'><a class='anchor' href='#list-subterritories-yes-'></a><code>subterritories_yes</code></h4>
 
 
-<p>The number of <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative divisions</a> one
-level below <code>level</code> that approved the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The number of <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative divisions</a> one level below <code>level</code> that approved the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:</p>
@@ -409,16 +376,14 @@ level below <code>level</code> that approved the referendum.</p><h5 class='hasAn
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-subterritories-no-'><a class='anchor' href='#list-subterritories-no-'></a><code>subterritories_no</code></h4>
 
 
-<p>The number of <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative divisions</a> one
-level below <code>level</code> that rejected the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The number of <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative divisions</a> one level below <code>level</code> that rejected the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:</p>
@@ -427,8 +392,7 @@ level below <code>level</code> that rejected the referendum.</p><h5 class='hasAn
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
@@ -438,20 +402,17 @@ level below <code>level</code> that rejected the referendum.</p><h5 class='hasAn
 <p>The total number of people entitled to vote in the referendum.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-electorate-abroad-'><a class='anchor' href='#list-electorate-abroad-'></a><code>electorate_abroad</code></h4>
 
 
-<p>The number of people entitled to vote in the referendum <em>who are living
-abroad</em>; by definition a subset of <code>electorate_total</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The number of people entitled to vote in the referendum <em>who are living abroad</em>; by definition a subset of <code>electorate_total</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
@@ -461,8 +422,7 @@ abroad</em>; by definition a subset of <code>electorate_total</code>.</p><h5 cla
 <p>The number of votes approving the referendum proposal.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
@@ -472,20 +432,17 @@ abroad</em>; by definition a subset of <code>electorate_total</code>.</p><h5 cla
 <p>The number of votes rejecting the referendum proposal.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-votes-empty-'><a class='anchor' href='#list-votes-empty-'></a><code>votes_empty</code></h4>
 
 
-<p>The number of votes that did not specify any preference on the
-referendum proposal.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The number of votes that did not specify any preference on the referendum proposal.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
@@ -495,18 +452,14 @@ referendum proposal.</p><h5 class='hasAnchor' id='level-of-measurement'><a class
 <p>The number of votes that were invalid.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-votes-per-subterritory-'><a class='anchor' href='#list-votes-per-subterritory-'></a><code>votes_per_subterritory</code></h4>
 
 
-<p>The number of <code>votes_yes</code>, <code>votes_no</code>, <code>votes_empty</code> and <code>votes_invalid</code>
-per <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative division</a> one
-level below <code>level</code>; currently only filled for Swiss referendums on the
-national level.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The number of <code>votes_yes</code>, <code>votes_no</code>, <code>votes_empty</code> and <code>votes_invalid</code> per <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative division</a> one level below <code>level</code>; currently only filled for Swiss referendums on the national level.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:</p>
@@ -515,103 +468,74 @@ national level.</p><h5 class='hasAnchor' id='applicability-constraint'><a class=
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-lower-house-yes-'><a class='anchor' href='#list-lower-house-yes-'></a><code>lower_house_yes</code></h4>
 
 
-<p>The number of parliamentarians that approved the referendum proposal in
-the corresponding parliamentary voting; in <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a>, this number
-includes only members of the <em>lower house</em>, in <a href='https://en.wikipedia.org/wiki/Unicameralism'>unicameral legislatures</a> all
-parliamentarians; currently only filled for Swiss referendums on the
-national level (<a href='https://en.wikipedia.org/wiki/National_Council_(Switzerland)'>National Council</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; in <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a>, this number includes only members of the <em>lower house</em>, in <a href='https://en.wikipedia.org/wiki/Unicameralism'>unicameral legislatures</a> all parliamentarians; currently only filled for Swiss referendums on the national level (<a href='https://en.wikipedia.org/wiki/National_Council_(Switzerland)'>National Council</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-lower-house-no-'><a class='anchor' href='#list-lower-house-no-'></a><code>lower_house_no</code></h4>
 
 
-<p>The number of parliamentarians that rejected the referendum proposal in
-the corresponding parliamentary voting; in <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a>, this number
-includes only members of the <em>lower house</em>, in <a href='https://en.wikipedia.org/wiki/Unicameralism'>unicameral legislatures</a> all
-parliamentarians; currently only filled for Swiss referendums on the
-national level (<a href='https://en.wikipedia.org/wiki/National_Council_(Switzerland)'>National Council</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; in <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a>, this number includes only members of the <em>lower house</em>, in <a href='https://en.wikipedia.org/wiki/Unicameralism'>unicameral legislatures</a> all parliamentarians; currently only filled for Swiss referendums on the national level (<a href='https://en.wikipedia.org/wiki/National_Council_(Switzerland)'>National Council</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-lower-house-abstentions-'><a class='anchor' href='#list-lower-house-abstentions-'></a><code>lower_house_abstentions</code></h4>
 
 
-<p>The number of parliamentarians that abstained from the corresponding
-parliamentary voting on the referendum proposal; in <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a>, this number
-includes only members of the <em>lower house</em>, in <a href='https://en.wikipedia.org/wiki/Unicameralism'>unicameral legislatures</a> all
-parliamentarians; currently only filled for Swiss referendums on the
-national level (<a href='https://en.wikipedia.org/wiki/National_Council_(Switzerland)'>National Council</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The number of parliamentarians that abstained from the corresponding parliamentary voting on the referendum proposal; in <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a>, this number includes only members of the <em>lower house</em>, in <a href='https://en.wikipedia.org/wiki/Unicameralism'>unicameral legislatures</a> all parliamentarians; currently only filled for Swiss referendums on the national level (<a href='https://en.wikipedia.org/wiki/National_Council_(Switzerland)'>National Council</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-upper-house-yes-'><a class='anchor' href='#list-upper-house-yes-'></a><code>upper_house_yes</code></h4>
 
 
-<p>The number of parliamentarians that approved the referendum proposal in
-the corresponding parliamentary voting; applies only to <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a> and includes
-only members of the <em>upper house</em>; currently only filled for Swiss
-referendums on the national level (<a href='https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)'>Council of States</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; applies only to <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a> and includes only members of the <em>upper house</em>; currently only filled for Swiss referendums on the national level (<a href='https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)'>Council of States</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-upper-house-no-'><a class='anchor' href='#list-upper-house-no-'></a><code>upper_house_no</code></h4>
 
 
-<p>The number of parliamentarians that rejected the referendum proposal in
-the corresponding parliamentary voting; applies only to <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a> and includes
-only members of the <em>upper house</em>; currently only filled for Swiss
-referendums on the national level (<a href='https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)'>Council of States</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The number of parliamentarians that rejected the referendum proposal in the corresponding parliamentary voting; applies only to <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a> and includes only members of the <em>upper house</em>; currently only filled for Swiss referendums on the national level (<a href='https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)'>Council of States</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-upper-house-abstentions-'><a class='anchor' href='#list-upper-house-abstentions-'></a><code>upper_house_abstentions</code></h4>
 
 
-<p>The number of parliamentarians that abstained from the corresponding
-parliamentary voting on the referendum proposal; applies only to
-<a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a> and
-includes only members of the <a href='https://en.wikipedia.org/wiki/Upper_house'>upper house</a>; currently only filled
-for Swiss referendums on the national level (<a href='https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)'>Council of States</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The number of parliamentarians that abstained from the corresponding parliamentary voting on the referendum proposal; applies only to <a href='https://en.wikipedia.org/wiki/Bicameralism'>bicameral legislatures</a> and includes only members of the <a href='https://en.wikipedia.org/wiki/Upper_house'>upper house</a>; currently only filled for Swiss referendums on the national level (<a href='https://en.wikipedia.org/wiki/Council_of_States_(Switzerland)'>Council of States</a>).</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ratio</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-position-government-'><a class='anchor' href='#list-position-government-'></a><code>position_government</code></h4>
 
 
-<p>The government’s recommendation on how to vote in the referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The government's recommendation on how to vote in the referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"yes"</code></td><td>The government recommends to approve the referendum.</td></tr>
@@ -624,257 +548,234 @@ for Swiss referendums on the national level (<a href='https://en.wikipedia.org/w
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='tags'><a class='anchor' href='#tags'></a>Tags</h4>
 
 
-<p>The tags (political topics) are organized on a three-tier hierarchy as
-follows:</p><ul>
-<li><p><span class="color-azure">state organisation</span></p><ul>
-<li><p><span class="color-violet">national identity</span></p></li>
-<li><p><span class="color-violet">political system</span></p><ul>
-<li><p><span class="color-rose">constitution</span></p></li>
-<li><p><span class="color-rose">procedure for constitutional
-reform</span></p></li>
-<li><p><span class="color-rose">legislative procedure</span></p></li>
-<li><p><span class="color-rose">electoral system</span></p></li>
+<p>The tags (political topics) are organized on a three-tier hierarchy as follows:</p><ul>
+<li><p>state organisation</p><ul>
+<li><p>national identity</p></li>
+<li><p>political system</p><ul>
+<li><p>constitution</p></li>
+<li><p>procedure for constitutional reform</p></li>
+<li><p>legislative procedure</p></li>
+<li><p>electoral system</p></li>
 </ul></li>
-<li><p><span class="color-violet">institutions</span></p><ul>
-<li><p><span class="color-rose">government, administration</span></p></li>
-<li><p><span class="color-rose">parliament</span></p></li>
-<li><p><span class="color-rose">courts</span></p></li>
-<li><p><span class="color-rose">national bank</span></p></li>
+<li><p>institutions</p><ul>
+<li><p>government, administration</p></li>
+<li><p>parliament</p></li>
+<li><p>courts</p></li>
+<li><p>national bank</p></li>
 </ul></li>
-<li><p><span class="color-violet">citizens’ rights</span></p><ul>
-<li><p><span class="color-rose">citizens’ initiatives</span></p></li>
-<li><p><span class="color-rose">referendum</span></p></li>
-<li><p><span class="color-rose">voting rights</span></p></li>
+<li><p>citizens' rights</p><ul>
+<li><p>citizens' initiatives</p></li>
+<li><p>referendum</p></li>
+<li><p>voting rights</p></li>
 </ul></li>
-<li><p><span class="color-violet">federalism</span></p><ul>
-<li><p><span class="color-rose">territorial questions</span></p></li>
-<li><p><span class="color-rose">intergovernmental relations</span></p></li>
-<li><p><span class="color-rose">division of tasks</span></p></li>
+<li><p>federalism</p><ul>
+<li><p>territorial questions</p></li>
+<li><p>intergovernmental relations</p></li>
+<li><p>division of tasks</p></li>
 </ul></li>
-<li><p><span class="color-violet">legal system</span></p><ul>
-<li><p><span class="color-rose">international law</span></p></li>
-<li><p><span class="color-rose">fundamental rights</span></p></li>
-<li><p><span class="color-rose">citizenship</span></p></li>
-<li><p><span class="color-rose">private law</span></p></li>
-<li><p><span class="color-rose">criminal law</span></p></li>
-<li><p><span class="color-rose">data protection</span></p></li>
+<li><p>legal system</p><ul>
+<li><p>international law</p></li>
+<li><p>fundamental rights</p></li>
+<li><p>citizenship</p></li>
+<li><p>private law</p></li>
+<li><p>criminal law</p></li>
+<li><p>data protection</p></li>
 </ul></li>
 </ul></li>
-<li><p><span class="color-azure">foreign policy</span></p><ul>
-<li><p><span class="color-violet">position on foreign policy</span></p><ul>
-<li><p><span class="color-rose">neutrality</span></p></li>
-<li><p><span class="color-rose">independence</span></p></li>
-<li><p><span class="color-rose">good offices</span></p></li>
+<li><p>foreign policy</p><ul>
+<li><p>position on foreign policy</p><ul>
+<li><p>neutrality</p></li>
+<li><p>independence</p></li>
+<li><p>good offices</p></li>
 </ul></li>
-<li><p><span class="color-violet">European policy</span></p><ul>
-<li><p><span class="color-rose">EFTA</span></p></li>
-<li><p><span class="color-rose">EU</span></p></li>
-<li><p><span class="color-rose">EEA</span></p></li>
-<li><p><span class="color-rose">other European organisations</span></p></li>
+<li><p>European policy</p><ul>
+<li><p>EFTA</p></li>
+<li><p>EU</p></li>
+<li><p>EEA</p></li>
+<li><p>other European organisations</p></li>
 </ul></li>
-<li><p><span class="color-violet">international organisations</span></p><ul>
-<li><p><span class="color-rose">UN</span></p></li>
-<li><p><span class="color-rose">other international
-organisations</span></p></li>
+<li><p>international organisations</p><ul>
+<li><p>UN</p></li>
+<li><p>other international organisations</p></li>
 </ul></li>
-<li><p><span class="color-violet">development cooperation</span></p></li>
-<li><p><span class="color-violet">bilateral treaties</span></p></li>
-<li><p><span class="color-violet">foreign trade policy</span></p><ul>
-<li><p><span class="color-rose">export promotion</span></p></li>
-<li><p><span class="color-rose">customs</span></p></li>
+<li><p>development cooperation</p></li>
+<li><p>bilateral treaties</p></li>
+<li><p>foreign trade policy</p><ul>
+<li><p>export promotion</p></li>
+<li><p>customs</p></li>
 </ul></li>
-<li><p><span class="color-violet">diplomacy</span></p></li>
-<li><p><span class="color-violet">Swiss abroad</span></p></li>
+<li><p>diplomacy</p></li>
+<li><p>Swiss abroad</p></li>
 </ul></li>
-<li><p><span class="color-azure">security policy</span></p><ul>
-<li><p><span class="color-violet">public security</span></p><ul>
-<li><p><span class="color-rose">civil protection</span></p></li>
-<li><p><span class="color-rose">state security</span></p></li>
-<li><p><span class="color-rose">police</span></p></li>
+<li><p>security policy</p><ul>
+<li><p>public security</p><ul>
+<li><p>civil protection</p></li>
+<li><p>state security</p></li>
+<li><p>police</p></li>
 </ul></li>
-<li><p><span class="color-violet">army</span></p><ul>
-<li><p><span class="color-rose">armed forces in general</span></p></li>
-<li><p><span class="color-rose">military organisation</span></p></li>
-<li><p><span class="color-rose">arms</span></p></li>
-<li><p><span class="color-rose">military facilities</span></p></li>
-<li><p><span class="color-rose">conscientious objection, civilian
-service</span></p></li>
-<li><p><span class="color-rose">abolition of the armed
-forces</span></p></li>
-<li><p><span class="color-rose">military training</span></p></li>
-<li><p><span class="color-rose">international deployment</span></p></li>
+<li><p>army</p><ul>
+<li><p>armed forces in general</p></li>
+<li><p>military organisation</p></li>
+<li><p>arms</p></li>
+<li><p>military facilities</p></li>
+<li><p>conscientious objection, civilian service</p></li>
+<li><p>abolition of the armed forces</p></li>
+<li><p>military training</p></li>
+<li><p>international deployment</p></li>
 </ul></li>
-<li><p><span class="color-violet">national economic supply</span></p></li>
+<li><p>national economic supply</p></li>
 </ul></li>
-<li><p><span class="color-azure">economy</span></p><ul>
-<li><p><span class="color-violet">economic policy</span></p><ul>
-<li><p><span class="color-rose">short-term economic policy</span></p></li>
-<li><p><span class="color-rose">competition policy</span></p></li>
-<li><p><span class="color-rose">structural policy</span></p></li>
-<li><p><span class="color-rose">pricing policy</span></p></li>
-<li><p><span class="color-rose">consumer protection</span></p></li>
+<li><p>economy</p><ul>
+<li><p>economic policy</p><ul>
+<li><p>short-term economic policy</p></li>
+<li><p>competition policy</p></li>
+<li><p>structural policy</p></li>
+<li><p>pricing policy</p></li>
+<li><p>consumer protection</p></li>
 </ul></li>
-<li><p><span class="color-violet">employment</span></p><ul>
-<li><p><span class="color-rose">employment conditions</span></p></li>
-<li><p><span class="color-rose">working hours</span></p></li>
-<li><p><span class="color-rose">industrial relations</span></p></li>
-<li><p><span class="color-rose">employment policy</span></p></li>
+<li><p>employment</p><ul>
+<li><p>employment conditions</p></li>
+<li><p>working hours</p></li>
+<li><p>industrial relations</p></li>
+<li><p>employment policy</p></li>
 </ul></li>
-<li><p><span class="color-violet">finance</span></p><ul>
-<li><p><span class="color-rose">monetary policy</span></p></li>
-<li><p><span class="color-rose">banks, stock exchange,
-insurance</span></p></li>
+<li><p>finance</p><ul>
+<li><p>monetary policy</p></li>
+<li><p>banks, stock exchange, insurance</p></li>
 </ul></li>
-<li><p><span class="color-violet">tourism and leisure</span></p><ul>
-<li><p><span class="color-rose">tourism</span></p></li>
-<li><p><span class="color-rose">hospitality</span></p></li>
-<li><p><span class="color-rose">lottery and gambling</span></p></li>
+<li><p>tourism and leisure</p><ul>
+<li><p>tourism</p></li>
+<li><p>hospitality</p></li>
+<li><p>lottery and gambling</p></li>
 </ul></li>
 </ul></li>
-<li><p><span class="color-azure">agriculture</span></p><ul>
-<li><p><span class="color-violet">agricultural policy</span></p></li>
-<li><p><span class="color-violet">livestock</span></p></li>
-<li><p><span class="color-violet">crop production</span></p></li>
-<li><p><span class="color-violet">forestry</span></p></li>
-<li><p><span class="color-violet">fishing, hunting and pets</span></p></li>
+<li><p>agriculture</p><ul>
+<li><p>agricultural policy</p></li>
+<li><p>livestock</p></li>
+<li><p>crop production</p></li>
+<li><p>forestry</p></li>
+<li><p>fishing, hunting and pets</p></li>
 </ul></li>
-<li><p><span class="color-azure">public finance</span></p><ul>
-<li><p><span class="color-violet">taxation</span></p><ul>
-<li><p><span class="color-rose">tax policy</span></p></li>
-<li><p><span class="color-rose">tax system</span></p></li>
-<li><p><span class="color-rose">direct taxation</span></p></li>
-<li><p><span class="color-rose">indirect taxation</span></p></li>
+<li><p>public finance</p><ul>
+<li><p>taxation</p><ul>
+<li><p>tax policy</p></li>
+<li><p>tax system</p></li>
+<li><p>direct taxation</p></li>
+<li><p>indirect taxation</p></li>
 </ul></li>
-<li><p><span class="color-violet">financial system</span></p></li>
-<li><p><span class="color-violet">public expenditure</span></p></li>
-<li><p><span class="color-violet">budget cuts and remediation
-measures</span></p></li>
+<li><p>financial system</p></li>
+<li><p>public expenditure</p></li>
+<li><p>budget cuts and remediation measures</p></li>
 </ul></li>
-<li><p><span class="color-azure">energy</span></p><ul>
-<li><p><span class="color-violet">energy policy</span></p></li>
-<li><p><span class="color-violet">nuclear energy</span></p></li>
-<li><p><span class="color-violet">hydro-electric power</span></p></li>
-<li><p><span class="color-violet">alternative energy</span></p></li>
-<li><p><span class="color-violet">oil and gas</span></p></li>
+<li><p>energy</p><ul>
+<li><p>energy policy</p></li>
+<li><p>nuclear energy</p></li>
+<li><p>hydro-electric power</p></li>
+<li><p>alternative energy</p></li>
+<li><p>oil and gas</p></li>
 </ul></li>
-<li><p><span class="color-azure">transport and infrastructure</span></p><ul>
-<li><p><span class="color-violet">transport policy</span></p><ul>
-<li><p><span class="color-rose">urban transport</span></p></li>
-<li><p><span class="color-rose">transit traffic</span></p></li>
+<li><p>transport and infrastructure</p><ul>
+<li><p>transport policy</p><ul>
+<li><p>urban transport</p></li>
+<li><p>transit traffic</p></li>
 </ul></li>
-<li><p><span class="color-violet">road transport</span></p><ul>
-<li><p><span class="color-rose">road construction</span></p></li>
-<li><p><span class="color-rose">heavy traffic</span></p></li>
+<li><p>road transport</p><ul>
+<li><p>road construction</p></li>
+<li><p>heavy traffic</p></li>
 </ul></li>
-<li><p><span class="color-violet">rail transport</span></p><ul>
-<li><p><span class="color-rose">goods traffic</span></p></li>
-<li><p><span class="color-rose">passenger traffic</span></p></li>
+<li><p>rail transport</p><ul>
+<li><p>goods traffic</p></li>
+<li><p>passenger traffic</p></li>
 </ul></li>
-<li><p><span class="color-violet">air transport</span></p></li>
-<li><p><span class="color-violet">shipping</span></p></li>
-<li><p><span class="color-violet">post</span></p></li>
-<li><p><span class="color-violet">telecommunications</span></p></li>
+<li><p>air transport</p></li>
+<li><p>shipping</p></li>
+<li><p>post</p></li>
+<li><p>telecommunications</p></li>
 </ul></li>
-<li><p><span class="color-azure">environment and living space</span></p><ul>
-<li><p><span class="color-violet">soil</span></p><ul>
-<li><p><span class="color-rose">spatial planning</span></p></li>
-<li><p><span class="color-rose">land law</span></p></li>
+<li><p>environment and living space</p><ul>
+<li><p>soil</p><ul>
+<li><p>spatial planning</p></li>
+<li><p>land law</p></li>
 </ul></li>
-<li><p><span class="color-violet">housing</span></p><ul>
-<li><p><span class="color-rose">tenancy issues</span></p></li>
-<li><p><span class="color-rose">building of residential housing,
-property ownership</span></p></li>
+<li><p>housing</p><ul>
+<li><p>tenancy issues</p></li>
+<li><p>building of residential housing, property ownership</p></li>
 </ul></li>
-<li><p><span class="color-violet">environment</span></p><ul>
-<li><p><span class="color-rose">environmental policy</span></p></li>
-<li><p><span class="color-rose">noise protection</span></p></li>
-<li><p><span class="color-rose">air quality control</span></p></li>
-<li><p><span class="color-rose">water pollution control</span></p></li>
-<li><p><span class="color-rose">soil protection</span></p></li>
-<li><p><span class="color-rose">waste</span></p></li>
-<li><p><span class="color-rose">protection of nature and cultural
-heritage</span></p></li>
-<li><p><span class="color-rose">animal protection</span></p></li>
+<li><p>environment</p><ul>
+<li><p>environmental policy</p></li>
+<li><p>noise protection</p></li>
+<li><p>air quality control</p></li>
+<li><p>water pollution control</p></li>
+<li><p>soil protection</p></li>
+<li><p>waste</p></li>
+<li><p>protection of nature and cultural heritage</p></li>
+<li><p>animal protection</p></li>
 </ul></li>
 </ul></li>
-<li><p><span class="color-azure">social policy</span></p><ul>
-<li><p><span class="color-violet">health</span></p><ul>
-<li><p><span class="color-rose">health policy</span></p></li>
-<li><p><span class="color-rose">medical research and
-technology</span></p></li>
-<li><p><span class="color-rose">medicines</span></p></li>
-<li><p><span class="color-rose">addictive substances</span></p></li>
-<li><p><span class="color-rose">reproductive medicine</span></p></li>
+<li><p>social policy</p><ul>
+<li><p>health</p><ul>
+<li><p>health policy</p></li>
+<li><p>medical research and technology</p></li>
+<li><p>medicines</p></li>
+<li><p>addictive substances</p></li>
+<li><p>reproductive medicine</p></li>
 </ul></li>
-<li><p><span class="color-violet">social security</span></p><ul>
-<li><p><span class="color-rose">pension insurance</span></p></li>
-<li><p><span class="color-rose">disability insurance</span></p></li>
-<li><p><span class="color-rose">occupational benefits
-provision</span></p></li>
-<li><p><span class="color-rose">health and accident
-insurance</span></p></li>
-<li><p><span class="color-rose">maternity insurance</span></p></li>
-<li><p><span class="color-rose">unemployment insurance</span></p></li>
-<li><p><span class="color-rose">compensation for loss of earnings
-for persons on military service or civil protection
-duty</span></p></li>
-<li><p><span class="color-rose">welfare</span></p></li>
+<li><p>social security</p><ul>
+<li><p>pension insurance</p></li>
+<li><p>disability insurance</p></li>
+<li><p>occupational benefits provision</p></li>
+<li><p>health and accident insurance</p></li>
+<li><p>maternity insurance</p></li>
+<li><p>unemployment insurance</p></li>
+<li><p>compensation for loss of earnings for persons on military service or civil protection duty</p></li>
+<li><p>welfare</p></li>
 </ul></li>
-<li><p><span class="color-violet">social groups</span></p><ul>
-<li><p><span class="color-rose">immigration policy</span></p></li>
-<li><p><span class="color-rose">refugees</span></p></li>
-<li><p><span class="color-rose">status of women</span></p></li>
-<li><p><span class="color-rose">family policy</span></p></li>
-<li><p><span class="color-rose">children and young people</span></p></li>
-<li><p><span class="color-rose">senior citizens</span></p></li>
-<li><p><span class="color-rose">persons with disabilities</span></p></li>
-<li><p><span class="color-rose">homosexuals</span></p></li>
+<li><p>social groups</p><ul>
+<li><p>immigration policy</p></li>
+<li><p>refugees</p></li>
+<li><p>status of women</p></li>
+<li><p>family policy</p></li>
+<li><p>children and young people</p></li>
+<li><p>senior citizens</p></li>
+<li><p>persons with disabilities</p></li>
+<li><p>homosexuals</p></li>
 </ul></li>
 </ul></li>
-<li><p><span class="color-azure">education and research</span></p><ul>
-<li><p><span class="color-violet">education policy</span></p></li>
-<li><p><span class="color-violet">schools</span></p></li>
-<li><p><span class="color-violet">universities</span></p></li>
-<li><p><span class="color-violet">research</span></p><ul>
-<li><p><span class="color-rose">genetic engineering</span></p></li>
-<li><p><span class="color-rose">animal testing</span></p></li>
+<li><p>education and research</p><ul>
+<li><p>education policy</p></li>
+<li><p>schools</p></li>
+<li><p>universities</p></li>
+<li><p>research</p><ul>
+<li><p>genetic engineering</p></li>
+<li><p>animal testing</p></li>
 </ul></li>
-<li><p><span class="color-violet">professional and vocational
-education</span></p></li>
+<li><p>professional and vocational education</p></li>
 </ul></li>
-<li><p><span class="color-azure">culture, religion and media</span></p><ul>
-<li><p><span class="color-violet">cultural policy</span></p></li>
-<li><p><span class="color-violet">language policy</span></p></li>
-<li><p><span class="color-violet">religion, churches</span></p></li>
-<li><p><span class="color-violet">sport</span></p></li>
-<li><p><span class="color-violet">media and communication</span></p><ul>
-<li><p><span class="color-rose">media policy</span></p></li>
-<li><p><span class="color-rose">press</span></p></li>
-<li><p><span class="color-rose">radio, television and electronic
-media</span></p></li>
-<li><p><span class="color-rose">freedom of the media</span></p></li>
+<li><p>culture, religion and media</p><ul>
+<li><p>cultural policy</p></li>
+<li><p>language policy</p></li>
+<li><p>religion, churches</p></li>
+<li><p>sport</p></li>
+<li><p>media and communication</p><ul>
+<li><p>media policy</p></li>
+<li><p>press</p></li>
+<li><p>radio, television and electronic media</p></li>
+<li><p>freedom of the media</p></li>
 </ul></li>
 </ul></li>
 </ul>
 
-<p>The hierarchical relations between the three tag variables
-<code>tags_tier_1</code>, <code>tags_tier_2</code> and <code>tags_tier_3</code> can be reconstructed at
-any time using
-<a href='https://rpkg.dev/c2d/reference/hierarchize_tags.html'><code><a href='hierarchize_tags.html'>hierarchize_tags()</a></code></a>.
-This function can also be used to simply determine the parent tag(s) of
-any tag.</p><h5 class='hasAnchor' id='list-tags-tier-'><a class='anchor' href='#list-tags-tier-'></a><code>tags_tier_1</code></h5>
+<p>The hierarchical relations between the three tag variables <code>tags_tier_1</code>, <code>tags_tier_2</code> and <code>tags_tier_3</code> can be reconstructed at any time using <a href='https://rpkg.dev/c2d/reference/hierarchize_tags.html'><code><a href='hierarchize_tags.html'>hierarchize_tags()</a></code></a>. This function can also be used to simply determine the parent tag(s) of any tag.</p><h5 class='hasAnchor' id='list-tags-tier-'><a class='anchor' href='#list-tags-tier-'></a><code>tags_tier_1</code></h5>
 
 
-<p>A maximum of 3 predefined top-tier political topics that best classify
-the referendum.</p>
+<p>A maximum of 3 predefined top-tier political topics that best classify the referendum.</p>
 
 <h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
@@ -901,15 +802,12 @@ the referendum.</p>
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 <h5 class='hasAnchor' id='list-tags-tier-'><a class='anchor' href='#list-tags-tier-'></a><code>tags_tier_2</code></h5>
 
 
-<p>A maximum of 3 predefined second-tier political topics that best
-classify the referendum; the presence of a second-tier topic always
-implies presence of its parent top-tier topic.</p>
+<p>A maximum of 3 predefined second-tier political topics that best classify the referendum; the presence of a second-tier topic always implies presence of its parent top-tier topic.</p>
 
 <h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
@@ -988,15 +886,12 @@ implies presence of its parent top-tier topic.</p>
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 <h5 class='hasAnchor' id='list-tags-tier-'><a class='anchor' href='#list-tags-tier-'></a><code>tags_tier_3</code></h5>
 
 
-<p>A maximum of 3 predefined third-tier political topics that best classify
-the referendum; the presence of a third-tier topic always implies
-presence of its parent second-tier topic and grandparent top-tier topic.</p>
+<p>A maximum of 3 predefined third-tier political topics that best classify the referendum; the presence of a third-tier topic always implies presence of its parent second-tier topic and grandparent top-tier topic.</p>
 
 <h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
@@ -1122,8 +1017,7 @@ presence of its parent second-tier topic and grandparent top-tier topic.</p>
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1133,8 +1027,7 @@ presence of its parent second-tier topic and grandparent top-tier topic.</p>
 <p>A free text field with additional information about the referendum.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1142,16 +1035,11 @@ presence of its parent second-tier topic and grandparent top-tier topic.</p>
 
 
 <p>Metadata about files attached to the referendum, including</p><ul>
-<li><p><code>date_time_attached</code>: the date and time on which the file was
-attached to the referendum’s data entry</p></li>
-<li><p><code>is_deleted</code>: whether or not the file has been deleted since it was
-attached</p></li>
+<li><p><code>date_time_attached</code>: the date and time on which the file was attached to the referendum's data entry</p></li>
+<li><p><code>is_deleted</code>: whether or not the file has been deleted since it was attached</p></li>
 <li><p><code>file_name</code>: the filename as it appears when the file is downloaded</p></li>
-<li><p><code>file_size</code>: the file’s size in bytes</p></li>
-<li><p><code>s3_object_key</code>: the key uniquely identifying the file in the C2D
-<a href='https://en.wikipedia.org/wiki/Amazon_S3#Design'>Amazon S3 bucket</a>;
-the file can be downloaded by feeding this key to
-<a href='https://rpkg.dev/c2d/reference/download_file_attachment.html'><code><a href='download_file_attachment.html'>c2d::download_file_attachment()</a></code></a>.</p></li>
+<li><p><code>file_size</code>: the file's size in bytes</p></li>
+<li><p><code>s3_object_key</code>: the key uniquely identifying the file in the C2D <a href='https://en.wikipedia.org/wiki/Amazon_S3#Design'>Amazon S3 bucket</a>; the file can be downloaded by feeding this key to <a href='https://rpkg.dev/c2d/reference/download_file_attachment.html'><code><a href='download_file_attachment.html'>c2d::download_file_attachment()</a></code></a>.</p></li>
 </ul>
 
 
@@ -1161,32 +1049,27 @@ the file can be downloaded by feeding this key to
 <p>The URL of the corresponding entry on <a href='https://sudd.ch/'>sudd.ch</a>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-url-swissvotes-'><a class='anchor' href='#list-url-swissvotes-'></a><code>url_swissvotes</code></h4>
 
 
-<p>The URL of the corresponding entry on
-<a href='https://swissvotes.ch/'>swissvotes.ch</a>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The URL of the corresponding entry on <a href='https://swissvotes.ch/'>swissvotes.ch</a>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-sources-'><a class='anchor' href='#list-sources-'></a><code>sources</code></h4>
 
 
-<p>Information about the source(s) of the referendum data like additional
-URLs or other references.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>Information about the source(s) of the referendum data like additional URLs or other references.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1206,45 +1089,39 @@ URLs or other references.</p><h5 class='hasAnchor' id='level-of-measurement'><a 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-date-time-created-'><a class='anchor' href='#list-date-time-created-'></a><code>date_time_created</code></h4>
 
 
-<p>The date and time on which the referendum’s data entry was created.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The date and time on which the referendum's data entry was created.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>interval</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-date-time-last-edited-'><a class='anchor' href='#list-date-time-last-edited-'></a><code>date_time_last_edited</code></h4>
 
 
-<p>The date and time on which the referendum’s data entry was last
-modified.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The date and time on which the referendum's data entry was last modified.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>interval</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-archive-'><a class='anchor' href='#list-archive-'></a><code>archive</code></h4>
 
 
-<p>The referendum’s data from an earlier, obsolete state of the C2D
-database.</p>
+<p>The referendum's data from an earlier, obsolete state of the C2D database.</p>
 
 <h4 class='hasAnchor' id='list-type-'><a class='anchor' href='#list-type-'></a><code>type</code></h4>
 
 
-<p>The institutional type of direct democracy which the referendum is an
-instance of.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The institutional type of direct democracy which the referendum is an instance of.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"mandatory referendum"</code></td><td>A referendum that was automatically triggered by certain legal conditions, usually found in the constitution.</td></tr>
@@ -1252,7 +1129,7 @@ instance of.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' hre
 <tr><td><code>"counter proposal"</code></td><td>A counter proposal by the government or parliament to another referendum.</td></tr>
 <tr><td><code>"citizens' initiative"</code></td><td>A referendum launched by citizens, usually via a signature collection.</td></tr>
 <tr><td><code>"governmental referendum"</code></td><td>A referendum launched by the government.</td></tr>
-<tr><td><code>"citizens' assembly"</code></td><td>A citizens’ assembly, usually in person where people vote by raising their hands.</td></tr>
+<tr><td><code>"citizens' assembly"</code></td><td>A citizens' assembly, usually in person where people vote by raising their hands.</td></tr>
 <tr><td><code>"recall"</code></td><td>A recall of all members of a political institution/body.</td></tr>
 </table>
 
@@ -1262,8 +1139,7 @@ instance of.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' hre
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1272,11 +1148,9 @@ instance of.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' hre
 <h3 class='hasAnchor' id='institution-level-variables'><a class='anchor' href='#institution-level-variables'></a>Institution-level variables</h3>
 
 
-<p>For the following variables, the <a href='https://en.wikipedia.org/wiki/Unit_of_observation'>unit of observation</a> is the
-referendum’s <em>institutional instrument</em>, a combination of the
-referendum’s <code>type</code> and the jurisdiction it took place.</p>
-<p>The set of variables that constitute the <em>geographical</em> component of the
-jurisdiction is dependent on the referendum’s <code>level</code>:</p><table class='table'>
+<p>For the following variables, the <a href='https://en.wikipedia.org/wiki/Unit_of_observation'>unit of observation</a> is the referendum's <em>institutional instrument</em>, a
+combination of the referendum's <code>type</code> and the jurisdiction it took place.</p>
+<p>The set of variables that constitute the <em>geographical</em> component of the jurisdiction is dependent on the referendum's <code>level</code>:</p><table class='table'>
 <tr><td><code>level</code></td><td>Geographical jurisdiction is given by</td></tr>
 <tr><td><code>national</code></td><td><code>country_code</code></td></tr>
 <tr><td><code>subnational</code></td><td><code>country_code</code> + <code>subnational_entity_name</code></td></tr>
@@ -1285,11 +1159,9 @@ jurisdiction is dependent on the referendum’s <code>level</code>:</p><table cl
 
 
 
-<p>The actual jurisdiction is also dependent on a <em>temporal</em> component
-since the legal setting in a geographical jurisdiction can vary over
-time. Thus, the actual jurisdicion is dependent on the geographical
-jurisdiction plus the <code>date</code> a referendum took place (more specifically
-the date <em>range</em> in between a specific legal setting is in force).</p><h4 class='hasAnchor' id='list-inst-legal-basis-type-'><a class='anchor' href='#list-inst-legal-basis-type-'></a><code>inst_legal_basis_type</code></h4>
+<p>The actual jurisdiction is also dependent on a <em>temporal</em> component since the legal setting in a geographical jurisdiction can vary over time. Thus, the actual
+jurisdicion is dependent on the geographical jurisdiction plus the <code>date</code> a referendum took place (more specifically the date <em>range</em> in between a
+specific legal setting is in force).</p><h4 class='hasAnchor' id='list-inst-legal-basis-type-'><a class='anchor' href='#list-inst-legal-basis-type-'></a><code>inst_legal_basis_type</code></h4>
 
 
 <p>The type of the legal basis of the referendum <code>type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
@@ -1306,16 +1178,14 @@ the date <em>range</em> in between a specific legal setting is in force).</p><h4
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ordinal (ascending)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ordinal (ascending)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-has-urgent-legal-basis-'><a class='anchor' href='#list-inst-has-urgent-legal-basis-'></a><code>inst_has_urgent_legal_basis</code></h4>
 
 
-<p>Whether or not the legal basis of the referendum <code>type</code> was adopted
-urgently, i.e. in an abridged procedure.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether or not the legal basis of the referendum <code>type</code> was adopted urgently, i.e. in an abridged procedure.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>TRUE</code></td><td>The legal basis of the referendum <code>type</code> was adopted in an abridged procedure (urgent).</td></tr>
@@ -1334,20 +1204,18 @@ urgently, i.e. in an abridged procedure.</p><h5 class='hasAnchor' id='possible-
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-is-binding-'><a class='anchor' href='#list-inst-is-binding-'></a><code>inst_is_binding</code></h4>
 
 
-<p>Whether the result of the referendum <code>type</code> has binding force or the
-decision of the voters may be disregarded.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether the result of the referendum <code>type</code> has binding force or the decision of the voters may be disregarded.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>TRUE</code></td><td>The result of the referendum <code>type</code> is binding for the legislator.</td></tr>
-<tr><td><code>FALSE</code></td><td>The result of the referendum <code>type</code> is only consultative, i.e. the legislator does not have to follow the decision of the voters.</td></tr>
+<tr><td><code>FALSE</code></td><td>The result of the referendum <code>type</code> is only consultative, i.e. the legislator does not have to follow the decision of the voters.</td></tr>
 </table>
 
 
@@ -1356,16 +1224,14 @@ decision of the voters may be disregarded.</p><h5 class='hasAnchor' id='possible
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-is-counter-proposal-'><a class='anchor' href='#list-inst-is-counter-proposal-'></a><code>inst_is_counter_proposal</code></h4>
 
 
-<p>Whether or not the referendum <code>type</code> is a counterproposal to a citizen’s
-(or other) initiative.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether or not the referendum <code>type</code> is a counterproposal to a citizen’s (or other) initiative.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>TRUE</code></td><td>The referendum <code>type</code> is a counterproposal to a citizen’s (or other) initiative.</td></tr>
@@ -1378,17 +1244,14 @@ decision of the voters may be disregarded.</p><h5 class='hasAnchor' id='possible
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-is-assembly-'><a class='anchor' href='#list-inst-is-assembly-'></a><code>inst_is_assembly</code></h4>
 
 
-<p>Whether or not the referendum <code>type</code> is held as an assembly (all voters
-at the same time and place; physical presence at the assembly is
-required to be able to vote; usually voting means raising one’s hand).</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether or not the referendum <code>type</code> is held as an assembly (all voters at the same time and place; physical presence at the assembly is required to be able to vote; usually voting means raising one’s hand).</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>TRUE</code></td><td>The referendum <code>type</code> is a counterproposal to a citizen’s (or other) initiative.</td></tr>
@@ -1401,21 +1264,19 @@ required to be able to vote; usually voting means raising one’s hand).</p><h5 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-trigger-type-'><a class='anchor' href='#list-inst-trigger-type-'></a><code>inst_trigger_type</code></h4>
 
 
-<p>The way the referendum <code>type</code> is triggered; completely dependent on
-<code>inst_trigger_actor</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The way the referendum <code>type</code> is triggered; completely dependent on <code>inst_trigger_actor</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"automatic"</code></td><td>The referendum <code>type</code> is triggered by a constitutional/legal requirement.</td></tr>
 <tr><td><code>"top down"</code></td><td>The referendum <code>type</code> is triggered by an institution of the political elite like the monarch/president/government, the parliament, a territorial unit, the UN or another institution.</td></tr>
-<tr><td><code>"bottom up"</code></td><td>The referendum <code>type</code> is triggered by citizen demand (e.g. a signature collection).</td></tr>
+<tr><td><code>"bottom up"</code></td><td>The referendum <code>type</code> is triggered by citizen demand (e.g. a signature collection).</td></tr>
 </table>
 
 
@@ -1424,8 +1285,7 @@ required to be able to vote; usually voting means raising one’s hand).</p><h5 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1453,8 +1313,7 @@ required to be able to vote; usually voting means raising one’s hand).</p><h5 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1475,16 +1334,14 @@ required to be able to vote; usually voting means raising one’s hand).</p><h5 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>ordinal (ascending)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ordinal (ascending)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-trigger-threshold-'><a class='anchor' href='#list-inst-trigger-threshold-'></a><code>inst_trigger_threshold</code></h4>
 
 
-<p>The threshold of support among <code>inst_trigger_actor</code> that has to be
-reached in order to trigger the referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The threshold of support among <code>inst_trigger_actor</code> that has to be reached in order to trigger the referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:</p>
@@ -1493,17 +1350,14 @@ reached in order to trigger the referendum <code>type</code>.</p><h5 class='hasA
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-trigger-time-limit-'><a class='anchor' href='#list-inst-trigger-time-limit-'></a><code>inst_trigger_time_limit</code></h4>
 
 
-<p>The time limit in which <code>inst_trigger_threshold</code> (usually a minimum
-number of signatures) has to be reached in order to trigger the
-referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The time limit in which <code>inst_trigger_threshold</code> (usually a minimum number of signatures) has to be reached in order to trigger the referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:</p>
@@ -1512,8 +1366,7 @@ referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constra
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1528,7 +1381,7 @@ referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constra
 <tr><td><code>"legal text (formulated proposal)"</code></td><td>A precisely formulated legal text which, if approved, will directly enter into force.</td></tr>
 <tr><td><code>"institution"</code></td><td>A recall of all members of a particular institution/body.</td></tr>
 <tr><td><code>"person"</code></td><td>An appointment of a single person.</td></tr>
-<tr><td><code>"principle"</code></td><td>A question about what direction to take on a particular issue/topic, but without a proposed legal text; e.g., “Should there be a total revision of our constitution?”.</td></tr>
+<tr><td><code>"principle"</code></td><td>A question about what direction to take on a particular issue/topic, but without a proposed legal text; e.g., "Should there be a total revision of our constitution?".</td></tr>
 </table>
 
 
@@ -1537,8 +1390,7 @@ referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constra
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1570,8 +1422,7 @@ referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constra
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1581,11 +1432,11 @@ referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constra
 <p>The legal level of <code>inst_object_type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>"ordinance"</code></td><td>An ordinance, i.e. a legal norm based on a law or the constitution.</td></tr>
-<tr><td><code>"treaty"</code></td><td>A domestic treaty, e.g. an agreement between the constituent states of a republic.</td></tr>
-<tr><td><code>"law"</code></td><td>A law, i.e. a legal norm based on the constitution and created by the legislative.</td></tr>
-<tr><td><code>"constitution"</code></td><td>The constitution, i.e. the aggregate of fundamental principles or established precedents that constitute the legal basis of a state and commonly determine how that state is to be governed.</td></tr>
-<tr><td><code>"international treaty"</code></td><td>An international treaty, i.e. a bilateral or multilateral agreement or an accession to and international organization.</td></tr>
+<tr><td><code>"ordinance"</code></td><td>An ordinance, i.e. a legal norm based on a law or the constitution.</td></tr>
+<tr><td><code>"treaty"</code></td><td>A domestic treaty, e.g. an agreement between the constituent states of a republic.</td></tr>
+<tr><td><code>"law"</code></td><td>A law, i.e. a legal norm based on the constitution and created by the legislative.</td></tr>
+<tr><td><code>"constitution"</code></td><td>The constitution, i.e. the aggregate of fundamental principles or established precedents that constitute the legal basis of a state and commonly determine how that state is to be governed.</td></tr>
+<tr><td><code>"international treaty"</code></td><td>An international treaty, i.e. a bilateral or multilateral agreement or an accession to and international organization.</td></tr>
 </table>
 
 
@@ -1600,16 +1451,14 @@ referendum <code>type</code>.</p><h5 class='hasAnchor' id='applicability-constra
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-object-revision-extent-'><a class='anchor' href='#list-inst-object-revision-extent-'></a><code>inst_object_revision_extent</code></h4>
 
 
-<p>The extent of revision of <code>inst_object_type</code> which can be achieved
-within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The extent of revision of <code>inst_object_type</code> which can be achieved within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"partial"</code></td><td>Only parts of the concerned legal text can be revised at the same time.</td></tr>
@@ -1629,8 +1478,7 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1641,7 +1489,7 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"introduce"</code></td><td>With this instrument, it is possible to introduce an entirely new text/concept.</td></tr>
-<tr><td><code>"revise"</code></td><td>With this instrument, it is possible to change some parts of the legal text/…</td></tr>
+<tr><td><code>"revise"</code></td><td>With this instrument, it is possible to change some parts of the legal text/...</td></tr>
 <tr><td><code>"abrogate"</code></td><td>With this instrument, it is possible to strike parts of the legal text / to recall a person/institution.</td></tr>
 </table>
 
@@ -1652,8 +1500,7 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1681,8 +1528,7 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1716,8 +1562,7 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1749,28 +1594,24 @@ within one referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='a
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-quorum-turnout-'><a class='anchor' href='#list-inst-quorum-turnout-'></a><code>inst_quorum_turnout</code></h4>
 
 
-<p>The minimum percentage of the <code>electorate_total</code> that have to
-participate in the referendum <code>type</code> in order for it to be passed.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The minimum percentage of the <code>electorate_total</code> that have to participate in the referendum <code>type</code> in order for it to be passed.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-quorum-approval-'><a class='anchor' href='#list-inst-quorum-approval-'></a><code>inst_quorum_approval</code></h4>
 
 
-<p>The minimum number of voters that have to approve the referendum <code>type</code>
-in order for it to be passed.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The minimum number of voters that have to approve the referendum <code>type</code> in order for it to be passed.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"simple majority"</code></td><td>&gt; 50 % of the voters have to approve the referendum proposal.</td></tr>
@@ -1784,16 +1625,14 @@ in order for it to be passed.</p><h5 class='hasAnchor' id='possible-values'><a c
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-has-precondition-'><a class='anchor' href='#list-inst-has-precondition-'></a><code>inst_has_precondition</code></h4>
 
 
-<p>Whether or not an institutional actor must take a preconditional
-decision in order for the referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether or not an institutional actor must take a preconditional decision in order for the referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>TRUE</code></td><td>An institutional actor must take a preconditional decision in order for the referendum <code>type</code> to be held.</td></tr>
@@ -1806,16 +1645,14 @@ decision in order for the referendum <code>type</code> to be held.</p><h5 class=
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-inst-precondition-actor-'><a class='anchor' href='#list-inst-precondition-actor-'></a><code>inst_precondition_actor</code></h4>
 
 
-<p>The actor that must take a preconditional decision in order for the
-referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The actor that must take a preconditional decision in order for the referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
 <tr><td><code>"parliament"</code></td><td>The parliament.</td></tr>
@@ -1824,7 +1661,7 @@ referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-v
 <tr><td><code>"UN"</code></td><td>The United Nations (UN) or one of its organs.</td></tr>
 <tr><td><code>"parliament and government"</code></td><td>The parliament and the government or prime minister.</td></tr>
 <tr><td><code>"parliament and president"</code></td><td>The parliament and the president.</td></tr>
-<tr><td><code>"central government and SPLM"</code></td><td>The central government and the <a href='https://en.wikipedia.org/wiki/Sudan_People's_Liberation_Movement'>Sudan People’s Liberation Movement</a>.</td></tr>
+<tr><td><code>"central government and SPLM"</code></td><td>The central government and the <a href='https://en.wikipedia.org/wiki/Sudan_People's_Liberation_Movement'>Sudan People's Liberation Movement</a>.</td></tr>
 </table>
 
 
@@ -1839,8 +1676,7 @@ referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-v
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
@@ -1850,8 +1686,8 @@ referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-v
 <p>The decision that <code>inst_precondition_actor</code> has taken.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>"yes"</code></td><td>Affirmative answer (e.g. “Yes, we will hold a vote that has been requested by citizens.”).</td></tr>
-<tr><td><code>"no"</code></td><td>Negative answer (e.g. “No, we will not implement the demands of a citizens’ initiative voluntarily.”).</td></tr>
+<tr><td><code>"yes"</code></td><td>Affirmative answer (e.g. "Yes, we will hold a vote that has been requested by citizens.").</td></tr>
+<tr><td><code>"no"</code></td><td>Negative answer (e.g. "No, we will not implement the demands of a citizens’ initiative voluntarily.").</td></tr>
 </table>
 
 
@@ -1860,8 +1696,7 @@ referendum <code>type</code> to be held.</p><h5 class='hasAnchor' id='possible-v
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable’s <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the
-<strong>nominal (binary)</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 

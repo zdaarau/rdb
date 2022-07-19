@@ -2,33 +2,45 @@
 % Please edit documentation in R/c2d.gen.R
 \name{tbl_n_rfrnds_per_period}
 \alias{tbl_n_rfrnds_per_period}
-\title{Table number of referendums per period}
+\title{Tabulate number of referendums per period}
 \usage{
 tbl_n_rfrnds_per_period(
   data,
+  by = NULL,
   period = c("week", "month", "quarter", "year", "decade", "century"),
   fill_gaps = TRUE,
-  by = NULL,
+  period_floor = NULL,
+  period_ceiling = NULL,
+  squeeze_zero_rows = TRUE,
   descending = TRUE,
   add_total_row = TRUE,
-  add_total_col = TRUE
+  add_total_col = NULL
 )
 }
 \arguments{
 \item{data}{C2D referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column specified in \code{period} or the column \code{date} (to
 compute the \link[=add_period]{period column}), plus the one(s) specified via \code{by} (if any).}
 
+\item{by}{Up to two additional \code{data} column(s) to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
+
 \item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
 
 \item{fill_gaps}{Whether or not to add zero-value rows to the result for \code{period} gaps in \code{data}.}
 
-\item{by}{Up to two additional \code{data} column(s) to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
+\item{period_floor}{Lower \code{period} limit up to which gaps are filled. If \code{NULL}, the lower limit is set to the minimum of \code{period} present in \code{data}. Only
+relevant if \code{fill_gaps = TRUE} and \code{period} is set to a unique timespan type (\code{"year"}, \code{"decade"} or \code{"century"}).}
+
+\item{period_ceiling}{Upper \code{period} limit up to which gaps are filled. If \code{NULL}, the upper limit is set to the maximum of \code{period} present in \code{data}. Only
+relevant if \code{fill_gaps = TRUE} and \code{period} is set to a unique timespan type (\code{"year"}, \code{"decade"} or \code{"century"}).}
+
+\item{squeeze_zero_rows}{Whether or not to compress consecutive zero-sum rows into single period span rows.}
 
 \item{descending}{Whether to sort the resulting table by \code{period} in descending or in ascending order.}
 
 \item{add_total_row}{Whether or not to add a summary row at the very end of the table containing column totals.}
 
-\item{add_total_col}{Whether or not to add a summary column at the very end of the table containing row totals.}
+\item{add_total_col}{Whether or not to add a summary column at the very end of the table containing row totals. If \code{NULL}, a total column is added only if
+\code{by} is non-empty.}
 }
 \value{
 A \code{\link[gt:gt]{gt_tbl}} object.
@@ -36,15 +48,18 @@ A \code{\link[gt:gt]{gt_tbl}} object.
 \description{
 Creates a ready-to-print \link[gt:gt]{gt} table with the number of referendums per period, optionally counted \code{by} one or more additional columns.
 }
+\details{
+Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
+}
 \examples{
 c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(period = "decade")
 
 # grouped by a single additional column
-c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(period = "decade",
-                                                                 by = level)
+c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(by = level,
+                                                                 period = "decade")
 
 # grouped by two addtional columns
-c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(period = "decade",
-                                                                 by = c(level, type))
+c2d::rfrnds(country_code = "AT") |> c2d::tbl_n_rfrnds_per_period(by = c(level, type),
+                                                                 period = "decade")
 }
 \concept{tabulate}
