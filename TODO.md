@@ -165,6 +165,34 @@
     but is this actually possible? generally, the order of variables in the returned JSON seems random: compare e.g. `date` of
     [here](https://services.c2d.ch/referendums/6102ae4ec72633da60229941) vs. [here](https://services.c2d.ch/referendums/604b33cb4132d76d38bfe97b)
 
+-   Deduplicate file attachments! Currently, file attachments like voting brochures which apply to multiple proposals on the same ballot date are attached to
+    each individual proposal, thus resulting in file duplications. Example: subnational ballot date in ZH, CH \@ 2022-05-15 has 4 proposals and the file
+    `voting_brochure_zh_2022_05_15_de.pdf` is uploaded 4 different times to our Amazon S3 bucket:
+
+    -   `62d6760ca52c3995043a8a1e`: <https://services.c2d.ch/s3_objects/referendum_62d6760ca52c3995043a8a1e_0001.pdf>
+    -   `62d67203a52c3995043a8a16`: <https://services.c2d.ch/s3_objects/referendum_62d67203a52c3995043a8a16_0001.pdf>
+    -   `62d66e97a52c3995043a8a0f`: <https://services.c2d.ch/s3_objects/referendum_62d66e97a52c3995043a8a0f_0001.pdf>
+    -   `62d66ce0a52c3995043a8a08`: <https://services.c2d.ch/s3_objects/referendum_62d66ce0a52c3995043a8a08_0002.pdf>
+
+    Ideally, we'd have two different attachment types:
+
+    1.  Attachments that belong to an individual proposal.
+    2.  Attachments that belong to a whole ballot date in a jurisdiction, i.e. all proposals at that ballot.
+
+    That way uploading *and* assigning e.g. a voting brochure to referendums would be a *single action*.
+
+    Rough outline of the procedure for introducing the second attachment type:
+
+    1.  Create new ballot-date-level database with primary key `country_code_historical`/`country_code` + `subnational_entity_code` + `municipality` +
+        **`date`**, plus a field for attachment metadata (to be discussed what exactly is sensible here).
+
+    2.  Create necessary API endpoints and front-end logic for type 2 attachments.
+
+    3.  Treat all existing attachments as belonging to individual proposals (type 1).
+
+    4.  Programmatically identify the attachments that belong to ballot dates (type 2) instead by comparing file hashes (open question: are file hashes already
+        available from S3 some way or do we have to download all attachments and calculate them ourselves?) and convert them to type 2.
+
 -   C2D admin front-end: Louis' Dokument `~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx`
 
 -   C2D website: Möglichkeit zum Report falscher/fehlender Daten schaffen! Bevor CCM Design damit beauftragt wird, sollten wir definieren, wie ungefähr das

@@ -3023,8 +3023,8 @@ TODO:
     -   `votes_empty`
     -   `votes_invalid`
 
-    This is annoying, thus I [asked to change it](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-996196362) -\> decide on what to do after CCM
-    Design replied.
+    This is annoying, thus I [asked to change it](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-996196362) -\> this [was
+    fixed](https://github.com/ccmdesign/c2d-app/commit/8e7317cea5803e9772d3ad2f10c42d8e7955d0c2), thus we need to adapt properly.
 
 NOTES:
 
@@ -4088,6 +4088,8 @@ n_rfrnds_per_period <- function(data,
                       to = period_max,
                       by = period_step)
     result %<>%
+      # reduce to results `>= period_floor` and `<= period_ceiling`
+      dplyr::filter(!!as.symbol(period) %in% period_seq) %>%
       # convert period col to fct, so `tidyr::complete()` knows the missing vals
       dplyr::mutate(!!as.symbol(period) := factor(x = !!as.symbol(period),
                                                   levels = period_seq,
@@ -4525,9 +4527,9 @@ tbl_n_rfrnds_per_period <- function(data,
   }
   
   by_names_print <- ifelse(has_by,
-      names(ix_by) %>%
-      printify_v_names() %>%
-      pal::wrap_chr(wrap = "*") %>%
+                           names(ix_by) %>%
+                             printify_v_names() %>%
+                             pal::wrap_chr(wrap = "*") %>%
                              paste0(collapse = "<br><br>"),
                            "")
   data_to_plot <-

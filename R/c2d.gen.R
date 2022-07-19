@@ -3384,6 +3384,8 @@ n_rfrnds_per_period <- function(data,
                       to = period_max,
                       by = period_step)
     result %<>%
+      # reduce to results `>= period_floor` and `<= period_ceiling`
+      dplyr::filter(!!as.symbol(period) %in% period_seq) %>%
       # convert period col to fct, so `tidyr::complete()` knows the missing vals
       dplyr::mutate(!!as.symbol(period) := factor(x = !!as.symbol(period),
                                                   levels = period_seq,
@@ -3761,9 +3763,9 @@ tbl_n_rfrnds_per_period <- function(data,
   }
   
   by_names_print <- ifelse(has_by,
-      names(ix_by) %>%
-      printify_v_names() %>%
-      pal::wrap_chr(wrap = "*") %>%
+                           names(ix_by) %>%
+                             printify_v_names() %>%
+                             pal::wrap_chr(wrap = "*") %>%
                              paste0(collapse = "<br><br>"),
                            "")
   data_to_plot <-
