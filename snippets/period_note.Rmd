@@ -1,0 +1,1 @@
+Note that the `period` types `"year"`, `"decade"` and `"century"` are *unique* timespans, while `"week"`, `"month"` and `"quarter"` are *recurring* timespans (e.g. every year has a week 1).
