@@ -93,6 +93,16 @@
     -\> see [issue #43](https://github.com/ccmdesign/c2d-app/issues/43) for a closed (and partially invalid) first problem report and
     [#51](https://github.com/ccmdesign/c2d-app/issues/51) for a follow-up requesting an improved UX.
 
+## To be discussed
+
+-   [Variable `type` should be multivalued](https://gitlab.com/zdaarau/rpkgs/c2d/-/issues/3)
+
+-   The referendum `type` **`"governmental referendum"`** should be renamed since it's used (and most probably intended, too) to catch all kinds of top-down
+    referendums, not only ones that originate from the government (executive) but also ones that originate from the parliament (legislative).
+
+-   There is at least one "Landsgemeinde" referendum (`id = 5bbc004292a21351232e52e7`) with no result (`NA`) where the result should actually be `"no"`
+    (Landsgemeinde rejected proposal) if I'm not mistaken. Do we handle "Landsgemeinde" votes specially or why is that?
+
 ## Internal (at least for now)
 
 -   We might wanna add even more database fields:
@@ -468,16 +478,18 @@
 
     Was meint Irina?
 
+#### Ideas
+
+-   We should ensure minimum quality of attachments (e.g. correct orientation, page ordering, OCR). Bad example:
+    <https://services.c2d.ch/s3_objects/referendum_5bbbf59192a21351232e2e65_0001.pdf>
+
+    I could probably write some validation fn in pkg c2d that checks all PDFs for text content to determine if they're OCR'ed, but maybe there's already more
+    sophisticated software avalailable for this.
+
+    Ideally, the admin portal should ensure the minimum quality requirements upon upload and display an informative warning in case of violation (with an opt-in
+    override to upload nevertheless).
+
 #### Sonstige
-
--   The referendum `type` **`"governmental referendum"`** should be renamed since it's used (and most probably intended, too) to catch all kinds of top-down
-    referendums, not only ones that originate from the government (executive) but also ones that originate from the parliament (legislative).
-
-    Additionally, it should be allowed to assign more than one `type` since in reality this happens sometimes (example: Robin found an example where a
-    referendum in the canton of Zurich was both a `"governmental referendum"` and an `"optional referendum"`).
-
--   There is at least one "Landsgemeinde" referendum (`id = 5bbc004292a21351232e52e7`) with no result (`NA`) where the result should actually be `"no"`
-    (Landsgemeinde rejected proposal) if I'm not mistaken. Do we handle "Landsgemeinde" votes specially or why is that?
 
 -   Are `id_sudd`s stable over time? Maybe contact the creator [Beat Müller](mailto:beat@sudd.ch) and ask?
 
