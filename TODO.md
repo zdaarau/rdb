@@ -97,6 +97,8 @@
 
 -   [Variable `type` should be multivalued](https://gitlab.com/zdaarau/rpkgs/c2d/-/issues/3)
 
+-   [Rethink how to capture referendums with other or more than yes-or-no answer options](https://gitlab.com/zdaarau/rpkgs/c2d/-/issues/5)
+
 -   The referendum `type` **`"governmental referendum"`** should be renamed since it's used (and most probably intended, too) to catch all kinds of top-down
     referendums, not only ones that originate from the government (executive) but also ones that originate from the parliament (legislative).
 
@@ -119,27 +121,6 @@
     Instead of not capturing such votings, it would be superior to introduce another variable indicating the status of a voting (official, inofficial, ...);
     currently we only have an *institutional* variable `legal_basis_type` (formerly `official_status`) which measures a completely different thing. Maybe name
     this new variable simply `status`?
-
--   We need a proper way to capture referendums with other or more than yes-or-no answer options. This includes
-
-    -   other options than yes/no (e.g. [this one](https://sudd.ch/event.php?id=cl022020))
-    -   multiple options (e.g. [this one](https://sudd.ch/event.php?id=bq012014))
-    -   competing (counter) proposals with tie-breaker question (e.g. [this one](https://sudd.ch/event.php?lang=de&id=ch021920) or [this
-        one](https://sudd.ch/event.php?lang=de&id=ch052010))
-    -   competing / mutually exclusive proposals (e.g. [this one](https://sudd.ch/event.php?id=pl011928) or [this one](https://sudd.ch/event.php?id=si011996))
-    -   preference / hierarchy information, i.e. whether or not multiple choices at the same time are allowed (i.e. whether or not options are mutually
-        exclusive) -- and if so -- how ambiguities are resolved (e.g. by an additional preference list)
-
-    We would also need to decide if counterproposals are simply to be included as additional "options" or if they are to be captured as separate entries
-    (recommended); if the latter, we should introduce an additional variable `interdependent_ids` or the like to link to the "sibling" entries.
-
-    Additionally,
-
-    -   the `result` variable needs to be changed to hold the option that won the referendum and
-    -   the `position_government` variable needs to be changed to hold the option the government favors
-    -   we might wanna introduce another variable `position_status_quo` indicating which (if any) option preserves the status quo (i.e. against any change)
-    -   the `votes_yes` and `votes_no` (as well as the same sub-vars in `votes_per_subterritory`) variables need to be replaced by a single nested (list-type)
-        variable `votes_substantive` that holds a subfield with the number of votes per option (named by the option?).
 
 -   There is obviously not much consistency in how the referendum titles in the three languages are captured. According to the guidelines to add Swiss votings
     (`~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/CH_Vorgehen_Abstimmungseingabe.docx`), the `title_de` (and `title_fr` if one exists) are the
