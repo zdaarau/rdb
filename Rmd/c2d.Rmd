@@ -284,63 +284,75 @@ assemble_query_filter <- function(country_code = NULL,
                                   query_filter = NULL,
                                   base64_encode = TRUE) {
   
+  checkmate::assert_string(query_filter,
+                           null.ok = TRUE)
+  checkmate::assert_flag(base64_encode)
+  
   # assemble JSON query filter document if `query_filter` is not provided
-  if (is.null(checkmate::assert_string(query_filter, null.ok = TRUE))) {
+  if (is.null(query_filter)) {
     
+    purrr::map_chr(.x = country_code,
+                   .f = checkmate::assert_choice,
+                   choices = ISOcodes::ISO_3166_1$Alpha_2,
+                   null.ok = TRUE,
+                   .var.name = "country_code")
+    checkmate::assert_character(subnational_entity_name,
+                                any.missing = FALSE,
+                                null.ok = TRUE)
+    checkmate::assert_character(municipality,
+                                any.missing = FALSE,
+                                null.ok = TRUE)
+    purrr::map_chr(.x = level,
+                   .f = checkmate::assert_choice,
+                   choices = v_vals("level"),
+                   null.ok = TRUE,
+                   .var.name = "level")
+    purrr::map_chr(.x = type,
+                   .f = checkmate::assert_choice,
+                   choices = v_vals("type"),
+                   null.ok = TRUE,
+                   .var.name = "type")
+    checkmate::assert_character(as.character(date),
+                                pattern = "\\d{4}-\\d{2}-\\d{2}",
+                                any.missing = FALSE,
+                                null.ok = TRUE,
+                                .var.name = "date")
+    checkmate::assert_flag(is_draft,
+                           null.ok = TRUE)
+    checkmate::assert_posixct(lubridate::as_datetime(date_time_created_min),
+                              any.missing = FALSE,
+                              .var.name = "date_time_created_min")
+    checkmate::assert_posixct(lubridate::as_datetime(date_time_created_max),
+                              any.missing = FALSE,
+                              .var.name = "date_time_created_max")
     query_filter <-
-      list(country_code =
-             country_code %>%
-             purrr::map_chr(checkmate::assert_choice,
-                            choices = ISOcodes::ISO_3166_1$Alpha_2,
-                            null.ok = TRUE,
-                            .var.name = "country_code") %>%
-             query_filter_in(),
-           canton = query_filter_in(checkmate::assert_character(subnational_entity_name,
-                                                                any.missing = FALSE,
-                                                                null.ok = TRUE)),
-           municipality = query_filter_in(checkmate::assert_character(municipality,
-                                                                      any.missing = FALSE,
-                                                                      null.ok = TRUE)),
-           level =
-             level %>%
-             purrr::map_chr(checkmate::assert_choice,
-                            choices = v_vals("level"),
-                            null.ok = TRUE,
-                            .var.name = "level") %>%
-             query_filter_in(),
+      list(country_code = query_filter_in(country_code),
+           canton = query_filter_in(subnational_entity_name),
+           municipality = query_filter_in(municipality),
+           level = query_filter_in(level),
            institution =
              type %>%
-             purrr::map_chr(checkmate::assert_choice,
-                            choices = v_vals("type"),
-                            null.ok = TRUE,
-                            .var.name = "type") %>%
              purrr::when(length(.) == 0L ~ .,
-                         ~ dplyr::recode("citizens' assembly" = "citizen assembly") %>% stringr::str_to_sentence()) %>%
+                         ~ dplyr::recode(., "citizens' assembly" = "citizen assembly") %>% stringr::str_to_sentence()) %>%
              query_filter_in(),
-           date = query_filter_in(checkmate::assert_character(as.character(date),
-                                                              pattern = "\\d{4}-\\d{2}-\\d{2}",
-                                                              any.missing = FALSE,
-                                                              null.ok = TRUE,
-                                                              .var.name = "date")),
-           draft = checkmate::assert_flag(is_draft,
-                                          null.ok = TRUE),
-           created_on = query_filter_date(min = checkmate::assert_posixct(lubridate::as_datetime(date_time_created_min),
-                                                                          any.missing = FALSE,
-                                                                          .var.name = "date_time_created_min"),
-                                          max = checkmate::assert_posixct(lubridate::as_datetime(date_time_created_max),
-                                                                          any.missing = FALSE,
-                                                                          .var.name = "date_time_created_max"))) %>%
+           date = query_filter_in(date),
+           draft = is_draft,
+           created_on = query_filter_date(min = date_time_created_min,
+                                          max = date_time_created_max)) %>%
       # remove `NULL` elements
       purrr::compact() %>%
-      # convert to base64-encoded JSON
+      # convert to JSON
       jsonlite::toJSON(POSIXt = "ISO8601",
                        auto_unbox = TRUE,
                        digits = NA,
                        pretty = FALSE)
   }
   
-  query_filter %>% purrr::when(checkmate::assert_flag(base64_encode) ~ jsonlite::base64_enc(.),
-                               ~ .)
+  if (base64_encode) {
+    query_filter %<>% jsonlite::base64_enc()
+  }
+  
+  query_filter
 }
 ```
 

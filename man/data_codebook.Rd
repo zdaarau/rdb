@@ -436,272 +436,257 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 The tags (political topics) are organized on a three-tier hierarchy as follows:
 \itemize{
-\item \if{html}{\out{<span class="color-azure">}}state organisation\if{html}{\out{</span>}}
+\item state organisation
 \itemize{
-\item \if{html}{\out{<span class="color-violet">}}national identity\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}political system\if{html}{\out{</span>}}
+\item national identity
+\item political system
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}constitution\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}procedure for constitutional
-reform\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}legislative procedure\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}electoral system\if{html}{\out{</span>}}
+\item constitution
+\item procedure for constitutional reform
+\item legislative procedure
+\item electoral system
 }
-\item \if{html}{\out{<span class="color-violet">}}institutions\if{html}{\out{</span>}}
+\item institutions
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}government, administration\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}parliament\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}courts\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}national bank\if{html}{\out{</span>}}
+\item government, administration
+\item parliament
+\item courts
+\item national bank
 }
-\item \if{html}{\out{<span class="color-violet">}}citizens’ rights\if{html}{\out{</span>}}
+\item citizens' rights
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}citizens’ initiatives\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}referendum\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}voting rights\if{html}{\out{</span>}}
+\item citizens' initiatives
+\item referendum
+\item voting rights
 }
-\item \if{html}{\out{<span class="color-violet">}}federalism\if{html}{\out{</span>}}
+\item federalism
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}territorial questions\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}intergovernmental relations\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}division of tasks\if{html}{\out{</span>}}
+\item territorial questions
+\item intergovernmental relations
+\item division of tasks
 }
-\item \if{html}{\out{<span class="color-violet">}}legal system\if{html}{\out{</span>}}
+\item legal system
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}international law\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}fundamental rights\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}citizenship\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}private law\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}criminal law\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}data protection\if{html}{\out{</span>}}
-}
-}
-\item \if{html}{\out{<span class="color-azure">}}foreign policy\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-violet">}}position on foreign policy\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}neutrality\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}independence\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}good offices\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}European policy\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}EFTA\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}EU\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}EEA\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}other European organisations\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}international organisations\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}UN\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}other international
-organisations\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}development cooperation\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}bilateral treaties\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}foreign trade policy\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}export promotion\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}customs\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}diplomacy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}Swiss abroad\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-azure">}}security policy\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-violet">}}public security\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}civil protection\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}state security\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}police\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}army\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}armed forces in general\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}military organisation\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}arms\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}military facilities\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}conscientious objection, civilian
-service\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}abolition of the armed
-forces\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}military training\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}international deployment\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}national economic supply\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-azure">}}economy\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-violet">}}economic policy\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}short-term economic policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}competition policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}structural policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}pricing policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}consumer protection\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}employment\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}employment conditions\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}working hours\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}industrial relations\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}employment policy\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}finance\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}monetary policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}banks, stock exchange,
-insurance\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}tourism and leisure\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}tourism\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}hospitality\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}lottery and gambling\if{html}{\out{</span>}}
+\item international law
+\item fundamental rights
+\item citizenship
+\item private law
+\item criminal law
+\item data protection
 }
 }
-\item \if{html}{\out{<span class="color-azure">}}agriculture\if{html}{\out{</span>}}
+\item foreign policy
 \itemize{
-\item \if{html}{\out{<span class="color-violet">}}agricultural policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}livestock\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}crop production\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}forestry\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}fishing, hunting and pets\if{html}{\out{</span>}}
+\item position on foreign policy
+\itemize{
+\item neutrality
+\item independence
+\item good offices
 }
-\item \if{html}{\out{<span class="color-azure">}}public finance\if{html}{\out{</span>}}
+\item European policy
 \itemize{
-\item \if{html}{\out{<span class="color-violet">}}taxation\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}tax policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}tax system\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}direct taxation\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}indirect taxation\if{html}{\out{</span>}}
+\item EFTA
+\item EU
+\item EEA
+\item other European organisations
 }
-\item \if{html}{\out{<span class="color-violet">}}financial system\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}public expenditure\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}budget cuts and remediation
-measures\if{html}{\out{</span>}}
+\item international organisations
+\itemize{
+\item UN
+\item other international organisations
 }
-\item \if{html}{\out{<span class="color-azure">}}energy\if{html}{\out{</span>}}
+\item development cooperation
+\item bilateral treaties
+\item foreign trade policy
 \itemize{
-\item \if{html}{\out{<span class="color-violet">}}energy policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}nuclear energy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}hydro-electric power\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}alternative energy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}oil and gas\if{html}{\out{</span>}}
+\item export promotion
+\item customs
 }
-\item \if{html}{\out{<span class="color-azure">}}transport and infrastructure\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-violet">}}transport policy\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}urban transport\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}transit traffic\if{html}{\out{</span>}}
+\item diplomacy
+\item Swiss abroad
 }
-\item \if{html}{\out{<span class="color-violet">}}road transport\if{html}{\out{</span>}}
+\item security policy
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}road construction\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}heavy traffic\if{html}{\out{</span>}}
+\item public security
+\itemize{
+\item civil protection
+\item state security
+\item police
 }
-\item \if{html}{\out{<span class="color-violet">}}rail transport\if{html}{\out{</span>}}
+\item army
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}goods traffic\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}passenger traffic\if{html}{\out{</span>}}
+\item armed forces in general
+\item military organisation
+\item arms
+\item military facilities
+\item conscientious objection, civilian service
+\item abolition of the armed forces
+\item military training
+\item international deployment
 }
-\item \if{html}{\out{<span class="color-violet">}}air transport\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}shipping\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}post\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}telecommunications\if{html}{\out{</span>}}
+\item national economic supply
 }
-\item \if{html}{\out{<span class="color-azure">}}environment and living space\if{html}{\out{</span>}}
+\item economy
 \itemize{
-\item \if{html}{\out{<span class="color-violet">}}soil\if{html}{\out{</span>}}
+\item economic policy
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}spatial planning\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}land law\if{html}{\out{</span>}}
+\item short-term economic policy
+\item competition policy
+\item structural policy
+\item pricing policy
+\item consumer protection
 }
-\item \if{html}{\out{<span class="color-violet">}}housing\if{html}{\out{</span>}}
+\item employment
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}tenancy issues\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}building of residential housing,
-property ownership\if{html}{\out{</span>}}
+\item employment conditions
+\item working hours
+\item industrial relations
+\item employment policy
 }
-\item \if{html}{\out{<span class="color-violet">}}environment\if{html}{\out{</span>}}
+\item finance
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}environmental policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}noise protection\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}air quality control\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}water pollution control\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}soil protection\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}waste\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}protection of nature and cultural
-heritage\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}animal protection\if{html}{\out{</span>}}
+\item monetary policy
+\item banks, stock exchange, insurance
 }
-}
-\item \if{html}{\out{<span class="color-azure">}}social policy\if{html}{\out{</span>}}
+\item tourism and leisure
 \itemize{
-\item \if{html}{\out{<span class="color-violet">}}health\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}health policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}medical research and
-technology\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}medicines\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}addictive substances\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}reproductive medicine\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}social security\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}pension insurance\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}disability insurance\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}occupational benefits
-provision\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}health and accident
-insurance\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}maternity insurance\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}unemployment insurance\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}compensation for loss of earnings
-for persons on military service or civil protection
-duty\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}welfare\if{html}{\out{</span>}}
-}
-\item \if{html}{\out{<span class="color-violet">}}social groups\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}immigration policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}refugees\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}status of women\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}family policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}children and young people\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}senior citizens\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}persons with disabilities\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}homosexuals\if{html}{\out{</span>}}
+\item tourism
+\item hospitality
+\item lottery and gambling
 }
 }
-\item \if{html}{\out{<span class="color-azure">}}education and research\if{html}{\out{</span>}}
+\item agriculture
 \itemize{
-\item \if{html}{\out{<span class="color-violet">}}education policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}schools\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}universities\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}research\if{html}{\out{</span>}}
-\itemize{
-\item \if{html}{\out{<span class="color-rose">}}genetic engineering\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}animal testing\if{html}{\out{</span>}}
+\item agricultural policy
+\item livestock
+\item crop production
+\item forestry
+\item fishing, hunting and pets
 }
-\item \if{html}{\out{<span class="color-violet">}}professional and vocational
-education\if{html}{\out{</span>}}
+\item public finance
+\itemize{
+\item taxation
+\itemize{
+\item tax policy
+\item tax system
+\item direct taxation
+\item indirect taxation
 }
-\item \if{html}{\out{<span class="color-azure">}}culture, religion and media\if{html}{\out{</span>}}
+\item financial system
+\item public expenditure
+\item budget cuts and remediation measures
+}
+\item energy
 \itemize{
-\item \if{html}{\out{<span class="color-violet">}}cultural policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}language policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}religion, churches\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}sport\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-violet">}}media and communication\if{html}{\out{</span>}}
+\item energy policy
+\item nuclear energy
+\item hydro-electric power
+\item alternative energy
+\item oil and gas
+}
+\item transport and infrastructure
 \itemize{
-\item \if{html}{\out{<span class="color-rose">}}media policy\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}press\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}radio, television and electronic
-media\if{html}{\out{</span>}}
-\item \if{html}{\out{<span class="color-rose">}}freedom of the media\if{html}{\out{</span>}}
+\item transport policy
+\itemize{
+\item urban transport
+\item transit traffic
+}
+\item road transport
+\itemize{
+\item road construction
+\item heavy traffic
+}
+\item rail transport
+\itemize{
+\item goods traffic
+\item passenger traffic
+}
+\item air transport
+\item shipping
+\item post
+\item telecommunications
+}
+\item environment and living space
+\itemize{
+\item soil
+\itemize{
+\item spatial planning
+\item land law
+}
+\item housing
+\itemize{
+\item tenancy issues
+\item building of residential housing, property ownership
+}
+\item environment
+\itemize{
+\item environmental policy
+\item noise protection
+\item air quality control
+\item water pollution control
+\item soil protection
+\item waste
+\item protection of nature and cultural heritage
+\item animal protection
+}
+}
+\item social policy
+\itemize{
+\item health
+\itemize{
+\item health policy
+\item medical research and technology
+\item medicines
+\item addictive substances
+\item reproductive medicine
+}
+\item social security
+\itemize{
+\item pension insurance
+\item disability insurance
+\item occupational benefits provision
+\item health and accident insurance
+\item maternity insurance
+\item unemployment insurance
+\item compensation for loss of earnings for persons on military service or civil protection duty
+\item welfare
+}
+\item social groups
+\itemize{
+\item immigration policy
+\item refugees
+\item status of women
+\item family policy
+\item children and young people
+\item senior citizens
+\item persons with disabilities
+\item homosexuals
+}
+}
+\item education and research
+\itemize{
+\item education policy
+\item schools
+\item universities
+\item research
+\itemize{
+\item genetic engineering
+\item animal testing
+}
+\item professional and vocational education
+}
+\item culture, religion and media
+\itemize{
+\item cultural policy
+\item language policy
+\item religion, churches
+\item sport
+\item media and communication
+\itemize{
+\item media policy
+\item press
+\item radio, television and electronic media
+\item freedom of the media
 }
 }
 }
