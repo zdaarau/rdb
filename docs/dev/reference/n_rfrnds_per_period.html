@@ -133,7 +133,8 @@
 <span>  period <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"week"</span>, <span class='st'>"month"</span>, <span class='st'>"quarter"</span>, <span class='st'>"year"</span>, <span class='st'>"decade"</span>, <span class='st'>"century"</span><span class='op'>)</span>,</span>
 <span>  fill_gaps <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
 <span>  period_floor <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
-<span>  period_ceiling <span class='op'>=</span> <span class='cn'>NULL</span></span>
+<span>  period_ceiling <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
+<span>  descending <span class='op'>=</span> <span class='cn'>FALSE</span></span>
 <span><span class='op'>)</span></span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -166,6 +167,10 @@ relevant if <code>fill_gaps = TRUE</code> and <code>period</code> is set to a un
       <td><p>Upper <code>period</code> limit up to which gaps are filled. If <code>NULL</code>, the upper limit is set to the maximum of <code>period</code> present in <code>data</code>. Only
 relevant if <code>fill_gaps = TRUE</code> and <code>period</code> is set to a unique timespan type (<code>"year"</code>, <code>"decade"</code> or <code>"century"</code>).</p></td>
     </tr>
+    <tr>
+      <th>descending</th>
+      <td><p>Whether to sort the resulting table by <code>period</code> in descending or in ascending order.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -197,18 +202,18 @@ relevant if <code>fill_gaps = TRUE</code> and <code>period</code> is set to a un
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 43 more rows</span></span>
 <span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>by <span class='op'>=</span> <span class='va'>level</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 159 × 3</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    level  week     n</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> local     1     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> local     2     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> local     3     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> local     4     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> local     5     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> local     6     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> local     7     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> local     8     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> local     9     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> local    10     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    level        week     n</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> local           1     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> subnational     1     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> national        1     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> local           2     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> subnational     2     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> national        2     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> local           3     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> subnational     3     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> national        3     2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> local           4     0</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 149 more rows</span></span>
 <span class='r-in'><span></span></span>
 <span class='r-in'><span><span class='co'># without filling gaps</span></span></span>
@@ -218,13 +223,13 @@ relevant if <code>fill_gaps = TRUE</code> and <code>period</code> is set to a un
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 8 × 3</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   level        week     n</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> subnational    16     1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span> subnational    19     1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span> subnational    21     1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span> subnational    41     3</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span> national        3     2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>6</span> national       14     1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>7</span> national       23     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> national        3     2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span> national       14     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span> subnational    16     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span> subnational    19     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span> subnational    21     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>6</span> national       23     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>7</span> subnational    41     3</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>8</span> national       44     1</span>
 <span class='r-in'><span></span></span>
 <span class='r-in'><span><span class='co'># per decade and by multiple columns</span></span></span>
@@ -232,18 +237,18 @@ relevant if <code>fill_gaps = TRUE</code> and <code>period</code> is set to a un
 <span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>n_rfrnds_per_period</span><span class='op'>(</span>by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>level</span>, <span class='va'>type</span><span class='op'>)</span>,</span></span>
 <span class='r-in'><span>                           period <span class='op'>=</span> <span class='st'>"decade"</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 264 × 4</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    level type                 decade     n</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>                 <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> local mandatory referendum   <span style='text-decoration: underline;'>1</span>910     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> local mandatory referendum   <span style='text-decoration: underline;'>1</span>920     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> local mandatory referendum   <span style='text-decoration: underline;'>1</span>930     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> local mandatory referendum   <span style='text-decoration: underline;'>1</span>940     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> local mandatory referendum   <span style='text-decoration: underline;'>1</span>950     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> local mandatory referendum   <span style='text-decoration: underline;'>1</span>960     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> local mandatory referendum   <span style='text-decoration: underline;'>1</span>970     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> local mandatory referendum   <span style='text-decoration: underline;'>1</span>980     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> local mandatory referendum   <span style='text-decoration: underline;'>1</span>990     0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> local mandatory referendum   <span style='text-decoration: underline;'>2</span>000     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    level       type                    decade     n</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> local       mandatory referendum      <span style='text-decoration: underline;'>1</span>910     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> local       optional referendum       <span style='text-decoration: underline;'>1</span>910     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> local       counter proposal          <span style='text-decoration: underline;'>1</span>910     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> local       citizens' initiative      <span style='text-decoration: underline;'>1</span>910     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> local       governmental referendum   <span style='text-decoration: underline;'>1</span>910     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> local       citizens' assembly        <span style='text-decoration: underline;'>1</span>910     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> local       recall                    <span style='text-decoration: underline;'>1</span>910     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> local       <span style='color: #BB0000;'>NA</span>                        <span style='text-decoration: underline;'>1</span>910     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> subnational mandatory referendum      <span style='text-decoration: underline;'>1</span>910     0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> subnational optional referendum       <span style='text-decoration: underline;'>1</span>910     0</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 254 more rows</span></span>
 </pre>
   </div>

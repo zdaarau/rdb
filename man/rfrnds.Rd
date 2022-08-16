@@ -18,7 +18,8 @@ rfrnds(
   incl_archive = FALSE,
   tidy = TRUE,
   use_cache = TRUE,
-  cache_lifespan = "1 week"
+  cache_lifespan = "1 week",
+  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
 )
 }
 \arguments{
@@ -38,10 +39,10 @@ rfrnds(
 include both draft and normal entries.}
 
 \item{date_time_created_min}{The minimum \code{date_time_created} to be included. A \link[base:Dates]{date}, a \link[base:DateTimeClasses]{datetime}, or something
-coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
+coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}; assumed to be in UTC if no timezone is given).}
 
 \item{date_time_created_max}{The maximum \code{date_time_created} to be included. A \link[base:Dates]{date}, a \link[base:DateTimeClasses]{datetime}, or something
-coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
+coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}; assumed to be in UTC if no timezone is given).}
 
 \item{query_filter}{A valid \href{https://docs.mongodb.com/manual/core/document/#query-filter-documents}{MongoDB JSON query filter document} which allows for
 maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if \code{query_filter} is provided, the
@@ -56,6 +57,8 @@ referendum data will only be modified just enough to be able to return it as a \
 \item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{cache_lifespan}.}
 
 \item{cache_lifespan}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Only relevant if \code{use_cache = TRUE}.}
+
+\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.

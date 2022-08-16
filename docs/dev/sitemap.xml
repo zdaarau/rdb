@@ -67,6 +67,9 @@
     <loc>https://rpkg.dev/c2d/reference/n_rfrnds_per_period.html</loc>
   </url>
   <url>
+    <loc>https://rpkg.dev/c2d/reference/pkg_config.html</loc>
+  </url>
+  <url>
     <loc>https://rpkg.dev/c2d/reference/plot_rfrnd_share_per_period.html</loc>
   </url>
   <url>
@@ -107,6 +110,15 @@
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/untidy_rfrnds.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/url_admin_portal.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/url_api.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/url_website.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/v_vals.html</loc>

@@ -128,7 +128,11 @@
 by <code><a href='rfrnds.html'>rfrnds()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span><span class='fu'>download_file_attachment</span><span class='op'>(</span><span class='va'>s3_object_key</span>, path <span class='op'>=</span> <span class='st'>"."</span><span class='op'>)</span></span></pre>
+    <pre class="usage"><span><span class='fu'>download_file_attachment</span><span class='op'>(</span></span>
+<span>  <span class='va'>s3_object_key</span>,</span>
+<span>  path <span class='op'>=</span> <span class='st'>"."</span>,</span>
+<span>  use_testing_server <span class='op'>=</span> <span class='fu'>pal</span><span class='fu'>::</span><span class='fu'><a href='https://rpkg.dev/pal/reference/pkg_config_val.html'>pkg_config_val</a></span><span class='op'>(</span>key <span class='op'>=</span> <span class='st'>"use_testing_server"</span>, pkg <span class='op'>=</span> <span class='va'>this_pkg</span><span class='op'>)</span></span>
+<span><span class='op'>)</span></span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,6 +144,10 @@ by <code><a href='rfrnds.html'>rfrnds()</a></code>.</p>
     <tr>
       <th>path</th>
       <td><p>The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.</p></td>
+    </tr>
+    <tr>
+      <th>use_testing_server</th>
+      <td><p>Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.</p></td>
     </tr>
     </table>
 

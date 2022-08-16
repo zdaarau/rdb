@@ -35,10 +35,10 @@ assemble_query_filter(
 include both draft and normal entries.}
 
 \item{date_time_created_min}{The minimum \code{date_time_created} to be included. A \link[base:Dates]{date}, a \link[base:DateTimeClasses]{datetime}, or something
-coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
+coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}; assumed to be in UTC if no timezone is given).}
 
 \item{date_time_created_max}{The maximum \code{date_time_created} to be included. A \link[base:Dates]{date}, a \link[base:DateTimeClasses]{datetime}, or something
-coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}).}
+coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}; assumed to be in UTC if no timezone is given).}
 
 \item{query_filter}{A valid \href{https://docs.mongodb.com/manual/core/document/#query-filter-documents}{MongoDB JSON query filter document} which allows for
 maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if \code{query_filter} is provided, the

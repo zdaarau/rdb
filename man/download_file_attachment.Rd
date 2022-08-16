@@ -4,12 +4,18 @@
 \alias{download_file_attachment}
 \title{Download file attachment}
 \usage{
-download_file_attachment(s3_object_key, path = ".")
+download_file_attachment(
+  s3_object_key,
+  path = ".",
+  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
+)
 }
 \arguments{
 \item{s3_object_key}{The key uniquely identifying the file in the C2D \href{https://en.wikipedia.org/wiki/Amazon_S3#Design}{Amazon S3 bucket}. A character scalar.}
 
 \item{path}{The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.}
+
+\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
 \value{
 A \link[httr:response]{response object}, invisibly.

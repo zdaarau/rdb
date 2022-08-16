@@ -4,7 +4,12 @@
 \alias{rfrnd}
 \title{Get a single referendum's data}
 \usage{
-rfrnd(id, incl_archive = FALSE, tidy = TRUE)
+rfrnd(
+  id,
+  incl_archive = FALSE,
+  tidy = TRUE,
+  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
+)
 }
 \arguments{
 \item{id}{The referendum's unique \href{https://rpkg.dev/c2d/articles/codebook.html#id}{identifier}.}
@@ -14,6 +19,8 @@ rfrnd(id, incl_archive = FALSE, tidy = TRUE)
 \item{tidy}{Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If \code{FALSE}, the raw MongoDB
 referendum data will only be modified just enough to be able to return it as a \link[tibble:tbl_df-class]{tibble}. Note that untidy data doesn't conform to the
 \link[=data_codebook]{codebook} (i.a. different variable names).}
+
+\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.

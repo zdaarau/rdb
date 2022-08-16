@@ -4,10 +4,15 @@
 \alias{search_rfrnds}
 \title{Search in English referendum titles}
 \usage{
-search_rfrnds(term)
+search_rfrnds(
+  term,
+  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
+)
 }
 \arguments{
 \item{term}{The Search term. A character scalar.}
+
+\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
 \value{
 A character vector of English referendum titles matching the search \code{term}.

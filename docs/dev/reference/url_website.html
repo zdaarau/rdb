@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Edit existing referendums in the C2D database — edit_rfrnds • c2d</title>
+<title>Assemble website URL — url_website • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Edit existing referendums in the C2D database — edit_rfrnds" />
-<meta name="description" content="Edits existing referendum entries in the C2D database via its API.">
-<meta property="og:description" content="Edits existing referendum entries in the C2D database via its API." />
+<meta property="og:title" content="Assemble website URL — url_website" />
+<meta name="description" content="Assemble website URL">
+<meta property="og:description" content="Assemble website URL" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -118,19 +118,17 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Edit existing referendums in the C2D database</h1>
+    <h1>Assemble website URL</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
-    <div class="hidden name"><code>edit_rfrnds.Rd</code></div>
+    <div class="hidden name"><code>url_website.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Edits existing referendum entries in the C2D database via <a href='https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes'>its API</a>.</p>
+    <p>Assemble website URL</p>
     </div>
 
-    <pre class="usage"><span><span class='fu'>edit_rfrnds</span><span class='op'>(</span></span>
-<span>  <span class='va'>data</span>,</span>
-<span>  email <span class='op'>=</span> <span class='fu'>pal</span><span class='fu'>::</span><span class='fu'><a href='https://rpkg.dev/pal/reference/pkg_config_val.html'>pkg_config_val</a></span><span class='op'>(</span>key <span class='op'>=</span> <span class='st'>"api_username"</span>, pkg <span class='op'>=</span> <span class='va'>this_pkg</span><span class='op'>)</span>,</span>
-<span>  password <span class='op'>=</span> <span class='fu'>pal</span><span class='fu'>::</span><span class='fu'><a href='https://rpkg.dev/pal/reference/pkg_config_val.html'>pkg_config_val</a></span><span class='op'>(</span>key <span class='op'>=</span> <span class='st'>"api_password"</span>, pkg <span class='op'>=</span> <span class='va'>this_pkg</span><span class='op'>)</span>,</span>
+    <pre class="usage"><span><span class='fu'>url_website</span><span class='op'>(</span></span>
+<span>  <span class='va'>...</span>,</span>
 <span>  use_testing_server <span class='op'>=</span> <span class='fu'>pal</span><span class='fu'>::</span><span class='fu'><a href='https://rpkg.dev/pal/reference/pkg_config_val.html'>pkg_config_val</a></span><span class='op'>(</span>key <span class='op'>=</span> <span class='st'>"use_testing_server"</span>, pkg <span class='op'>=</span> <span class='va'>this_pkg</span><span class='op'>)</span></span>
 <span><span class='op'>)</span></span></pre>
 
@@ -138,18 +136,8 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>The updated referendum data. A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> that must contain an <a href='https://rpkg.dev/c2d/articles/codebook.html#id'><code>id</code></a> column
-identifying the referendums to be edited, an <a href='https://rpkg.dev/c2d/articles/codebook.html#is_draft'><code>is_draft</code></a> column setting their updated draft status,
-plus a <a href='data_codebook.html'>valid</a> column containing the new values for each additional database field that should be updated.</p></td>
-    </tr>
-    <tr>
-      <th>email</th>
-      <td><p>The e-mail address of the C2D API user account to be used for authentication. A character scalar.</p></td>
-    </tr>
-    <tr>
-      <th>password</th>
-      <td><p>The password of the C2D API user account to be used for authentication. A character scalar.</p></td>
+      <th>...</th>
+      <td><p>Optional path components added to the base URL.</p></td>
     </tr>
     <tr>
       <th>use_testing_server</th>
@@ -159,26 +147,12 @@ plus a <a href='data_codebook.html'>valid</a> column containing the new values f
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>data</code>, invisibly.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <p>A character scalar.</p>
 
-    <p>Note that the following variables are not supported, i.e. simply dropped from <code>data</code>:</p><ul>
-<li><p><code>id_official</code></p></li>
-<li><p><code>id_sudd</code></p></li>
-<li><p><code>files</code></p></li>
-</ul>
-
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other referendum data functions:
-<code><a href='add_rfrnds.html'>add_rfrnds</a>()</code>,
-<code><a href='count_rfrnds.html'>count_rfrnds</a>()</code>,
-<code><a href='download_file_attachment.html'>download_file_attachment</a>()</code>,
-<code><a href='rfrnds.html'>rfrnds</a>()</code>,
-<code><a href='rfrnd.html'>rfrnd</a>()</code>,
-<code><a href='search_rfrnds.html'>search_rfrnds</a>()</code>,
-<code><a href='validate_rfrnds.html'>validate_rfrnds</a>()</code></p></div>
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>:::</span><span class='fu'>url_website</span><span class='op'>(</span><span class='st'>"referendum/CH/5bbc04f692a21351232e5a01"</span><span class='op'>)</span></span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "https://c2d.ch/referendum/CH/5bbc04f692a21351232e5a01"</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

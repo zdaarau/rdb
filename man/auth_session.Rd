@@ -5,9 +5,10 @@
 \title{Authenticate a user session for the \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes}{C2D API}}
 \usage{
 auth_session(
-  email = Sys.getenv("C2D_API_USER"),
-  password = Sys.getenv("C2D_API_PW"),
-  quiet = FALSE
+  email = pal::pkg_config_val(key = "api_username", pkg = this_pkg),
+  password = pal::pkg_config_val(key = "api_password", pkg = this_pkg),
+  quiet = FALSE,
+  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ auth_session(
 \item{password}{The password of the user for which a session should be created. A character scalar.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
+
+\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
 \value{
 The user session token as a character scalar, invisibly.
@@ -25,8 +28,7 @@ Creates a new user session token if necessary. The token is stored in the R opti
 \code{email}, \code{token} and \code{date_time_last_active}.
 }
 \details{
-By default, \code{email} and \code{password} are read from the \href{https://en.wikipedia.org/wiki/Environment_variable}{environment variables} \code{C2D_API_EMAIL} and
-\code{C2D_API_PW} respectively.
+\code{email} and \code{password} default to the \link[=pkg_config]{package configuration options} \code{api_username} and \code{api_password} respectively.
 
 User session tokens expire automatically after 15 days of inactivity.
 }

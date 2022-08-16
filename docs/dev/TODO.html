@@ -199,28 +199,26 @@ isn’t overloaded anymore. Possible extensions (taken from Louis’
 <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Vorgehen_Abstimmungseingabe.docx</code>)):</p>
 <ul class="task-list">
 <li>
-<input type="checkbox" disabled>
-Background information on the vote (most important actors and events
-(sudd.ch, Wikipedia, NZZ etc.), content/main points)</li>
+<input type="checkbox" disabled>Background information on the
+vote (most important actors and events (sudd.ch, Wikipedia, NZZ etc.),
+content/main points)</li>
 <li>
-<input type="checkbox" disabled checked>
-Voting question; original language</li>
+<input type="checkbox" disabled checked>Voting question;
+original language</li>
 <li>
-<input type="checkbox" disabled checked>
-Voting question; English (translation if necessary)</li>
+<input type="checkbox" disabled checked>Voting question;
+English (translation if necessary)</li>
 <li>
-<input type="checkbox" disabled>
-Legal basis</li>
+<input type="checkbox" disabled>Legal basis</li>
 <li>
-<input type="checkbox" disabled>
-Name of the institution in original language</li>
+<input type="checkbox" disabled>Name of the institution in
+original language</li>
 <li>
-<input type="checkbox" disabled>
-Specialities of the institution (e.g. special quorum or 2 collecting
-periods)</li>
+<input type="checkbox" disabled>Specialities of the institution
+(e.g. special quorum or 2 collecting periods)</li>
 <li>
-<input type="checkbox" disabled>
-Specialities of the result (e.g. contradictory numbers)</li>
+<input type="checkbox" disabled>Specialities of the result
+(e.g. contradictory numbers)</li>
 </ul>
 </li>
 <li>
@@ -274,6 +272,28 @@ follow-up requesting an improved UX.</p>
 </li>
 </ul>
 </div>
+<div id="to-be-discussed" class="section level2">
+<h2 class="hasAnchor">
+<a href="#to-be-discussed" class="anchor"></a>To be discussed</h2>
+<ul>
+<li><p><a href="https://gitlab.com/zdaarau/rpkgs/c2d/-/issues/3" class="external-link">Variable
+<code>type</code> should be multivalued</a></p></li>
+<li><p><a href="https://gitlab.com/zdaarau/rpkgs/c2d/-/issues/5" class="external-link">Rethink
+how to capture referendums with other or more than yes-or-no answer
+options</a></p></li>
+<li><p>The referendum <code>type</code>
+<strong><code>"governmental referendum"</code></strong> should be
+renamed since it’s used (and most probably intended, too) to catch all
+kinds of top-down referendums, not only ones that originate from the
+government (executive) but also ones that originate from the parliament
+(legislative).</p></li>
+<li><p>There is at least one “Landsgemeinde” referendum
+(<code>id = 5bbc004292a21351232e52e7</code>) with no result
+(<code>NA</code>) where the result should actually be <code>"no"</code>
+(Landsgemeinde rejected proposal) if I’m not mistaken. Do we handle
+“Landsgemeinde” votes specially or why is that?</p></li>
+</ul>
+</div>
 <div id="internal-at-least-for-now" class="section level2">
 <h2 class="hasAnchor">
 <a href="#internal-at-least-for-now" class="anchor"></a>Internal (at least for now)</h2>
@@ -306,42 +326,6 @@ inofficial, …); currently we only have an <em>institutional</em>
 variable <code>legal_basis_type</code> (formerly
 <code>official_status</code>) which measures a completely different
 thing. Maybe name this new variable simply <code>status</code>?</p>
-</li>
-<li>
-<p>We need a proper way to capture referendums with other or more
-than yes-or-no answer options. This includes</p>
-<ul>
-<li>other options than yes/no (e.g. <a href="https://sudd.ch/event.php?id=cl022020" class="external-link">this one</a>)</li>
-<li>multiple options (e.g. <a href="https://sudd.ch/event.php?id=bq012014" class="external-link">this one</a>)</li>
-<li>competing (counter) proposals with tie-breaker question (e.g. <a href="https://sudd.ch/event.php?lang=de&amp;id=ch021920" class="external-link">this one</a> or
-<a href="https://sudd.ch/event.php?lang=de&amp;id=ch052010" class="external-link">this
-one</a>)</li>
-<li>competing / mutually exclusive proposals (e.g. <a href="https://sudd.ch/event.php?id=pl011928" class="external-link">this one</a> or <a href="https://sudd.ch/event.php?id=si011996" class="external-link">this one</a>)</li>
-<li>preference / hierarchy information, i.e. whether or not multiple
-choices at the same time are allowed (i.e. whether or not options are
-mutually exclusive) – and if so – how ambiguities are resolved (e.g. by
-an additional preference list)</li>
-</ul>
-<p>We would also need to decide if counterproposals are simply to be
-included as additional “options” or if they are to be captured as
-separate entries (recommended); if the latter, we should introduce an
-additional variable <code>interdependent_ids</code> or the like to link
-to the “sibling” entries.</p>
-<p>Additionally,</p>
-<ul>
-<li>the <code>result</code> variable needs to be changed to hold the
-option that won the referendum and</li>
-<li>the <code>position_government</code> variable needs to be changed to
-hold the option the government favors</li>
-<li>we might wanna introduce another variable
-<code>position_status_quo</code> indicating which (if any) option
-preserves the status quo (i.e. against any change)</li>
-<li>the <code>votes_yes</code> and <code>votes_no</code> (as well as the
-same sub-vars in <code>votes_per_subterritory</code>) variables need to
-be replaced by a single nested (list-type) variable
-<code>votes_substantive</code> that holds a subfield with the number of
-votes per option (named by the option?).</li>
-</ul>
 </li>
 <li>
 <p>There is obviously not much consistency in how the referendum
@@ -398,6 +382,55 @@ the API would be cool…</p>
 <p>but is this actually possible? generally, the order of variables in
 the returned JSON seems random: compare e.g. <code>date</code> of <a href="https://services.c2d.ch/referendums/6102ae4ec72633da60229941" class="external-link">here</a>
 vs. <a href="https://services.c2d.ch/referendums/604b33cb4132d76d38bfe97b" class="external-link">here</a></p>
+</li>
+<li>
+<p>Deduplicate file attachments! Currently, file attachments like
+voting brochures which apply to multiple proposals on the same ballot
+date are attached to each individual proposal, thus resulting in file
+duplications. Example: subnational ballot date in ZH, CH @ 2022-05-15
+has 4 proposals and the file
+<code>voting_brochure_zh_2022_05_15_de.pdf</code> is uploaded 4
+different times to our Amazon S3 bucket:</p>
+<ul>
+<li>
+<code>62d6760ca52c3995043a8a1e</code>: <a href="https://services.c2d.ch/s3_objects/referendum_62d6760ca52c3995043a8a1e_0001.pdf" class="external-link uri">https://services.c2d.ch/s3_objects/referendum_62d6760ca52c3995043a8a1e_0001.pdf</a>
+</li>
+<li>
+<code>62d67203a52c3995043a8a16</code>: <a href="https://services.c2d.ch/s3_objects/referendum_62d67203a52c3995043a8a16_0001.pdf" class="external-link uri">https://services.c2d.ch/s3_objects/referendum_62d67203a52c3995043a8a16_0001.pdf</a>
+</li>
+<li>
+<code>62d66e97a52c3995043a8a0f</code>: <a href="https://services.c2d.ch/s3_objects/referendum_62d66e97a52c3995043a8a0f_0001.pdf" class="external-link uri">https://services.c2d.ch/s3_objects/referendum_62d66e97a52c3995043a8a0f_0001.pdf</a>
+</li>
+<li>
+<code>62d66ce0a52c3995043a8a08</code>: <a href="https://services.c2d.ch/s3_objects/referendum_62d66ce0a52c3995043a8a08_0002.pdf" class="external-link uri">https://services.c2d.ch/s3_objects/referendum_62d66ce0a52c3995043a8a08_0002.pdf</a>
+</li>
+</ul>
+<p>Ideally, we’d have two different attachment types:</p>
+<ol style="list-style-type: decimal">
+<li>Attachments that belong to an individual proposal.</li>
+<li>Attachments that belong to a whole ballot date in a jurisdiction,
+i.e. all proposals at that ballot.</li>
+</ol>
+<p>That way uploading <em>and</em> assigning e.g. a voting brochure to
+referendums would be a <em>single action</em>.</p>
+<p>Rough outline of the procedure for introducing the second attachment
+type:</p>
+<ol style="list-style-type: decimal">
+<li><p>Create new ballot-date-level database with primary key
+<code>country_code_historical</code>/<code>country_code</code> +
+<code>subnational_entity_code</code> + <code>municipality</code> +
+<strong><code>date</code></strong>, plus a field for attachment metadata
+(to be discussed what exactly is sensible here).</p></li>
+<li><p>Create necessary API endpoints and front-end logic for type 2
+attachments.</p></li>
+<li><p>Treat all existing attachments as belonging to individual
+proposals (type 1).</p></li>
+<li><p>Programmatically identify the attachments that belong to ballot
+dates (type 2) instead by comparing file hashes (open question: are file
+hashes already available from S3 some way or do we have to download all
+attachments and calculate them ourselves?) and convert them to type
+2.</p></li>
+</ol>
 </li>
 <li><p>C2D admin front-end: Louis’ Dokument
 <code>~/Arbeit/ZDA/Lokal/C2D-Datenbank/Materialen von Mayowa/Intl_Louis/3_Test_Datenbank.docx</code></p></li>
@@ -826,28 +859,26 @@ format.</p>
 </li>
 </ul>
 </div>
+<div id="ideas" class="section level4">
+<h4 class="hasAnchor">
+<a href="#ideas" class="anchor"></a>Ideas</h4>
+<ul>
+<li>
+<p>We should ensure minimum quality of attachments (e.g. correct
+orientation, page ordering, OCR). Bad example: <a href="https://services.c2d.ch/s3_objects/referendum_5bbbf59192a21351232e2e65_0001.pdf" class="external-link uri">https://services.c2d.ch/s3_objects/referendum_5bbbf59192a21351232e2e65_0001.pdf</a></p>
+<p>I could probably write some validation fn in pkg c2d that checks all
+PDFs for text content to determine if they’re OCR’ed, but maybe there’s
+already more sophisticated software avalailable for this.</p>
+<p>Ideally, the admin portal should ensure the minimum quality
+requirements upon upload and display an informative warning in case of
+violation (with an opt-in override to upload nevertheless).</p>
+</li>
+</ul>
+</div>
 <div id="sonstige" class="section level4">
 <h4 class="hasAnchor">
 <a href="#sonstige" class="anchor"></a>Sonstige</h4>
 <ul>
-<li>
-<p>The referendum <code>type</code>
-<strong><code>"governmental referendum"</code></strong> should be
-renamed since it’s used (and most probably intended, too) to catch all
-kinds of top-down referendums, not only ones that originate from the
-government (executive) but also ones that originate from the parliament
-(legislative).</p>
-<p>Additionally, it should be allowed to assign more than one
-<code>type</code> since in reality this happens sometimes (example:
-Robin found an example where a referendum in the canton of Zurich was
-both a <code>"governmental referendum"</code> and an
-<code>"optional referendum"</code>).</p>
-</li>
-<li><p>There is at least one “Landsgemeinde” referendum
-(<code>id = 5bbc004292a21351232e52e7</code>) with no result
-(<code>NA</code>) where the result should actually be <code>"no"</code>
-(Landsgemeinde rejected proposal) if I’m not mistaken. Do we handle
-“Landsgemeinde” votes specially or why is that?</p></li>
 <li><p>Are <code>id_sudd</code>s stable over time? Maybe contact the
 creator <a href="mailto:beat@sudd.ch">Beat Müller</a> and ask?</p></li>
 <li><p>Genauer abklären, inwieweit man Angaben von Swissvotes

@@ -141,8 +141,8 @@ utils::globalVariables(names = c(".",
 .onLoad <- function(libname, pkgname) {
   
   tryCatch(expr = pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
-                                       max_age = getOption(paste0(pkgname, ".max_cache_lifespan"),
-                                                           default = "30 days")),
+                                       max_age = pal::pkg_config_val(key = "max_cache_lifespan",
+                                                                     pkg = this_pkg)),
            error = function(e) cli::cli_alert_warning(text = "Failed to clear pkgpins cache on load of {.pkg pkgname}. Error message: {e$message}"))
 }
 
@@ -159,9 +159,9 @@ utils::globalVariables(names = c(".",
 #' @param is_draft `TRUE` means to include only referendum entries with _draft_ status, `FALSE` to include only normal entries. Set to `NULL` in order to
 #'   include both draft and normal entries.
 #' @param date_time_created_min The minimum `date_time_created` to be included. A [date][base::Date], a [datetime][base::DateTimeClasses], or something
-#'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`).
+#'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`; assumed to be in UTC if no timezone is given).
 #' @param date_time_created_max The maximum `date_time_created` to be included. A [date][base::Date], a [datetime][base::DateTimeClasses], or something
-#'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`).
+#'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`; assumed to be in UTC if no timezone is given).
 #' @param query_filter A valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents) which allows for
 #' maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if `query_filter` is provided, the
 #' parameters `r formals(assemble_query_filter) %>% names() %>% setdiff(c("query_filter", "base64_encode")) %>% pal::prose_ls(wrap = "\x60")` are ignored.
@@ -218,12 +218,12 @@ assemble_query_filter <- function(country_code = NULL,
                                 .var.name = "date")
     checkmate::assert_flag(is_draft,
                            null.ok = TRUE)
-    checkmate::assert_posixct(lubridate::as_datetime(date_time_created_min),
-                              any.missing = FALSE,
-                              .var.name = "date_time_created_min")
-    checkmate::assert_posixct(lubridate::as_datetime(date_time_created_max),
-                              any.missing = FALSE,
-                              .var.name = "date_time_created_max")
+    date_time_created_min %<>% lubridate::as_datetime()
+    date_time_created_max %<>% lubridate::as_datetime()
+    checkmate::assert_posixct(date_time_created_min,
+                              any.missing = FALSE)
+    checkmate::assert_posixct(date_time_created_max,
+                              any.missing = FALSE)
     query_filter <-
       list(country_code = query_filter_in(country_code),
            canton = query_filter_in(subnational_entity_name),
@@ -440,21 +440,24 @@ assert_cols_valid <- function(data,
 #' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, a [tibble][tibble::tbl_df] with the columns
 #' `email`, `token` and `date_time_last_active`.
 #' 
-#' By default, `email` and `password` are read from the [environment variables](https://en.wikipedia.org/wiki/Environment_variable) `C2D_API_EMAIL` and
-#' `C2D_API_PW` respectively.
+#' `email` and `password` default to the [package configuration options][pkg_config] `api_username` and `api_password` respectively.
 #'
 #' User session tokens expire automatically after 15 days of inactivity.
 #'
+#' @inheritParams url_api
 #' @param email The e-mail address of the user for which a session should be created. A character scalar.
 #' @param password The password of the user for which a session should be created. A character scalar.
 #' @param quiet `r pkgsnip::param_label("quiet")`
 #'
 #' @return The user session token as a character scalar, invisibly.
 #' @keywords internal
-auth_session <- function(email = Sys.getenv("C2D_API_USER"),
-                         password = Sys.getenv("C2D_API_PW"),
-                         quiet = FALSE) {
-  
+auth_session <- function(email = pal::pkg_config_val(key = "api_username",
+                                                     pkg = this_pkg),
+                         password = pal::pkg_config_val(key = "api_password",
+                                                        pkg = this_pkg),
+                         quiet = FALSE,
+                         use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                  pkg = this_pkg)) {
   checkmate::assert_string(email,
                            min.chars = 3L)
   checkmate::assert_string(password,
@@ -475,8 +478,8 @@ auth_session <- function(email = Sys.getenv("C2D_API_USER"),
   # ensure token is not expired (checked if older than 14 days), else set to `NULL`
   if (nrow(token) &&
       checkmate::test_string(token$token, min.chars = 1L) &&
-      ((token$date_time_last_active > clock::add_days(clock::date_now(zone = "UTC"), -14L)) || !is_session_expired(token$token))) {
-    
+      ((token$date_time_last_active > clock::add_days(clock::date_now(zone = "UTC"), -14L)) || !is_session_expired(token = token$token,
+                                                                                                                   use_testing_server = use_testing_server))) {
     token <- token$token
     
   } else {
@@ -495,8 +498,9 @@ auth_session <- function(email = Sys.getenv("C2D_API_USER"),
     
     token <-
       httr::RETRY(verb = "POST",
-                  url = "https://services.c2d.ch/users/session",
-                  config = httr::add_headers(Origin = "https://admin.c2d.ch"),
+                  url = url_api("users/session",
+                                use_testing_server = use_testing_server),
+                  config = httr::add_headers(Origin = url_admin_portal(use_testing_server = use_testing_server)),
                   times = 5L,
                   encode = "json",
                   body = list(email = email,
@@ -663,13 +667,15 @@ insert_after <- function(x,
     x[(i_after + 1L):length(x)])
 }
 
-is_session_expired <- function(token) {
-  
+is_session_expired <- function(token,
+                               use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                        pkg = this_pkg)) {
   response <-
     httr::RETRY(verb = "GET",
-                url = "https://services.c2d.ch/users/profile",
+                url = url_api("users/profile",
+                              use_testing_server = use_testing_server),
                 config = httr::add_headers(Authorization = paste("Bearer", token),
-                                           Origin = "https://admin.c2d.ch"),
+                                           Origin = url_admin_portal(use_testing_server = use_testing_server)),
                 times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -744,12 +750,14 @@ tag_frequency <- function(tags,
     dplyr::summarise(n = dplyr::n())
 }
 
-tidy_date <- function(x) {
-  
+tidy_date <- function(x,
+                      origin = "1970-01-01",
+                      tz = "UTC") {
   x %>%
     unlist(use.names = FALSE) %>%
     magrittr::divide_by(1000L) %>%
-    as.POSIXct(origin = "1970-01-01")
+    as.POSIXct(origin = origin,
+               tz = tz)
 }
 
 #' Tidy "raw" C2D API referendum data
@@ -1389,6 +1397,70 @@ untidy_rfrnds <- function(data,
   }
   
   data
+}
+
+#' Assemble C2D Services API URL
+#'
+#' @param ... Optional path components added to the base URL.
+#' @param use_testing_server `r pkg_config$description[pkg_config$key == "use_testing_server"]`
+#'
+#' @return A character scalar.
+#' @keywords internal
+#'
+#' @examples
+#' c2d:::url_api("health")
+url_api <- function(...,
+                    use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                             pkg = this_pkg)) {
+  checkmate::assert_flag(use_testing_server)
+  
+  ifelse(use_testing_server,
+         "stagservices.c2d.ch",
+         "services.c2d.ch") %>%
+    fs::path(...) %>%
+    paste0("https://", .)
+}
+
+#' Assemble C2D admin portal URL
+#'
+#' @inheritParams url_api
+#'
+#' @inherit url_api return
+#' @keywords internal
+#'
+#' @examples
+#' c2d:::url_admin_portal("referendum/5bbbfd7b92a21351232e46b5")
+url_admin_portal <- function(...,
+                             use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                      pkg = this_pkg)) {
+  checkmate::assert_flag(use_testing_server)
+  
+  ifelse(use_testing_server,
+         "c2d-admin.netlify.app",
+         "admin.c2d.ch") %>%
+    fs::path(...) %>%
+    paste0("https://", .)
+}
+
+#' Assemble website URL
+#'
+#' @inheritParams url_api
+#'
+#' @inherit url_api return
+#' @keywords internal
+#'
+#' @examples
+#' c2d:::url_website("referendum/CH/5bbc04f692a21351232e5a01")
+url_website <- function(...,
+                        use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                 pkg = this_pkg)) {
+  checkmate::assert_flag(use_testing_server)
+  
+  ifelse(use_testing_server,
+         "c2d-site.netlify.app",
+         "c2d.ch") %>%
+    fs::path(...) %>%
+    paste0("https://", .)
 }
 
 query_filter_date <- function(min,
@@ -2161,6 +2233,7 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
 #'
 #' @inheritParams assemble_query_filter
 #' @inheritParams tidy_rfrnds
+#' @inheritParams url_api
 #' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the C2D database.
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
@@ -2194,8 +2267,9 @@ rfrnds <- function(country_code = NULL,
                    incl_archive = FALSE,
                    tidy = TRUE,
                    use_cache = TRUE,
-                   cache_lifespan = "1 week") {
-  
+                   cache_lifespan = "1 week",
+                   use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                            pkg = this_pkg)) {
   checkmate::assert_flag(incl_archive)
   
   result <- pkgpins::with_cache(expr = {
@@ -2204,10 +2278,10 @@ rfrnds <- function(country_code = NULL,
     cli::cli_progress_step(msg = status_msg,
                            msg_done = paste(status_msg, "done"),
                            msg_failed = paste(status_msg, "failed"))
-    
     data <-
       httr::RETRY(verb = "GET",
-                  url = "https://services.c2d.ch/referendums",
+                  url = url_api("referendums",
+                                use_testing_server = use_testing_server),
                   httr::progress(type = "down"),
                   query = list(mode = "stream",
                                format = "json",
@@ -2274,8 +2348,8 @@ rfrnds <- function(country_code = NULL,
 #'
 #' Downloads a single referendum's data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
 #'
-#' @param id The referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
 #' @inheritParams rfrnds
+#' @param id The referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
 #'
 #' @inherit rfrnds return
 #' @family rfrnd
@@ -2285,8 +2359,9 @@ rfrnds <- function(country_code = NULL,
 #' c2d::rfrnd(id = "5bbbe26a92a21351232dd73f")
 rfrnd <- function(id,
                   incl_archive = FALSE,
-                  tidy = TRUE) {
-  
+                  tidy = TRUE,
+                  use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                           pkg = this_pkg)) {
   checkmate::assert_string(id,
                            min.chars = 1L)
   checkmate::assert_flag(incl_archive)
@@ -2295,8 +2370,9 @@ rfrnd <- function(id,
   # retrieve data
   data <-
     httr::RETRY(verb = "GET",
-                url = paste0("https://services.c2d.ch/referendums/", id),
-                config = httr::add_headers(Origin = "https://admin.c2d.ch"),
+                url = url_api("referendums", id,
+                              use_testing_server = use_testing_server),
+                config = httr::add_headers(Origin = url_admin_portal(use_testing_server = use_testing_server)),
                 times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -2325,6 +2401,7 @@ rfrnd <- function(id,
 #' Downloads a file attachment from the C2D database. The necessary `s3_object_key`s identifying individual files are found in the `files` list column returned
 #' by [rfrnds()].
 #'
+#' @inheritParams url_api
 #' @param s3_object_key The key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design). A character scalar.
 #' @param path The path where the downloaded file is written to. If a directory, the original filename returned by the C2D services API will be used.
 #'
@@ -2344,8 +2421,9 @@ rfrnd <- function(id,
 #'   # ...and download the corresponding files to the current working dir
 #'   purrr::walk(c2d::download_file_attachment)}
 download_file_attachment <- function(s3_object_key,
-                                     path = ".") {
-  
+                                     path = ".",
+                                     use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                              pkg = this_pkg)) {
   checkmate::assert_string(s3_object_key)
   checkmate::assert_atomic(path)
   
@@ -2362,7 +2440,8 @@ download_file_attachment <- function(s3_object_key,
   temp_path <- fs::file_temp()
   
   response <- httr::RETRY(verb = "GET",
-                          url = paste0("https://services.c2d.ch/s3_objects/", s3_object_key),
+                          url = url_api("s3_objects", s3_object_key,
+                                        use_testing_server = use_testing_server),
                           httr::write_disk(path = temp_path),
                           times = 5L)
   
@@ -2395,6 +2474,7 @@ download_file_attachment <- function(s3_object_key,
 #' - `id_sudd`
 #' - `files`
 #'
+#' @inheritParams url_api
 #' @param data The new referendum data. A [tibble][tibble::tbl_df] that in any case must contain the columns
 #' `r rfrnd_fields$required_for_additions %>% dplyr::recode(!!!v_names) %>% paste0("[\x60", ., "\x60](https://rpkg.dev/c2d/articles/codebook.html#", ., ")") %>% pal::as_md_list()`
 #'   
@@ -2410,9 +2490,12 @@ download_file_attachment <- function(s3_object_key,
 #' @family rfrnd
 #' @export
 add_rfrnds <- function(data,
-                       email = Sys.getenv("C2D_API_USER"),
-                       password = Sys.getenv("C2D_API_PW")) {
-  
+                       email = pal::pkg_config_val(key = "api_username",
+                                                   pkg = this_pkg),
+                       password = pal::pkg_config_val(key = "api_password",
+                                                      pkg = this_pkg),
+                       use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                pkg = this_pkg)) {
   # ensure `data` is a non-empty df
   checkmate::assert_data_frame(data,
                                min.rows = 1L)
@@ -2455,7 +2538,8 @@ add_rfrnds <- function(data,
   responses <-
     json_items %>%
     purrr::map(~ httr::RETRY(verb = "POST",
-                             url = "https://services.c2d.ch/referendums",
+                             url = url_api("referendums",
+                                           use_testing_server = use_testing_server),
                              config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
                                                                                                      password = password))),
                              body = .x,
@@ -2482,18 +2566,22 @@ add_rfrnds <- function(data,
 #'
 #' Edits existing referendum entries in the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
 #'
-#' @inherit add_rfrnds details
+#' @inherit add_rfrnds details return
+#'
+#' @inheritParams add_rfrnds
 #' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
 #'   identifying the referendums to be edited, an [`is_draft`](https://rpkg.dev/c2d/articles/codebook.html#is_draft) column setting their updated draft status,
 #'   plus a [valid][codebook] column containing the new values for each additional database field that should be updated.
-#' @inheritParams add_rfrnds
 #'
-#' @inherit add_rfrnds return
 #' @family rfrnd
 #' @export
 edit_rfrnds <- function(data,
-                        email = Sys.getenv("C2D_API_USER"),
-                        password = Sys.getenv("C2D_API_PW")) {
+                        email = pal::pkg_config_val(key = "api_username",
+                                                    pkg = this_pkg),
+                        password = pal::pkg_config_val(key = "api_password",
+                                                       pkg = this_pkg),
+                        use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                 pkg = this_pkg)) {
   # ensure `data` is valid
   checkmate::assert_data_frame(data,
                                min.rows = 1L)
@@ -2539,7 +2627,8 @@ edit_rfrnds <- function(data,
                            .y = json_items,
                            .f = ~
                              httr::RETRY(verb = "PUT",
-                                         url = paste0("https://services.c2d.ch/referendums/",.x),
+                                         url = url_api("referendums", .x,
+                                                       use_testing_server = use_testing_server),
                                          config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
                                                                                                                  password = password))),
                                          body = .y,
@@ -2720,6 +2809,7 @@ validate_rfrnds <- function(data,
 #' Counts the number of referendums per [`level`](https://rpkg.dev/c2d/articles/codebook.html#level) in the C2D Database.
 #'
 #' @inheritParams assemble_query_filter
+#' @inheritParams url_api
 #'
 #' @return A named list with `level` as names and referendum counts as values.
 #' @family rfrnd
@@ -2745,9 +2835,12 @@ count_rfrnds <- function(is_draft = FALSE,
                          date = NULL,
                          date_time_created_min = NULL,
                          date_time_created_max = NULL,
-                         query_filter = NULL) {
+                         query_filter = NULL,
+                         use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                  pkg = this_pkg)) {
   httr::RETRY(verb = "GET",
-              url = "https://services.c2d.ch/referendums/stats",
+              url = url_api("referendums/stats",
+                            use_testing_server = use_testing_server),
               query = list(filter = assemble_query_filter(country_code = country_code,
                                                           subnational_entity_name = subnational_entity_name,
                                                           municipality = municipality,
@@ -2758,7 +2851,7 @@ count_rfrnds <- function(is_draft = FALSE,
                                                           date_time_created_min = date_time_created_min,
                                                           date_time_created_max = date_time_created_max,
                                                           query_filter = query_filter)),
-              config = httr::add_headers(Origin = "https://admin.c2d.ch"),
+              config = httr::add_headers(Origin = url_admin_portal(use_testing_server = use_testing_server)),
               times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -2777,6 +2870,7 @@ count_rfrnds <- function(is_draft = FALSE,
 #' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
 #' titles.
 #'
+#' @inheritParams url_api
 #' @param term The Search term. A character scalar.
 #'
 #' @return A character vector of English referendum titles matching the search `term`.
@@ -2785,13 +2879,15 @@ count_rfrnds <- function(is_draft = FALSE,
 #'
 #' @examples
 #' c2d::search_rfrnds("freedom")
-search_rfrnds <- function(term) {
-  
+search_rfrnds <- function(term,
+                          use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                   pkg = this_pkg)) {
   httr::RETRY(verb = "GET",
-              url = "https://services.c2d.ch/referendums",
+              url = url_api("referendums",
+                            use_testing_server = use_testing_server),
               query = list(mode = "search",
                            term = checkmate::assert_string(term)),
-              config = httr::add_headers(Origin = "https://admin.c2d.ch"),
+              config = httr::add_headers(Origin = url_admin_portal(use_testing_server = use_testing_server)),
               times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -3318,13 +3414,14 @@ add_world_regions <- function(data) {
 #'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
 #'   compute the [period column][add_period]), plus the one(s) specified via `by` (if any).
+#' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
 #' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
 #' @param fill_gaps Whether or not to add zero-value rows to the result for `period` gaps in `data`.
 #' @param period_floor Lower `period` limit up to which gaps are filled. If `NULL`, the lower limit is set to the minimum of `period` present in `data`. Only
 #'   relevant if `fill_gaps = TRUE` and `period` is set to a unique timespan type (`"year"`, `"decade"` or `"century"`).
 #' @param period_ceiling Upper `period` limit up to which gaps are filled. If `NULL`, the upper limit is set to the maximum of `period` present in `data`. Only
 #'   relevant if `fill_gaps = TRUE` and `period` is set to a unique timespan type (`"year"`, `"decade"` or `"century"`).
-#' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param descending Whether to sort the resulting table by `period` in descending or in ascending order.
 #'
 #' @inherit add_period details
 #' @return `r pkgsnip::return_label("data")`
@@ -3349,7 +3446,8 @@ n_rfrnds_per_period <- function(data,
                                 period = c("week", "month", "quarter", "year", "decade", "century"),
                                 fill_gaps = TRUE,
                                 period_floor = NULL,
-                                period_ceiling = NULL) {
+                                period_ceiling = NULL,
+                                descending = FALSE) {
   # arg checks
   checkmate::assert_data_frame(data)
   period <- rlang::arg_match(period)
@@ -3358,6 +3456,8 @@ n_rfrnds_per_period <- function(data,
                         null.ok = TRUE)
   checkmate::assert_int(period_ceiling,
                         null.ok = TRUE)
+  checkmate::assert_flag(descending)
+  
   # tidy selection
   defused_by <- rlang::enquo(by)
   ix_by <- tidyselect::eval_select(expr = defused_by,
@@ -3408,7 +3508,7 @@ n_rfrnds_per_period <- function(data,
       dplyr::mutate(!!as.symbol(period) := as.integer(as.character(!!as.symbol(period))))
   }
   
-  result
+  result %>% dplyr::arrange(if (descending) dplyr::desc(!!as.symbol(period)) else !!as.symbol(period))
 }
 
 #' Printify referendum data column names
@@ -3724,7 +3824,6 @@ plot_tag_share_per_period <- function(data,
 #' @inheritParams n_rfrnds_per_period
 #' @param by Up to two additional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
 #' @param squeeze_zero_rows Whether or not to compress consecutive zero-sum rows into single period span rows.
-#' @param descending Whether to sort the resulting table by `period` in descending or in ascending order.
 #' @param add_total_row Whether or not to add a summary row at the very end of the table containing column totals.
 #' @param add_total_col Whether or not to add a summary column at the very end of the table containing row totals. If `NULL`, a total column is added only if
 #'   `by` is non-empty.
@@ -3756,7 +3855,6 @@ tbl_n_rfrnds_per_period <- function(data,
   
   period <- rlang::arg_match(period)
   checkmate::assert_flag(squeeze_zero_rows)
-  checkmate::assert_flag(descending)
   checkmate::assert_flag(add_total_row)
   checkmate::assert_flag(add_total_col,
                          null.ok = TRUE)
@@ -3786,11 +3884,11 @@ tbl_n_rfrnds_per_period <- function(data,
                         by = {{ by }},
                         fill_gaps = fill_gaps,
                         period_floor = period_floor,
-                        period_ceiling = period_ceiling) %>%
+                        period_ceiling = period_ceiling,
+                        descending = descending) %>%
     dplyr::mutate(dplyr::across(.cols = where(is.factor),
                                 .fns = forcats::fct_explicit_na,
                                 na_level = "N/A")) %>%
-    dplyr::arrange(if (descending) dplyr::desc(!!as.symbol(period)) else !!as.symbol(period)) %>%
     purrr::when(has_by ~ tidyr::pivot_wider(data = .,
                                             names_from = {{ by }},
                                             names_sort = TRUE,
@@ -3837,6 +3935,12 @@ tbl_n_rfrnds_per_period <- function(data,
     }
   }
   
+  # add "s" to decade/century period values
+  if (period %in% c("decade", "century")) {
+    data_to_plot[[period]] %<>% stringr::str_replace_all(pattern = "(\\d+)",
+                                                         replacement = "\\1s")
+  }
+  
   data_to_plot %>%
     dplyr::filter(!(dplyr::row_number() %in% ix_rm)) %>%
     gt::gt(rowname_col = period) %>%
@@ -3857,17 +3961,21 @@ tbl_n_rfrnds_per_period <- function(data,
 #'
 #' Checks if the C2D API server is online and operational.
 #'
+#' @inheritParams url_api
 #' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
 #'
 #' @return A logical scalar.
 #' @family api_status
 #' @export
-is_online <- function(quiet = FALSE) {
-  
+is_online <- function(quiet = FALSE,
+                      use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                               pkg = this_pkg)) {
   checkmate::assert_flag(quiet)
+  
   result <- FALSE
   response <- tryCatch(expr = httr::RETRY(verb = "GET",
-                                          url = "https://services.c2d.ch/health",
+                                          url = url_api("health",
+                                                        use_testing_server = use_testing_server),
                                           times = 5L),
                        error = function(e) e$message)
   
@@ -4294,3 +4402,28 @@ sudd_rfrnds <- function(ids_sudd,
   use_cache = use_cache,
   cache_lifespan = cache_lifespan)
 }
+
+#' `r this_pkg` package configuration metadata
+#'
+#' A [tibble][tibble::tbl_df] with metadata of all possible `r this_pkg` package configuration options. See [pal::pkg_config_val()] for more information.
+#'
+#' @format `r pkgsnip::return_label("data_cols", cols = colnames(pkg_config))`
+#' @export
+#'
+#' @examples
+#' c2d::pkg_config
+pkg_config <-
+  tibble::tibble(key = character(),
+                 default_value = list(),
+                 description = character()) %>%
+  tibble::add_row(key = "api_username",
+                  description = "C2D Services API username") %>%
+  tibble::add_row(key = "api_password",
+                  description = "C2D Services API password") %>%
+  tibble::add_row(key = "max_cache_lifespan",
+                  default_value = list("30 days"),
+                  description = paste0("Maximal timespan to preserve the package's [pkgpins](https://rpkg.dev/pkgpins/) cache. Cache entries older than this ",
+                                       "will be deleted upon package loading.")) %>%
+  tibble::add_row(key = "use_testing_server",
+                  default_value = list(FALSE),
+                  description = "Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.")

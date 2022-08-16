@@ -10,7 +10,8 @@ n_rfrnds_per_period(
   period = c("week", "month", "quarter", "year", "decade", "century"),
   fill_gaps = TRUE,
   period_floor = NULL,
-  period_ceiling = NULL
+  period_ceiling = NULL,
+  descending = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ relevant if \code{fill_gaps = TRUE} and \code{period} is set to a unique timespa
 
 \item{period_ceiling}{Upper \code{period} limit up to which gaps are filled. If \code{NULL}, the upper limit is set to the maximum of \code{period} present in \code{data}. Only
 relevant if \code{fill_gaps = TRUE} and \code{period} is set to a unique timespan type (\code{"year"}, \code{"decade"} or \code{"century"}).}
+
+\item{descending}{Whether to sort the resulting table by \code{period} in descending or in ascending order.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.

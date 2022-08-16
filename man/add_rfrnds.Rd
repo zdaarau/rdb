@@ -6,8 +6,9 @@
 \usage{
 add_rfrnds(
   data,
-  email = Sys.getenv("C2D_API_USER"),
-  password = Sys.getenv("C2D_API_PW")
+  email = pal::pkg_config_val(key = "api_username", pkg = this_pkg),
+  password = pal::pkg_config_val(key = "api_password", pkg = this_pkg),
+  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ plus any additional \link[=codebook]{valid} columns containing the values for th
 \item{email}{The e-mail address of the C2D API user account to be used for authentication. A character scalar.}
 
 \item{password}{The password of the C2D API user account to be used for authentication. A character scalar.}
+
+\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
 \value{
 \code{data}, invisibly.

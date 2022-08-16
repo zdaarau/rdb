@@ -80,3 +80,5 @@ reference:
   - list_sudd_titles
   - list_sudd_rfrnds
   - sudd_rfrnds
+- title: Miscellaneous
+- contents: pkg_config
