@@ -6,13 +6,13 @@
 \usage{
 url_website(
   ...,
-  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
+  .use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
 )
 }
 \arguments{
 \item{...}{Optional path components added to the base URL.}
 
-\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
+\item{.use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
 \value{
 A character scalar.

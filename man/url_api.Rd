@@ -6,7 +6,7 @@
 \usage{
 url_api(
   ...,
-  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
+  .use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
 )
 }
 \arguments{

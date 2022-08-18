@@ -499,8 +499,8 @@ auth_session <- function(email = pal::pkg_config_val(key = "api_username",
     token <-
       httr::RETRY(verb = "POST",
                   url = url_api("users/session",
-                                use_testing_server = use_testing_server),
-                  config = httr::add_headers(Origin = url_admin_portal(use_testing_server = use_testing_server)),
+                                .use_testing_server = use_testing_server),
+                  config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
                   times = 5L,
                   encode = "json",
                   body = list(email = email,
@@ -673,9 +673,9 @@ is_session_expired <- function(token,
   response <-
     httr::RETRY(verb = "GET",
                 url = url_api("users/profile",
-                              use_testing_server = use_testing_server),
+                              .use_testing_server = use_testing_server),
                 config = httr::add_headers(Authorization = paste("Bearer", token),
-                                           Origin = url_admin_portal(use_testing_server = use_testing_server)),
+                                           Origin = url_admin_portal(.use_testing_server = use_testing_server)),
                 times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -707,6 +707,15 @@ lower_non_abbrs <- function(x) {
 order_rfrnd_cols <- function(data) {
   
   data %>% dplyr::relocate(any_of(rfrnd_cols_order))
+}
+
+parse_datetime <- function(x) {
+  
+  x %>%
+    unlist(use.names = FALSE) %>%
+    clock::naive_time_parse(format = "%Y-%m-%dT%H:%M:%SZ",
+                            precision = "millisecond") %>%
+    clock::as_date_time(zone = "UTC")
 }
 
 #' Read in a TOML file
@@ -843,8 +852,10 @@ tidy_rfrnds <- function(data,
           # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
           dplyr::across(any_of(c("subterritories_no",
                                  "subterritories_yes",
-                                 "date_time_created",
-                                 "date_time_last_edited")),
+                                 # TODO: remove next two lines once [this](https://github.com/ccmdesign/c2d-app/commit/6b72d1928e0182f01b188f3973ba15482fc8c04a)
+                                 #       is deployed to production
+                                 "date_time_created"[is.numeric(.$date_time_created[[1L]])],
+                                 "date_time_last_edited"[is.numeric(.$date_time_last_edited[[1L]])])),
                         as.double),
           
           # use explicit NA values
@@ -885,7 +896,7 @@ tidy_rfrnds <- function(data,
                         .fns = purrr::map,
                         .f = stringr::str_to_lower),
           
-          # convert non-abbreviations only to lowercase
+          # convert only non-abbreviated values to lowercase
           dplyr::across(.cols = any_of(c("inst_object_author",
                                          "inst_trigger_actor",
                                          "inst_precondition_actor")),
@@ -992,14 +1003,35 @@ tidy_rfrnds <- function(data,
                                     "(\\s+)?%(\\s+)?$" = "\u202f%")),
           ## ordinal
           ## interval
-          date = clock::date_parse(date),
-          date_time_created = tidy_date(date_time_created),
-          date_time_last_edited = tidy_date(date_time_last_edited),
+          # TODO: Remove else-clauses once [this](https://github.com/ccmdesign/c2d-app/commit/6b72d1928e0182f01b188f3973ba15482fc8c04a) is deployed to
+          #       production, and delete then-obsolete `tidy_date()`
+          date = if (is.list(date) && utils::hasName(date, "$date") && is.character(date[[1L]])) {
+            clock::as_date(parse_datetime(date))
+          } else {
+            clock::date_parse(date)
+          },
+          date_time_created = if (is.list(date_time_created) && utils::hasName(date_time_created, "$date") && is.character(date_time_created[[1L]])) {
+            parse_datetime(date_time_created)
+          } else {
+            tidy_date(date_time_created)
+          },
+          date_time_last_edited = if (is.list(date_time_last_edited)
+                                      && utils::hasName(date_time_last_edited, "$date")
+                                      && is.character(date_time_last_edited[[1L]])) {
+            parse_datetime(date_time_last_edited)
+          } else {
+            tidy_date(date_time_last_edited)
+          },
           ## undefined
           files = files %>% purrr::map(~ .x %>% purrr::map(~ .x %>%
                                                              # unnest and restore `date`
-                                                             purrr::assign_in(where = "date",
-                                                                              value = tidy_date(.$date)) %>%
+                                                             # TODO: same as above TODO
+                                                             purrr::modify_in(.where = "date",
+                                                                              .f = ~ if (is.list(.x) && utils::hasName(.x, "$date") && is.character(.x[[1L]])) {
+                                                                                parse_datetime(.x)
+                                                                              } else {
+                                                                                tidy_date(.x)
+                                                                              }) %>%
                                                              # change subvariable names
                                                              rename_from_list(names_list = sub_v_names$files))),
           votes_per_subterritory = votes_per_subterritory,
@@ -1410,11 +1442,11 @@ untidy_rfrnds <- function(data,
 #' @examples
 #' c2d:::url_api("health")
 url_api <- function(...,
-                    use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                             pkg = this_pkg)) {
-  checkmate::assert_flag(use_testing_server)
+                    .use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                              pkg = this_pkg)) {
+  checkmate::assert_flag(.use_testing_server)
   
-  ifelse(use_testing_server,
+  ifelse(.use_testing_server,
          "stagservices.c2d.ch",
          "services.c2d.ch") %>%
     fs::path(...) %>%
@@ -1431,11 +1463,11 @@ url_api <- function(...,
 #' @examples
 #' c2d:::url_admin_portal("referendum/5bbbfd7b92a21351232e46b5")
 url_admin_portal <- function(...,
-                             use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                      pkg = this_pkg)) {
-  checkmate::assert_flag(use_testing_server)
+                             .use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                       pkg = this_pkg)) {
+  checkmate::assert_flag(.use_testing_server)
   
-  ifelse(use_testing_server,
+  ifelse(.use_testing_server,
          "c2d-admin.netlify.app",
          "admin.c2d.ch") %>%
     fs::path(...) %>%
@@ -1452,11 +1484,11 @@ url_admin_portal <- function(...,
 #' @examples
 #' c2d:::url_website("referendum/CH/5bbc04f692a21351232e5a01")
 url_website <- function(...,
-                        use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                 pkg = this_pkg)) {
-  checkmate::assert_flag(use_testing_server)
+                        .use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                  pkg = this_pkg)) {
+  checkmate::assert_flag(.use_testing_server)
   
-  ifelse(use_testing_server,
+  ifelse(.use_testing_server,
          "c2d-site.netlify.app",
          "c2d.ch") %>%
     fs::path(...) %>%
@@ -2281,7 +2313,7 @@ rfrnds <- function(country_code = NULL,
     data <-
       httr::RETRY(verb = "GET",
                   url = url_api("referendums",
-                                use_testing_server = use_testing_server),
+                                .use_testing_server = use_testing_server),
                   httr::progress(type = "down"),
                   query = list(mode = "stream",
                                format = "json",
@@ -2371,8 +2403,8 @@ rfrnd <- function(id,
   data <-
     httr::RETRY(verb = "GET",
                 url = url_api("referendums", id,
-                              use_testing_server = use_testing_server),
-                config = httr::add_headers(Origin = url_admin_portal(use_testing_server = use_testing_server)),
+                              .use_testing_server = use_testing_server),
+                config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
                 times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -2441,7 +2473,7 @@ download_file_attachment <- function(s3_object_key,
   
   response <- httr::RETRY(verb = "GET",
                           url = url_api("s3_objects", s3_object_key,
-                                        use_testing_server = use_testing_server),
+                                        .use_testing_server = use_testing_server),
                           httr::write_disk(path = temp_path),
                           times = 5L)
   
@@ -2539,7 +2571,7 @@ add_rfrnds <- function(data,
     json_items %>%
     purrr::map(~ httr::RETRY(verb = "POST",
                              url = url_api("referendums",
-                                           use_testing_server = use_testing_server),
+                                           .use_testing_server = use_testing_server),
                              config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
                                                                                                      password = password))),
                              body = .x,
@@ -2628,7 +2660,7 @@ edit_rfrnds <- function(data,
                            .f = ~
                              httr::RETRY(verb = "PUT",
                                          url = url_api("referendums", .x,
-                                                       use_testing_server = use_testing_server),
+                                                       .use_testing_server = use_testing_server),
                                          config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
                                                                                                                  password = password))),
                                          body = .y,
@@ -2840,7 +2872,7 @@ count_rfrnds <- function(is_draft = FALSE,
                                                                   pkg = this_pkg)) {
   httr::RETRY(verb = "GET",
               url = url_api("referendums/stats",
-                            use_testing_server = use_testing_server),
+                            .use_testing_server = use_testing_server),
               query = list(filter = assemble_query_filter(country_code = country_code,
                                                           subnational_entity_name = subnational_entity_name,
                                                           municipality = municipality,
@@ -2851,7 +2883,7 @@ count_rfrnds <- function(is_draft = FALSE,
                                                           date_time_created_min = date_time_created_min,
                                                           date_time_created_max = date_time_created_max,
                                                           query_filter = query_filter)),
-              config = httr::add_headers(Origin = url_admin_portal(use_testing_server = use_testing_server)),
+              config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
               times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -2884,10 +2916,10 @@ search_rfrnds <- function(term,
                                                                    pkg = this_pkg)) {
   httr::RETRY(verb = "GET",
               url = url_api("referendums",
-                            use_testing_server = use_testing_server),
+                            .use_testing_server = use_testing_server),
               query = list(mode = "search",
                            term = checkmate::assert_string(term)),
-              config = httr::add_headers(Origin = url_admin_portal(use_testing_server = use_testing_server)),
+              config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
               times = 5L) %>%
     # ensure we actually got a JSON response
     pal::assert_mime_type(mime_type = "application/json",
@@ -3975,7 +4007,7 @@ is_online <- function(quiet = FALSE,
   result <- FALSE
   response <- tryCatch(expr = httr::RETRY(verb = "GET",
                                           url = url_api("health",
-                                                        use_testing_server = use_testing_server),
+                                                        .use_testing_server = use_testing_server),
                                           times = 5L),
                        error = function(e) e$message)
   
