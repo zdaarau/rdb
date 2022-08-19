@@ -10,10 +10,13 @@ rfrnds(
   municipality = NULL,
   level = NULL,
   type = NULL,
-  date = NULL,
+  date_min = NULL,
+  date_max = NULL,
   is_draft = FALSE,
   date_time_created_min = NULL,
   date_time_created_max = NULL,
+  date_time_last_edited_min = NULL,
+  date_time_last_edited_max = NULL,
   query_filter = NULL,
   incl_archive = FALSE,
   tidy = TRUE,
@@ -33,20 +36,28 @@ rfrnds(
 
 \item{type}{The \code{type}(s) to be included. A character vector.}
 
-\item{date}{The \code{date}(s) to be included. A character vector.}
+\item{date_min}{The minimum \code{date} to be included. A \link[=Date]{date} or something coercible to.}
+
+\item{date_max}{The maximum \code{date} to be included. A \link[=Date]{date} or something coercible to.}
 
 \item{is_draft}{\code{TRUE} means to include only referendum entries with \emph{draft} status, \code{FALSE} to include only normal entries. Set to \code{NULL} in order to
 include both draft and normal entries.}
 
-\item{date_time_created_min}{The minimum \code{date_time_created} to be included. A \link[base:Dates]{date}, a \link[base:DateTimeClasses]{datetime}, or something
-coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}; assumed to be in UTC if no timezone is given).}
+\item{date_time_created_min}{The minimum \code{date_time_created} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
+\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
 
-\item{date_time_created_max}{The maximum \code{date_time_created} to be included. A \link[base:Dates]{date}, a \link[base:DateTimeClasses]{datetime}, or something
-coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}; assumed to be in UTC if no timezone is given).}
+\item{date_time_created_max}{The maximum \code{date_time_created} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
+\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
+
+\item{date_time_last_edited_min}{The minimum \code{date_time_last_edited} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
+\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
+
+\item{date_time_last_edited_max}{The maximum \code{date_time_last_edited} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
+\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
 
 \item{query_filter}{A valid \href{https://docs.mongodb.com/manual/core/document/#query-filter-documents}{MongoDB JSON query filter document} which allows for
 maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if \code{query_filter} is provided, the
-parameters \code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date}, \code{is_draft}, \code{date_time_created_min} and \code{date_time_created_max} are ignored.}
+parameters \code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date_min}, \code{date_max}, \code{is_draft}, \code{date_time_created_min}, \code{date_time_created_max}, \code{date_time_last_edited_min} and \code{date_time_last_edited_max} are ignored.}
 
 \item{incl_archive}{Whether or not to include an \code{archive} column containing data from an earlier, obsolete state of the C2D database.}
 
@@ -74,6 +85,14 @@ c2d::rfrnds()}
 # get only referendums in Austria and Australia on subnational level
 c2d::rfrnds(country_code = c("AT", "AU"),
             level = "subnational")
+
+# get referendums in 2020
+c2d::rfrnds(date_min = "2020-01-01",
+            date_max = "2020-12-31")
+
+# get referendums added to the database during the last 30 days
+c2d::rfrnds(date_time_created_min = clock::date_today(zone = "UTC") |> clock::add_days(-30L),
+            date_time_created_max = clock::date_today(zone = "UTC"))
 
 # provide custom `query_filter` for more complex queries like regex matches
 # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/

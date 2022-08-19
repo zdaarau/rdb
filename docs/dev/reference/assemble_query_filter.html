@@ -133,10 +133,13 @@
 <span>  municipality <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
 <span>  level <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
 <span>  type <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
-<span>  date <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
+<span>  date_min <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
+<span>  date_max <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
 <span>  is_draft <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
 <span>  date_time_created_min <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
 <span>  date_time_created_max <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
+<span>  date_time_last_edited_min <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
+<span>  date_time_last_edited_max <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
 <span>  query_filter <span class='op'>=</span> <span class='cn'>NULL</span>,</span>
 <span>  base64_encode <span class='op'>=</span> <span class='cn'>TRUE</span></span>
 <span><span class='op'>)</span></span></pre>
@@ -165,8 +168,12 @@
       <td><p>The <code>type</code>(s) to be included. A character vector.</p></td>
     </tr>
     <tr>
-      <th>date</th>
-      <td><p>The <code>date</code>(s) to be included. A character vector.</p></td>
+      <th>date_min</th>
+      <td><p>The minimum <code>date</code> to be included. A <a href='https://rdrr.io/r/base/Dates.html'>date</a> or something coercible to.</p></td>
+    </tr>
+    <tr>
+      <th>date_max</th>
+      <td><p>The maximum <code>date</code> to be included. A <a href='https://rdrr.io/r/base/Dates.html'>date</a> or something coercible to.</p></td>
     </tr>
     <tr>
       <th>is_draft</th>
@@ -175,19 +182,29 @@ include both draft and normal entries.</p></td>
     </tr>
     <tr>
       <th>date_time_created_min</th>
-      <td><p>The minimum <code>date_time_created</code> to be included. A <a href='https://rdrr.io/r/base/Dates.html'>date</a>, a <a href='https://rdrr.io/r/base/DateTimeClasses.html'>datetime</a>, or something
-coercible to (like <code>"2006-01-02"</code> or <code>"2006-01-02T15:04:05"</code>; assumed to be in UTC if no timezone is given).</p></td>
+      <td><p>The minimum <code>date_time_created</code> to be included. A <a href='https://rdrr.io/r/base/DateTimeClasses.html'>datetime</a>, or something coercible to (like
+<code>"2006-01-02"</code> or <code>"2006-01-02T15:04:05Z"</code>; assumed to be in UTC if no timezone is given).</p></td>
     </tr>
     <tr>
       <th>date_time_created_max</th>
-      <td><p>The maximum <code>date_time_created</code> to be included. A <a href='https://rdrr.io/r/base/Dates.html'>date</a>, a <a href='https://rdrr.io/r/base/DateTimeClasses.html'>datetime</a>, or something
-coercible to (like <code>"2006-01-02"</code> or <code>"2006-01-02T15:04:05"</code>; assumed to be in UTC if no timezone is given).</p></td>
+      <td><p>The maximum <code>date_time_created</code> to be included. A <a href='https://rdrr.io/r/base/DateTimeClasses.html'>datetime</a>, or something coercible to (like
+<code>"2006-01-02"</code> or <code>"2006-01-02T15:04:05Z"</code>; assumed to be in UTC if no timezone is given).</p></td>
+    </tr>
+    <tr>
+      <th>date_time_last_edited_min</th>
+      <td><p>The minimum <code>date_time_last_edited</code> to be included. A <a href='https://rdrr.io/r/base/DateTimeClasses.html'>datetime</a>, or something coercible to (like
+<code>"2006-01-02"</code> or <code>"2006-01-02T15:04:05Z"</code>; assumed to be in UTC if no timezone is given).</p></td>
+    </tr>
+    <tr>
+      <th>date_time_last_edited_max</th>
+      <td><p>The maximum <code>date_time_last_edited</code> to be included. A <a href='https://rdrr.io/r/base/DateTimeClasses.html'>datetime</a>, or something coercible to (like
+<code>"2006-01-02"</code> or <code>"2006-01-02T15:04:05Z"</code>; assumed to be in UTC if no timezone is given).</p></td>
     </tr>
     <tr>
       <th>query_filter</th>
       <td><p>A valid <a href='https://docs.mongodb.com/manual/core/document/#query-filter-documents'>MongoDB JSON query filter document</a> which allows for
 maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if <code>query_filter</code> is provided, the
-parameters <code>country_code</code>, <code>subnational_entity_name</code>, <code>municipality</code>, <code>level</code>, <code>type</code>, <code>date</code>, <code>is_draft</code>, <code>date_time_created_min</code> and <code>date_time_created_max</code> are ignored.</p></td>
+parameters <code>country_code</code>, <code>subnational_entity_name</code>, <code>municipality</code>, <code>level</code>, <code>type</code>, <code>date_min</code>, <code>date_max</code>, <code>is_draft</code>, <code>date_time_created_min</code>, <code>date_time_created_max</code>, <code>date_time_last_edited_min</code> and <code>date_time_last_edited_max</code> are ignored.</p></td>
     </tr>
     <tr>
       <th>base64_encode</th>

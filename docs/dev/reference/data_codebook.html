@@ -1712,22 +1712,24 @@ specific legal setting is in force).</p><h4 class='hasAnchor' id='list-inst-lega
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>data_codebook</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 70 × 13</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    variable_name       variable_name_p… variable_label is_multi_valued is_nested</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>               <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>            <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> id                  C2D ID           a 24-characte… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> id_official         Official ID      the referendu… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> id_sudd             sudd.ch ID       the referendu… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> country_code        ISO 3166-1 alph… the two-lette… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> country_code_histo… ISO 3166-3       the four-lett… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> country_name        Country          the English n… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> subnational_entity… Subnational ent… the English n… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> municipality        Municipality     the municipal… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> level               Political level  the political… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> is_past_jurisdicti… Past jurisdicti… whether or no… FALSE           FALSE    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 60 more rows, and 8 more variables: applicability_constraint &lt;chr&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   variable_values &lt;list&gt;, value_label_prefix &lt;chr&gt;, value_labels &lt;list&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   value_label_suffix &lt;chr&gt;, value_default &lt;list&gt;, value_scale &lt;chr&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ptype &lt;list&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    variable_name varia…¹ varia…² is_mu…³ is_ne…⁴ appli…⁵ varia…⁶ value…⁷ value…⁸</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> id            C2D ID  a 24-c… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> id_official   Offici… the re… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> id_sudd       sudd.c… the re… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> country_code  ISO 31… the tw… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> country_code… ISO 31… the fo… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> country_name  Country the En… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> subnational_… Subnat… the En… FALSE   FALSE   level … &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> municipality  Munici… the mu… FALSE   FALSE   level … &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> level         Politi… the po… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   The re… &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> is_past_juri… Past j… whethe… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;lgl&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 60 more rows, 4 more variables: value_label_suffix &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   value_default &lt;list&gt;, value_scale &lt;chr&gt;, ptype &lt;list&gt;, and abbreviated</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   variable names ¹​variable_name_print, ²​variable_label, ³​is_multi_valued,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁴​is_nested, ⁵​applicability_constraint, ⁶​variable_values,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁷​value_label_prefix, ⁸​value_labels</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</span></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

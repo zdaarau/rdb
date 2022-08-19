@@ -11,9 +11,12 @@ count_rfrnds(
   municipality = NULL,
   level = NULL,
   type = NULL,
-  date = NULL,
+  date_min = NULL,
+  date_max = NULL,
   date_time_created_min = NULL,
   date_time_created_max = NULL,
+  date_time_last_edited_min = NULL,
+  date_time_last_edited_max = NULL,
   query_filter = NULL,
   use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
 )
@@ -32,17 +35,25 @@ include both draft and normal entries.}
 
 \item{type}{The \code{type}(s) to be included. A character vector.}
 
-\item{date}{The \code{date}(s) to be included. A character vector.}
+\item{date_min}{The minimum \code{date} to be included. A \link[=Date]{date} or something coercible to.}
 
-\item{date_time_created_min}{The minimum \code{date_time_created} to be included. A \link[base:Dates]{date}, a \link[base:DateTimeClasses]{datetime}, or something
-coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}; assumed to be in UTC if no timezone is given).}
+\item{date_max}{The maximum \code{date} to be included. A \link[=Date]{date} or something coercible to.}
 
-\item{date_time_created_max}{The maximum \code{date_time_created} to be included. A \link[base:Dates]{date}, a \link[base:DateTimeClasses]{datetime}, or something
-coercible to (like \code{"2006-01-02"} or \code{"2006-01-02T15:04:05"}; assumed to be in UTC if no timezone is given).}
+\item{date_time_created_min}{The minimum \code{date_time_created} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
+\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
+
+\item{date_time_created_max}{The maximum \code{date_time_created} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
+\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
+
+\item{date_time_last_edited_min}{The minimum \code{date_time_last_edited} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
+\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
+
+\item{date_time_last_edited_max}{The maximum \code{date_time_last_edited} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
+\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
 
 \item{query_filter}{A valid \href{https://docs.mongodb.com/manual/core/document/#query-filter-documents}{MongoDB JSON query filter document} which allows for
 maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if \code{query_filter} is provided, the
-parameters \code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date}, \code{is_draft}, \code{date_time_created_min} and \code{date_time_created_max} are ignored.}
+parameters \code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date_min}, \code{date_max}, \code{is_draft}, \code{date_time_created_min}, \code{date_time_created_max}, \code{date_time_last_edited_min} and \code{date_time_last_edited_max} are ignored.}
 
 \item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }

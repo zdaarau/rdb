@@ -155,16 +155,21 @@ utils::globalVariables(names = c(".",
 #' @param municipality The `municipality`(s) to be included. A character vector.
 #' @param level The `level`(s) to be included. A character vector.
 #' @param type The `type`(s) to be included. A character vector.
-#' @param date The `date`(s) to be included. A character vector.
+#' @param date_min The minimum `date` to be included. A [date][Date] or something coercible to.
+#' @param date_max The maximum `date` to be included. A [date][Date] or something coercible to.
 #' @param is_draft `TRUE` means to include only referendum entries with _draft_ status, `FALSE` to include only normal entries. Set to `NULL` in order to
 #'   include both draft and normal entries.
-#' @param date_time_created_min The minimum `date_time_created` to be included. A [date][base::Date], a [datetime][base::DateTimeClasses], or something
-#'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`; assumed to be in UTC if no timezone is given).
-#' @param date_time_created_max The maximum `date_time_created` to be included. A [date][base::Date], a [datetime][base::DateTimeClasses], or something
-#'   coercible to (like `"2006-01-02"` or `"2006-01-02T15:04:05"`; assumed to be in UTC if no timezone is given).
+#' @param date_time_created_min The minimum `date_time_created` to be included. A [datetime][base::DateTimeClasses], or something coercible to (like
+#'   `"2006-01-02"` or `"2006-01-02T15:04:05Z"`; assumed to be in UTC if no timezone is given).
+#' @param date_time_created_max The maximum `date_time_created` to be included. A [datetime][base::DateTimeClasses], or something coercible to (like
+#'   `"2006-01-02"` or `"2006-01-02T15:04:05Z"`; assumed to be in UTC if no timezone is given).
+#' @param date_time_last_edited_min The minimum `date_time_last_edited` to be included. A [datetime][base::DateTimeClasses], or something coercible to (like
+#'   `"2006-01-02"` or `"2006-01-02T15:04:05Z"`; assumed to be in UTC if no timezone is given).
+#' @param date_time_last_edited_max The maximum `date_time_last_edited` to be included. A [datetime][base::DateTimeClasses], or something coercible to (like
+#'   `"2006-01-02"` or `"2006-01-02T15:04:05Z"`; assumed to be in UTC if no timezone is given).
 #' @param query_filter A valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents) which allows for
-#' maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if `query_filter` is provided, the
-#' parameters `r formals(assemble_query_filter) %>% names() %>% setdiff(c("query_filter", "base64_encode")) %>% pal::prose_ls(wrap = "\x60")` are ignored.
+#'   maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if `query_filter` is provided, the
+#'   parameters `r formals(assemble_query_filter) %>% names() %>% setdiff(c("query_filter", "base64_encode")) %>% pal::prose_ls(wrap = "\x60")` are ignored.
 #' @param base64_encode Whether or not to [Base64](https://en.wikipedia.org/wiki/Base64)-encode the resulting query filter document. Note that the
 #'   `query_filter` argument provided to other functions of this package must be Base64-encoded.
 #'
@@ -176,10 +181,13 @@ assemble_query_filter <- function(country_code = NULL,
                                   municipality = NULL,
                                   level = NULL,
                                   type = NULL,
-                                  date = NULL,
+                                  date_min = NULL,
+                                  date_max = NULL,
                                   is_draft = NULL,
                                   date_time_created_min = NULL,
                                   date_time_created_max = NULL,
+                                  date_time_last_edited_min = NULL,
+                                  date_time_last_edited_max = NULL,
                                   query_filter = NULL,
                                   base64_encode = TRUE) {
   
@@ -211,19 +219,16 @@ assemble_query_filter <- function(country_code = NULL,
                    choices = v_vals("type"),
                    null.ok = TRUE,
                    .var.name = "type")
-    checkmate::assert_character(as.character(date),
-                                pattern = "\\d{4}-\\d{2}-\\d{2}",
-                                any.missing = FALSE,
-                                null.ok = TRUE,
-                                .var.name = "date")
     checkmate::assert_flag(is_draft,
                            null.ok = TRUE)
+    
+    date_min %<>% lubridate::as_date()
+    date_max %<>% lubridate::as_date()
     date_time_created_min %<>% lubridate::as_datetime()
     date_time_created_max %<>% lubridate::as_datetime()
-    checkmate::assert_posixct(date_time_created_min,
-                              any.missing = FALSE)
-    checkmate::assert_posixct(date_time_created_max,
-                              any.missing = FALSE)
+    date_time_last_edited_min %<>% lubridate::as_datetime()
+    date_time_last_edited_max %<>% lubridate::as_datetime()
+    
     query_filter <-
       list(country_code = query_filter_in(country_code),
            canton = query_filter_in(subnational_entity_name),
@@ -234,10 +239,13 @@ assemble_query_filter <- function(country_code = NULL,
              purrr::when(length(.) == 0L ~ .,
                          ~ dplyr::recode(., "citizens' assembly" = "citizen assembly") %>% stringr::str_to_sentence()) %>%
              query_filter_in(),
-           date = query_filter_in(date),
+           date = query_filter_date(min = date_min,
+                                    max = date_max),
            draft = is_draft,
-           created_on = query_filter_date(min = date_time_created_min,
-                                          max = date_time_created_max)) %>%
+           created_on = query_filter_datetime(min = date_time_created_min,
+                                              max = date_time_created_max),
+           date_time_last_edited = query_filter_datetime(min = date_time_last_edited_min,
+                                                         max = date_time_last_edited_max)) %>%
       # remove `NULL` elements
       purrr::compact() %>%
       # convert to JSON
@@ -622,6 +630,16 @@ drop_disabled_vx <- function(data,
   }
   
   data
+}
+
+ensure_content <- function(x) {
+  
+  if (!nchar(x)) {
+    cli::cli_abort("Received empty response from C2D API. Please debug.",
+                   .internal = TRUE)
+  }
+  
+  x
 }
 
 extend_data_codebook <- function(data) {
@@ -1497,6 +1515,13 @@ url_website <- function(...,
 
 query_filter_date <- function(min,
                               max) {
+  list(`$gte` = min,
+       `$lte` = max) %>%
+    purrr::compact()
+}
+
+query_filter_datetime <- function(min,
+                                  max) {
   
   list(`$gte` = purrr::compact(list(`$date` = min)),
        `$lte` = purrr::compact(list(`$date` = max))) %>%
@@ -1505,7 +1530,7 @@ query_filter_date <- function(min,
 
 query_filter_in <- function(x) {
   
-  x %>% purrr::when(is.null(.) || length(.) == 0L ~ NULL,
+  x %>% purrr::when(length(.) == 0L ~ NULL,
                     length(.) == 1 ~ .,
                     ~ list(`$in` = .))
 }
@@ -2078,6 +2103,25 @@ plot_share_per_period <- function(data_freq,
 
 this_pkg <- utils::packageName()
 
+data_iso_3166_3 <-
+  ISOcodes::ISO_3166_3 %>%
+  tibble::as_tibble() %>%
+  dplyr::mutate(Alpha_2 = Alpha_4 %>% stringr::str_sub(end = 2L),
+                Alpha_2_New = Alpha_4 %>% stringr::str_sub(start = 3L),
+                Date_withdrawn =
+                  Date_withdrawn %>%
+                      purrr::map(~ {
+                          if (nchar(.x) == 4L) {
+                              clock::date_build(year = as.integer(.x))
+                          } else {
+                              clock::date_parse(x = .x,
+                                                format = "%F")
+                          }
+                          }) %>%
+                      purrr::reduce(c)) %>%
+  dplyr::relocate(Alpha_2, Alpha_2_New,
+                  .after = Alpha_3)
+
 rfrnd_fields <- list()
 
 rfrnd_fields$all <- c("_id",
@@ -2176,25 +2220,6 @@ rfrnd_fields$never_empty <- c("_id",
                               "votes_invalid",
                               "draft")
 
-data_iso_3166_3 <-
-  ISOcodes::ISO_3166_3 %>%
-  tibble::as_tibble() %>%
-  dplyr::mutate(Alpha_2 = Alpha_4 %>% stringr::str_sub(end = 2L),
-                Alpha_2_New = Alpha_4 %>% stringr::str_sub(start = 3L),
-                Date_withdrawn =
-                  Date_withdrawn %>%
-                      purrr::map(~ {
-                          if (nchar(.x) == 4L) {
-                              clock::date_build(year = as.integer(.x))
-                          } else {
-                              clock::date_parse(x = .x,
-                                                format = "%F")
-                          }
-                          }) %>%
-                      purrr::reduce(c)) %>%
-  dplyr::relocate(Alpha_2, Alpha_2_New,
-                  .after = Alpha_3)
-
 mime_error_suffix <- "This indicates either some network issue or a change in the C2D API."
 
 sudd_years <-
@@ -2282,6 +2307,14 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
 #' # get only referendums in Austria and Australia on subnational level
 #' c2d::rfrnds(country_code = c("AT", "AU"),
 #'             level = "subnational")
+#'
+#' # get referendums in 2020
+#' c2d::rfrnds(date_min = "2020-01-01",
+#'             date_max = "2020-12-31")
+#'
+#' # get referendums added to the database during the last 30 days
+#' c2d::rfrnds(date_time_created_min = clock::date_today(zone = "UTC") |> clock::add_days(-30L),
+#'             date_time_created_max = clock::date_today(zone = "UTC"))
 #' 
 #' # provide custom `query_filter` for more complex queries like regex matches
 #' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
@@ -2291,10 +2324,13 @@ rfrnds <- function(country_code = NULL,
                    municipality = NULL,
                    level = NULL,
                    type = NULL,
-                   date = NULL,
+                   date_min = NULL,
+                   date_max = NULL,
                    is_draft = FALSE,
                    date_time_created_min = NULL,
                    date_time_created_max = NULL,
+                   date_time_last_edited_min = NULL,
+                   date_time_last_edited_max = NULL,
                    query_filter = NULL,
                    incl_archive = FALSE,
                    tidy = TRUE,
@@ -2303,6 +2339,9 @@ rfrnds <- function(country_code = NULL,
                    use_testing_server = pal::pkg_config_val(key = "use_testing_server",
                                                             pkg = this_pkg)) {
   checkmate::assert_flag(incl_archive)
+  
+  # TODO: remove this check as soon as [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
+  if (isTRUE(use_testing_server)) cli::cli_abort("{.code mode=stream} not yet supported on testing server.")
   
   result <- pkgpins::with_cache(expr = {
     
@@ -2322,10 +2361,13 @@ rfrnds <- function(country_code = NULL,
                                                               municipality = municipality,
                                                               level = level,
                                                               type = type,
-                                                              date = date,
+                                                              date_min = date_min,
+                                                              date_max = date_max,
                                                               is_draft = is_draft,
                                                               date_time_created_min = date_time_created_min,
                                                               date_time_created_max = date_time_created_max,
+                                                              date_time_last_edited_min = date_time_last_edited_min,
+                                                              date_time_last_edited_max = date_time_last_edited_max,
                                                               query_filter = query_filter)),
                   times = 5L) %>%
       # ensure we actually got a JSON response
@@ -2333,7 +2375,9 @@ rfrnds <- function(country_code = NULL,
                             msg_suffix = mime_error_suffix) %>%
       # extract JSON
       httr::content(as = "text",
-                    encoding = "UTF-8")
+                    encoding = "UTF-8") %>%
+      # ensure body is not empty
+      ensure_content()
     
     status_msg <- "Converting JSON to list data..."
     cli::cli_progress_step(msg = status_msg,
@@ -2367,6 +2411,7 @@ rfrnds <- function(country_code = NULL,
   date_time_created_max,
   query_filter,
   tidy,
+  use_testing_server,
   use_cache = use_cache,
   cache_lifespan = cache_lifespan)
   
@@ -2412,6 +2457,8 @@ rfrnd <- function(id,
     # extract JSON
     httr::content(as = "text",
                   encoding = "UTF-8") %>%
+    # ensure body is not empty
+    ensure_content() %>%
     # convert JSON to list
     # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result
     jsonlite::fromJSON(simplifyVector = FALSE,
@@ -2582,7 +2629,9 @@ add_rfrnds <- function(data,
                                        msg_suffix = mime_error_suffix) %>%
                  # extract JSON string
                  httr::content(as = "text",
-                               encoding = "UTF-8"))
+                               encoding = "UTF-8") %>%
+                 # ensure body is not empty
+                 ensure_content())
   
   # throw warnings for unsuccessful API calls
   purrr::walk2(.x = seq_along(responses),
@@ -2671,7 +2720,9 @@ edit_rfrnds <- function(data,
                                                    msg_suffix = mime_error_suffix) %>%
                              # extract JSON string
                              httr::content(as = "text",
-                                           encoding = "UTF-8"))
+                                           encoding = "UTF-8") %>%
+                             # ensure body is not empty
+                             ensure_content())
   
   # throw warnings for unsuccessful API calls
   purrr::walk2(.x = ids,
@@ -2864,9 +2915,12 @@ count_rfrnds <- function(is_draft = FALSE,
                          municipality = NULL,
                          level = NULL,
                          type = NULL,
-                         date = NULL,
+                         date_min = NULL,
+                         date_max = NULL,
                          date_time_created_min = NULL,
                          date_time_created_max = NULL,
+                         date_time_last_edited_min = NULL,
+                         date_time_last_edited_max = NULL,
                          query_filter = NULL,
                          use_testing_server = pal::pkg_config_val(key = "use_testing_server",
                                                                   pkg = this_pkg)) {
@@ -2878,10 +2932,13 @@ count_rfrnds <- function(is_draft = FALSE,
                                                           municipality = municipality,
                                                           level = level,
                                                           type = type,
-                                                          date = date,
+                                                          date_min = date_min,
+                                                          date_max = date_max,
                                                           is_draft = is_draft,
                                                           date_time_created_min = date_time_created_min,
                                                           date_time_created_max = date_time_created_max,
+                                                          date_time_last_edited_min = date_time_last_edited_min,
+                                                          date_time_last_edited_max = date_time_last_edited_max,
                                                           query_filter = query_filter)),
               config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
               times = 5L) %>%
