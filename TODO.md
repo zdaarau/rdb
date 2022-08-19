@@ -1,5 +1,20 @@
 # TODOs
 
+## c2d R package
+
+-   Implement fn to delete referendums ([issue #45](https://github.com/ccmdesign/c2d-app/issues/45) should be solved on testing server).
+
+-   Test `add_rfrnds()` and `edit_rfrnds()` on testing server.
+
+-   Implement convenience fn to `add_country_code_long()` (or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is occasionally needed to merge with
+    data from other sources.
+
+-   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook)
+
+-   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
+
+-   Automated vote entry creation by feeding scraped sudd.ch data to `c2d::add_rfrnds()`.
+
 ## Reported to [CCM Design](https://github.com/ccmdesign/c2d-app/issues/)
 
 -   Publish code under AGPL \>= 3, see [issue #26](https://github.com/ccmdesign/c2d-app/issues/26)
@@ -349,19 +364,6 @@
     be hard-coded)\`
 
 -   check `electorate_abroad` for obvious errors (e.g. `id == "5f99b6c8d1291cc3961f1c2c"` is one)
-
-### c2d R package
-
--   Implement convenience fn to `add_country_code_long()` (or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is occasionally needed to merge with
-    data from other sources.
-
--   Implement fn to delete referendums once [issue #45](https://github.com/ccmdesign/c2d-app/issues/45) is resolved.
-
--   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook)
-
--   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
-
--   Automated vote entry creation by feeding scraped sudd.ch data to `c2d::add_rfrnds()`.
 
 ### Miscellaneous
 

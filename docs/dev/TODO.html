@@ -121,6 +121,26 @@
 
 <div id="todos" class="section level1">
 
+<div id="c2d-r-package" class="section level2">
+<h2 class="hasAnchor">
+<a href="#c2d-r-package" class="anchor"></a>c2d R package</h2>
+<ul>
+<li><p>Implement fn to delete referendums (<a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a>
+should be solved on testing server).</p></li>
+<li><p>Test <code><a href="reference/add_rfrnds.html">add_rfrnds()</a></code> and <code><a href="reference/edit_rfrnds.html">edit_rfrnds()</a></code> on
+testing server.</p></li>
+<li><p>Implement convenience fn to <code>add_country_code_long()</code>
+(or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is
+occasionally needed to merge with data from other sources.</p></li>
+<li><p>As soon as <a href="https://github.com/ccmdesign/c2d-app/issues/57" class="external-link">issue #57</a> is
+resolved, properly process the question variables (and adapt
+codebook)</p></li>
+<li><p>Implement fn to rename file attachments as soon as <a href="https://github.com/ccmdesign/c2d-app/issues/69" class="external-link">issue #69</a> is
+resolved.</p></li>
+<li><p>Automated vote entry creation by feeding scraped sudd.ch data to
+<code><a href="reference/add_rfrnds.html">c2d::add_rfrnds()</a></code>.</p></li>
+</ul>
+</div>
 <div id="reported-to-ccm-design" class="section level2">
 <h2 class="hasAnchor">
 <a href="#reported-to-ccm-design" class="anchor"></a>Reported to <a href="https://github.com/ccmdesign/c2d-app/issues/" class="external-link">CCM Design</a>
@@ -672,24 +692,6 @@ country we shall assign has to be hard-coded)`</p>
 </li>
 <li><p>check <code>electorate_abroad</code> for obvious errors
 (e.g. <code>id == "5f99b6c8d1291cc3961f1c2c"</code> is one)</p></li>
-</ul>
-</div>
-<div id="c2d-r-package" class="section level3">
-<h3 class="hasAnchor">
-<a href="#c2d-r-package" class="anchor"></a>c2d R package</h3>
-<ul>
-<li><p>Implement convenience fn to <code>add_country_code_long()</code>
-(or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is
-occasionally needed to merge with data from other sources.</p></li>
-<li><p>Implement fn to delete referendums once <a href="https://github.com/ccmdesign/c2d-app/issues/45" class="external-link">issue #45</a> is
-resolved.</p></li>
-<li><p>As soon as <a href="https://github.com/ccmdesign/c2d-app/issues/57" class="external-link">issue #57</a> is
-resolved, properly process the question variables (and adapt
-codebook)</p></li>
-<li><p>Implement fn to rename file attachments as soon as <a href="https://github.com/ccmdesign/c2d-app/issues/69" class="external-link">issue #69</a> is
-resolved.</p></li>
-<li><p>Automated vote entry creation by feeding scraped sudd.ch data to
-<code><a href="reference/add_rfrnds.html">c2d::add_rfrnds()</a></code>.</p></li>
 </ul>
 </div>
 <div id="miscellaneous" class="section level3">

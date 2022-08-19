@@ -18,7 +18,12 @@ search_rfrnds(
 A character vector of English referendum titles matching the search \code{term}.
 }
 \description{
-Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no \href{https://en.wikipedia.org/wiki/Approximate_string_matching}{fuzzy search} is performed (i.e. only exact matches are returned).
+Allows to use the C2D API's primitive search functionality. Note that
+\itemize{
+\item the search is not case-sensitive and no \href{https://en.wikipedia.org/wiki/Approximate_string_matching}{fuzzy search} is performed (i.e. only exact matches are
+returned).
+\item only up to the first \strong{5} matching results will be returned.
+}
 }
 \details{
 Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English

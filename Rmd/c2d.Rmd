@@ -3054,6 +3054,9 @@ download_file_attachment <- function(s3_object_key,
   checkmate::assert_string(s3_object_key)
   checkmate::assert_atomic(path)
   
+  # TODO: remove this check as soon as [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
+  if (isTRUE(use_testing_server)) cli::cli_abort("Accessing file attachments is not yet supported on testing server.")
+  
   if (fs::dir_exists(path)) {
     checkmate::assert_directory(path,
                                 access = "rw")
@@ -3619,8 +3622,10 @@ title](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-refer
 ```{r}
 #' Search in English referendum titles
 #'
-#' Allows to use the C2D API's primitive search functionality. The search is not case-sensitive and no [fuzzy
-#' search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are returned).
+#' Allows to use the C2D API's primitive search functionality. Note that
+#' - the search is not case-sensitive and no [fuzzy search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are
+#'   returned).
+#' - only up to the first **5** matching results will be returned.
 #'
 #' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
 #' titles.
@@ -5402,7 +5407,10 @@ pkg_config <-
                                        "will be deleted upon package loading.")) %>%
   tibble::add_row(key = "use_testing_server",
                   default_value = list(FALSE),
-                  description = "Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.")
+                  description = "Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.") %>%
+  tibble::add_row(key = "test_testing_server",
+                  default_value = list(FALSE),
+                  description = "Whether or not to run the tests that use the testing servers for C2D Services API calls etc. during `devtools::test()`.")
 ```
 
 # TEMP

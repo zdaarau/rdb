@@ -33,7 +33,7 @@ Imports:
     labelled (>= 2.8.0),
     lubridate (>= 1.7.10),
     magrittr (>= 2.0.1),
-    pal (>= 0.0.9085),
+    pal (>= 0.0.9086),
     pkgpins (>= 0.7.0.9003),
     purrr (>= 0.3.4),
     rlang (>= 1.0.1),
@@ -56,6 +56,7 @@ Suggests:
     salim (>= 0.0.9015),
     testthat (>= 3.0.0),
     utils,
+    withr (>= 2.5.0),
     xfun (>= 0.23)
 VignetteBuilder: 
     knitr
