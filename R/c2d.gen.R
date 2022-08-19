@@ -729,11 +729,27 @@ order_rfrnd_cols <- function(data) {
 
 parse_datetime <- function(x) {
   
-  x %>%
-    unlist(use.names = FALSE) %>%
-    clock::naive_time_parse(format = "%Y-%m-%dT%H:%M:%SZ",
-                            precision = "millisecond") %>%
-    clock::as_date_time(zone = "UTC")
+  x %<>% unlist(use.names = FALSE)
+  
+  if (is.character(x) && stringr::str_detect(string = x,
+                                             pattern = "^-?\\d+$",
+                                             negate = TRUE)) {
+    result <-
+      x %>%
+      clock::naive_time_parse(format = "%Y-%m-%dT%H:%M:%SZ",
+                              precision = "millisecond") %>%
+      clock::as_date_time(zone = "UTC")
+    
+  } else {
+    
+    result <-
+      as.numeric(x) %>%
+      magrittr::divide_by(1000L) %>%
+      as.POSIXct(origin = "1970-01-01",
+                 tz = "UTC")
+  }
+  
+  result
 }
 
 #' Read in a TOML file
@@ -775,16 +791,6 @@ tag_frequency <- function(tags,
     tibble::tibble(tag = .) %>%
     dplyr::group_by(tag) %>%
     dplyr::summarise(n = dplyr::n())
-}
-
-tidy_date <- function(x,
-                      origin = "1970-01-01",
-                      tz = "UTC") {
-  x %>%
-    unlist(use.names = FALSE) %>%
-    magrittr::divide_by(1000L) %>%
-    as.POSIXct(origin = origin,
-               tz = tz)
 }
 
 #' Tidy "raw" C2D API referendum data
@@ -870,8 +876,7 @@ tidy_rfrnds <- function(data,
           # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
           dplyr::across(any_of(c("subterritories_no",
                                  "subterritories_yes",
-                                 # TODO: remove next two lines once [this](https://github.com/ccmdesign/c2d-app/commit/6b72d1928e0182f01b188f3973ba15482fc8c04a)
-                                 #       is deployed to production
+                                 # TODO: remove/adapt next two lines once [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
                                  "date_time_created"[is.numeric(.$date_time_created[[1L]])],
                                  "date_time_last_edited"[is.numeric(.$date_time_last_edited[[1L]])])),
                         as.double),
@@ -1022,34 +1027,19 @@ tidy_rfrnds <- function(data,
           ## ordinal
           ## interval
           # TODO: Remove else-clauses once [this](https://github.com/ccmdesign/c2d-app/commit/6b72d1928e0182f01b188f3973ba15482fc8c04a) is deployed to
-          #       production, and delete then-obsolete `tidy_date()`
-          date = if (is.list(date) && utils::hasName(date, "$date") && is.character(date[[1L]])) {
+          #       production
+          date = if (is.list(date)) {
             clock::as_date(parse_datetime(date))
           } else {
             clock::date_parse(date)
           },
-          date_time_created = if (is.list(date_time_created) && utils::hasName(date_time_created, "$date") && is.character(date_time_created[[1L]])) {
-            parse_datetime(date_time_created)
-          } else {
-            tidy_date(date_time_created)
-          },
-          date_time_last_edited = if (is.list(date_time_last_edited)
-                                      && utils::hasName(date_time_last_edited, "$date")
-                                      && is.character(date_time_last_edited[[1L]])) {
-            parse_datetime(date_time_last_edited)
-          } else {
-            tidy_date(date_time_last_edited)
-          },
+          date_time_created = parse_datetime(date_time_created),
+          date_time_last_edited = parse_datetime(date_time_last_edited),
           ## undefined
           files = files %>% purrr::map(~ .x %>% purrr::map(~ .x %>%
                                                              # unnest and restore `date`
-                                                             # TODO: same as above TODO
                                                              purrr::modify_in(.where = "date",
-                                                                              .f = ~ if (is.list(.x) && utils::hasName(.x, "$date") && is.character(.x[[1L]])) {
-                                                                                parse_datetime(.x)
-                                                                              } else {
-                                                                                tidy_date(.x)
-                                                                              }) %>%
+                                                                              .f = parse_datetime) %>%
                                                              # change subvariable names
                                                              rename_from_list(names_list = sub_v_names$files))),
           votes_per_subterritory = votes_per_subterritory,
