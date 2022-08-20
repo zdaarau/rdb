@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get a single referendum's data — rfrnd • c2d</title>
+<title>Delete referendums in the C2D database — delete_rfrnds • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Get a single referendum's data — rfrnd" />
-<meta name="description" content="Downloads a single referendum's data from the C2D Database. See the codebook for a detailed description of all variables.">
-<meta property="og:description" content="Downloads a single referendum's data from the C2D Database. See the codebook for a detailed description of all variables." />
+<meta property="og:title" content="Delete referendums in the C2D database — delete_rfrnds" />
+<meta name="description" content="Deletes existing referendum entries in the C2D database via its API.">
+<meta property="og:description" content="Deletes existing referendum entries in the C2D database via its API." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -118,19 +118,19 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get a single referendum's data</h1>
+    <h1>Delete referendums in the C2D database</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
-    <div class="hidden name"><code>rfrnd.Rd</code></div>
+    <div class="hidden name"><code>delete_rfrnds.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Downloads a single referendum's data from the C2D Database. See the <code><a href='data_codebook.html'>codebook</a></code> for a detailed description of all variables.</p>
+    <p>Deletes existing referendum entries in the C2D database via <a href='https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes'>its API</a>.</p>
     </div>
 
-    <pre class="usage"><span><span class='fu'>rfrnd</span><span class='op'>(</span></span>
-<span>  <span class='va'>id</span>,</span>
-<span>  incl_archive <span class='op'>=</span> <span class='cn'>FALSE</span>,</span>
-<span>  tidy <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+    <pre class="usage"><span><span class='fu'>delete_rfrnds</span><span class='op'>(</span></span>
+<span>  <span class='va'>ids</span>,</span>
+<span>  email <span class='op'>=</span> <span class='fu'>pal</span><span class='fu'>::</span><span class='fu'><a href='https://rpkg.dev/pal/reference/pkg_config_val.html'>pkg_config_val</a></span><span class='op'>(</span>key <span class='op'>=</span> <span class='st'>"api_username"</span>, pkg <span class='op'>=</span> <span class='va'>this_pkg</span><span class='op'>)</span>,</span>
+<span>  password <span class='op'>=</span> <span class='fu'>pal</span><span class='fu'>::</span><span class='fu'><a href='https://rpkg.dev/pal/reference/pkg_config_val.html'>pkg_config_val</a></span><span class='op'>(</span>key <span class='op'>=</span> <span class='st'>"api_password"</span>, pkg <span class='op'>=</span> <span class='va'>this_pkg</span><span class='op'>)</span>,</span>
 <span>  use_testing_server <span class='op'>=</span> <span class='fu'>pal</span><span class='fu'>::</span><span class='fu'><a href='https://rpkg.dev/pal/reference/pkg_config_val.html'>pkg_config_val</a></span><span class='op'>(</span>key <span class='op'>=</span> <span class='st'>"use_testing_server"</span>, pkg <span class='op'>=</span> <span class='va'>this_pkg</span><span class='op'>)</span></span>
 <span><span class='op'>)</span></span></pre>
 
@@ -138,18 +138,16 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>id</th>
-      <td><p>The referendum's unique <a href='https://rpkg.dev/c2d/articles/codebook.html#id'>identifier</a>.</p></td>
+      <th>ids</th>
+      <td><p>IDs of the referendums to be deleted. A character vector.</p></td>
     </tr>
     <tr>
-      <th>incl_archive</th>
-      <td><p>Whether or not to include an <code>archive</code> column containing data from an earlier, obsolete state of the C2D database.</p></td>
+      <th>email</th>
+      <td><p>The e-mail address of the C2D API user account to be used for authentication. A character scalar.</p></td>
     </tr>
     <tr>
-      <th>tidy</th>
-      <td><p>Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If <code>FALSE</code>, the raw MongoDB
-referendum data will only be modified just enough to be able to return it as a <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a>. Note that untidy data doesn't conform to the
-<a href='data_codebook.html'>codebook</a> (i.a. different variable names).</p></td>
+      <th>password</th>
+      <td><p>The password of the C2D API user account to be used for authentication. A character scalar.</p></td>
     </tr>
     <tr>
       <th>use_testing_server</th>
@@ -159,34 +157,19 @@ referendum data will only be modified just enough to be able to return it as a <
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a>.</p>
+    <p><code>ids</code>, invisibly.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other referendum data functions:
 <code><a href='add_rfrnds.html'>add_rfrnds</a>()</code>,
 <code><a href='count_rfrnds.html'>count_rfrnds</a>()</code>,
-<code><a href='delete_rfrnds.html'>delete_rfrnds</a>()</code>,
 <code><a href='download_file_attachment.html'>download_file_attachment</a>()</code>,
 <code><a href='edit_rfrnds.html'>edit_rfrnds</a>()</code>,
 <code><a href='rfrnds.html'>rfrnds</a>()</code>,
+<code><a href='rfrnd.html'>rfrnd</a>()</code>,
 <code><a href='search_rfrnds.html'>search_rfrnds</a>()</code>,
 <code><a href='validate_rfrnds.html'>validate_rfrnds</a>()</code></p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>rfrnd</span><span class='op'>(</span>id <span class='op'>=</span> <span class='st'>"5bbbe26a92a21351232dd73f"</span><span class='op'>)</span></span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 1 × 69</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   id       id_of…¹ id_sudd count…² count…³ count…⁴ subna…⁵ munic…⁶ level is_pa…⁷</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> 5bbbe26… 5       <span style='color: #BB0000;'>NA</span>      CH      <span style='color: #BB0000;'>NA</span>      Switze… <span style='color: #BB0000;'>NA</span>      <span style='color: #BB0000;'>NA</span>      nati… <span style='color: #BB0000;'>NA</span>     </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 59 more variables: date &lt;date&gt;, title_de &lt;chr&gt;, title_fr &lt;chr&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   title_en &lt;chr&gt;, question &lt;chr&gt;, question_en &lt;chr&gt;, committee_name &lt;chr&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   result &lt;fct&gt;, subterritories_yes &lt;dbl&gt;, subterritories_no &lt;dbl&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_no &lt;int&gt;, votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   votes_per_subterritory &lt;list&gt;, lower_house_yes &lt;int&gt;, lower_house_no &lt;int&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   lower_house_abstentions &lt;int&gt;, upper_house_yes &lt;int&gt;, …</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># ℹ Use `colnames()` to see all variable names</span></span>
-</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

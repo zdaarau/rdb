@@ -156,6 +156,7 @@ utils::globalVariables(names = c(".",
                                  "inst_trigger_type",
                                  "is_draft",
                                  "is_past_jurisdiction",
+                                 "is_testing_server",
                                  "ISO_Alpha_3",
                                  "items",
                                  "level",
@@ -602,10 +603,15 @@ auth_session <- function(email = pal::pkg_config_val(key = "api_username",
     purrr::when(all(c("email", "token", "date_time_last_active") %in% colnames(.)) ~ .,
                 ~ tibble::tibble(email = character(),
                                  token = character(),
+                                 is_testing_server = logical(),
                                  date_time_last_active = as.POSIXct(NULL)))
   # extract latest token
-  token <- tokens %>% dplyr::filter(email == !!email)
-  if (nrow(token)) token %<>% dplyr::filter(date_time_last_active == max(date_time_last_active))
+  token <- tokens %>% dplyr::filter(email == !!email & is_testing_server == !!use_testing_server)
+  
+  if (nrow(token)) {
+    token %<>% dplyr::filter(date_time_last_active == max(date_time_last_active))
+    token %<>% .[1L, ]
+  }
   
   # ensure token is not expired (checked if older than 14 days), else set to `NULL`
   if (nrow(token) &&
@@ -655,6 +661,7 @@ auth_session <- function(email = pal::pkg_config_val(key = "api_username",
             dplyr::filter(token != !!token) %>%
             tibble::add_row(email = email,
                             token = token,
+                            is_testing_server = use_testing_server,
                             date_time_last_active = clock::date_now(zone = "UTC")))
   # return token
   invisible(token)
@@ -2881,7 +2888,7 @@ rfrnds <- function(country_code = NULL,
   checkmate::assert_flag(incl_archive)
   
   # TODO: remove this check as soon as [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
-  if (isTRUE(use_testing_server)) cli::cli_abort("{.code mode=stream} not yet supported on testing server.")
+  if (isTRUE(use_testing_server)) cli::cli_abort("{.code mode=stream} is not yet supported on the testing servers.")
   
   result <- pkgpins::with_cache(expr = {
     
@@ -3055,7 +3062,7 @@ download_file_attachment <- function(s3_object_key,
   checkmate::assert_atomic(path)
   
   # TODO: remove this check as soon as [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
-  if (isTRUE(use_testing_server)) cli::cli_abort("Accessing file attachments is not yet supported on testing server.")
+  if (isTRUE(use_testing_server)) cli::cli_abort("Accessing file attachments is not yet supported on the testing servers.")
   
   if (fs::dir_exists(path)) {
     checkmate::assert_directory(path,
@@ -3227,7 +3234,8 @@ add_rfrnds <- function(data,
                              url = url_api("referendums",
                                            .use_testing_server = use_testing_server),
                              config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
-                                                                                                     password = password))),
+                                                                                                     password = password,
+                                                                                                     use_testing_server = use_testing_server))),
                              body = .x,
                              times = 3L,
                              httr::content_type_json()) %>%
@@ -3299,13 +3307,12 @@ NOTES:
 #'
 #' Edits existing referendum entries in the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
 #'
-#' @inherit add_rfrnds details return
-#'
 #' @inheritParams add_rfrnds
 #' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
 #'   identifying the referendums to be edited, an [`is_draft`](https://rpkg.dev/c2d/articles/codebook.html#is_draft) column setting their updated draft status,
 #'   plus a [valid][codebook] column containing the new values for each additional database field that should be updated.
 #'
+#' @inherit add_rfrnds details return
 #' @family rfrnd
 #' @export
 edit_rfrnds <- function(data,
@@ -3355,7 +3362,7 @@ edit_rfrnds <- function(data,
                auto_unbox = TRUE,
                digits = NA)
   
-  # edit data in the MongoDB via HTTP PUT on `/referendums` API endpoint
+  # edit data in the MongoDB via HTTP PUT on `/referendums/{id}` API endpoint
   responses <- purrr::map2(.x = ids,
                            .y = json_items,
                            .f = ~
@@ -3363,7 +3370,8 @@ edit_rfrnds <- function(data,
                                          url = url_api("referendums", .x,
                                                        .use_testing_server = use_testing_server),
                                          config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
-                                                                                                                 password = password))),
+                                                                                                                 password = password,
+                                                                                                                 use_testing_server = use_testing_server))),
                                          body = .y,
                                          times = 3L,
                                          httr::content_type_json()) %>%
@@ -3384,6 +3392,65 @@ edit_rfrnds <- function(data,
                })
   
   invisible(data)
+}
+```
+
+### `delete_rfrnds`
+
+```{r}
+#' Delete referendums in the C2D database
+#'
+#' Deletes existing referendum entries in the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
+#'
+#' @inheritParams add_rfrnds
+#' @param ids IDs of the referendums to be deleted. A character vector.
+#'
+#' @return `ids`, invisibly.
+#' @family rfrnd
+#' @export
+delete_rfrnds <- function(ids,
+                          email = pal::pkg_config_val(key = "api_username",
+                                                      pkg = this_pkg),
+                          password = pal::pkg_config_val(key = "api_password",
+                                                         pkg = this_pkg),
+                          use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                   pkg = this_pkg)) {
+  checkmate::assert_character(ids,
+                              min.chars = 1L,
+                              any.missing = FALSE,
+                              unique = TRUE)
+  
+  # TODO: remove this as soon as https://github.com/ccmdesign/c2d-app/issues/45 is deployed to master
+  if (!use_testing_server) {
+    cli::cli_abort("Referendum deletions are not yet supported on the production servers.")
+  }
+  
+  responses <- purrr::map(.x = ids,
+                          .f = ~
+                            httr::RETRY(verb = "DELETE",
+                                        url = url_api("referendums", .x,
+                                                      .use_testing_server = use_testing_server),
+                                        config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
+                                                                                                                password = password,
+                                                                                                                use_testing_server = use_testing_server))),
+                                        times = 3L) %>%
+                            # ensure we actually got a JSON response
+                            pal::assert_mime_type(mime_type = "application/json",
+                                                  msg_suffix = mime_error_suffix) %>%
+                            # extract JSON string
+                            httr::content(as = "text",
+                                          encoding = "UTF-8") %>%
+                            # ensure body is not empty
+                            ensure_content())
+  
+  # throw warnings for unsuccessful API calls
+  purrr::walk2(.x = ids,
+               .y = responses,
+               .f = ~ if (!isTRUE(jsonlite::fromJSON(.y)$ok)) {
+                 cli::cli_alert_warning("Failed to delete referendum with {.var id} {.val {.x}}. The API server responded with {.field {.y}}.")
+               })
+  
+  invisible(ids)
 }
 ```
 

@@ -35,6 +35,7 @@ reference:
   - download_file_attachment
   - add_rfrnds
   - edit_rfrnds
+  - delete_rfrnds
   - validate_rfrnds
   - count_rfrnds
   - search_rfrnds

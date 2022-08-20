@@ -78,6 +78,7 @@ c2d::count_rfrnds(country_code = "CH",
 \seealso{
 Other referendum data functions:
 \code{\link{add_rfrnds}()},
+\code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
 \code{\link{edit_rfrnds}()},
 \code{\link{rfrnds}()},

@@ -40,6 +40,7 @@ c2d::rfrnds()$files |>
 Other referendum data functions:
 \code{\link{add_rfrnds}()},
 \code{\link{count_rfrnds}()},
+\code{\link{delete_rfrnds}()},
 \code{\link{edit_rfrnds}()},
 \code{\link{rfrnds}()},
 \code{\link{rfrnd}()},

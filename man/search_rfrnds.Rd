@@ -36,6 +36,7 @@ c2d::search_rfrnds("freedom")
 Other referendum data functions:
 \code{\link{add_rfrnds}()},
 \code{\link{count_rfrnds}()},
+\code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
 \code{\link{edit_rfrnds}()},
 \code{\link{rfrnds}()},

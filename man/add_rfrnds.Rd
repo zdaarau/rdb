@@ -58,6 +58,7 @@ Note that the following variables are not supported, i.e. simply dropped from \c
 \seealso{
 Other referendum data functions:
 \code{\link{count_rfrnds}()},
+\code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
 \code{\link{edit_rfrnds}()},
 \code{\link{rfrnds}()},
