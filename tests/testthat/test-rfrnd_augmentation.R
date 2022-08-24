@@ -1,4 +1,4 @@
-# define some repeatedly used test data
+# define some repeatedly used stuff
 single_rfrnd <- rfrnd(id = "5bbbe26a92a21351232dd73f")
 
 # add_world_regions ----

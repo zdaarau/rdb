@@ -2,9 +2,18 @@
 
 ## c2d R package
 
--   Implement fn to delete referendums ([issue #45](https://github.com/ccmdesign/c2d-app/issues/45) should be solved on testing server).
+-   Fix `edit_rfrnds()` and test it on testing server.
 
--   Test `add_rfrnds()` and `edit_rfrnds()` on testing server.
+    Example snippet:
+
+    ``` r
+    c2d::rfrnd("6303a4cba52c3995043a8c24") %>%
+      dplyr::select(-c("country_name",
+                       "date_time_created",
+                       "date_time_last_edited")) %>%
+      dplyr::mutate(result = "no") %>%
+      c2d::edit_rfrnds()
+    ```
 
 -   Implement convenience fn to `add_country_code_long()` (or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is occasionally needed to merge with
     data from other sources.

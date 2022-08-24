@@ -1,4 +1,4 @@
-# define some repeatedly used test data
+# define some repeatedly used stuff
 test_testing <-
   pal::pkg_config_val(key = "test_testing_server",
                       pkg = this_pkg) %>%

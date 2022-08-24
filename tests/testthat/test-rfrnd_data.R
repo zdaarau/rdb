@@ -1,4 +1,4 @@
-# define some repeatedly used test data
+# define some repeatedly used stuff
 single_rfrnd <- rfrnd(id = "5bbbe26a92a21351232dd73f")
 test_testing <-
   pal::pkg_config_val(key = "test_testing_server",

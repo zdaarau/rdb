@@ -8,7 +8,8 @@ add_rfrnds(
   data,
   email = pal::pkg_config_val(key = "api_username", pkg = this_pkg),
   password = pal::pkg_config_val(key = "api_password", pkg = this_pkg),
-  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
+  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg),
+  quiet = FALSE
 )
 }
 \arguments{
@@ -42,18 +43,13 @@ plus any additional \link[=codebook]{valid} columns containing the values for th
 \item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
 \value{
-\code{data}, invisibly.
+A character vector of newly created referendum IDs.
 }
 \description{
 Adds new referendum entries to the C2D database via \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
 }
 \details{
-Note that the following variables are not supported, i.e. simply dropped from \code{data}:
-\itemize{
-\item \code{id_official}
-\item \code{id_sudd}
-\item \code{files}
-}
+Note that adding/editing the column \code{files} is not supported, i.e. simply dropped from \code{data}.
 }
 \seealso{
 Other referendum data functions:
