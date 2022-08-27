@@ -13,8 +13,17 @@ edit_rfrnds(
 }
 \arguments{
 \item{data}{The updated referendum data. A \link[tibble:tbl_df-class]{tibble} that must contain an \href{https://rpkg.dev/c2d/articles/codebook.html#id}{\code{id}} column
-identifying the referendums to be edited, an \href{https://rpkg.dev/c2d/articles/codebook.html#is_draft}{\code{is_draft}} column setting their updated draft status,
-plus a \link[=codebook]{valid} column containing the new values for each additional database field that should be updated.}
+identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
+due to \href{https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683}{current API requirements}, the following columns must always be supplied:
+\itemize{
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#is_draft}{\code{is_draft}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#electorate_total}{\code{electorate_total}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#electorate_abroad}{\code{electorate_abroad}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_yes}{\code{votes_yes}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_no}{\code{votes_no}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_empty}{\code{votes_empty}}
+\item \href{https://rpkg.dev/c2d/articles/codebook.html#votes_invalid}{\code{votes_invalid}} .
+}}
 
 \item{email}{The e-mail address of the C2D API user account to be used for authentication. A character scalar.}
 
@@ -29,7 +38,7 @@ plus a \link[=codebook]{valid} column containing the new values for each additio
 Edits existing referendum entries in the C2D database via \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
 }
 \details{
-Note that adding/editing the column \code{files} is not supported, i.e. simply dropped from \code{data}.
+Note that adding/editing the column \code{files} is not supported, i.e. it is simply dropped from \code{data}.
 }
 \seealso{
 Other referendum data functions:

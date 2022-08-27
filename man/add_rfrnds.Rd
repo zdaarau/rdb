@@ -41,6 +41,8 @@ plus any additional \link[=codebook]{valid} columns containing the values for th
 \item{password}{The password of the C2D API user account to be used for authentication. A character scalar.}
 
 \item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
+
+\item{quiet}{Whether or not to print the newly created referendum IDs to console.}
 }
 \value{
 A character vector of newly created referendum IDs.
@@ -49,7 +51,7 @@ A character vector of newly created referendum IDs.
 Adds new referendum entries to the C2D database via \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
 }
 \details{
-Note that adding/editing the column \code{files} is not supported, i.e. simply dropped from \code{data}.
+Note that adding/editing the column \code{files} is not supported, i.e. it is simply dropped from \code{data}.
 }
 \seealso{
 Other referendum data functions:

@@ -150,6 +150,30 @@ utils::globalVariables(names = c(".",
 
 
 
+api_failure <- function(parsed,
+                        prefix = "") {
+  
+  env <- parent.frame(n = 2L)
+  
+  assign(x = "parsed",
+         value = parsed,
+         pos = env)
+  
+  msg_part_val <- ifelse(utils::hasName(parsed$error, "value"),
+                         paste0(": ", paste0("{.var ", names(parsed$error$value), "}: {.warn ", parsed$error$value, "}",
+                                             collapse = ", ")),
+                         "")
+  
+  msg_part_error <- ifelse(utils::hasName(parsed, "error"),
+                           paste0("error {.err {parsed$error$id}}", msg_part_val),
+                           "{.err {.y}}.")
+  
+  cli_div_id <- cli::cli_div(theme = cli_theme)
+  cli::cli_alert_warning(paste0(prefix, "The API server responded with ", msg_part_error),
+                         .envir = env)
+  cli::cli_end(id = cli_div_id)
+}
+
 #' Assemble MongoDB query filter document
 #'
 #' @param country_code The `country_code`(s) to be included. A character vector.
@@ -265,11 +289,14 @@ assemble_query_filter <- function(country_code = NULL,
 }
 
 assert_cols_absent <- function(data,
-                               cols) {
+                               type) {
   
-  cols <- rlang::arg_match(arg = cols,
-                           values = data_cols_absent$col,
-                           multiple = TRUE)
+  type <- rlang::arg_match(arg = type,
+                           values = unique(unlist(data_cols_absent$type)))
+  cols <-
+    data_cols_absent %>%
+    dplyr::filter(type == !!type) %$%
+    col
   
   col_names <- colnames(data)
   
@@ -279,8 +306,8 @@ assert_cols_absent <- function(data,
                 if (.x %in% col_names) {
                   
                   data_cols_absent %>%
-                    dplyr::filter(col == !!.x) %$%
-                    error_msg %>%
+                    dplyr::filter(col == !!.x & type == !!type) %$%
+                    msg %>%
                     cli::cli_abort()
                 }
               })
@@ -566,6 +593,11 @@ auth_session <- function(email = pal::pkg_config_val(key = "api_username",
   invisible(token)
 }
 
+codebook_url <- function(v_names) {
+  
+  v_names %>% paste0("[`", ., "`](https://rpkg.dev/c2d/articles/codebook.html#", ., ")")
+}
+
 complete_country_vx <- function(data) {
   
   data %>%
@@ -605,6 +637,11 @@ country_code_to_name <- function(country_code,
                     
                     result
                   })
+}
+
+field_to_v_name <- function(x) {
+  
+  x %>% purrr::map_chr(~ v_names[[.x]] %||% .x)
 }
 
 derive_country_vx <- function(country_code,
@@ -1348,19 +1385,24 @@ untidy_rfrnds <- function(data,
                     .fns = purrr::map,
                     .f = pal::sentenceify,
                     punctuation_mark = ""),
-      # restore NA values (always assumed to mean 'not provided', never 'unknown')
-      dplyr::across(any_of("result"),
-                    tidyr::replace_na,
-                    replace = "Not provided"),
-      dplyr::across(any_of(c("subterritories_yes", "subterritories_no")),
-                    tidyr::replace_na,
-                    replace = -2.0),
-      dplyr::across(where(is.character),
+      # restore NA values
+      dplyr::across(where(is.character) & !any_of("result"),
                     tidyr::replace_na,
                     replace = ""),
-      dplyr::across(where(is.integer),
+      ## implicit NAs (i.e. 'not provided' (-2))
+      dplyr::across(where(is.integer) & !any_of(field_to_v_name(union(rfrnd_fields$required_for_additions, rfrnd_fields$required_for_edits))),
                     tidyr::replace_na,
-                    replace = -2L)
+                    replace = -2L),
+      ## explicit NAs (i.e. 'unknown' (-1))
+      dplyr::across(any_of("result"),
+                    tidyr::replace_na,
+                    replace = "Unknown"),
+      dplyr::across(where(is.integer) & any_of(field_to_v_name(union(rfrnd_fields$required_for_additions, rfrnd_fields$required_for_edits))),
+                    tidyr::replace_na,
+                    replace = -1L),
+      dplyr::across(any_of(c("subterritories_yes", "subterritories_no")),
+                    tidyr::replace_na,
+                    replace = -1.0)
     ) %>%
     # restore variable names
     rename_from_list(names_list = v_names_inverse)
@@ -2133,20 +2175,31 @@ plot_share_per_period <- function(data_freq,
 
 this_pkg <- utils::packageName()
 
-cli_theme <- cli::builtin_theme() %>% purrr::list_modify(span.err = list(color = "red",
-                                                                         `font-weight` = "bold"))
+cli_theme <-
+  cli::builtin_theme() %>%
+  purrr::list_modify(span.err = list(color = "red",
+                                     `font-weight` = "bold"),
+                     span.warn = list(color = "orange",
+                                     `font-weight` = "bold"))
 
 data_cols_absent <-
-  tibble::tribble(
-    
-    ~col, ~error_msg,
-    "id", "an {.var id} column. It is automatically set by the C2D API back-end. Did you mean to {.fun edit_rfrnds} instead?",
-    "country_name", "a {.var country_name} column. It is automatically set by the C2D API back-end based on {.var country_code}.",
-    "date_time_created", "a {.var date_time_created} column. This date is automatically set by the C2D API back-end and not supposed to be changed.",
-    "date_time_last_edited", paste0("a {.var date_time_last_edited} column. This date is automatically set by the C2D API back-end and not supposed to be ",
-                                    "changed manually.")
-  ) %>%
-  dplyr::mutate(error_msg = paste0("{.arg data} mustn't contain ", error_msg))
+  tibble::tibble(col = character(),
+                 type = list(),
+                 msg = character()) %>%
+  tibble::add_row(col = "id",
+                  type = list("add"),
+                  msg = "an {.var id} column. It is automatically set by the C2D API back-end. Did you mean to {.fun edit_rfrnds} instead?") %>%
+  tibble::add_row(col = "country_name",
+                  type = list(c("add", "edit")),
+                  msg = "a {.var country_name} column. It is automatically set by the C2D API back-end based on {.var country_code}.") %>%
+  tibble::add_row(col = "date_time_created",
+                  type = list(c("add", "edit")),
+                  msg = "a {.var date_time_created} column. This date is automatically set by the C2D API back-end and not supposed to be changed.") %>%
+  tibble::add_row(col = "date_time_last_edited",
+                  type = list(c("add", "edit")),
+                  msg = paste0("a {.var date_time_last_edited} column. This date is automatically set by the C2D API back-end and not supposed to be changed ",
+                               "manually.")) %>%
+  dplyr::mutate(msg = paste0("{.arg data} mustn't contain ", msg))
 
 data_iso_3166_3 <-
   ISOcodes::ISO_3166_3 %>%
@@ -2244,7 +2297,8 @@ rfrnd_fields$all_flat <-
           "title.en",
           "title.fr"))
 
-rfrnd_fields$required_for_edits <- c("draft",
+rfrnd_fields$required_for_edits <- c("_id",
+                                     "draft",
                                      "total_electorate",
                                      "citizens_abroad",
                                      "votes_yes",
@@ -2612,7 +2666,7 @@ download_file_attachment <- function(s3_object_key,
 #' Adds new referendum entries to the C2D database via [its API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
 #'
 #' @details
-#' Note that adding/editing the column `files` is not supported, i.e. simply dropped from `data`.
+#' Note that adding/editing the column `files` is not supported, i.e. it is simply dropped from `data`.
 #'
 #' @inheritParams url_api
 #' @param data The new referendum data. A [tibble][tibble::tbl_df] that in any case must contain the columns
@@ -2625,6 +2679,7 @@ download_file_attachment <- function(s3_object_key,
 #' plus any additional [valid][codebook] columns containing the values for the corresponding database fields.
 #' @param email The e-mail address of the C2D API user account to be used for authentication. A character scalar.
 #' @param password The password of the C2D API user account to be used for authentication. A character scalar.
+#' @param quiet Whether or not to print the newly created referendum IDs to console.
 #'
 #' @return A character vector of newly created referendum IDs.
 #' @family rfrnd
@@ -2644,10 +2699,7 @@ add_rfrnds <- function(data,
   
   ## ensure forbidden columns are absent
   assert_cols_absent(data = data,
-                     cols = c("id",
-                              "country_name",
-                              "date_time_created",
-                              "date_time_last_edited"))
+                     type = "add")
   
   ## ensure mandatory columns are present
   rfrnd_fields$required_for_additions %>%
@@ -2702,13 +2754,8 @@ add_rfrnds <- function(data,
                .y = seq_along(responses),
                .f = ~ if (!is.list(.x) || !isTRUE(nchar(.x$`_id`$`$oid`) > 0L)) {
                  
-                 cli_div_id <- cli::cli_div(theme = cli_theme)
-                 cli::cli_alert_warning(paste0("Failed to add the {.y}. referendum. The API server responded with ",
-                                               ifelse(hasName(parsed, "error"),
-                                                      "error ",
-                                                      ""),
-                                               "{.err {unlist(.x)}}."))
-                 cli::cli_end(id = cli_div_id)
+                 api_failure(parsed,
+                             prefix = "Failed to add the {.y}. referendum. ")
                })
   
   ids_new <- unlist(responses,
@@ -2730,8 +2777,10 @@ add_rfrnds <- function(data,
 #' 
 #' @inheritParams add_rfrnds
 #' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
-#'   identifying the referendums to be edited, an [`is_draft`](https://rpkg.dev/c2d/articles/codebook.html#is_draft) column setting their updated draft status,
-#'   plus a [valid][codebook] column containing the new values for each additional database field that should be updated.
+#'   identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
+#'   due to [current API requirements](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683), the following columns must always be supplied:
+#'   
+#'   `r rfrnd_fields$required_for_edits %>% dplyr::recode(!!!v_names) %>% setdiff("id") %>% codebook_url() %>% pal::as_md_list()`.
 #'
 #' @return `data`, invisibly.
 #' @family rfrnd
@@ -2749,9 +2798,7 @@ edit_rfrnds <- function(data,
   
   ## ensure forbidden columns are absent
   assert_cols_absent(data = data,
-                     cols = c("country_name",
-                              "date_time_created",
-                              "date_time_last_edited"))
+                     type = "edit")
   
   ## ensure mandatory columns are present
   rfrnd_fields$required_for_edits %>%
@@ -2811,13 +2858,8 @@ edit_rfrnds <- function(data,
                  
                  if (!isTRUE(parsed$ok)) {
                    
-                   cli_div_id <- cli::cli_div(theme = cli_theme)
-                   cli::cli_alert_warning(paste0("Failed to edit referendum with {.var id} {.val {.x}}. The API server responded with ",
-                                                 ifelse(hasName(parsed, "error"),
-                                                        "error ",
-                                                        ""),
-                                                 "{.err {unlist(.y)}}."))
-                   cli::cli_end(id = cli_div_id)
+                   api_failure(parsed,
+                               prefix = "Failed to edit referendum with {.var id} {.val {.x}}. ")
                  }
                })
   
@@ -2878,13 +2920,8 @@ delete_rfrnds <- function(ids,
                  
                  if (!isTRUE(parsed$ok)) {
                    
-                   cli_div_id <- cli::cli_div(theme = cli_theme)
-                   cli::cli_alert_warning(paste0("Failed to delete referendum with {.var id} {.val {.x}}. The API server responded with ",
-                                                 ifelse(hasName(parsed, "error"),
-                                                        "error ",
-                                                        ""),
-                                                 "{.err {unlist(parsed)}}."))
-                   cli::cli_end(id = cli_div_id)
+                   api_failure(parsed,
+                               prefix = "Failed to delete referendum with {.var id} {.val {.x}}. ")
                  }
                })
   

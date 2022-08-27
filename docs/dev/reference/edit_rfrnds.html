@@ -140,8 +140,16 @@
     <tr>
       <th>data</th>
       <td><p>The updated referendum data. A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a> that must contain an <a href='https://rpkg.dev/c2d/articles/codebook.html#id'><code>id</code></a> column
-identifying the referendums to be edited, an <a href='https://rpkg.dev/c2d/articles/codebook.html#is_draft'><code>is_draft</code></a> column setting their updated draft status,
-plus a <a href='data_codebook.html'>valid</a> column containing the new values for each additional database field that should be updated.</p></td>
+identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
+due to <a href='https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683'>current API requirements</a>, the following columns must always be supplied:</p><ul>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#is_draft'><code>is_draft</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#electorate_total'><code>electorate_total</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#electorate_abroad'><code>electorate_abroad</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_yes'><code>votes_yes</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_no'><code>votes_no</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_empty'><code>votes_empty</code></a></p></li>
+<li><p><a href='https://rpkg.dev/c2d/articles/codebook.html#votes_invalid'><code>votes_invalid</code></a> .</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>email</th>
@@ -162,7 +170,7 @@ plus a <a href='data_codebook.html'>valid</a> column containing the new values f
     <p><code>data</code>, invisibly.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that adding/editing the column <code>files</code> is not supported, i.e. simply dropped from <code>data</code>.</p>
+    <p>Note that adding/editing the column <code>files</code> is not supported, i.e. it is simply dropped from <code>data</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other referendum data functions:
