@@ -39,6 +39,7 @@ reference:
   - validate_rfrnds
   - count_rfrnds
   - search_rfrnds
+  - rfrnd_exists
 - title: Referendum metadata
 - contents:
   - data_codebook

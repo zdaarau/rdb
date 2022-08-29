@@ -2,18 +2,7 @@
 
 ## c2d R package
 
--   Fix `edit_rfrnds()` and test it on testing server.
-
-    Example snippet:
-
-    ``` r
-    c2d::rfrnd("6303a4cba52c3995043a8c24") %>%
-      dplyr::select(-c("country_name",
-                       "date_time_created",
-                       "date_time_last_edited")) %>%
-      dplyr::mutate(result = "no") %>%
-      c2d::edit_rfrnds()
-    ```
+-   Report issue in `drop_non_applicable_vx()` to CCM Design!
 
 -   Implement convenience fn to `add_country_code_long()` (or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is occasionally needed to merge with
     data from other sources.

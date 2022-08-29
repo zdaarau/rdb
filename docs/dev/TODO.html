@@ -125,17 +125,6 @@
 <h2 class="hasAnchor">
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h2>
 <ul>
-<li>
-<p>Fix <code><a href="reference/edit_rfrnds.html">edit_rfrnds()</a></code> and test it on testing server.</p>
-<p>Example snippet:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/rfrnd.html">rfrnd</a></span><span class="op">(</span><span class="st">"6303a4cba52c3995043a8c24"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"country_name"</span>,</span>
-<span>                   <span class="st">"date_time_created"</span>,</span>
-<span>                   <span class="st">"date_time_last_edited"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="st">"no"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/edit_rfrnds.html">edit_rfrnds</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</li>
 <li><p>Implement convenience fn to <code>add_country_code_long()</code>
 (or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is
 occasionally needed to merge with data from other sources.</p></li>
@@ -542,14 +531,14 @@ ASAP!</p></li>
 <code>electorate_*</code> numbers have to be double-checked and possibly
 corrected since <code>electorate_total &lt; sum(votes_*)</code>, which
 should by definition be impossible:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">c2d</span><span class="fu">::</span><span class="fu">add_tunrout</span><span class="op">(</span>excl_dubious <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">turnout</span> <span class="op">&gt;</span> <span class="fl">1.0</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">electorate_total</span>, <span class="fu">matches</span><span class="op">(</span><span class="st">"^votes_(yes|no|empty|invalid)"</span><span class="op">)</span>, <span class="va">turnout</span><span class="op">)</span></span></code></pre></div>
 <p>We should probably also double-check improbably high turnout numbers,
 e.g. those &gt; 0.9:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/add_turnout.html">add_turnout</a></span><span class="op">(</span>excl_dubious <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/between.html" class="external-link">between</a></span><span class="op">(</span><span class="va">turnout</span>, <span class="fl">0.9</span>, <span class="fl">1.0</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -575,7 +564,7 @@ löschen!</p></li>
 <p>Clean <code>id_official</code>; there are likely erroneous
 entries or ones that don’t designate an <code>id_official</code> but
 another kind of ID; entries to double-check:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span>string <span class="op">=</span> <span class="va">id_official</span>, pattern <span class="op">=</span> <span class="st">"\\D"</span><span class="op">)</span> <span class="op">|</span> <span class="op">!</span><span class="op">(</span><span class="va">country_code</span> <span class="op">==</span> <span class="st">"CH"</span> <span class="op">&amp;</span> <span class="va">level</span> <span class="op">==</span> <span class="st">"national"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">id_official</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Plus: Nobody knows what <code>id_official = "0"</code> means, so it
 should be replaced with <code>NA</code> (if no proper
@@ -681,7 +670,7 @@ check if this is actually always the case!</p></li>
 <li>
 <p>check <code>country_code</code> for obsolete codes, i.e. check
 if</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ISOcodes</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ISOcodes/man/ISO_3166.html" class="external-link">ISO_3166_3</a></span><span class="op">$</span><span class="va">Alpha_4</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="co"># exclude simple renamings where `country_code` didn't change</span></span>
 <span>  <span class="fu">magrittr</span><span class="fu">::</span><span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html" class="external-link">extract</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span>string <span class="op">=</span> <span class="va">.</span>, start <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span> <span class="op">!=</span> <span class="st">"AA"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>

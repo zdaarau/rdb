@@ -151,6 +151,7 @@ utils::globalVariables(names = c(".",
 
 
 api_failure <- function(parsed,
+                        raw = NULL,
                         prefix = "") {
   
   env <- parent.frame(n = 2L)
@@ -171,6 +172,9 @@ api_failure <- function(parsed,
   cli_div_id <- cli::cli_div(theme = cli_theme)
   cli::cli_alert_warning(paste0(prefix, "The API server responded with ", msg_part_error),
                          .envir = env)
+  if (!is.null(raw)) {
+    cli::cli_alert_info("The following JSON payload was sent: {.content {raw}}")
+  }
   cli::cli_end(id = cli_div_id)
 }
 
@@ -295,7 +299,8 @@ assert_cols_absent <- function(data,
                            values = unique(unlist(data_cols_absent$type)))
   cols <-
     data_cols_absent %>%
-    dplyr::filter(type == !!type) %$%
+    dplyr::filter(purrr::map_lgl(type,
+                                 ~ !!type %in% .x)) %$%
     col
   
   col_names <- colnames(data)
@@ -306,7 +311,8 @@ assert_cols_absent <- function(data,
                 if (.x %in% col_names) {
                   
                   data_cols_absent %>%
-                    dplyr::filter(col == !!.x & type == !!type) %$%
+                    dplyr::filter(col == !!.x & purrr::map_lgl(type,
+                                                               ~ !!type %in% .x)) %$%
                     msg %>%
                     cli::cli_abort()
                 }
@@ -699,6 +705,44 @@ drop_disabled_vx <- function(data,
   data
 }
 
+drop_implicit_vx <- function(data,
+                             type = c("add", "edit")) {
+  
+  type <- rlang::arg_match(type)
+  
+  to_drop <-
+    data_cols_absent %>%
+    dplyr::filter(purrr::map_lgl(type,
+                                 ~ !!type %in% .x)) %$%
+    col
+  
+  data %>% dplyr::select(-any_of(to_drop))
+}
+
+drop_non_applicable_vx <- function(data) {
+  
+  if ("level" %in% colnames(data)) {
+    
+    if (data$level != "local") {
+      data %<>% dplyr::select(-any_of("municipality"))
+    }
+    if (data$level == "national") {
+      data %<>% dplyr::select(-any_of("subnational_entity_name"))
+    }
+  }
+  
+  # TODO: remove this as soon as [issue #?]() is fixed
+  # TODO: report setting these doesn't work if they haven't been set before (i.e. referendum was created before new DB fields were added) AND ADD TEST!
+  data %<>% dplyr::select(-any_of(c("country_code_historical",
+                                    "is_past_jurisdiction",
+                                    "id_official",
+                                    "id_sudd",
+                                    "question",
+                                    "question_en",
+                                    "sources")))
+  data
+}
+
 ensure_content <- function(x) {
   
   if (!nchar(x)) {
@@ -742,6 +786,18 @@ extend_data_codebook <- function(data) {
     "un_region_tier_3_code", "UN tier-3 region's M49 area code",
     "un_region_tier_3_name", "UN tier-3 region's English name",
   ))
+}
+
+fct_flip <- function(x) {
+  
+  checkmate::assert_factor(x,
+                           n.levels = 2L)
+  flip_map <-
+    levels(x) %>%
+    magrittr::set_names(value = rev(.)) %>%
+    as.list()
+  
+  x %>% forcats::fct_recode(!!!flip_map)
 }
 
 flatten_array_as_is <- function(x) {
@@ -1523,7 +1579,7 @@ untidy_rfrnds <- function(data,
 #' Assemble C2D Services API URL
 #'
 #' @param ... Optional path components added to the base URL.
-#' @param use_testing_server `r pkg_config$description[pkg_config$key == "use_testing_server"]`
+#' @param .use_testing_server `r pkg_config$description[pkg_config$key == "use_testing_server"]`
 #'
 #' @return A character scalar.
 #' @keywords internal
@@ -1906,7 +1962,7 @@ sudd_rfrnd <- function(id_sudd) {
                                 unique = TRUE,
                                 .var.name = "field_names") %>%
     # referendum-option-specific recodings (sequentially numbered `votes_option_#` columns)
-    # TODO: adapt this once we can properly capture more than yes/no answer options
+    # TODO: adapt this once we can properly capture more than yes/no answer options, cf. https://gitlab.com/zdaarau/rpkgs/c2d/-/issues/5
     purrr::map_at(.at = which(stringr::str_detect(string = .,
                                                   pattern = "^\u2517\u2501 ")),
                   .f = function(old_name, old_names) paste0("votes_option_", which(old_names == old_name)),
@@ -2180,7 +2236,8 @@ cli_theme <-
   purrr::list_modify(span.err = list(color = "red",
                                      `font-weight` = "bold"),
                      span.warn = list(color = "orange",
-                                     `font-weight` = "bold"))
+                                     `font-weight` = "bold"),
+                     span.content = list(color = "mediumorchid"))
 
 data_cols_absent <-
   tibble::tibble(col = character(),
@@ -2712,6 +2769,9 @@ add_rfrnds <- function(data,
   # drop disabled variables
   data %<>% drop_disabled_vx(to_drop = "files")
   
+  # drop non-applicable columns (they're supposed to be absent in MongoDB)
+  data %<>% drop_non_applicable_vx()
+  
   # convert data to MongoDB schema
   json_items <-
     data %>%
@@ -2754,7 +2814,8 @@ add_rfrnds <- function(data,
                .y = seq_along(responses),
                .f = ~ if (!is.list(.x) || !isTRUE(nchar(.x$`_id`$`$oid`) > 0L)) {
                  
-                 api_failure(parsed,
+                 api_failure(.x,
+                             raw = json_items[[.y]],
                              prefix = "Failed to add the {.y}. referendum. ")
                })
   
@@ -2812,6 +2873,9 @@ edit_rfrnds <- function(data,
   # drop disabled variables
   data %<>% drop_disabled_vx(to_drop = "files")
   
+  # drop non-applicable columns (they're absent in MongoDB)
+  data %<>% drop_non_applicable_vx()
+  
   # convert data to MongoDB schema
   ids <- data$id
   
@@ -2850,18 +2914,17 @@ edit_rfrnds <- function(data,
                              ensure_content())
   
   # throw warnings for unsuccessful API calls
-  purrr::walk2(.x = ids,
-               .y = responses,
-               .f = ~ {
-                 
-                 parsed <- jsonlite::fromJSON(.y)
-                 
-                 if (!isTRUE(parsed$ok)) {
-                   
-                   api_failure(parsed,
-                               prefix = "Failed to edit referendum with {.var id} {.val {.x}}. ")
-                 }
-               })
+  purrr::walk(.x = seq_along(ids),
+              .f = ~ {
+                
+                parsed <- jsonlite::fromJSON(responses[[.x]])
+                
+                if (!isTRUE(parsed$ok)) {
+                  api_failure(parsed,
+                              raw = json_items[[.x]],
+                              prefix = paste0("Failed to edit referendum with {.var id} {.val ", ids[.x], "}. "))
+                }
+              })
   
   invisible(data)
 }
@@ -2919,7 +2982,6 @@ delete_rfrnds <- function(ids,
                  parsed <- jsonlite::fromJSON(.y)
                  
                  if (!isTRUE(parsed$ok)) {
-                   
                    api_failure(parsed,
                                prefix = "Failed to delete referendum with {.var id} {.val {.x}}. ")
                  }
@@ -3181,6 +3243,31 @@ search_rfrnds <- function(term,
     httr::content(as = "parsed") %$%
     items %>%
     purrr::flatten_chr() 
+}
+
+#' Test if referendum ID exists
+#'
+#' Tests whether the refendum with the supplied `id` exists or not.
+#'
+#' @inheritParams rfrnd
+#' @inheritParams url_api
+#'
+#' @return A logical scalar.
+#' @export
+#'
+#' @examples
+#' c2d::rfrnd_exists("6303a4cba52c3995043a8c24")
+rfrnd_exists <- function(id,
+                         .use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                                   pkg = this_pkg)) {
+  checkmate::assert_string(id,
+                           min.chars = 1L)
+  
+  httr::GET(url = url_api("referendums", id,
+                          .use_testing_server = .use_testing_server),
+            config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = .use_testing_server))) %>%
+    httr::http_error() %>%
+    magrittr::not()
 }
 
 #' C2D Codebook
