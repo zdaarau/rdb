@@ -104,6 +104,7 @@ utils::globalVariables(names = c(".",
                                  # other
                                  "Alpha_2",
                                  "Alpha_3",
+                                 "Alpha_4",
                                  "applicability_constraint",
                                  "archive",
                                  "Children",
@@ -116,9 +117,11 @@ utils::globalVariables(names = c(".",
                                  "count",
                                  "country_code",
                                  "country_code_historical",
+                                 "country_code_long",
                                  "country_code_synthetic",
                                  "country_name",
                                  "country_name_de",
+                                 "country_name_long",
                                  "date_last_edited",
                                  "date_time_created",
                                  "date_time_last_active",
@@ -169,6 +172,7 @@ utils::globalVariables(names = c(".",
                                  "n",
                                  "Name",
                                  "number",
+                                 "Official_name",
                                  "Parent",
                                  "parent_tag",
                                  "position_government",
@@ -953,6 +957,17 @@ ensure_content <- function(x) {
   }
   
   x
+}
+```
+
+### `ensure_country_code`
+
+```{r}
+ensure_country_code <- function(data) {
+  
+  if (!("country_code" %in% colnames(data))) {
+    cli::cli_abort("{.arg data} must contain a column {.var country_code} with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.")
+  }
 }
 ```
 
@@ -4391,6 +4406,175 @@ infer_tags <- function(tags,
 
 Functions to augment the C2D referendum data by additional information (columns).
 
+### `add_country_code_long`
+
+```{r}
+#' Add long country code to referendum data
+#'
+#' Augments `data` with an additional column holding the three-letter [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) code of the country
+#' in which the referendum took place.
+#'
+#' @inheritParams add_world_regions
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family augment
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(date_max = clock::date_today(zone = "UTC"),
+#'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
+#'   c2d:::add_country_code_long() |>
+#'   dplyr::select(any_of("id"),
+#'                 starts_with("country_code"))
+add_country_code_long <- function(data) {
+  
+  # ensure minimal validity
+  checkmate::assert_data_frame(data)
+  ensure_country_code(data)
+  
+  # add row number to be able to restore exact column order after split-and-merge, and n chars col for split
+  ## use hash name to avoid possible colname collision
+  colname_rowid <- rlang::hash(stats::runif(n = 1L))
+  colname_n_char <- rlang::hash(stats::runif(n = 1L,
+                                             min = 1.1,
+                                             max = 2))
+  data %<>%
+    tibble::rowid_to_column(var = colname_rowid) %>%
+    dplyr::mutate(!!colname_n_char := nchar(country_code))
+  
+  # small integrity check
+  i_invalid_country_code <- which(!(data[[colname_n_char]] %in% c(2L, 4L)))
+  n_invalid_country_code <- length(i_invalid_country_code)
+  
+  if (n_invalid_country_code) {
+    cli::cli_abort("{.arg data} contains invalid {.var country_code}s. Affected are the rows {.and i_invalid_country_code}.")
+  }
+  
+  # split data into ISO 3166-1 and ISO 3166-3 code groups and new var
+  # NOTE: we need to use a left join in order to not lose `country_code`'s attrs
+  data_current <-
+    data %>%
+    dplyr::filter(!!as.symbol(colname_n_char) == 2L) %>%
+    dplyr::left_join(y = ISOcodes::ISO_3166_1 %>% dplyr::select(country_code = Alpha_2,
+                                                                country_code_long = Alpha_3),
+                     by = "country_code")
+  data_past <-
+    data %>%
+    dplyr::filter(!!as.symbol(colname_n_char) > 2L) %>%
+    dplyr::left_join(y = ISOcodes::ISO_3166_3 %>% dplyr::select(country_code = Alpha_4,
+                                                                country_code_long = Alpha_3),
+                     by = "country_code")
+  
+  # merge data back again
+  # NOTE: both `dplyr::bind_rows()` and `base::rbind()` lose col attrs under certain circumstances, which is why we use `dplyr::full_join()`
+  data_current %>%
+    dplyr::full_join(y = data_past,
+                     by = colnames(.)) %>%
+    # ensure no NAs
+    assertr::assert(predicate = assertr::not_na,
+                    country_code_long) %>%
+    # restore original row order
+    dplyr::arrange(!!as.symbol(colname_rowid)) %>%
+    # clean up
+    dplyr::select(-any_of(c(colname_rowid,
+                            colname_n_char))) %>%
+    tibble::as_tibble() %>%
+    order_rfrnd_cols()
+}
+```
+
+### `add_country_name_long`
+
+```{r}
+#' Add long country name to referendum data
+#'
+#' Augments `data` with an additional column holding the official full name(s) of the country in which the referendum took place.
+#'
+#' @inheritParams add_world_regions
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family augment
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(date_max = clock::date_today(zone = "UTC"),
+#'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
+#'   c2d:::add_country_name_long() |>
+#'   dplyr::select(any_of("id"),
+#'                 starts_with("country_name"))
+add_country_name_long <- function(data) {
+  
+  # ensure minimal validity
+  checkmate::assert_data_frame(data)
+  ensure_country_code(data)
+  
+  # add row number to be able to restore exact column order after split-and-merge, and n chars col for split
+  ## use hash name to avoid possible colname collision
+  colname_rowid <- rlang::hash(stats::runif(n = 1L))
+  colname_n_char <- rlang::hash(stats::runif(n = 1L,
+                                             min = 1.1,
+                                             max = 2))
+  data %<>%
+    tibble::rowid_to_column(var = colname_rowid) %>%
+    dplyr::mutate(!!colname_n_char := nchar(country_code))
+  
+  # small integrity check
+  i_invalid_country_code <- which(!(data[[colname_n_char]] %in% c(2L, 4L)))
+  n_invalid_country_code <- length(i_invalid_country_code)
+  
+  if (n_invalid_country_code) {
+    cli::cli_abort("{.arg data} contains invalid {.var country_code}s. Affected are the rows {.and i_invalid_country_code}.")
+  }
+  
+  # split data into ISO 3166-1 and ISO 3166-3 code groups
+  # NOTE: we need to use a left join in order to not lose `country_code`'s attrs
+  data_current <-
+    data %>%
+    dplyr::filter(!!as.symbol(colname_n_char) == 2L) %>%
+    dplyr::left_join(y =
+                       ISOcodes::ISO_3166_1 %>%
+                       # complement `Official_name` by shorter `Name`
+                       dplyr::mutate(Official_name = dplyr::if_else(is.na(Official_name),
+                                                                    Name,
+                                                                    Official_name)) %>%
+                       dplyr::select(country_code = Alpha_2,
+                                     country_name_long = Official_name),
+                     by = "country_code")
+  data_past <-
+    data %>%
+    dplyr::filter(!!as.symbol(colname_n_char) > 2L) %>%
+    dplyr::left_join(y =
+                       ISOcodes::ISO_3166_3 %>%
+                       dplyr::select(country_code = Alpha_4,
+                                     country_name_long = Name) %>%
+                       # harmonize name style
+                       dplyr::mutate(country_name_long = dplyr::case_when(country_code == "BYAA" ~ "Byelorussian Soviet Socialist Republic",
+                                                                          country_code == "CSHH" ~ country_name_long,
+                                                                          country_code == "SUHH" ~ "Union of Soviet Socialist Republics (USSR)",
+                                                                          country_code == "YDYE" ~ "Democratic Yemen, People's Democratic Republic of Yemen",
+                                                                          TRUE ~ stringr::str_replace(string = country_name_long,
+                                                                                                      pattern = "^([^,]+), (.+)$",
+                                                                                                      replacement = "\\2 \\1"))),
+                     by = "country_code")
+  
+  # merge data back again
+  # NOTE: both `dplyr::bind_rows()` and `base::rbind()` lose col attrs under certain circumstances, which is why we use `dplyr::full_join()`
+  data_current %>%
+    dplyr::full_join(y = data_past,
+                     by = colnames(.)) %>%
+    # ensure no NAs
+    assertr::assert(predicate = assertr::not_na,
+                    country_name_long) %>%
+    # restore original row order
+    dplyr::arrange(!!as.symbol(colname_rowid)) %>%
+    # clean up
+    dplyr::select(-any_of(c(colname_rowid,
+                            colname_n_char))) %>%
+    tibble::as_tibble() %>%
+    order_rfrnd_cols()
+}
+```
+
 ### `add_period`
 
 ```{r}
@@ -4412,11 +4596,11 @@ Functions to augment the C2D referendum data by additional information (columns)
 #' @examples
 #' c2d::rfrnds(country_code = "AT") |>
 #'   c2d::add_period() |>
-#'   dplyr::select(id, date, week)
+#'   dplyr::select(any_of("id"), date, week)
 #'
 #' c2d::rfrnds(country_code = "AT") |>
 #'   c2d::add_period("year") |>
-#'   dplyr::select(id, date, year)
+#'   dplyr::select(any_of("id"), date, year)
 add_period <- function(data,
                        period = c("week", "month", "quarter", "year", "decade", "century")) {
   
@@ -4477,12 +4661,18 @@ TODO:
 #' # rough turnout numbers
 #' c2d::rfrnds(country_code = "IT") |>
 #'   c2d::add_turnout() |>
-#'   dplyr::select(id, electorate_total, starts_with("votes_"), turnout)
+#'   dplyr::select(any_of("id"),
+#'                 electorate_total,
+#'                 starts_with("votes_"),
+#'                 turnout)
 #'
 #' # strict turnout numbers
 #' c2d::rfrnds(country_code = "IT") |>
 #'   c2d::add_turnout(rough = FALSE) |>
-#'   dplyr::select(id, electorate_total, starts_with("votes_"), turnout)
+#'   dplyr::select(any_of("id"),
+#'                 electorate_total,
+#'                 starts_with("votes_"),
+#'                 turnout)
 add_turnout <- function(data,
                         rough = TRUE,
                         excl_dubious = TRUE) {
@@ -4545,15 +4735,14 @@ add_turnout <- function(data,
 #' @examples
 #' c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
 #'   c2d::add_world_regions() |>
-#'   dplyr::select(id, country_name, starts_with("un_"))
+#'   dplyr::select(any_of("id"),
+#'                 starts_with("country_"),
+#'                 starts_with("un_"))
 add_world_regions <- function(data) {
   
   # ensure minimal validity
   checkmate::assert_data_frame(data)
-  
-  if (!("country_code" %in% colnames(data))) {
-    cli::cli_abort("{.arg data} must contain a column {.var country_code} with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.")
-  }
+  ensure_country_code(data)
   
   unknown_country_codes <-
     data$country_code %>%

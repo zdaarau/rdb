@@ -27,14 +27,16 @@ Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"cent
 \examples{
 c2d::rfrnds(country_code = "AT") |>
   c2d::add_period() |>
-  dplyr::select(id, date, week)
+  dplyr::select(any_of("id"), date, week)
 
 c2d::rfrnds(country_code = "AT") |>
   c2d::add_period("year") |>
-  dplyr::select(id, date, year)
+  dplyr::select(any_of("id"), date, year)
 }
 \seealso{
 Other referendum data augmentation functions:
+\code{\link{add_country_code_long}()},
+\code{\link{add_country_name_long}()},
 \code{\link{add_turnout}()},
 \code{\link{add_world_regions}()}
 }

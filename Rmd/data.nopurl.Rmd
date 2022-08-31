@@ -316,6 +316,9 @@ val_set$country_code <- c(ISOcodes::ISO_3166_1$Alpha_2,
 ```{r}
 rfrnd_cols_order <-
   data_codebook$variable_name %>%
+  ## country_code_long after country_code
+  c2d:::insert_after(new = "country_code_long",
+                     after = "country_code") %>%
   ## period cols after `date`
   c2d:::insert_after(new = c("week", "month", "quarter", "year", "decade", "century"),
                      after = "date") %>%

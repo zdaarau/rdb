@@ -37,10 +37,14 @@ country doesn't belong to any UN tier-3 region, the corresponding \verb{un_regio
 \examples{
 c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
   c2d::add_world_regions() |>
-  dplyr::select(id, country_name, starts_with("un_"))
+  dplyr::select(any_of("id"),
+                starts_with("country_"),
+                starts_with("un_"))
 }
 \seealso{
 Other referendum data augmentation functions:
+\code{\link{add_country_code_long}()},
+\code{\link{add_country_name_long}()},
 \code{\link{add_period}()},
 \code{\link{add_turnout}()}
 }

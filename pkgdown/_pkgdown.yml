@@ -57,6 +57,8 @@ reference:
 - title: Augmentation
   desc: Functions to augment the C2D referendum data by additional information (columns).
 - contents:
+  - add_country_code_long
+  - add_country_name_long
   - add_period
   - add_turnout
   - add_world_regions

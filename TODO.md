@@ -2,8 +2,8 @@
 
 ## c2d R package
 
--   Implement convenience fn to `add_country_code_long()` (or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is occasionally needed to merge with
-    data from other sources.
+-   Add var lbls for all the cols from the augmentation fns (probably best to directly add them to the codebook). And add tests for all these fns ensuring col
+    attrs are all preserved.
 
 -   Once referendum deletions are possible on production servers, extend tests to modify every single data field individually.
 

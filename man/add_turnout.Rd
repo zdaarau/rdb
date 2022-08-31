@@ -32,15 +32,23 @@ displayMode = TRUE)
 # rough turnout numbers
 c2d::rfrnds(country_code = "IT") |>
   c2d::add_turnout() |>
-  dplyr::select(id, electorate_total, starts_with("votes_"), turnout)
+  dplyr::select(any_of("id"),
+                electorate_total,
+                starts_with("votes_"),
+                turnout)
 
 # strict turnout numbers
 c2d::rfrnds(country_code = "IT") |>
   c2d::add_turnout(rough = FALSE) |>
-  dplyr::select(id, electorate_total, starts_with("votes_"), turnout)
+  dplyr::select(any_of("id"),
+                electorate_total,
+                starts_with("votes_"),
+                turnout)
 }
 \seealso{
 Other referendum data augmentation functions:
+\code{\link{add_country_code_long}()},
+\code{\link{add_country_name_long}()},
 \code{\link{add_period}()},
 \code{\link{add_world_regions}()}
 }
