@@ -7,6 +7,11 @@ test_that("`add_world_regions()` is idempotent", {
   expect_identical(single_rfrnd %>% add_world_regions(),
                    single_rfrnd %>% add_world_regions() %>% add_world_regions())
 })
+test_that("`add_world_regions()` works for ISO 3166-3 Alpha-4 codes (former countries)", {
+
+  expect_identical(tibble::tibble(country_code = "SUHH") %>% add_world_regions() %$% un_region_tier_2_name,
+                   "Eastern Europe")
+})
 
 # add_period ----
 test_that("`add_period()` is idempotent", {

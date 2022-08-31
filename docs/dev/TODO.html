@@ -125,14 +125,19 @@
 <h2 class="hasAnchor">
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h2>
 <ul>
-<li><p>Report issue in <code>drop_non_applicable_vx()</code> to CCM
-Design!</p></li>
 <li><p>Implement convenience fn to <code>add_country_code_long()</code>
 (or the like) adding the 3-letter ISO 3166-1 alpha-3 code which is
 occasionally needed to merge with data from other sources.</p></li>
+<li><p>Once referendum deletions are possible on production servers,
+extend tests to modify every single data field individually.</p></li>
+<li><p>Once <a href="https://github.com/ccmdesign/c2d-app/issues/82" class="external-link">issue #82</a> is
+fixed, remove/adapt all remaining code handling
+<code>country_code_historical</code> and
+<code>is_past_jurisdiction</code> (especially the sudd.ch-related fns
+have to be overhauled)</p></li>
 <li><p>As soon as <a href="https://github.com/ccmdesign/c2d-app/issues/57" class="external-link">issue #57</a> is
 resolved, properly process the question variables (and adapt
-codebook)</p></li>
+codebook).</p></li>
 <li><p>Implement fn to rename file attachments as soon as <a href="https://github.com/ccmdesign/c2d-app/issues/69" class="external-link">issue #69</a> is
 resolved.</p></li>
 <li><p>Automated vote entry creation by feeding scraped sudd.ch data to

@@ -35,6 +35,7 @@ utils::globalVariables(names = c(".",
                                  "count",
                                  "country_code",
                                  "country_code_historical",
+                                 "country_code_synthetic",
                                  "country_name",
                                  "country_name_de",
                                  "date_last_edited",
@@ -230,7 +231,7 @@ assemble_query_filter <- function(country_code = NULL,
     
     purrr::map_chr(.x = country_code,
                    .f = checkmate::assert_choice,
-                   choices = ISOcodes::ISO_3166_1$Alpha_2,
+                   choices = val_set$country_code,
                    null.ok = TRUE,
                    .var.name = "country_code")
     checkmate::assert_character(subnational_entity_name,
@@ -320,8 +321,11 @@ assert_cols_absent <- function(data,
 }
 
 assert_cols_valid <- function(data,
+                              type = c("validate", "add", "edit"),
                               action = cli::cli_abort,
                               cli_progress_id = NULL) {
+  
+  type <- rlang::arg_match(type)
   
   non_na_col_names <- c("id",
                         "country_code",
@@ -376,18 +380,19 @@ assert_cols_valid <- function(data,
   if ("country_code" %in% colnames(data)) {
     
     check <- checkmate::check_subset(as.character(data$country_code),
-                                     choices = ISOcodes::ISO_3166_1$Alpha_2)
+                                     choices = val_set$country_code)
     if (!isTRUE(check)) {
       cli::cli_progress_done(id = cli_progress_id,
                              result = "failed")
       action("Failed to validate {.var data$country_code}. {check}")
     }
     
-    ## ensure `position_government` is present when `country_code = "CH" & level = "national"`
-    if ((data %>%
-         dplyr::filter(country_code == "CH" & level == "national") %>%
-         nrow() %>%
-         magrittr::is_greater_than(0L))
+    ## ensure `position_government` is present for additions when `country_code = "CH" & level = "national"`
+    if (type == "add"
+        && (data %>%
+            dplyr::filter(country_code == "CH" & level == "national") %>%
+            nrow() %>%
+            magrittr::is_greater_than(0L))
         && !("position_government" %in% colnames(data))) {
       
       cli::cli_progress_done(id = cli_progress_id,
@@ -422,6 +427,23 @@ assert_cols_valid <- function(data,
                     "the row{?s} with ind{?ex/ices} {.val {ix_missing_subnational_entities}}."))
     }
   }
+  if ("subnational_entity_name" %in% colnames(data)) {
+    
+    ix_illegal_subnational_entities <-
+      data %>%
+      tibble::rowid_to_column() %>%
+      dplyr::filter(level == "national" & !is.na(subnational_entity_name)) %$%
+      rowid
+    
+    n_illegal_subnational_entities <- length(ix_illegal_subnational_entities)
+    
+    if (n_illegal_subnational_entities) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
+      action(paste0("{n_illegal_subnational_entities} row{?s} in {.arg data} {?has/have} a {.var subnational_entity_name} set although they are on the ",
+                    "national level. Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal_subnational_entities}}."))
+    }
+  }
   
   ## check `municipality`
   if (any(data[["level"]] == "local")) {
@@ -445,6 +467,23 @@ assert_cols_valid <- function(data,
                              result = "failed")
       action(paste0("{n_missing_municipalities} row{?s} in {.arg data} {?is/are} missing a {.var municipality}. Affected {?is/are} the row{?s} with ",
                     "ind{?ex/ices} {.val {ix_missing_subnational_entities}}."))
+    }
+  }
+  if ("municipality" %in% colnames(data)) {
+    
+    ix_illegal_municipalities <-
+      data %>%
+      tibble::rowid_to_column() %>%
+      dplyr::filter(level != "local" & !is.na(municipality)) %$%
+      rowid
+    
+    n_illegal_municipalities <- length(ix_illegal_municipalities)
+    
+    if (n_illegal_municipalities) {
+      cli::cli_progress_done(id = cli_progress_id,
+                             result = "failed")
+      action(paste0("{n_illegal_municipalities} row{?s} in {.arg data} {?has/have} a {.var municipality} set although they are not on the local level. ",
+                    "Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal_municipalities}}."))
     }
   }
   
@@ -604,17 +643,6 @@ codebook_url <- function(v_names) {
   v_names %>% paste0("[`", ., "`](https://rpkg.dev/c2d/articles/codebook.html#", ., ")")
 }
 
-complete_country_vx <- function(data) {
-  
-  data %>%
-    dplyr::select(-c(country_code,
-                     country_name,
-                     any_of("country_code_historical"))) %>%
-    tibble::add_column(purrr::map2_dfr(data$country_code,
-                                       data$date,
-                                       derive_country_vx))
-}
-
 country_code_to_name <- function(country_code,
                                  country_code_historical = NA_character_) {
   
@@ -742,15 +770,14 @@ drop_non_applicable_vx <- function(data) {
     }
   }
   
-  # TODO: remove this as soon as [issue #?]() is fixed
-  # TODO: report setting these doesn't work if they haven't been set before (i.e. referendum was created before new DB fields were added) AND ADD TEST!
-  data %<>% dplyr::select(-any_of(c("country_code_historical",
-                                    "is_past_jurisdiction",
-                                    "id_official",
-                                    "id_sudd",
-                                    "question",
-                                    "question_en",
-                                    "sources")))
+  data %<>% dplyr::select(-any_of(c(
+    # TODO: remove this as soon as [issue #82](https://github.com/ccmdesign/c2d-app/issues/82) is fixed
+    "country_code_historical",
+    "is_past_jurisdiction",
+    # TODO: remove this as soon as [issue #81](https://github.com/ccmdesign/c2d-app/issues/81) is fixed
+    "sources"
+  )))
+  
   data
 }
 
@@ -1171,15 +1198,21 @@ tidy_rfrnds <- function(data,
         data %<>% dplyr::mutate(number = dplyr::if_else(number %in% c("0", ""),
                                                         NA_character_,
                                                         number),
-                                id_official = dplyr::if_else(is.na(id_official) & stringr::str_detect(number, "^\\d") %in% TRUE,
-                                                             number,
-                                                             id_official),
-                                id_sudd = dplyr::if_else(is.na(id_sudd) & stringr::str_detect(number, "^\\D") %in% TRUE,
-                                                         # everything beyond the 8th char seems to be manually added -> strip!
-                                                         stringr::str_sub(string = number,
-                                                                          end = 8L),
-                                                         id_sudd))
+                                dplyr::across(.cols = any_of("id_official"),
+                                              .fns = ~ dplyr::if_else(is.na(.x) & stringr::str_detect(number, "^\\d") %in% TRUE,
+                                                                      number,
+                                                                      .x)),
+                                dplyr::across(.cols = any_of("id_sudd"),
+                                              .fns = ~ dplyr::if_else(is.na(.x) & stringr::str_detect(number, "^\\D") %in% TRUE,
+                                                                      # everything beyond the 8th char seems to be manually added -> strip!
+                                                                      stringr::str_sub(string = number,
+                                                                                       end = 8L),
+                                                                      .x)))
       }
+      
+      # ensure `id_official` and `id_sudd` are present
+      if (!("id_official" %in% colnames(data))) data$id_official <- NA_character_
+      if (!("id_sudd" %in% colnames(data))) data$id_sudd <- NA_character_
       
       data %<>%
         # variable creations
@@ -1223,7 +1256,7 @@ tidy_rfrnds <- function(data,
         ## fctrs without explicit variable_values set in codebook
         dplyr::mutate(dplyr::across(.cols = country_code,
                                     .fns = factor,
-                                    levels = ISOcodes::ISO_3166_1$Alpha_2,
+                                    levels = val_set$country_code,
                                     ordered = FALSE),
                       dplyr::across(.cols = any_of(c("country_name",
                                                      "subnational_entity_name",
@@ -2231,25 +2264,6 @@ data_cols_absent <-
                                "manually.")) %>%
   dplyr::mutate(msg = paste0("{.arg data} mustn't contain ", msg))
 
-data_iso_3166_3 <-
-  ISOcodes::ISO_3166_3 %>%
-  tibble::as_tibble() %>%
-  dplyr::mutate(Alpha_2 = Alpha_4 %>% stringr::str_sub(end = 2L),
-                Alpha_2_New = Alpha_4 %>% stringr::str_sub(start = 3L),
-                Date_withdrawn =
-                  Date_withdrawn %>%
-                      purrr::map(~ {
-                          if (nchar(.x) == 4L) {
-                              clock::date_build(year = as.integer(.x))
-                          } else {
-                              clock::date_parse(x = .x,
-                                                format = "%F")
-                          }
-                          }) %>%
-                      purrr::reduce(c)) %>%
-  dplyr::relocate(Alpha_2, Alpha_2_New,
-                  .after = Alpha_3)
-
 rfrnd_fields <- list()
 
 rfrnd_fields$all <- c("_id",
@@ -2739,14 +2753,15 @@ add_rfrnds <- function(data,
     dplyr::recode(!!!v_names) %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
-  ## ensure remaining columns are valid
-  assert_cols_valid(data = data)
-  
   # drop disabled variables
   data %<>% drop_disabled_vx(to_drop = "files")
   
   # drop non-applicable columns (they're supposed to be absent in MongoDB)
   data %<>% drop_non_applicable_vx()
+  
+  ## ensure remaining columns are valid
+  assert_cols_valid(data = data,
+                    type = "add")
   
   # convert data to MongoDB schema
   json_items <-
@@ -2843,14 +2858,15 @@ edit_rfrnds <- function(data,
     c("id") %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
-  ## ensure columns are valid
-  assert_cols_valid(data)
-  
   # drop disabled variables
   data %<>% drop_disabled_vx(to_drop = "files")
   
   # drop non-applicable columns (they're absent in MongoDB)
   data %<>% drop_non_applicable_vx()
+  
+  ## ensure remaining columns are valid
+  assert_cols_valid(data,
+                    type = "edit")
   
   # convert data to MongoDB schema
   ids <- data$id
@@ -2968,6 +2984,8 @@ delete_rfrnds <- function(ids,
 
 #' Validate referendum data
 #'
+#' Performs various data validation steps to ensure there are no errors in the supplied `data`.
+#'
 #' @param data The referendum data to validate, as returned by [rfrnds()].
 #' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
 #' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
@@ -2993,6 +3011,7 @@ validate_rfrnds <- function(data,
                                             msg_failed = paste(status_msg, "failed"))
   
   assert_cols_valid(data = data,
+                    type = "validate",
                     action = cli::cli_alert_warning,
                     cli_progress_id = cli_progress_id)
   
@@ -3715,8 +3734,8 @@ add_turnout <- function(data,
 #' Note that only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a
 #' country doesn't belong to any UN tier-3 region, the corresponding `un_region_tier_3_*` values will simply be `NA`.
 #'
-#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `country_code` (with two-letter [ISO 3166-1
-#'   alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) codes).
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `country_code` (with [ISO 3166-1
+#'   alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) or [ISO 3166-3 alpha-4](https://en.wikipedia.org/wiki/ISO_3166-3) codes).
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @family augment
@@ -3724,7 +3743,7 @@ add_turnout <- function(data,
 #'
 #' @examples
 #' c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
-#'   add_world_regions() |>
+#'   c2d::add_world_regions() |>
 #'   dplyr::select(id, country_name, starts_with("un_"))
 add_world_regions <- function(data) {
   
@@ -3732,29 +3751,44 @@ add_world_regions <- function(data) {
   checkmate::assert_data_frame(data)
   
   if (!("country_code" %in% colnames(data))) {
-    cli::cli_abort("{.arg data} must contain a column {.var country_code} with two-letter ISO 3166-1 alpha-2 codes.")
+    cli::cli_abort("{.arg data} must contain a column {.var country_code} with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.")
   }
   
   unknown_country_codes <-
     data$country_code %>%
     unique() %>%
-    setdiff(ISOcodes::ISO_3166_1$Alpha_2)
+    setdiff(val_set$country_code)
   
   if (length(unknown_country_codes)) {
-    cli::cli_abort("Column {.var country_code} of {.arg data} contains unknown ISO 3166-1 alpha-2 codes: {.val {unknown_country_codes}}")
+    cli::cli_abort(paste0("Column {.var country_code} of {.arg data} contains unknown codes (neither ISO 3166-1 alpha-2 nor ISO 3166-3 alpha-4): {.val ",
+                          "{unknown_country_codes}}"))
   }
   
   # add UN regions to input data
   data %>%
+    # add temp synthetic country code column
+    dplyr::mutate(country_code_synthetic =
+                    country_code %>%
+                    purrr::map_chr(~ {
+                      
+                      if (nchar(.x) > 2L) {
+                        data_iso_3166_3$Alpha_2_new_main[data_iso_3166_3$Alpha_4 == .x]
+                        
+                      } else {
+                        .x
+                      }
+                    })) %>%
     # remove possibly existing UN region vx
     dplyr::select(-any_of(setdiff(colnames(un_regions),
                                   "country_code"))) %>%
     # add UN regions
     dplyr::left_join(y = un_regions,
-                     by = "country_code") %>%
+                     by = c("country_code_synthetic" = "country_code")) %>%
     # ensure every row got at least a UN tier-1 region assigned
     assertr::assert(predicate = assertr::not_na,
                     un_region_tier_1_code) %>%
+    # drop temp col
+    dplyr::select(-country_code_synthetic) %>%
     # harmonize col order
     order_rfrnd_cols()
 }

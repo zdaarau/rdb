@@ -129,6 +129,51 @@ data_codebook <- {
 }
 ```
 
+## `data_iso_3166_3`
+
+```{r}
+data_iso_3166_3 <-
+  ISOcodes::ISO_3166_3 %>%
+  tibble::as_tibble() %>%
+  dplyr::mutate(Alpha_2 = Alpha_4 %>% stringr::str_sub(end = 2L),
+                Alpha_2_new = Alpha_4 %>% stringr::str_sub(start = 3L),
+                # variation of `Alpha_2_new` that in case of multiple successor countries (*HH/*XX) holds the biggest one (1. population-, then 2. area-wise)
+                # (main purpose is to be able to match with UN M49 area codes)
+                Alpha_2_new_main =
+                  Alpha_4 %>%
+                  purrr::map_chr(~ {
+                    if (stringr::str_detect(.x, "(HH|XX)$")) {
+                      switch(.x,
+                             ANHH = "CW",
+                             CSHH = "CZ",
+                             CSXX = "RS",
+                             FQHH = "AQ",
+                             GEHH = "KI",
+                             NTHH = "IQ",
+                             PCHH = "FM",
+                             SUHH = "RU",
+                             cli::abort(paste0("No ISO 3166-3 alpha-4 \"n-to-1\" ISO 3166-1 alpha-2 conversion rule defined for {.val .x}. Please update ",
+                                               "{.var data_iso_3166_3} accordingly and run again.")))
+                      
+                    } else {
+                      stringr::str_sub(.x, start = 3L)
+                    }
+                  }),
+                Date_withdrawn =
+                  Date_withdrawn %>%
+                  purrr::map(~ {
+                    if (nchar(.x) == 4L) {
+                      clock::date_build(year = as.integer(.x))
+                    } else {
+                      clock::date_parse(x = .x,
+                                        format = "%F")
+                    }
+                  }) %>%
+                  purrr::reduce(c)) %>%
+  dplyr::relocate(Alpha_2, Alpha_2_new, Alpha_2_new_main,
+                  .after = Alpha_3)
+```
+
 ## `data_tags`
 
 ```{r}
@@ -258,6 +303,14 @@ v_lbls <-
   magrittr::set_names(value = data_codebook$variable_name)
 ```
 
+## `val_set`
+
+```{r}
+val_set <- list()
+val_set$country_code <- c(ISOcodes::ISO_3166_1$Alpha_2,
+                          ISOcodes::ISO_3166_3$Alpha_4)
+```
+
 ## `rfrnd_cols_order`
 
 ```{r}
@@ -282,6 +335,7 @@ to package users.
 
 ```{r}
 usethis::use_data(data_codebook,
+                  data_iso_3166_3,
                   data_tags,
                   months_de,
                   rfrnd_cols_order,
@@ -290,6 +344,7 @@ usethis::use_data(data_codebook,
                   tags_tier_3_,
                   un_regions,
                   v_lbls,
+                  val_set,
                   internal = TRUE,
                   overwrite = TRUE,
                   compress = "xz",

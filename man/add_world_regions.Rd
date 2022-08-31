@@ -7,7 +7,7 @@
 add_world_regions(data)
 }
 \arguments{
-\item{data}{C2D referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column \code{country_code} (with two-letter \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} codes).}
+\item{data}{C2D referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column \code{country_code} (with \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} or \href{https://en.wikipedia.org/wiki/ISO_3166-3}{ISO 3166-3 alpha-4} codes).}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
@@ -36,7 +36,7 @@ country doesn't belong to any UN tier-3 region, the corresponding \verb{un_regio
 }
 \examples{
 c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
-  add_world_regions() |>
+  c2d::add_world_regions() |>
   dplyr::select(id, country_name, starts_with("un_"))
 }
 \seealso{

@@ -21,7 +21,7 @@ validate_rfrnds(
 \code{data}, invisibly.
 }
 \description{
-Validate referendum data
+Performs various data validation steps to ensure there are no errors in the supplied \code{data}.
 }
 \seealso{
 Other referendum data functions:
