@@ -17,7 +17,11 @@ vignette: >
 
 For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the individual referendum.
 
-```{r, referendum-level-vx, echo = FALSE, results = "asis", message = FALSE}
+```{r}
+#| label: referendum-level-vx
+#| echo: false
+#| results: asis
+#| message: false
 # setup
 library(rlang)
 library(magrittr)
@@ -201,7 +205,10 @@ c2d::data_codebook %>%
 
 ## Institution-level variables
 
-```{r, institution-level-vx, echo = FALSE, results = "asis"}
+```{r}
+#| label: institution-level-vx
+#| echo: false
+#| results: asis
 "For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the referendum's *institutional instrument*, a
 combination of the referendum's [`type`](#type) and the jurisdiction it took place.
 
@@ -230,7 +237,11 @@ c2d::data_codebook %>%
   pal::cat_lines()
 ```
 
-```{r, footnotes, echo = FALSE, results = "asis", include = to_pandoc}
+```{r}
+#| label: footnotes
+#| echo: false
+#| results: asis
+#| include: !expr to_pandoc
 cat("
 [^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/hoist.html) to convert data containing such a variable to long format. To unnest `tags_tier_1` to `tag_tier_1` for example, use:
 

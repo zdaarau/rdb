@@ -895,6 +895,17 @@ drop_non_applicable_vx <- function(data) {
     if (data$level == "national") {
       data %<>% dplyr::select(-any_of("subnational_entity_name"))
     }
+    # TODO: remove this as soon as [issue #52](https://github.com/ccmdesign/c2d-app/issues/52) is resolved
+    if (data$level != "national" || data$country_code != "CH") {
+      data %<>% dplyr::select(-any_of(c("votes_per_subterritory",
+                                        "lower_house_yes",
+                                        "lower_house_no",
+                                        "lower_house_abstentions",
+                                        "upper_house_yes",
+                                        "upper_house_no",
+                                        "upper_house_abstentions",
+                                        "position_government")))
+    }
   }
   
   # TODO: remove this as soon as [issue #?]() is fixed
@@ -1387,33 +1398,6 @@ tidy_rfrnds <- function(data,
           ## nominal
           ### flatten `id`
           id = purrr::flatten_chr(id),
-          ### complement `id_official` by old `number` when it doesn't signify an `id_sudd`
-          ### (the latter consists of a two-letter country code plus a 6-digit number)
-          id_official = {
-            if (exists("number")) {
-              number %>%
-              dplyr::if_else(is.na(id_official) & stringr::str_detect(string = .,
-                                                                      pattern = "^\\D"),
-                             NA_character_,
-                             .)
-            } else {
-              NA_character_
-            }
-          },
-          id_sudd = {
-            if (exists("number")) {
-              number %>%
-              dplyr::if_else(is.na(id_sudd) & stringr::str_detect(string = .,
-                                                                  pattern = "^\\D"),
-                             .,
-                             NA_character_) %>%
-                # everything beyond the 8th char seems to be manually added -> strip!
-                stringr::str_sub(end = 8L)
-            } else {
-              NA_character_
-            }
-          },
-          
           ### split `tags` into separate per-tier vars
           tags_tier_1 = tags %>% purrr::map(infer_tags,
                                             tier = 1L),
@@ -1473,18 +1457,36 @@ tidy_rfrnds <- function(data,
                                                              purrr::modify_in(.where = "date",
                                                                               .f = parse_datetime) %>%
                                                              # change subvariable names
-                                                             rename_from_list(names_list = sub_v_names$files))),
-          votes_per_subterritory = votes_per_subterritory,
-          
-          # variable creations
-          url_sudd = dplyr::if_else(!is.na(id_sudd),
-                                    paste0("https://sudd.ch/event.php?id=", id_sudd),
-                                    NA_character_),
-          url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
-                                          paste0("https://swissvotes.ch/vote/", id_official),
-                                          NA_character_)
-        ) %>%
+                                                             rename_from_list(names_list = sub_v_names$files))))
+      
+      # complement `id_official` and `id_sudd` (a two-letter country code plus a 6-digit number) by old `number`
+      # TODO: once [issue #?](https://github.com/ccmdesign/c2d-app/issues/?) is resolved:
+      #       - correct this upstream using `edit_rfrnds()`
+      #       - remove corresponding code below
+      #       - file issue to completely get rid of field `number`
+      if ("number" %in% colnames(data)) {
         
+        data %<>% dplyr::mutate(number = dplyr::if_else(number %in% c("0", ""),
+                                                        NA_character_,
+                                                        number),
+                                id_official = dplyr::if_else(is.na(id_official) & stringr::str_detect(number, "^\\d") %in% TRUE,
+                                                             number,
+                                                             id_official),
+                                id_sudd = dplyr::if_else(is.na(id_sudd) & stringr::str_detect(number, "^\\D") %in% TRUE,
+                                                         # everything beyond the 8th char seems to be manually added -> strip!
+                                                         stringr::str_sub(string = number,
+                                                                          end = 8L),
+                                                         id_sudd))
+      }
+      
+      data %<>%
+        # variable creations
+        dplyr::mutate(url_sudd = dplyr::if_else(!is.na(id_sudd),
+                                                paste0("https://sudd.ch/event.php?id=", id_sudd),
+                                                NA_character_),
+                      url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
+                                                      paste0("https://swissvotes.ch/vote/", id_official),
+                                                      NA_character_)) %>%
         # remove obsolete vars
         dplyr::select(-any_of(c("number",
                                 "tags"))) %>%
@@ -1534,35 +1536,6 @@ tidy_rfrnds <- function(data,
                         call = this_env) %>%
         # harmonize col order
         order_rfrnd_cols()
-      
-      # correct known errors
-      # TODO: correct this upstream using `edit_rfrnds()` once [issue #29](https://github.com/ccmdesign/c2d-app/issues/29) is resolved
-      ## wrong `id_sudd`
-      data$id_sudd[data$id == "5bbbffa992a21351232e50e7"] <- "az022009"
-      data$id_sudd[data$id == "5bbbfb7c92a21351232e4185"] <- "bs022002"
-      data$id_sudd[data$id == "5bbbe5fb92a21351232dfbfb"] <- "mg011972"
-      data$id_sudd[data$id == "5bbbe7fd92a21351232e0243"] <- "mg011975"
-      data$id_sudd[data$id == "5bbbf37c92a21351232e2721"] <- "mg011992"
-      data$id_sudd[data$id == "5bbbf60a92a21351232e2f4d"] <- "mg011995"
-      data$id_sudd[data$id == "5bbbf7e892a21351232e3757"] <- "mg011998"
-      data$id_sudd[data$id == "5bbbfe8692a21351232e4c99"] <- "mg012007"
-      data$id_sudd[data$id == "5bbc009e92a21351232e5389"] <- "mg012010"
-      data$id_sudd[data$id == "5bbbe99c92a21351232e0949"] <- "mh011979"
-      data$id_sudd[data$id %in% c("5bbbf45592a21351232e291f", "5bbbf45592a21351232e291d")] <- "mw011993"
-      data$id_sudd[data$id == "5bbbf50592a21351232e2ca9"] <- "ec031994"
-      data$id_sudd[data$id == "5bbbfe7b92a21351232e4c0f"] <- "ec022006"
-      data$id_sudd[data$id == "5bbbe2d592a21351232df4f7"] <- "gq011968"
-      data$id_sudd[data$id == "5bbbf92f92a21351232e3a11"] <- "gt011999"
-      data$id_sudd[data$id == "5bbbf92f92a21351232e3a17"] <- "gt021999"
-      data$id_sudd[data$id == "5bbbf92f92a21351232e3a15"] <- "gt031999"
-      data$id_sudd[data$id == "5bbbe29492a21351232de33d"] <- "li021930"
-      data$id_sudd[data$id == "5bbbf50592a21351232e2c9d"] <- "lt031994"
-      data$id_sudd[data$id == "5bbbeaee92a21351232e0ca5"] <- "nf011979"
-      data$id_sudd[data$id == "5bbbe73592a21351232dffc1"] <- "tv011974"
-      data$id_sudd[data$id == "5bbbe27f92a21351232ddd93"] <- "uy011917"
-      data$id_sudd[data$id == "5bbbf2e692a21351232e23cb"] <- "ye011991"
-      ## missing `id_sudd`
-      data$id_sudd[data$id == "5caf179361af8403c235ddc9"] <- "si012015"
     }
   }
   
@@ -3165,10 +3138,13 @@ rfrnds <- function(country_code = NULL,
   municipality,
   level,
   type,
-  date,
+  date_min,
+  date_max,
   is_draft,
   date_time_created_min,
   date_time_created_max,
+  date_time_last_edited_min,
+  date_time_last_edited_max,
   query_filter,
   tidy,
   use_testing_server,
@@ -3373,7 +3349,7 @@ NOTES:
          --request POST \
          --header 'Content-Type: application/json' \
          --header 'Origin: https://c2d.ch' \
-         --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YzhiYTE3ZDYxYWY4NDYyMmRkZThjNjEiLCJleHAiOjE2MzAxODY0ODB9.lpKWUPyYh7yGWN1AKBWkjhrsQIVeIH71DUOA4hpJhR8' \
+         --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NjI5MzExNDksInN1YiI6IjYyMjE1NDAxMTNiZWQ0MjBkNmZmYmMwYSJ9.06VA7kGcF2ajuTge_qAy7VD7UD0wX9QTwi7HIkntPQ0' \
          --data-raw $'{"title":{"en":"test test test"},"date":"2222-02-22","level":"national","country_code":"AT","institution":"Citizens\' initiative","votes_no":-1,"votes_yes":-1,"votes_empty":-1,"votes_invalid":-1,"total_electorate":-1,"citizens_abroad":-1,"result":"Unknown"}'
     ```
 
@@ -3527,7 +3503,7 @@ NOTES:
          --header 'Content-Type: application/json' \
          --header 'Origin: https://c2d.ch' \
          --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NjI5MzExNDksInN1YiI6IjYyMjE1NDAxMTNiZWQ0MjBkNmZmYmMwYSJ9.06VA7kGcF2ajuTge_qAy7VD7UD0wX9QTwi7HIkntPQ0' \
-         --data-raw $'{"draft":true,"votes_yes":-1,"votes_no":-1,"votes_empty":-1,"votes_invalid":-1,"total_electorate":-1,"citizens_abroad":-1,"title":{"fr":"letest 99"}}'
+         --data-raw '{"draft":true,"votes_yes":-1,"votes_no":-1,"votes_empty":-1,"votes_invalid":-1,"total_electorate":-1,"citizens_abroad":-1,"title":{"fr":"letest 99"}}'
     ```
 
 ```{r}
@@ -4472,8 +4448,14 @@ TODO:
 ```{r}
 #' Add turnout to referendum data
 #'
-#' Augments `data` with an additional column `turnout` containing the voter turnout calculated as
-#' `(votes_yes + votes_no + votes_empty + votes_invalid) / electorate_total`.
+#' @description
+#' Augments `data` with an additional column `turnout` containing the voter turnout calculated as:
+#'
+#' \Sexpr[results=rd, stage=build]{
+#'   katex::math_to_rd(tex = "\\\\frac{votes\\\\_yes+votes\\\\_no+votes\\\\_empty+votes\\\\_invalid}{electorate\\\\_total}",
+#'                     ascii = "(votes_yes + votes_no + votes_empty + votes_invalid) / electorate_total",
+#'                     displayMode = TRUE)
+#' }
 #'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns `electorate_total`, `votes_yes`, `votes_no`,
 #'   `votes_empty` and `votes_invalid`.

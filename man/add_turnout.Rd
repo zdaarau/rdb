@@ -20,8 +20,13 @@ data errors or (officially) tampered numbers.}
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Augments \code{data} with an additional column \code{turnout} containing the voter turnout calculated as
-\code{(votes_yes + votes_no + votes_empty + votes_invalid) / electorate_total}.
+Augments \code{data} with an additional column \code{turnout} containing the voter turnout calculated as:
+
+\Sexpr[results=rd, stage=build]{
+katex::math_to_rd(tex = "\\\\frac{votes\\\\_yes+votes\\\\_no+votes\\\\_empty+votes\\\\_invalid}{electorate\\\\_total}",
+ascii = "(votes_yes + votes_no + votes_empty + votes_invalid) / electorate_total",
+displayMode = TRUE)
+}
 }
 \examples{
 # rough turnout numbers
