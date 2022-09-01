@@ -18,7 +18,7 @@ rfrnd_exists(
 A logical scalar.
 }
 \description{
-Tests whether the refendum with the supplied \code{id} exists or not.
+Tests whether the referendum with the supplied \code{id} exists or not.
 }
 \examples{
 c2d::rfrnd_exists("6303a4cba52c3995043a8c24")

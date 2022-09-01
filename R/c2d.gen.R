@@ -3265,7 +3265,7 @@ search_rfrnds <- function(term,
 
 #' Test if referendum ID exists
 #'
-#' Tests whether the refendum with the supplied `id` exists or not.
+#' Tests whether the referendum with the supplied `id` exists or not.
 #'
 #' @inheritParams rfrnd
 #' @inheritParams url_api
@@ -3920,7 +3920,7 @@ add_turnout <- function(data,
     # harmonize col order
     order_rfrnd_cols() %>%
     # add var lbl
-    labelled::set_variable_labels(turnout = paste0("the voter turnout ", ifelse(rough, "(rough) ", ""), "at the refendum"))
+    labelled::set_variable_labels(turnout = paste0("the voter turnout ", ifelse(rough, "(rough) ", ""), "at the referendum"))
 }
 
 #' Add UN world regions to referendum data
