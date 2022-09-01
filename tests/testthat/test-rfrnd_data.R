@@ -13,7 +13,8 @@ test_rfrnd_data <- function(use_testing_server = FALSE) {
     skip_if(use_testing_server && !test_testing)
 
     expect_gte(nrow(rfrnds(country_code = "AT",
-                           use_testing_server = use_testing_server)),
+                           use_testing_server = use_testing_server,
+                           quiet = TRUE)),
                1L)
   })
 

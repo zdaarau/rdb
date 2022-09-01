@@ -563,9 +563,10 @@ auth_session <- function(email = pal::pkg_config_val(key = "api_username",
                                                      pkg = this_pkg),
                          password = pal::pkg_config_val(key = "api_password",
                                                         pkg = this_pkg),
-                         quiet = FALSE,
                          use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                  pkg = this_pkg)) {
+                                                                  pkg = this_pkg),
+                         quiet = FALSE) {
+  
   checkmate::assert_string(email,
                            min.chars = 3L)
   checkmate::assert_string(password,
@@ -2462,6 +2463,7 @@ sub_v_names <- list(files = list("date"       = "date_time_attached",
 #' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the C2D database.
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @family rfrnd
@@ -2505,23 +2507,28 @@ rfrnds <- function(country_code = NULL,
                    use_cache = TRUE,
                    cache_lifespan = "1 week",
                    use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                            pkg = this_pkg)) {
+                                                            pkg = this_pkg),
+                   quiet = FALSE) {
+  
   checkmate::assert_flag(incl_archive)
+  checkmate::assert_flag(quiet)
   
   # TODO: remove this check as soon as [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
   if (isTRUE(use_testing_server)) cli::cli_abort("{.code mode=stream} is not yet supported on the testing servers.")
   
   result <- pkgpins::with_cache(expr = {
     
-    status_msg <- "Fetching JSON data from C2D API..."
-    cli::cli_progress_step(msg = status_msg,
-                           msg_done = paste(status_msg, "done"),
-                           msg_failed = paste(status_msg, "failed"))
+    if (!quiet) {
+      status_msg <- "Fetching JSON data from C2D API..."
+      cli::cli_progress_step(msg = status_msg,
+                             msg_done = paste(status_msg, "done"),
+                             msg_failed = paste(status_msg, "failed"))
+    }
+    
     data <-
       httr::RETRY(verb = "GET",
                   url = url_api("referendums",
                                 .use_testing_server = use_testing_server),
-                  httr::progress(type = "down"),
                   query = list(mode = "stream",
                                format = "json",
                                filter = assemble_query_filter(country_code = country_code,
@@ -2537,6 +2544,7 @@ rfrnds <- function(country_code = NULL,
                                                               date_time_last_edited_min = date_time_last_edited_min,
                                                               date_time_last_edited_max = date_time_last_edited_max,
                                                               query_filter = query_filter)),
+                  if (!quiet) httr::progress(type = "down"),
                   times = 3L) %>%
       # ensure we actually got a JSON response
       pal::assert_mime_type(mime_type = "application/json",
@@ -2547,10 +2555,12 @@ rfrnds <- function(country_code = NULL,
       # ensure body is not empty
       ensure_content()
     
-    status_msg <- "Converting JSON to list data..."
-    cli::cli_progress_step(msg = status_msg,
-                           msg_done = paste(status_msg, "done"),
-                           msg_failed = paste(status_msg, "failed"))
+    if (!quiet) {
+      status_msg <- "Converting JSON to list data..."
+      cli::cli_progress_step(msg = status_msg,
+                             msg_done = paste(status_msg, "done"),
+                             msg_failed = paste(status_msg, "failed"))
+    }
     # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result (depending on `query`)
     data %<>%
       jsonlite::fromJSON(simplifyVector = FALSE,
@@ -2559,10 +2569,12 @@ rfrnds <- function(country_code = NULL,
                          flatten = FALSE) %$%
       items
     
-    status_msg <- "Tidying data..."
-    cli::cli_progress_step(msg = status_msg,
-                           msg_done = paste(status_msg, "done"),
-                           msg_failed = paste(status_msg, "failed"))
+    if (!quiet) {
+      status_msg <- "Tidying data..."
+      cli::cli_progress_step(msg = status_msg,
+                             msg_done = paste(status_msg, "done"),
+                             msg_failed = paste(status_msg, "failed"))
+    }
     
     data %>% tidy_rfrnds(tidy = tidy)
   },
@@ -3657,6 +3669,9 @@ add_country_code_long <- function(data) {
     cli::cli_abort("{.arg data} contains invalid {.var country_code}s. Affected are the rows {.and i_invalid_country_code}.")
   }
   
+  # remove possibly existing `country_code_long`
+  data %<>% dplyr::select(-any_of("country_code_long"))
+  
   # split data into ISO 3166-1 and ISO 3166-3 code groups and new var
   # NOTE: we need to use a left join in order to not lose `country_code`'s attrs
   data_current <-
@@ -3686,12 +3701,14 @@ add_country_code_long <- function(data) {
     dplyr::select(-any_of(c(colname_rowid,
                             colname_n_char))) %>%
     tibble::as_tibble() %>%
-    order_rfrnd_cols()
+    order_rfrnd_cols() %>%
+    # add var lbl
+    labelled::set_variable_labels(country_code_long = "the three-letter ISO 3166-1 alpha-3 code identifying the country in which the referendum took place")
 }
 
 #' Add long country name to referendum data
 #'
-#' Augments `data` with an additional column holding the official full name(s) of the country in which the referendum took place.
+#' Augments `data` with an additional column holding the official full English name(s) of the country in which the referendum took place.
 #'
 #' @inheritParams add_world_regions
 #'
@@ -3728,6 +3745,9 @@ add_country_name_long <- function(data) {
   if (n_invalid_country_code) {
     cli::cli_abort("{.arg data} contains invalid {.var country_code}s. Affected are the rows {.and i_invalid_country_code}.")
   }
+  
+  # remove possibly existing `country_name_long`
+  data %<>% dplyr::select(-any_of("country_name_long"))
   
   # split data into ISO 3166-1 and ISO 3166-3 code groups
   # NOTE: we need to use a left join in order to not lose `country_code`'s attrs
@@ -3774,7 +3794,9 @@ add_country_name_long <- function(data) {
     dplyr::select(-any_of(c(colname_rowid,
                             colname_n_char))) %>%
     tibble::as_tibble() %>%
-    order_rfrnd_cols()
+    order_rfrnd_cols() %>%
+    # add var lbl
+    labelled::set_variable_labels(country_name_long = "the official full English name(s) of the country in which the referendum took place")
 }
 
 #' Add period to referendum data
@@ -3820,10 +3842,19 @@ add_period <- function(data,
                        decade  = function(x) (clock::get_year(x) %/% 10L) * 10L,
                        century = function(x) (clock::get_year(x) %/% 100L) * 100L)
   
+  # define lbl parts
+  period_lbl <- switch(EXPR    = period,
+                       week    = glue::glue("{period} (1\u201353)"),
+                       month   = glue::glue("{period} (1\u201312)"),
+                       quarter = glue::glue("{period} (1\u20134)"),
+                       period)
   data %>%
+    # add period
     dplyr::mutate(!!as.symbol(period) := get_period(date)) %>%
     # harmonize col order
-    order_rfrnd_cols()
+    order_rfrnd_cols() %>%
+    # add var lbl
+    labelled::set_variable_labels(!!period := glue::glue("the {period_lbl} in which the referendum was held"))
 }
 
 #' Add turnout to referendum data
@@ -3887,7 +3918,9 @@ add_turnout <- function(data,
                                            NA_real_,
                                            turnout)) %>%
     # harmonize col order
-    order_rfrnd_cols()
+    order_rfrnd_cols() %>%
+    # add var lbl
+    labelled::set_variable_labels(turnout = paste0("the voter turnout ", ifelse(rough, "(rough) ", ""), "at the refendum"))
 }
 
 #' Add UN world regions to referendum data
@@ -3967,7 +4000,15 @@ add_world_regions <- function(data) {
     # drop temp col
     dplyr::select(-country_code_synthetic) %>%
     # harmonize col order
-    order_rfrnd_cols()
+    order_rfrnd_cols() %>%
+    # add var lbl
+    labelled::set_variable_labels(un_country_code       = "the UN M49 code of the country in which the referendum took place",
+                                  un_region_tier_1_code = "the area code of the UN tier-1 region in which the referendum took place",
+                                  un_region_tier_1_name = "the name of the UN tier-1 region in which the referendum took place",
+                                  un_region_tier_2_code = "the area code of the UN tier-2 region in which the referendum took place",
+                                  un_region_tier_2_name = "the name of the UN tier-2 region in which the referendum took place",
+                                  un_region_tier_3_code = "the area code of the UN tier-3 region in which the referendum took place",
+                                  un_region_tier_3_name = "the name of the UN tier-3 region in which the referendum took place")
 }
 
 #' Count number of referendums per period
@@ -4532,9 +4573,10 @@ tbl_n_rfrnds_per_period <- function(data,
 #' @return A logical scalar.
 #' @family api_status
 #' @export
-is_online <- function(quiet = FALSE,
-                      use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                               pkg = this_pkg)) {
+is_online <- function(use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                               pkg = this_pkg),
+                      quiet = FALSE) {
+  
   checkmate::assert_flag(quiet)
   
   result <- FALSE

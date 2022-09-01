@@ -22,7 +22,8 @@ rfrnds(
   tidy = TRUE,
   use_cache = TRUE,
   cache_lifespan = "1 week",
-  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
+  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg),
+  quiet = FALSE
 )
 }
 \arguments{
@@ -70,6 +71,8 @@ referendum data will only be modified just enough to be able to return it as a \
 \item{cache_lifespan}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Only relevant if \code{use_cache = TRUE}.}
 
 \item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
+
+\item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.

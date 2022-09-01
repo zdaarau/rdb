@@ -5,14 +5,14 @@
 \title{Test C2D API availability}
 \usage{
 is_online(
-  quiet = FALSE,
-  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
+  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg),
+  quiet = FALSE
 )
 }
 \arguments{
-\item{quiet}{Whether or not to suppress printing a warning in case the API is unavailable.}
-
 \item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
+
+\item{quiet}{Whether or not to suppress printing a warning in case the API is unavailable.}
 }
 \value{
 A logical scalar.

@@ -13,7 +13,7 @@ add_country_name_long(data)
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Augments \code{data} with an additional column holding the official full name(s) of the country in which the referendum took place.
+Augments \code{data} with an additional column holding the official full English name(s) of the country in which the referendum took place.
 }
 \examples{
 c2d::rfrnds(date_max = clock::date_today(zone = "UTC"),
