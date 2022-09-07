@@ -66,6 +66,7 @@ reference:
   desc: Functions to transform the C2D referendum data into other shapes, each with
     a specific purpose.
 - contents:
+  - as_ballot_dates
   - n_rfrnds_per_period
   - printify_col_names
 - title: Visualization

@@ -2,9 +2,6 @@
 
 ## c2d R package
 
--   Add var lbls for all the cols from the augmentation fns (probably best to directly add them to the codebook). And add tests for all these fns ensuring col
-    attrs are all preserved.
-
 -   Once referendum deletions are possible on production servers, extend tests to modify every single data field individually.
 
 -   Once [issue #82](https://github.com/ccmdesign/c2d-app/issues/82) is fixed, remove/adapt all remaining code handling `country_code_historical` and
@@ -389,29 +386,6 @@
     -   [Liip](https://www.liip.ch/), Zürich (und weitere CH-Städte)
     -   [Ops One](https://opsone.ch/), Zürich
 
-### Database renaming
-
--   Bislang gilt: *C2D* wird als alleiniger Name für die Datenbank bestehen bleiben, sollte die C2D-Abteilung, wie von Andreas Glaser beabsichtigt, umbenannt
-    werden. Dies weil die Datenbank unter diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat. Allerdings taugt "C2D" beim besten Willen nicht
-    als Akronym für eine Datenbank...
-
-    Ich würde daher stattdessen eine zügige Umbenennung in
-
-    -   **D3** für ***D**atabase on **D**irect **D**emocracy* nahelegen! Die Domain `d3.vote` wäre noch zu haben (1. Jahr USD 650.-, danach USD 65.-/Jahr). Im
-        Politik-Bereich ist `D3` bislang nicht besetzt; alles ziemlich unverfänglich, wofür [D3 steht](https://en.wikipedia.org/wiki/D3) (am nächsten käme noch
-        die JavaScript-Datenvisualisierungs-Library [D3.js](https://en.wikipedia.org/wiki/D3.js), short for *Data-Driven Documents*).
-
-        Als Alternative böte sich **3DB** für ***D**irect **D**emocracy* **D**atabase an. Die Domain `3db.vote` wäre noch frei. (TODO: Bisherige Nutzung von
-        *3DB* recherchieren.)
-
-    -   oder -- falls *Direct Democracy* vermieden werden soll im Namen (bspw. wegen [starker Vereinnahmung durch politische
-        Bewegungen](https://en.wikipedia.org/wiki/Direct_democracy_(disambiguation))) -- **RDB** für ***R**eferendum **D**ata**b**ase*. Die Domain `rdb.vote`
-        wäre noch zu haben (USD 95.34/Jahr), wie auch `rdb.report` oder `referendum.report` (je USD 26.96/Jahr) für den Jahresbericht. Im Politik-Bereich ist
-        `RDB` bislang kaum besetzt; alles ziemlich unverfänglich, wofür RDB [international steht](https://en.wikipedia.org/wiki/RDB); auch im [deutschsprachigen
-        Raum](https://de.wikipedia.org/wiki/RDB) gibt es keine problematische Konkurrenz (am ehesten noch [diese Rechtsdatenbank](https://rdb.manz.at/)).
-
-    Die alte Domain `c2d.ch` könnten wir einige Jahre weiter halten und einfach auf die neue umleiten.
-
 ### Open questions / suggestions
 
 #### Mit Irina besprechen
@@ -426,17 +400,7 @@
 
 -   `inst_quorum_turnout` sollte standardisiert werden -\> was wäre eine geeignete, abschliessende Menge an Werten?
 
--   Was ist der Nutzen/zusätzliche Informationsgehalt von `inst_is_counter_proposal` sowie `inst_is_assembly`? Ob ein Referendum ein `"counter proposal"` bzw.
-    ein `"citizens' assembly"` ist, wird ja bereits in `type` erfasst.
-
-    Diesbezüglich gilt anzumerken, dass in der Datenbank
-
-    -   21 Fälle enthalten sind, bei denen `inst_is_counter_proposal == TRUE`, aber `type != "counter proposal"`.
-    -   3 Fälle enthalten sind, bei denen `inst_is_assembly == TRUE`, aber `type != "citizens' assembly"`.
-
-    Sind das einfach Kodierungsfehler?
-
--   Woher genau stammt die Tag-Hierarchy? Ist sie "custom"?
+-   Woher genau stammt die Tag-Hierarchie? Ist sie "custom"?
 
     Falls ja, sollten wir
 
@@ -468,7 +432,7 @@
     <https://services.c2d.ch/s3_objects/referendum_5bbbf59192a21351232e2e65_0001.pdf>
 
     I could probably write some validation fn in pkg c2d that checks all PDFs for text content to determine if they're OCR'ed, but maybe there's already more
-    sophisticated software avalailable for this.
+    sophisticated software available for this.
 
     Ideally, the admin portal should ensure the minimum quality requirements upon upload and display an informative warning in case of violation (with an opt-in
     override to upload nevertheless).

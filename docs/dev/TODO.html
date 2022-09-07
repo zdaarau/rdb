@@ -125,9 +125,6 @@
 <h2 class="hasAnchor">
 <a href="#c2d-r-package" class="anchor"></a>c2d R package</h2>
 <ul>
-<li><p>Add var lbls for all the cols from the augmentation fns (probably
-best to directly add them to the codebook). And add tests for all these
-fns ensuring col attrs are all preserved.</p></li>
 <li><p>Once referendum deletions are possible on production servers,
 extend tests to modify every single data field individually.</p></li>
 <li><p>Once <a href="https://github.com/ccmdesign/c2d-app/issues/82" class="external-link">issue #82</a> is
@@ -734,50 +731,6 @@ CH-Städte)</li>
 </li>
 </ul>
 </div>
-<div id="database-renaming" class="section level3">
-<h3 class="hasAnchor">
-<a href="#database-renaming" class="anchor"></a>Database renaming</h3>
-<ul>
-<li>
-<p>Bislang gilt: <em>C2D</em> wird als alleiniger Name für die
-Datenbank bestehen bleiben, sollte die C2D-Abteilung, wie von Andreas
-Glaser beabsichtigt, umbenannt werden. Dies weil die Datenbank unter
-diesem Kürzel angeblich bereits eine gewisse Bekanntheit erlangt hat.
-Allerdings taugt “C2D” beim besten Willen nicht als Akronym für eine
-Datenbank…</p>
-<p>Ich würde daher stattdessen eine zügige Umbenennung in</p>
-<ul>
-<li>
-<p><strong>D3</strong> für <em><strong>D</strong>atabase on
-<strong>D</strong>irect <strong>D</strong>emocracy</em> nahelegen! Die
-Domain <code>d3.vote</code> wäre noch zu haben (1. Jahr USD 650.-,
-danach USD 65.-/Jahr). Im Politik-Bereich ist <code>D3</code> bislang
-nicht besetzt; alles ziemlich unverfänglich, wofür <a href="https://en.wikipedia.org/wiki/D3" class="external-link">D3 steht</a> (am nächsten käme
-noch die JavaScript-Datenvisualisierungs-Library <a href="https://en.wikipedia.org/wiki/D3.js" class="external-link">D3.js</a>, short for
-<em>Data-Driven Documents</em>).</p>
-<p>Als Alternative böte sich <strong>3DB</strong> für
-<em><strong>D</strong>irect <strong>D</strong>emocracy</em>
-<strong>D</strong>atabase an. Die Domain <code>3db.vote</code> wäre noch
-frei. (TODO: Bisherige Nutzung von <em>3DB</em> recherchieren.)</p>
-</li>
-<li><p>oder – falls <em>Direct Democracy</em> vermieden werden soll im
-Namen (bspw. wegen <a href="https://en.wikipedia.org/wiki/Direct_democracy_(disambiguation)" class="external-link">starker
-Vereinnahmung durch politische Bewegungen</a>) – <strong>RDB</strong>
-für <em><strong>R</strong>eferendum
-<strong>D</strong>ata<strong>b</strong>ase</em>. Die Domain
-<code>rdb.vote</code> wäre noch zu haben (USD 95.34/Jahr), wie auch
-<code>rdb.report</code> oder <code>referendum.report</code> (je USD
-26.96/Jahr) für den Jahresbericht. Im Politik-Bereich ist
-<code>RDB</code> bislang kaum besetzt; alles ziemlich unverfänglich,
-wofür RDB <a href="https://en.wikipedia.org/wiki/RDB" class="external-link">international
-steht</a>; auch im <a href="https://de.wikipedia.org/wiki/RDB" class="external-link">deutschsprachigen Raum</a> gibt
-es keine problematische Konkurrenz (am ehesten noch <a href="https://rdb.manz.at/" class="external-link">diese Rechtsdatenbank</a>).</p></li>
-</ul>
-<p>Die alte Domain <code>c2d.ch</code> könnten wir einige Jahre weiter
-halten und einfach auf die neue umleiten.</p>
-</li>
-</ul>
-</div>
 <div id="open-questions--suggestions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#open-questions--suggestions" class="anchor"></a>Open questions / suggestions</h3>
@@ -801,25 +754,7 @@ schlau…)?</p></li>
 <li><p><code>inst_quorum_turnout</code> sollte standardisiert werden
 -&gt; was wäre eine geeignete, abschliessende Menge an Werten?</p></li>
 <li>
-<p>Was ist der Nutzen/zusätzliche Informationsgehalt von
-<code>inst_is_counter_proposal</code> sowie
-<code>inst_is_assembly</code>? Ob ein Referendum ein
-<code>"counter proposal"</code> bzw. ein
-<code>"citizens' assembly"</code> ist, wird ja bereits in
-<code>type</code> erfasst.</p>
-<p>Diesbezüglich gilt anzumerken, dass in der Datenbank</p>
-<ul>
-<li>21 Fälle enthalten sind, bei denen
-<code>inst_is_counter_proposal == TRUE</code>, aber
-<code>type != "counter proposal"</code>.</li>
-<li>3 Fälle enthalten sind, bei denen
-<code>inst_is_assembly == TRUE</code>, aber
-<code>type != "citizens' assembly"</code>.</li>
-</ul>
-<p>Sind das einfach Kodierungsfehler?</p>
-</li>
-<li>
-<p>Woher genau stammt die Tag-Hierarchy? Ist sie “custom”?</p>
+<p>Woher genau stammt die Tag-Hierarchie? Ist sie “custom”?</p>
 <p>Falls ja, sollten wir</p>
 <ul>
 <li>den <code>tag_tier_3</code> “homosexuals” wohl etwas breiter fassen,
@@ -873,7 +808,7 @@ format.</p>
 orientation, page ordering, OCR). Bad example: <a href="https://services.c2d.ch/s3_objects/referendum_5bbbf59192a21351232e2e65_0001.pdf" class="external-link uri">https://services.c2d.ch/s3_objects/referendum_5bbbf59192a21351232e2e65_0001.pdf</a></p>
 <p>I could probably write some validation fn in pkg c2d that checks all
 PDFs for text content to determine if they’re OCR’ed, but maybe there’s
-already more sophisticated software avalailable for this.</p>
+already more sophisticated software available for this.</p>
 <p>Ideally, the admin portal should ensure the minimum quality
 requirements upon upload and display an informative warning in case of
 violation (with an opt-in override to upload nevertheless).</p>

@@ -57,6 +57,7 @@ c2d::rfrnds(country_code = "AT") |>
 }
 \seealso{
 Other referendum data transformation functions:
+\code{\link{as_ballot_dates}()},
 \code{\link{printify_col_names}()}
 }
 \concept{transform}

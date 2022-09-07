@@ -4011,6 +4011,55 @@ add_world_regions <- function(data) {
                                   un_region_tier_3_name = "the name of the UN tier-3 region in which the referendum took place")
 }
 
+#' Transform to ballot-date-level observations
+#'
+#' Transforms referendum-level observations to ones on the level of ballot date and jurisdiction via [nesting][tidyr::nest] of referendum-level columns. The
+#' individual values of all the referendums on a specific ballot date in a specific jurisdiction are preserved in a list column named `rfrnd_data`.
+#'
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family transform
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(country_code = "AT") |> c2d::as_ballot_dates()
+as_ballot_dates <- function(data) {
+  
+  # ensure date col is present
+  if (!("date" %in% colnames(data))) {
+    cli::cli_abort("Unable to transform to ballot-date-level data since no {.var {date}} column is present in {.arg data}.")
+  }
+  
+  cols_to_nest <-
+    data %>%
+    colnames() %>%
+    setdiff(c("country_code",
+              "country_code_historical",
+              "country_name",
+              "subnational_entity_name",
+              "municipality",
+              "level",
+              "is_past_jurisdiction",
+              "date",
+              "week",
+              "month",
+              "quarter",
+              "year",
+              "decade",
+              "century",
+              "un_country_code",
+              "un_region_tier_1_code",
+              "un_region_tier_1_name",
+              "un_region_tier_2_code",
+              "un_region_tier_2_name",
+              "un_region_tier_3_code",
+              "un_region_tier_3_name",
+              "subregion"))
+  
+  data %>% tidyr::nest(rfrnd_data = any_of(cols_to_nest))
+}
+
 #' Count number of referendums per period
 #'
 #' Counts the number of C2D referendums per desired period, optionally by additional columns specified via `by`.
