@@ -4,19 +4,19 @@
 \alias{val_lbls}
 \title{Get the set of possible \emph{value labels} of a referendum data variable}
 \usage{
-val_lbls(v_name, incl_affixes = TRUE)
+val_lbls(var_name, incl_affixes = TRUE)
 }
 \arguments{
-\item{v_name}{A variable name. Must be one of the column names of \code{\link{data_codebook}}.}
+\item{var_name}{A variable name. Must be one of the column names of \code{\link{data_codebook}}.}
 
 \item{incl_affixes}{Whether or not to add the corresponding \code{value_label_prefix} and \code{value_label_suffix} to the returned labels.}
 }
 \value{
-A character vector. Of length \code{0} if \code{v_name}'s values are not restricted to a predefined set or no value labels are defined in the
+A character vector. Of length \code{0} if \code{var_name}'s values are not restricted to a predefined set or no value labels are defined in the
 \link[=data_codebook]{codebook}.
 }
 \description{
-Returns a character vector of value labels of a specific \code{\link[=rfrnds]{rfrnds()}} column, in the same order as \code{\link[=v_vals]{v_vals()}}, or of length \code{0} if \code{v_name}'s values are
+Returns a character vector of value labels of a specific \code{\link[=rfrnds]{rfrnds()}} column, in the same order as \code{\link[=var_vals]{var_vals()}}, or of length \code{0} if \code{var_name}'s values are
 not restricted to a predefined set or no value labels are defined in the \link[=data_codebook]{codebook}.
 }
 \examples{
@@ -30,7 +30,7 @@ c2d::val_lbls("result") |> pal::sentenceify()
 \seealso{
 Other referendum metadata functions:
 \code{\link{data_codebook}},
-\code{\link{printify_v_names}()},
-\code{\link{v_vals}()}
+\code{\link{printify_var_names}()},
+\code{\link{var_vals}()}
 }
 \concept{metadata}

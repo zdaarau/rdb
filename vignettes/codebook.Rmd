@@ -18,10 +18,11 @@ vignette: >
 For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the individual referendum.
 
 ```{r}
-#| label: referendum-level-vx
+#| label: referendum-level-vars
 #| echo: false
 #| results: asis
 #| message: false
+
 # setup
 library(rlang)
 library(magrittr)
@@ -64,10 +65,10 @@ strip_anchors <- function(x) {
 }
 
 ## assemble variable sections in Markdown
-v_sections <- function(data,
-                       # useful when target format doesn't support them like GFM in roxygen2 documentation
-                       strip_extended_pandoc = FALSE,
-                       strip_anchors = FALSE) {
+var_sections <- function(data,
+                         # useful when target format doesn't support them like GFM in roxygen2 documentation
+                         strip_extended_pandoc = FALSE,
+                         strip_anchors = FALSE) {
   
   data %>% purrr::pmap(function(variable_name,
                                 variable_name_print,
@@ -198,17 +199,18 @@ c2d::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_",
                                     negate = TRUE)) %>%
-  v_sections(strip_extended_pandoc = !to_pandoc,
-             strip_anchors = !to_pandoc) %>%
+  var_sections(strip_extended_pandoc = !to_pandoc,
+               strip_anchors = !to_pandoc) %>%
   pal::cat_lines()
 ```
 
 ## Institution-level variables
 
 ```{r}
-#| label: institution-level-vx
+#| label: institution-level-vars
 #| echo: false
 #| results: asis
+
 "For the following variables, the [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is the referendum's *institutional instrument*, a
 combination of the referendum's [`type`](#type) and the jurisdiction it took place.
 
@@ -232,8 +234,8 @@ specific legal setting is in force).
 c2d::data_codebook %>%
   dplyr::filter(stringr::str_detect(string = variable_name,
                                     pattern = "^inst_")) %>%
-  v_sections(strip_extended_pandoc = !to_pandoc,
-             strip_anchors = !to_pandoc) %>%
+  var_sections(strip_extended_pandoc = !to_pandoc,
+               strip_anchors = !to_pandoc) %>%
   pal::cat_lines()
 ```
 
@@ -242,6 +244,7 @@ c2d::data_codebook %>%
 #| echo: false
 #| results: asis
 #| include: !expr to_pandoc
+
 cat("
 [^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/hoist.html) to convert data containing such a variable to long format. To unnest `tags_tier_1` to `tag_tier_1` for example, use:
 

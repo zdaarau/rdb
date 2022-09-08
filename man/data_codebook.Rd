@@ -1604,9 +1604,9 @@ c2d::data_codebook
 }
 \seealso{
 Other referendum metadata functions:
-\code{\link{printify_v_names}()},
-\code{\link{v_vals}()},
-\code{\link{val_lbls}()}
+\code{\link{printify_var_names}()},
+\code{\link{val_lbls}()},
+\code{\link{var_vals}()}
 }
 \concept{metadata}
 \keyword{datasets}

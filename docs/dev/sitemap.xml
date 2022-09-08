@@ -94,7 +94,7 @@
     <loc>https://rpkg.dev/c2d/reference/printify_col_names.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/printify_v_names.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/printify_var_names.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/read_toml.html</loc>
@@ -136,13 +136,13 @@
     <loc>https://rpkg.dev/c2d/reference/url_website.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/v_vals.html</loc>
-  </url>
-  <url>
     <loc>https://rpkg.dev/c2d/reference/val_lbls.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/validate_rfrnds.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/var_vals.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/articles/codebook.html</loc>

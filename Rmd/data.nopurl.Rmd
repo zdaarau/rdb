@@ -291,12 +291,12 @@ un_regions <-
                   un_country_code)
 ```
 
-## `v_lbls`
+## `var_lbls`
 
 Only for performance-reasons.
 
 ```{r}
-v_lbls <-
+var_lbls <-
   data_codebook$variable_label %>%
   pal::strip_md() %>%
   as.list() %>%
@@ -346,7 +346,7 @@ usethis::use_data(data_codebook,
                   tags_tier_2_,
                   tags_tier_3_,
                   un_regions,
-                  v_lbls,
+                  var_lbls,
                   val_set,
                   internal = TRUE,
                   overwrite = TRUE,

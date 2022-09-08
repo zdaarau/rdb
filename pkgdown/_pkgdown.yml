@@ -44,8 +44,8 @@ reference:
 - contents:
   - data_codebook
   - val_lbls
-  - v_vals
-  - printify_v_names
+  - var_vals
+  - printify_var_names
 - title: Tags
   desc: Functions to work with referendum [tags](https://rpkg.dev/c2d/articles/codebook.html#tags).
 - contents:

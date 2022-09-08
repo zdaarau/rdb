@@ -246,12 +246,12 @@ assemble_query_filter <- function(country_code = NULL,
                                 null.ok = TRUE)
     purrr::map_chr(.x = level,
                    .f = checkmate::assert_choice,
-                   choices = v_vals("level"),
+                   choices = var_vals("level"),
                    null.ok = TRUE,
                    .var.name = "level")
     purrr::map_chr(.x = type,
                    .f = checkmate::assert_choice,
-                   choices = v_vals("type"),
+                   choices = var_vals("type"),
                    null.ok = TRUE,
                    .var.name = "type")
     checkmate::assert_flag(is_draft,
@@ -372,7 +372,7 @@ assert_cols_valid <- function(data,
   if ("level" %in% colnames(data)) {
     
     check <- checkmate::check_subset(as.character(data$level),
-                                     choices = v_vals("level"))
+                                     choices = var_vals("level"))
     if (!isTRUE(check)) {
       cli::cli_progress_done(id = cli_progress_id,
                              result = "failed")
@@ -511,7 +511,7 @@ assert_cols_valid <- function(data,
                     "national referendums. Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal_votes_per_subterritory}}."))
     }
   }
-  ### non-list vx
+  ### non-list vars
   c("lower_house_yes",
     "lower_house_no",
     "lower_house_abstentions",
@@ -519,14 +519,14 @@ assert_cols_valid <- function(data,
     "upper_house_no",
     "upper_house_abstentions",
     "position_government") %>%
-    purrr::walk(function(v_name) {
+    purrr::walk(function(var_name) {
       
-      if (all(c(v_name, "level", "country_code") %in% colnames(data))) {
+      if (all(c(var_name, "level", "country_code") %in% colnames(data))) {
         
         ix_illegal <-
           data %>%
           tibble::rowid_to_column() %>%
-          dplyr::filter((level != "national" | country_code != "CH") & !is.na(!!as.symbol(v_name))) %$%
+          dplyr::filter((level != "national" | country_code != "CH") & !is.na(!!as.symbol(var_name))) %$%
           rowid
         
         n_illegal <- length(ix_illegal)
@@ -534,7 +534,7 @@ assert_cols_valid <- function(data,
         if (n_illegal) {
           cli::cli_progress_done(id = cli_progress_id,
                                  result = "failed")
-          action(paste0("{n_illegal} row{?s} in {.arg data} {?has/have} a {.var {v_name}} set although {cli::qty(n_illegal)}{?it is not a/they are not} Swiss",
+          action(paste0("{n_illegal} row{?s} in {.arg data} {?has/have} a {.var {var_name}} set although {cli::qty(n_illegal)}{?it is not a/they are not} Swiss",
                         " national referendum{?s}. Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal}}."))
         }
       }
@@ -643,9 +643,9 @@ auth_session <- function(email = pal::pkg_config_val(key = "api_username",
   invisible(token)
 }
 
-codebook_url <- function(v_names) {
+codebook_url <- function(var_names) {
   
-  v_names %>% paste0("[`", ., "`](https://rpkg.dev/c2d/articles/codebook.html#", ., ")")
+  var_names %>% paste0("[`", ., "`](https://rpkg.dev/c2d/articles/codebook.html#", ., ")")
 }
 
 country_code_to_name <- function(country_code,
@@ -678,13 +678,13 @@ country_code_to_name <- function(country_code,
                   })
 }
 
-field_to_v_name <- function(x) {
+field_to_var_name <- function(x) {
   
-  x %>% purrr::map_chr(~ v_names[[.x]] %||% .x)
+  x %>% purrr::map_chr(~ var_names[[.x]] %||% .x)
 }
 
-derive_country_vx <- function(country_code,
-                              date) {
+derive_country_vars <- function(country_code,
+                                date) {
   
   country_code %<>% as.character()
   
@@ -721,8 +721,8 @@ derive_country_vx <- function(country_code,
        country_code_historical = country_code_historical)
 }
 
-drop_disabled_vx <- function(data,
-                             to_drop) {
+drop_disabled_vars <- function(data,
+                               to_drop) {
   
   to_drop_present <- intersect(to_drop, colnames(data))
   n_to_drop_present <- length(to_drop_present)
@@ -738,8 +738,8 @@ drop_disabled_vx <- function(data,
   data
 }
 
-drop_implicit_vx <- function(data,
-                             type = c("add", "edit")) {
+drop_implicit_vars <- function(data,
+                               type = c("add", "edit")) {
   
   type <- rlang::arg_match(type)
   
@@ -752,7 +752,7 @@ drop_implicit_vx <- function(data,
   data %>% dplyr::select(-any_of(to_drop))
 }
 
-drop_non_applicable_vx <- function(data) {
+drop_non_applicable_vars <- function(data) {
   
   if ("level" %in% colnames(data)) {
     
@@ -1054,7 +1054,7 @@ tidy_rfrnds <- function(data,
       
       data %<>%
         # rename variables (mind that the MongoDB-based API doesn't demand a fixed schema)
-        rename_from_list(names_list = v_names) %>%
+        rename_from_list(names_list = var_names) %>%
         # create/recode variables
         dplyr::mutate(
           # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
@@ -1198,7 +1198,7 @@ tidy_rfrnds <- function(data,
                                                              purrr::modify_in(.where = "date",
                                                                               .f = parse_datetime) %>%
                                                              # change subvariable names
-                                                             rename_from_list(names_list = sub_v_names$files))))
+                                                             rename_from_list(names_list = sub_var_names$files))))
       
       # complement `id_official` and `id_sudd` (a two-letter country code plus a 6-digit number) by old `number`
       # TODO: once [issue #?](https://github.com/ccmdesign/c2d-app/issues/?) is resolved:
@@ -1294,7 +1294,7 @@ tidy_rfrnds <- function(data,
                   dplyr::across(any_of("archive"),
                                 ~ .x %>% purrr::map(~ { if (length(.x)) tibble::as_tibble(.x) else NULL }))) %>%
     # add variable labels (must be done at last since mutations above drop attrs)
-    labelled::set_variable_labels(.labels = v_lbls,
+    labelled::set_variable_labels(.labels = var_lbls,
                                   .strict = FALSE)
 }
 
@@ -1323,8 +1323,8 @@ untidy_rfrnds <- function(data,
                           as_tibble = FALSE) {
   
   checkmate::assert_flag(as_tibble)
-  v_names_inverse <- names(v_names) %>% magrittr::set_names(purrr::flatten_chr(v_names))
-  sub_v_names_files_inverse <- names(sub_v_names$files) %>% magrittr::set_names(purrr::flatten_chr(sub_v_names$files))
+  var_names_inverse <- names(var_names) %>% magrittr::set_names(purrr::flatten_chr(var_names))
+  sub_var_names_files_inverse <- names(sub_var_names$files) %>% magrittr::set_names(purrr::flatten_chr(sub_var_names$files))
   
   # restore `number`
   if (all(c("id_official", "id_sudd") %in% colnames(data))) {
@@ -1362,7 +1362,7 @@ untidy_rfrnds <- function(data,
                         .x$date_time_attached %<>% untidy_date()
                       }
                       
-                      .x %<>% rename_from_list(names_list = sub_v_names_files_inverse)
+                      .x %<>% rename_from_list(names_list = sub_var_names_files_inverse)
                     }),
       ## `inst_topics_excluded`
       dplyr::across(.cols = any_of("inst_topics_excluded"),
@@ -1464,14 +1464,14 @@ untidy_rfrnds <- function(data,
                     tidyr::replace_na,
                     replace = ""),
       ## implicit NAs (i.e. 'not provided' (-2))
-      dplyr::across(where(is.integer) & !any_of(field_to_v_name(union(rfrnd_fields$required_for_additions, rfrnd_fields$required_for_edits))),
+      dplyr::across(where(is.integer) & !any_of(field_to_var_name(union(rfrnd_fields$required_for_additions, rfrnd_fields$required_for_edits))),
                     tidyr::replace_na,
                     replace = -2L),
       ## explicit NAs (i.e. 'unknown' (-1))
       dplyr::across(any_of("result"),
                     tidyr::replace_na,
                     replace = "Unknown"),
-      dplyr::across(where(is.integer) & any_of(field_to_v_name(union(rfrnd_fields$required_for_additions, rfrnd_fields$required_for_edits))),
+      dplyr::across(where(is.integer) & any_of(field_to_var_name(union(rfrnd_fields$required_for_additions, rfrnd_fields$required_for_edits))),
                     tidyr::replace_na,
                     replace = -1L),
       dplyr::across(any_of(c("subterritories_yes", "subterritories_no")),
@@ -1479,25 +1479,25 @@ untidy_rfrnds <- function(data,
                     replace = -1.0)
     ) %>%
     # restore variable names
-    rename_from_list(names_list = v_names_inverse)
+    rename_from_list(names_list = var_names_inverse)
   
   # restore `tags`
-  tags_v_names <- paste0("tags_tier_", 1:3)
-  tags_vx_present <- tags_v_names %in% colnames(data)
+  tags_var_names <- paste0("tags_tier_", 1:3)
+  tags_vars_present <- tags_var_names %in% colnames(data)
   
-  if (any(tags_vx_present)) {
+  if (any(tags_vars_present)) {
     
-    if (!all(tags_vx_present)) {
-      tags_vx_missing <- tags_v_names %>% setdiff(tags_vx_present)
-      cli::cli_abort(paste0("{cli::qty(tags_vx_missing)}The following {.var {'tags_tier_#'}} variable{?s} {?is/are} missing from {.arg data}: ",
-                            "{.var {tags_vx_missing}}"))
+    if (!all(tags_vars_present)) {
+      tags_vars_missing <- tags_var_names %>% setdiff(tags_vars_present)
+      cli::cli_abort(paste0("{cli::qty(tags_vars_missing)}The following {.var {'tags_tier_#'}} variable{?s} {?is/are} missing from {.arg data}: ",
+                            "{.var {tags_vars_missing}}"))
     }
     
     data %<>%
       dplyr::mutate(tags = restore_tags(tags_tier_1,
                                         tags_tier_2,
                                         tags_tier_3)) %>%
-      dplyr::select(-any_of(tags_v_names))
+      dplyr::select(-any_of(tags_var_names))
   }
   
   data %<>%
@@ -1515,19 +1515,19 @@ untidy_rfrnds <- function(data,
     
     # restore nested structure
     categories_fields_present <-
-      names(v_names) %>%
+      names(var_names) %>%
       stringr::str_subset(pattern = "^categories\\.") %>%
       stringr::str_remove(pattern = "^categories\\.") %>%
       intersect(colnames(data))
     
     context_fields_present <-
-      names(v_names) %>%
+      names(var_names) %>%
       stringr::str_subset(pattern = "^context\\.") %>%
       stringr::str_remove(pattern = "^context\\.") %>%
       intersect(colnames(data))
     
     title_fields_present <-
-      names(v_names) %>%
+      names(var_names) %>%
       stringr::str_subset(pattern = "^title\\.") %>%
       stringr::str_remove(pattern = "^title\\.") %>%
       intersect(colnames(data))
@@ -1736,10 +1736,10 @@ parse_sudd_id <- function(id_sudd) {
     stringr::str_sub(end = 2L) %>%
     stringr::str_to_upper()
   
-  derive_country_vx(country_code = sudd_country_code,
-                    date = clock::date_build(year = sudd_year,
-                                             month = 1L,
-                                             day = 1L))
+  derive_country_vars(country_code = sudd_country_code,
+                      date = clock::date_build(year = sudd_year,
+                                               month = 1L,
+                                               day = 1L))
 }
 
 shorten_sudd_territory_name_de <- function(x) {
@@ -2402,56 +2402,56 @@ sudd_max_year <- pal::safe_max(sudd_years)
 sudd_min_year <- pal::safe_min(sudd_years)
 rm(sudd_years)
 
-                # old name                                               new name
-v_names <- list("_id"                                                  = "id",
-                "canton"                                               = "subnational_entity_name",
-                "title.de"                                             = "title_de",
-                "title.en"                                             = "title_en",
-                "title.fr"                                             = "title_fr",
-                "context.states_no"                                    = "subterritories_no",
-                "context.states_yes"                                   = "subterritories_yes",
-                "total_electorate"                                     = "electorate_total",
-                "citizens_abroad"                                      = "electorate_abroad",
-                "context.votes_per_canton"                             = "votes_per_subterritory",
-                "context.national_council_yes"                         = "lower_house_yes",
-                "context.national_council_no"                          = "lower_house_no",
-                "context.national_council_abstentions"                 = "lower_house_abstentions",
-                "context.states_council_yes"                           = "upper_house_yes",
-                "context.states_council_no"                            = "upper_house_no",
-                "context.states_council_abstentions"                   = "upper_house_abstentions",
-                "context.recommendation"                               = "position_government",
-                "draft"                                                = "is_draft",
-                "created_on"                                           = "date_time_created",
-                "institution"                                          = "type",
-                "categories.official_status"                           = "inst_legal_basis_type",
-                "categories.legal_act_type"                            = "inst_has_urgent_legal_basis",
-                "categories.vote_result_status"                        = "inst_is_binding",
-                "categories.counter_proposal"                          = "inst_is_counter_proposal",
-                "categories.vote_venue"                                = "inst_is_assembly",
-                "categories.vote_trigger"                              = "inst_trigger_type",
-                "categories.vote_trigger_actor"                        = "inst_trigger_actor",
-                "categories.vote_trigger_state_level"                  = "inst_trigger_actor_level",
-                "categories.vote_trigger_number"                       = "inst_trigger_threshold",
-                "categories.vote_trigger_time"                         = "inst_trigger_time_limit",
-                "categories.vote_object"                               = "inst_object_type",
-                "categories.author_of_the_vote_object"                 = "inst_object_author",
-                "categories.hierarchy_of_the_legal_norm"               = "inst_object_legal_level",
-                "categories.degree_of_revision"                        = "inst_object_revision_extent",
-                "categories.action"                                    = "inst_object_revision_modes",
-                "categories.referendum_text_options"                   = "inst_object_revision_divisibility",
-                "categories.turnout_quorum"                            = "inst_quorum_turnout",
-                "categories.decision_quorum"                           = "inst_quorum_approval",
-                "categories.institutional_precondition"                = "inst_has_precondition",
-                "categories.institutional_precondition_decision_actor" = "inst_precondition_actor",
-                "categories.institutional_precondition_decision"       = "inst_precondition_decision",
-                "categories.special_topics"                            = "inst_topics_only",
-                "categories.excluded_topics"                           = "inst_topics_excluded")
+                 # old name                                                 new name
+var_names <- list("_id"                                                  = "id",
+                  "canton"                                               = "subnational_entity_name",
+                  "title.de"                                             = "title_de",
+                  "title.en"                                             = "title_en",
+                  "title.fr"                                             = "title_fr",
+                  "context.states_no"                                    = "subterritories_no",
+                  "context.states_yes"                                   = "subterritories_yes",
+                  "total_electorate"                                     = "electorate_total",
+                  "citizens_abroad"                                      = "electorate_abroad",
+                  "context.votes_per_canton"                             = "votes_per_subterritory",
+                  "context.national_council_yes"                         = "lower_house_yes",
+                  "context.national_council_no"                          = "lower_house_no",
+                  "context.national_council_abstentions"                 = "lower_house_abstentions",
+                  "context.states_council_yes"                           = "upper_house_yes",
+                  "context.states_council_no"                            = "upper_house_no",
+                  "context.states_council_abstentions"                   = "upper_house_abstentions",
+                  "context.recommendation"                               = "position_government",
+                  "draft"                                                = "is_draft",
+                  "created_on"                                           = "date_time_created",
+                  "institution"                                          = "type",
+                  "categories.official_status"                           = "inst_legal_basis_type",
+                  "categories.legal_act_type"                            = "inst_has_urgent_legal_basis",
+                  "categories.vote_result_status"                        = "inst_is_binding",
+                  "categories.counter_proposal"                          = "inst_is_counter_proposal",
+                  "categories.vote_venue"                                = "inst_is_assembly",
+                  "categories.vote_trigger"                              = "inst_trigger_type",
+                  "categories.vote_trigger_actor"                        = "inst_trigger_actor",
+                  "categories.vote_trigger_state_level"                  = "inst_trigger_actor_level",
+                  "categories.vote_trigger_number"                       = "inst_trigger_threshold",
+                  "categories.vote_trigger_time"                         = "inst_trigger_time_limit",
+                  "categories.vote_object"                               = "inst_object_type",
+                  "categories.author_of_the_vote_object"                 = "inst_object_author",
+                  "categories.hierarchy_of_the_legal_norm"               = "inst_object_legal_level",
+                  "categories.degree_of_revision"                        = "inst_object_revision_extent",
+                  "categories.action"                                    = "inst_object_revision_modes",
+                  "categories.referendum_text_options"                   = "inst_object_revision_divisibility",
+                  "categories.turnout_quorum"                            = "inst_quorum_turnout",
+                  "categories.decision_quorum"                           = "inst_quorum_approval",
+                  "categories.institutional_precondition"                = "inst_has_precondition",
+                  "categories.institutional_precondition_decision_actor" = "inst_precondition_actor",
+                  "categories.institutional_precondition_decision"       = "inst_precondition_decision",
+                  "categories.special_topics"                            = "inst_topics_only",
+                  "categories.excluded_topics"                           = "inst_topics_excluded")
 
-                                 # old name     new name
-sub_v_names <- list(files = list("date"       = "date_time_attached",
-                                 "object_key" = "s3_object_key",
-                                 "size"       = "file_size",
-                                 "deleted"    = "is_deleted"))
+                                  # old name       new name
+sub_var_names <- list(files = list("date"       = "date_time_attached",
+                                   "object_key" = "s3_object_key",
+                                   "size"       = "file_size",
+                                   "deleted"    = "is_deleted"))
 
 #' Get referendum data
 #'
@@ -2740,7 +2740,7 @@ download_file_attachment <- function(s3_object_key,
 #'
 #' @inheritParams url_api
 #' @param data The new referendum data. A [tibble][tibble::tbl_df] that in any case must contain the columns
-#' `r rfrnd_fields$required_for_additions %>% dplyr::recode(!!!v_names) %>% codebook_url() %>% pal::as_md_list()`
+#' `r rfrnd_fields$required_for_additions %>% dplyr::recode(!!!var_names) %>% codebook_url() %>% pal::as_md_list()`
 #'   
 #' plus the column [`subnational_entity_name`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) for referendums of
 #' [`level`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) below `"national"`, and the column
@@ -2773,14 +2773,14 @@ add_rfrnds <- function(data,
   
   ## ensure mandatory columns are present
   rfrnd_fields$required_for_additions %>%
-    dplyr::recode(!!!v_names) %>%
+    dplyr::recode(!!!var_names) %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
   # drop disabled variables
-  data %<>% drop_disabled_vx(to_drop = "files")
+  data %<>% drop_disabled_vars(to_drop = "files")
   
   # drop non-applicable columns (they're supposed to be absent in MongoDB)
-  data %<>% drop_non_applicable_vx()
+  data %<>% drop_non_applicable_vars()
   
   ## ensure remaining columns are valid
   assert_cols_valid(data = data,
@@ -2855,7 +2855,7 @@ add_rfrnds <- function(data,
 #'   identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
 #'   due to [current API requirements](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683), the following columns must always be supplied:
 #'   
-#'   `r rfrnd_fields$required_for_edits %>% dplyr::recode(!!!v_names) %>% setdiff("id") %>% codebook_url() %>% pal::as_md_list()`.
+#'   `r rfrnd_fields$required_for_edits %>% dplyr::recode(!!!var_names) %>% setdiff("id") %>% codebook_url() %>% pal::as_md_list()`.
 #'
 #' @return `data`, invisibly.
 #' @family rfrnd
@@ -2877,15 +2877,15 @@ edit_rfrnds <- function(data,
   
   ## ensure mandatory columns are present
   rfrnd_fields$required_for_edits %>%
-    dplyr::recode(!!!v_names) %>%
+    dplyr::recode(!!!var_names) %>%
     c("id") %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
   # drop disabled variables
-  data %<>% drop_disabled_vx(to_drop = "files")
+  data %<>% drop_disabled_vars(to_drop = "files")
   
   # drop non-applicable columns (they're absent in MongoDB)
-  data %<>% drop_non_applicable_vx()
+  data %<>% drop_non_applicable_vars()
   
   ## ensure remaining columns are valid
   assert_cols_valid(data,
@@ -3046,7 +3046,7 @@ validate_rfrnds <- function(data,
                            msg_done = paste(status_msg, "done"),
                            msg_failed = paste(status_msg, "failed"))
     
-    v_names_violated <-
+    var_names_violated <-
       data_codebook %>%
       dplyr::filter(variable_name %in% colnames(data)
                     & !is.na(applicability_constraint)) %$%
@@ -3064,37 +3064,37 @@ validate_rfrnds <- function(data,
     magrittr::extract(. %in% FALSE) %>%
     names()
     
-    n_v_names_violated <- length(v_names_violated)
+    n_var_names_violated <- length(var_names_violated)
     
-    if (n_v_names_violated) {
+    if (n_var_names_violated) {
       
       cli::cli_progress_done(result = "failed")
-      cli::cli_alert_warning("Applicability constraints are violated for {n_v_names_violated} variable{?s}:")
+      cli::cli_alert_warning("Applicability constraints are violated for {n_var_names_violated} variable{?s}:")
       
-      paste0("{.var ", v_names_violated, "}") %>%
+      paste0("{.var ", var_names_violated, "}") %>%
         magrittr::set_names(rep("x",
                                 times = length(.))) %>%
         cli::cli_bullets()
       
-      first_v_name_violated <- v_names_violated[1L]
+      first_var_name_violated <- var_names_violated[1L]
       
       cli::cli({
-        cli::cli_text("\nTo get the applicability constraint of e.g. {.var {first_v_name_violated}}, run:")
+        cli::cli_text("\nTo get the applicability constraint of e.g. {.var {first_var_name_violated}}, run:")
         cli::cli_text("")
         cli::cli_code(c("c2d::data_codebook %>%",
-                        glue::glue("  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%"),
+                        glue::glue("  dplyr::filter(variable_name == \"{first_var_name_violated}\") %$%"),
                         "  applicability_constraint"))
         cli::cli_text("")
         cli::cli_text("To inspect the entries in violation of the above applicability constraint, run:")
         cli::cli_text("")
         cli::cli_code(c("data %>%",
                         glue::glue("  dplyr::filter(c2d::data_codebook %>%\n",
-                                   "                  dplyr::filter(variable_name == \"{first_v_name_violated}\") %$%\n",
+                                   "                  dplyr::filter(variable_name == \"{first_var_name_violated}\") %$%\n",
                                    "                  applicability_constraint %>%\n",
                                    "                  parse(text = .) %>%\n",
                                    "                  eval() %>%\n",
                                    "                  magrittr::not()) %>%\n",
-                                   "  dplyr::select(id, {first_v_name_violated})",
+                                   "  dplyr::select(id, {first_var_name_violated})",
                                    .trim = FALSE)))
       })
     }
@@ -3307,13 +3307,13 @@ rfrnd_exists <- function(id,
 
 #' Get the set of possible *value labels* of a referendum data variable
 #'
-#' Returns a character vector of value labels of a specific [rfrnds()] column, in the same order as [v_vals()], or of length `0` if `v_name`'s values are
+#' Returns a character vector of value labels of a specific [rfrnds()] column, in the same order as [var_vals()], or of length `0` if `var_name`'s values are
 #' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
 #'
-#' @param v_name A variable name. Must be one of the column names of [`data_codebook`].
+#' @param var_name A variable name. Must be one of the column names of [`data_codebook`].
 #' @param incl_affixes Whether or not to add the corresponding `value_label_prefix` and `value_label_suffix` to the returned labels.
 #'
-#' @return A character vector. Of length `0` if `v_name`'s values are not restricted to a predefined set or no value labels are defined in the
+#' @return A character vector. Of length `0` if `var_name`'s values are not restricted to a predefined set or no value labels are defined in the
 #'   [codebook][data_codebook].
 #' @family metadata
 #' @export
@@ -3325,11 +3325,11 @@ rfrnd_exists <- function(id,
 #' 
 #' # Convert the labels to sentence case with trailing dot
 #' c2d::val_lbls("result") |> pal::sentenceify()
-val_lbls <- function(v_name,
+val_lbls <- function(var_name,
                      incl_affixes = TRUE) {
-  v_name <- rlang::arg_match(arg = v_name,
-                             values = data_codebook$variable_name)
-  metadata <- data_codebook %>% dplyr::filter(variable_name == !!v_name)
+  var_name <- rlang::arg_match(arg = var_name,
+                               values = data_codebook$variable_name)
+  metadata <- data_codebook %>% dplyr::filter(variable_name == !!var_name)
   result <- metadata$value_labels %>% purrr::flatten_chr()
   
   if (incl_affixes) {
@@ -3345,26 +3345,26 @@ val_lbls <- function(v_name,
 #' Returns a vector of the possible predefined values a specific column in [rfrnds()] can hold. If the variable values aren't restricted to a predefined
 #' set, `NULL` is returned.
 #'
-#' @param v_name Variable name present in [`data_codebook`]. A character scalar.
+#' @param var_name Variable name present in [`data_codebook`]. A character scalar.
 #'
 #' @return
-#' If `v_name`'s values are restricted to a predefined set and
-#' - `v_name` is *not* of type list, a vector of the same type as `v_name`.
-#' - `v_name` is of type list, a vector of the same type as the elements of `v_name`.
+#' If `var_name`'s values are restricted to a predefined set and
+#' - `var_name` is *not* of type list, a vector of the same type as `var_name`.
+#' - `var_name` is of type list, a vector of the same type as the elements of `var_name`.
 #'
 #' Else `NULL`.
 #' @family metadata
 #' @export
 #'
 #' @examples
-#' v_vals("result")
-#' v_vals("id")
-v_vals <- function(v_name) {
+#' var_vals("result")
+#' var_vals("id")
+var_vals <- function(var_name) {
   
-  v_name <- rlang::arg_match(arg = v_name,
-                             values = data_codebook$variable_name)
+  var_name <- rlang::arg_match(arg = var_name,
+                               values = data_codebook$variable_name)
   data_codebook %>%
-    dplyr::filter(variable_name == !!v_name) %$%
+    dplyr::filter(variable_name == !!var_name) %$%
     variable_values %>%
     unlist()
 }
@@ -3373,23 +3373,23 @@ v_vals <- function(v_name) {
 #'
 #' Converts referendum data variables to their ready-to-print version.
 #'
-#' @param v_names A character vector of C2D referendum data variable name(s). They must be either present in [`data_codebook`] or added by one of the [data
+#' @param var_names A character vector of C2D referendum data variable name(s). They must be either present in [`data_codebook`] or added by one of the [data
 #'   augmentation functions](https://rpkg.dev/c2d/reference/#section-augmentation).
 #'
-#' @return A character vector of the same length as `v_names`.
+#' @return A character vector of the same length as `var_names`.
 #' @seealso [printify_col_names()]
 #' @family metadata
 #' @export
 #'
 #' @examples
-#' c2d::printify_v_names("type")
-printify_v_names <- function(v_names) {
+#' c2d::printify_var_names("type")
+printify_var_names <- function(var_names) {
   
   data_codebook_ <- extend_data_codebook(data_codebook)
-  checkmate::assert_subset(v_names,
+  checkmate::assert_subset(var_names,
                            choices = data_codebook_$variable_name)
   
-  tibble::tibble(variable_name = !!v_names) %>%
+  tibble::tibble(variable_name = !!var_names) %>%
     dplyr::left_join(data_codebook_,
                      by = "variable_name") %$%
     variable_name_print
@@ -3470,18 +3470,18 @@ hierarchize_tags <- function(x) {
   
   if (!test_char) {
     
-    tag_v_names <- paste0("tags_tier_", 1:3)
+    tag_var_names <- paste0("tags_tier_", 1:3)
     test_df <- checkmate::test_data_frame(x,
                                           min.rows = 1L,
                                           max.rows = 1L)
-    has_tag_vars <- all(tag_v_names %in% colnames(x))
+    has_tag_vars <- all(tag_var_names %in% colnames(x))
     
     if (!test_df || !has_tag_vars) {
       cli::cli_abort(paste0("{.arg x} must be either a character vector of tags or a single-row data frame containing at least the columns ",
                             "{.field tags_tier_1}, {.field tags_tier_2} and {.field tags_tier_3}."))
     }
     
-    x <- unlist(x[, tag_v_names],
+    x <- unlist(x[, tag_var_names],
                 use.names = FALSE)
   }
   
@@ -3988,7 +3988,7 @@ add_world_regions <- function(data) {
                         .x
                       }
                     })) %>%
-    # remove possibly existing UN region vx
+    # remove possibly existing UN region vars
     dplyr::select(-any_of(setdiff(colnames(un_regions),
                                   "country_code"))) %>%
     # add UN regions
@@ -4443,29 +4443,29 @@ plot_tag_share_per_period <- function(data,
     data %<>% add_period(period = period)
   }
   
-  # ensure tags v is present
-  v_name_tags <- glue::glue("tags_tier_{tier}")
-  v_name_tag <- glue::glue("tag_tier_{tier}")
+  # ensure tags var is present
+  var_name_tags <- glue::glue("tags_tier_{tier}")
+  var_name_tag <- glue::glue("tag_tier_{tier}")
   
-  if (!(v_name_tags %in% colnames(data))) {
-    cli::cli_abort("Required column {.var {v_name_tags}} is missing from {.arg data}.")
+  if (!(var_name_tags %in% colnames(data))) {
+    cli::cli_abort("Required column {.var {var_name_tags}} is missing from {.arg data}.")
   }
   
   data %>%
-    # add proper count v
-    dplyr::mutate(count = if (weight_by_n_rfrnds) 1 / purrr::map_int(!!as.symbol(v_name_tags), length) else 1) %>%
+    # add proper count var
+    dplyr::mutate(count = if (weight_by_n_rfrnds) 1 / purrr::map_int(!!as.symbol(var_name_tags), length) else 1) %>%
     # transform data
-    tidyr::unnest_longer(col = all_of(v_name_tags),
-                         values_to = v_name_tag,
+    tidyr::unnest_longer(col = all_of(var_name_tags),
+                         values_to = var_name_tag,
                          ptype = character()) %>%
     # calculate freqs
-    dplyr::group_by(!!as.symbol(period), !!as.symbol(v_name_tag)) %>%
+    dplyr::group_by(!!as.symbol(period), !!as.symbol(var_name_tag)) %>%
     dplyr::summarise(n = sum(count),
                      .groups = "drop") %>%
-    dplyr::mutate(!!as.symbol(v_name_tag) := factor(x = !!as.symbol(v_name_tag),
-                                                    levels = v_vals(v_name_tags))) %>%
+    dplyr::mutate(!!as.symbol(var_name_tag) := factor(x = !!as.symbol(var_name_tag),
+                                                      levels = var_vals(var_name_tags))) %>%
     # plot
-    plot_share_per_period(x = v_name_tag,
+    plot_share_per_period(x = var_name_tag,
                           period = period)
 }
 
@@ -4529,7 +4529,7 @@ tbl_n_rfrnds_per_period <- function(data,
   
   by_names_print <- ifelse(has_by,
                            names(ix_by) %>%
-                             printify_v_names() %>%
+                             printify_var_names() %>%
                              pal::wrap_chr(wrap = "*") %>%
                              paste0(collapse = "<br><br>"),
                            "")
@@ -4937,7 +4937,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
     }
     
     result %>%
-      # derive vx from `id_sudd`
+      # derive vars from `id_sudd`
       dplyr::bind_cols(.$id_sudd %>% purrr::map_dfr(parse_sudd_id)) %>%
       dplyr::mutate(is_past_jurisdiction = !is.na(country_code_historical)) %>%
       dplyr::select(id_sudd,
@@ -5011,7 +5011,7 @@ sudd_rfrnds <- function(ids_sudd,
       # add `id_sudd`
       tibble::add_column(id_sudd = ids_sudd,
                          .before = 1L) %>%
-      # derive vx from `id_sudd`
+      # derive vars from `id_sudd`
       dplyr::bind_cols(ids_sudd %>% purrr::map_dfr(parse_sudd_id)) %>%
       # reorder columns
       dplyr::relocate(id_sudd,

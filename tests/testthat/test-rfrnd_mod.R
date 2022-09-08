@@ -36,7 +36,7 @@ test_rfrnd_mod <- function(use_testing_server = FALSE) {
 
       # reset vals that are later changed
       rfrnd(id = id_new) %>%
-        dplyr::select(all_of(field_to_v_name(rfrnd_fields$required_for_edits)),
+        dplyr::select(all_of(field_to_var_name(rfrnd_fields$required_for_edits)),
                       country_code,
                       result) %>%
         dplyr::mutate(result = "yes",
@@ -55,7 +55,7 @@ test_rfrnd_mod <- function(use_testing_server = FALSE) {
     ## result (plus overwriting all other fields with themselves)
     data_api %>%
       dplyr::mutate(result = fct_flip(result)) %>%
-      drop_implicit_vx(type = "edit") %>%
+      drop_implicit_vars(type = "edit") %>%
       edit_rfrnds(use_testing_server = use_testing_server) %>%
       checkmate::assert_tibble()
 
@@ -68,7 +68,7 @@ test_rfrnd_mod <- function(use_testing_server = FALSE) {
 
     ## change country_code to historical one
     data_api %>%
-      dplyr::select(all_of(field_to_v_name(rfrnd_fields$required_for_edits)),
+      dplyr::select(all_of(field_to_var_name(rfrnd_fields$required_for_edits)),
                     country_code) %>%
       dplyr::mutate(country_code = "BQAQ") %>%
       edit_rfrnds(use_testing_server = use_testing_server) %>%
