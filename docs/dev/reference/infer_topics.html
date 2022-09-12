@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Infer higher-tier tags — infer_tags • c2d</title>
+<title>Infer higher-tier topics — infer_topics • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Infer higher-tier tags — infer_tags" />
-<meta name="description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) tags corresponding to tags in the hierarchy, i.e. either tags themselves or their (grand)parent tags.">
-<meta property="og:description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) tags corresponding to tags in the hierarchy, i.e. either tags themselves or their (grand)parent tags." />
+<meta property="og:title" content="Infer higher-tier topics — infer_topics" />
+<meta name="description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) topics corresponding to topics in the hierarchy, i.e. either topics themselves or their (grand)parent topics.">
+<meta property="og:description" content="Determines the top-tier (tier = 1L) or second-tier (tier = 2L) topics corresponding to topics in the hierarchy, i.e. either topics themselves or their (grand)parent topics." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -118,28 +118,28 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Infer higher-tier tags</h1>
+    <h1>Infer higher-tier topics</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
-    <div class="hidden name"><code>infer_tags.Rd</code></div>
+    <div class="hidden name"><code>infer_topics.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Determines the top-tier (<code>tier = 1L</code>) or second-tier (<code>tier = 2L</code>) tags corresponding to <code>tags</code> in the
-<a href='data_tags.html'>hierarchy</a>, i.e. either <code>tags</code> themselves or their (grand)parent tags.</p>
+    <p>Determines the top-tier (<code>tier = 1L</code>) or second-tier (<code>tier = 2L</code>) topics corresponding to <code>topics</code> in the
+<a href='data_topics.html'>hierarchy</a>, i.e. either <code>topics</code> themselves or their (grand)parent topics.</p>
     </div>
 
-    <pre class="usage"><span><span class='fu'>infer_tags</span><span class='op'>(</span><span class='va'>tags</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></span></pre>
+    <pre class="usage"><span><span class='fu'>infer_topics</span><span class='op'>(</span><span class='va'>topics</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>tags</th>
-      <td><p>Tags from which the corresponding tags are to be determined. A factor or character vector.</p></td>
+      <th>topics</th>
+      <td><p>Topics from which the corresponding (grand)parent topics are to be determined. A factor or character vector.</p></td>
     </tr>
     <tr>
       <th>tier</th>
-      <td><p>Tier of the inferred tags. Either <code>1L</code> or <code>2L</code>.</p></td>
+      <td><p>Tier of the inferred topics. Either <code>1L</code> or <code>2L</code>.</p></td>
     </tr>
     </table>
 
@@ -148,28 +148,28 @@
     <p>A character vector.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other tag-related functions:
-<code><a href='data_tags.html'>data_tags</a></code>,
-<code><a href='hierarchize_tags_fast.html'>hierarchize_tags_fast</a>()</code>,
-<code><a href='hierarchize_tags.html'>hierarchize_tags</a>()</code>,
-<code><a href='tags.html'>tags</a>()</code></p></div>
+    <div class='dont-index'><p>Other referendum topic functions:
+<code><a href='data_topics.html'>data_topics</a></code>,
+<code><a href='hierarchize_topics_fast.html'>hierarchize_topics_fast</a>()</code>,
+<code><a href='hierarchize_topics.html'>hierarchize_topics</a>()</code>,
+<code><a href='topics.html'>topics</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,</span></span>
-<span class='r-in'><span>                tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></span></span>
+    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_topics</span><span class='op'>(</span>topics <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,</span></span>
+<span class='r-in'><span>                  tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "foreign policy"               "environment and living space"</span>
-<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,</span></span>
-<span class='r-in'><span>                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></span></span>
+<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_topics</span><span class='op'>(</span>topics <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"animal protection"</span><span class='op'>)</span>,</span></span>
+<span class='r-in'><span>                  tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "European policy" "environment"    </span>
 <span class='r-in'><span></span></span>
-<span class='r-in'><span><span class='co'># tags of different tiers can mixed in `tags`</span></span></span>
-<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"environment"</span><span class='op'>)</span>,</span></span>
-<span class='r-in'><span>                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></span></span>
+<span class='r-in'><span><span class='co'># topics of different tiers can mixed in `topics`</span></span></span>
+<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_topics</span><span class='op'>(</span>topics <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"EU"</span>, <span class='st'>"environment"</span><span class='op'>)</span>,</span></span>
+<span class='r-in'><span>                  tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "European policy" "environment"    </span>
 <span class='r-in'><span></span></span>
-<span class='r-in'><span><span class='co'># but `tags` of a higher tier than `tier` will be ignored</span></span></span>
-<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_tags</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='st'>"foreign policy"</span>,</span></span>
-<span class='r-in'><span>                tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></span></span>
+<span class='r-in'><span><span class='co'># but `topics` of a higher tier than `tier` will be ignored</span></span></span>
+<span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>infer_topics</span><span class='op'>(</span>topics <span class='op'>=</span> <span class='st'>"foreign policy"</span>,</span></span>
+<span class='r-in'><span>                  tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> character(0)</span>
 </pre>
   </div>

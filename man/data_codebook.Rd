@@ -51,7 +51,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 \subsection{\code{country_code}}{
 
-The two-letter \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} code identifying the country in which the referendum took place; only set if \code{is_past_jurisdiction = FALSE}.
+The two- or four-letter code identifying the country in which the referendum took place; an \href{https://en.wikipedia.org/wiki/ISO_3166-3}{ISO 3166-3 alpha-4 code} for historical countries which ceased to exist, otherwise an \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2 code}.
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
@@ -59,9 +59,29 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
-\subsection{\code{country_code_historical}}{
+\subsection{\code{country_code_long}}{
 
-The four-letter \href{https://en.wikipedia.org/wiki/ISO_3166-3}{ISO 3166-3} code identifying the \emph{historical} (i.e. ceased to exist) country in which the referendum took place; only set if \code{is_past_jurisdiction = TRUE}.
+The three-letter ISO 3166-1 alpha-3 code identifying the country in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_country_code_long]{add_country_code_long()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
+\subsection{\code{country_code_continual}}{
+
+The current or future \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} code of the country where the referendum took place; identical to \code{country_code} if the country still exists, otherwise the \code{country_code} of the successor country (the largest one in terms of population if it was succeeded by multiple countries).
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_country_code_continual]{add_country_code_continual()}}.
+}
+
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
@@ -72,6 +92,21 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 \subsection{\code{country_name}}{
 
 The English name of the country in which the referendum took place.
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
+\subsection{\code{country_name_long}}{
+
+The official full English name(s) of the country in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_country_name_long]{add_country_name_long()}}.
+}
+
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
@@ -115,6 +150,111 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
+\subsection{\code{un_country_code}}{
+
+The UN M49 code of the country in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
+\subsection{\code{un_region_tier_1_code}}{
+
+The area code of the UN tier-1 region in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
+\subsection{\code{un_region_tier_1_name}}{
+
+The name of the UN tier-1 region in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
+\subsection{\code{un_region_tier_2_code}}{
+
+The area code of the UN tier-2 region in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
+\subsection{\code{un_region_tier_2_name}}{
+
+The name of the UN tier-2 region in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
+\subsection{\code{un_region_tier_3_code}}{
+
+The area code of the UN tier-3 region in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
+\subsection{\code{un_region_tier_3_name}}{
+
+The name of the UN tier-3 region in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
 \subsection{\code{level}}{
 
 The political level at which the referendum took place.
@@ -134,9 +274,109 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
-\subsection{\code{is_past_jurisdiction}}{
+\subsection{\code{date}}{
 
-Whether or not the country where the referendum took place ceased to exist and thus has a \code{country_code_historical} instead of a \code{country_code} assigned.
+The date on which the referendum took place.
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
+}
+
+}
+
+\subsection{\code{week}}{
+
+The week number (1–53) in which the referendum was held.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#date}{\code{date}} and can be generated on demand via \code{\link[=add_period]{add_period()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
+}
+
+}
+
+\subsection{\code{month}}{
+
+The month number (1–12) in which the referendum was held.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#date}{\code{date}} and can be generated on demand via \code{\link[=add_period]{add_period()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
+}
+
+}
+
+\subsection{\code{quarter}}{
+
+The quarter number (1–4) in which the referendum was held.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#date}{\code{date}} and can be generated on demand via \code{\link[=add_period]{add_period()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
+}
+
+}
+
+\subsection{\code{year}}{
+
+The year in which the referendum was held.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#date}{\code{date}} and can be generated on demand via \code{\link[=add_period]{add_period()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
+}
+
+}
+
+\subsection{\code{decade}}{
+
+The decade in which the referendum was held.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#date}{\code{date}} and can be generated on demand via \code{\link[=add_period]{add_period()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
+}
+
+}
+
+\subsection{\code{century}}{
+
+The century in which the referendum was held.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#date}{\code{date}} and can be generated on demand via \code{\link[=add_period]{add_period()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
+}
+
+}
+
+\subsection{\code{is_former_country}}{
+
+Whether or not the country where the referendum took place ceased to exist and thus has an \href{https://en.wikipedia.org/wiki/ISO_3166-3}{ISO 3166-3 alpha-4} instead of an \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} \code{country_code}.
 \subsection{Possible values}{\tabular{l}{
    Value \cr
    \code{TRUE} \cr
@@ -152,19 +392,19 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
-\subsection{\code{date}}{
+\subsection{\code{title_en}}{
 
-The date on which the referendum took place.
+The referendum proposal's English title.
 \subsection{Level of measurement}{
 
-This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{interval} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
 }
 
 \subsection{\code{title_de}}{
 
-The referendum's German title.
+The referendum proposal's German title.
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
@@ -174,17 +414,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 \subsection{\code{title_fr}}{
 
-The referendum's French title.
-\subsection{Level of measurement}{
-
-This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
-}
-
-}
-
-\subsection{\code{title_en}}{
-
-The referendum's English title.
+The referendum proposal's French title.
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
@@ -194,7 +424,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 \subsection{\code{question}}{
 
-The question exactly as it was asked in the referendum.
+The proposal question exactly as it was asked in the referendum.
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
@@ -214,7 +444,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 \subsection{\code{committee_name}}{
 
-The name of the committee that initiated the referendum.
+The name of the committee that initiated the referendum proposal.
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
@@ -242,7 +472,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 \subsection{\code{subterritories_yes}}{
 
-The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one level below \code{level} that approved the referendum.
+The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one level below \code{level} that approved the referendum proposal.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
@@ -260,7 +490,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 \subsection{\code{subterritories_no}}{
 
-The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one level below \code{level} that rejected the referendum.
+The number of \href{https://en.wikipedia.org/wiki/Administrative_division}{administrative divisions} one level below \code{level} that rejected the referendum proposal.
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
@@ -354,6 +584,21 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
+\subsection{\code{turnout}}{
+
+The voter turnout at the referendum.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#votes_yes}{\code{votes_yes}}, \href{https://rpkg.dev/c2d/articles/codebook.html#votes_no}{\code{votes_no}}, \href{https://rpkg.dev/c2d/articles/codebook.html#votes_empty}{\code{votes_empty}}, \href{https://rpkg.dev/c2d/articles/codebook.html#votes_invalid}{\code{votes_invalid}} and \href{https://rpkg.dev/c2d/articles/codebook.html#electorate_total}{\code{electorate_total}} and can be generated on demand via \code{\link[=add_turnout]{add_turnout()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{ratio} level.
+}
+
+}
+
 \subsection{\code{lower_house_yes}}{
 
 The number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; in \href{https://en.wikipedia.org/wiki/Bicameralism}{bicameral legislatures}, this number includes only members of the \emph{lower house}, in \href{https://en.wikipedia.org/wiki/Unicameralism}{unicameral legislatures} all parliamentarians; currently only filled for Swiss referendums on the national level (\href{https://en.wikipedia.org/wiki/National_Council_(Switzerland)}{National Council}).
@@ -419,8 +664,8 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 The government's recommendation on how to vote in the referendum.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"yes"} \tab The government recommends to approve the referendum. \cr
-   \code{"no"} \tab The government recommends to reject the referendum. \cr
+   \code{"yes"} \tab The government recommends to approve the referendum proposal. \cr
+   \code{"no"} \tab The government recommends to reject the referendum proposal. \cr
 }
 
 }
@@ -432,9 +677,9 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
-\subsection{Tags}{
+\subsection{Topics}{
 
-The tags (political topics) are organized on a three-tier hierarchy as follows:
+The political topics to classify referendums are organized on a three-tier hierarchy as follows:
 \itemize{
 \item state organisation
 \itemize{
@@ -691,10 +936,10 @@ The tags (political topics) are organized on a three-tier hierarchy as follows:
 }
 }
 
-The hierarchical relations between the three tag variables \code{tags_tier_1}, \code{tags_tier_2} and \code{tags_tier_3} can be reconstructed at any time using \href{https://rpkg.dev/c2d/reference/hierarchize_tags.html}{\code{hierarchize_tags()}}. This function can also be used to simply determine the parent tag(s) of any tag.
-\subsection{\code{tags_tier_1}}{
+The hierarchical relations between the three topic variables \code{topics_tier_1}, \code{topics_tier_2} and \code{topics_tier_3} can be reconstructed at any time using \href{https://rpkg.dev/c2d/reference/hierarchize_topics.html}{\code{hierarchize_topics()}}. This function can also be used to simply determine the parent topic(s) of any topic.
+\subsection{\code{topics_tier_1}}{
 
-A maximum of 3 predefined top-tier political topics that best classify the referendum.
+A maximum of 3 predefined top-tier political topics that best classify the referendum proposal.
 }
 
 \subsection{Possible values}{\tabular{l}{
@@ -722,9 +967,9 @@ A maximum of 3 predefined top-tier political topics that best classify the refer
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
-\subsection{\code{tags_tier_2}}{
+\subsection{\code{topics_tier_2}}{
 
-A maximum of 3 predefined second-tier political topics that best classify the referendum; the presence of a second-tier topic always implies presence of its parent top-tier topic.
+A maximum of 3 predefined second-tier political topics that best classify the referendum proposal; the presence of a second-tier topic always implies presence of its parent top-tier topic.
 }
 
 \subsection{Possible values}{\tabular{l}{
@@ -797,7 +1042,7 @@ A maximum of 3 predefined second-tier political topics that best classify the re
 
 This variable is only applicable under the following condition:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_2, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) \%in\% .x))
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_2, .f = ~ all(c2d::infer_topics(topics = .y, tier = 1L) \%in\% .x))
 }\if{html}{\out{</div>}}
 }
 
@@ -806,9 +1051,9 @@ This variable is only applicable under the following condition:
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
 }
 
-\subsection{\code{tags_tier_3}}{
+\subsection{\code{topics_tier_3}}{
 
-A maximum of 3 predefined third-tier political topics that best classify the referendum; the presence of a third-tier topic always implies presence of its parent second-tier topic and grandparent top-tier topic.
+A maximum of 3 predefined third-tier political topics that best classify the referendum proposal; the presence of a third-tier topic always implies presence of its parent second-tier topic and grandparent top-tier topic.
 }
 
 \subsection{Possible values}{\tabular{l}{
@@ -928,7 +1173,7 @@ A maximum of 3 predefined third-tier political topics that best classify the ref
 
 This variable is only applicable under the following condition:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = tags_tier_2, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 2L) \%in\% .x)) & purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) \%in\% .x))
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = topics_tier_2, .y = topics_tier_3, .f = ~ all(c2d::infer_topics(topics = .y, tier = 2L) \%in\% .x)) & purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_3, .f = ~ all(c2d::infer_topics(topics = .y, tier = 1L) \%in\% .x))
 }\if{html}{\out{</div>}}
 }
 
@@ -1405,15 +1650,13 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
-\subsection{\code{inst_object_revision_divisibility}}{
+\subsection{\code{inst_is_divisible}}{
 
-The divisibility of \code{inst_object_type}.
+Whether or not \code{inst_object_type} (the proposed legal text) may be split up so voters can decide upon these parts separately.
 \subsection{Possible values}{\tabular{ll}{
    Value \tab Meaning \cr
-   \code{"as a whole"} \tab The proposed legal text can only be accepted/rejected as a whole. \cr
-   \code{"split up"} \tab The proposed legal text can be split up, the voters may vote upon these parts separately. \cr
-   \code{"as variants"} \tab The proposed legal text can be presented as two or more (alternative) variants. \cr
-   \code{"both split up and as variants"} \tab The proposed legal text can be both split up as well as presented as two or more (alternative) variants. \cr
+   \code{TRUE} \tab The proposed legal text may be split up. \cr
+   \code{FALSE} \tab The proposed legal text may not be split up. \cr
 }
 
 }
@@ -1428,7 +1671,33 @@ This variable is only applicable under the following condition:
 
 \subsection{Level of measurement}{
 
-This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
+}
+
+}
+
+\subsection{\code{inst_is_variable}}{
+
+Whether or not the proposed legal text may be presented in two or more (alternative) variants for voters to choose amongst.
+\subsection{Possible values}{\tabular{ll}{
+   Value \tab Meaning \cr
+   \code{TRUE} \tab The proposed legal text may be presented in variants. \cr
+   \code{FALSE} \tab The proposed legal text may not be presented in variants. \cr
+}
+
+}
+
+\subsection{Applicability constraint}{
+
+This variable is only applicable under the following condition:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{inst_object_type \%in\% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')
+}\if{html}{\out{</div>}}
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal (binary)} level.
 }
 
 }

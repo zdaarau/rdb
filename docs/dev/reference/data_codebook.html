@@ -173,17 +173,37 @@
 <h4 class='hasAnchor' id='list-country-code-'><a class='anchor' href='#list-country-code-'></a><code>country_code</code></h4>
 
 
-<p>The two-letter <a href='https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>ISO 3166-1 alpha-2</a> code identifying the country in which the referendum took place; only set if <code>is_past_jurisdiction = FALSE</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The two- or four-letter code identifying the country in which the referendum took place; an <a href='https://en.wikipedia.org/wiki/ISO_3166-3'>ISO 3166-3 alpha-4 code</a> for historical countries which ceased to exist, otherwise an <a href='https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>ISO 3166-1 alpha-2 code</a>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
-<h4 class='hasAnchor' id='list-country-code-historical-'><a class='anchor' href='#list-country-code-historical-'></a><code>country_code_historical</code></h4>
+<h4 class='hasAnchor' id='list-country-code-long-'><a class='anchor' href='#list-country-code-long-'></a><code>country_code_long</code></h4>
 
 
-<p>The four-letter <a href='https://en.wikipedia.org/wiki/ISO_3166-3'>ISO 3166-3</a> code identifying the <em>historical</em> (i.e. ceased to exist) country in which the referendum took place; only set if <code>is_past_jurisdiction = TRUE</code>.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The three-letter ISO 3166-1 alpha-3 code identifying the country in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_country_code_long.html'>add_country_code_long()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-country-code-continual-'><a class='anchor' href='#list-country-code-continual-'></a><code>country_code_continual</code></h4>
+
+
+<p>The current or future <a href='https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>ISO 3166-1 alpha-2</a> code of the country where the referendum took place; identical to <code>country_code</code> if the country still exists, otherwise the <code>country_code</code> of the successor country (the largest one in terms of population if it was succeeded by multiple countries).</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_country_code_continual.html'>add_country_code_continual()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
@@ -194,6 +214,21 @@
 
 
 <p>The English name of the country in which the referendum took place.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-country-name-long-'><a class='anchor' href='#list-country-name-long-'></a><code>country_name_long</code></h4>
+
+
+<p>The official full English name(s) of the country in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_country_name_long.html'>add_country_name_long()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
@@ -232,6 +267,111 @@
 
 
 
+<h4 class='hasAnchor' id='list-un-country-code-'><a class='anchor' href='#list-un-country-code-'></a><code>un_country_code</code></h4>
+
+
+<p>The UN M49 code of the country in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-un-region-tier-code-'><a class='anchor' href='#list-un-region-tier-code-'></a><code>un_region_tier_1_code</code></h4>
+
+
+<p>The area code of the UN tier-1 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-un-region-tier-name-'><a class='anchor' href='#list-un-region-tier-name-'></a><code>un_region_tier_1_name</code></h4>
+
+
+<p>The name of the UN tier-1 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-un-region-tier-code-'><a class='anchor' href='#list-un-region-tier-code-'></a><code>un_region_tier_2_code</code></h4>
+
+
+<p>The area code of the UN tier-2 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-un-region-tier-name-'><a class='anchor' href='#list-un-region-tier-name-'></a><code>un_region_tier_2_name</code></h4>
+
+
+<p>The name of the UN tier-2 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-un-region-tier-code-'><a class='anchor' href='#list-un-region-tier-code-'></a><code>un_region_tier_3_code</code></h4>
+
+
+<p>The area code of the UN tier-3 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-un-region-tier-name-'><a class='anchor' href='#list-un-region-tier-name-'></a><code>un_region_tier_3_name</code></h4>
+
+
+<p>The name of the UN tier-3 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
 <h4 class='hasAnchor' id='list-level-'><a class='anchor' href='#list-level-'></a><code>level</code></h4>
 
 
@@ -253,10 +393,110 @@
 
 
 
-<h4 class='hasAnchor' id='list-is-past-jurisdiction-'><a class='anchor' href='#list-is-past-jurisdiction-'></a><code>is_past_jurisdiction</code></h4>
+<h4 class='hasAnchor' id='list-date-'><a class='anchor' href='#list-date-'></a><code>date</code></h4>
 
 
-<p>Whether or not the country where the referendum took place ceased to exist and thus has a <code>country_code_historical</code> instead of a <code>country_code</code> assigned.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>The date on which the referendum took place.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-week-'><a class='anchor' href='#list-week-'></a><code>week</code></h4>
+
+
+<p>The week number (1–53) in which the referendum was held.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#date'><code>date</code></a> and can be generated on demand via <code><a href='add_period.html'>add_period()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-month-'><a class='anchor' href='#list-month-'></a><code>month</code></h4>
+
+
+<p>The month number (1–12) in which the referendum was held.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#date'><code>date</code></a> and can be generated on demand via <code><a href='add_period.html'>add_period()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-quarter-'><a class='anchor' href='#list-quarter-'></a><code>quarter</code></h4>
+
+
+<p>The quarter number (1–4) in which the referendum was held.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#date'><code>date</code></a> and can be generated on demand via <code><a href='add_period.html'>add_period()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-year-'><a class='anchor' href='#list-year-'></a><code>year</code></h4>
+
+
+<p>The year in which the referendum was held.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#date'><code>date</code></a> and can be generated on demand via <code><a href='add_period.html'>add_period()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-decade-'><a class='anchor' href='#list-decade-'></a><code>decade</code></h4>
+
+
+<p>The decade in which the referendum was held.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#date'><code>date</code></a> and can be generated on demand via <code><a href='add_period.html'>add_period()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-century-'><a class='anchor' href='#list-century-'></a><code>century</code></h4>
+
+
+<p>The century in which the referendum was held.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#date'><code>date</code></a> and can be generated on demand via <code><a href='add_period.html'>add_period()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-is-former-country-'><a class='anchor' href='#list-is-former-country-'></a><code>is_former_country</code></h4>
+
+
+<p>Whether or not the country where the referendum took place ceased to exist and thus has an <a href='https://en.wikipedia.org/wiki/ISO_3166-3'>ISO 3166-3 alpha-4</a> instead of an <a href='https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>ISO 3166-1 alpha-2</a> <code>country_code</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td></tr>
 <tr><td><code>TRUE</code></td></tr>
@@ -274,20 +514,20 @@
 
 
 
-<h4 class='hasAnchor' id='list-date-'><a class='anchor' href='#list-date-'></a><code>date</code></h4>
+<h4 class='hasAnchor' id='list-title-en-'><a class='anchor' href='#list-title-en-'></a><code>title_en</code></h4>
 
 
-<p>The date on which the referendum took place.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The referendum proposal's English title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>interval</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
 
 
 <h4 class='hasAnchor' id='list-title-de-'><a class='anchor' href='#list-title-de-'></a><code>title_de</code></h4>
 
 
-<p>The referendum's German title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The referendum proposal's German title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
@@ -297,17 +537,7 @@
 <h4 class='hasAnchor' id='list-title-fr-'><a class='anchor' href='#list-title-fr-'></a><code>title_fr</code></h4>
 
 
-<p>The referendum's French title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
-
-
-<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
-
-
-
-<h4 class='hasAnchor' id='list-title-en-'><a class='anchor' href='#list-title-en-'></a><code>title_en</code></h4>
-
-
-<p>The referendum's English title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The referendum proposal's French title.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
@@ -317,7 +547,7 @@
 <h4 class='hasAnchor' id='list-question-'><a class='anchor' href='#list-question-'></a><code>question</code></h4>
 
 
-<p>The question exactly as it was asked in the referendum.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The proposal question exactly as it was asked in the referendum.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
@@ -337,7 +567,7 @@
 <h4 class='hasAnchor' id='list-committee-name-'><a class='anchor' href='#list-committee-name-'></a><code>committee_name</code></h4>
 
 
-<p>The name of the committee that initiated the referendum.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+<p>The name of the committee that initiated the referendum proposal.</p><h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
@@ -367,7 +597,7 @@
 <h4 class='hasAnchor' id='list-subterritories-yes-'><a class='anchor' href='#list-subterritories-yes-'></a><code>subterritories_yes</code></h4>
 
 
-<p>The number of <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative divisions</a> one level below <code>level</code> that approved the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The number of <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative divisions</a> one level below <code>level</code> that approved the referendum proposal.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:</p>
@@ -383,7 +613,7 @@
 <h4 class='hasAnchor' id='list-subterritories-no-'><a class='anchor' href='#list-subterritories-no-'></a><code>subterritories_no</code></h4>
 
 
-<p>The number of <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative divisions</a> one level below <code>level</code> that rejected the referendum.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+<p>The number of <a href='https://en.wikipedia.org/wiki/Administrative_division'>administrative divisions</a> one level below <code>level</code> that rejected the referendum proposal.</p><h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
 
 
 <p>This variable is only applicable under the following condition:</p>
@@ -472,6 +702,21 @@
 
 
 
+<h4 class='hasAnchor' id='list-turnout-'><a class='anchor' href='#list-turnout-'></a><code>turnout</code></h4>
+
+
+<p>The voter turnout at the referendum.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#votes_yes'><code>votes_yes</code></a>, <a href='https://rpkg.dev/c2d/articles/codebook.html#votes_no'><code>votes_no</code></a>, <a href='https://rpkg.dev/c2d/articles/codebook.html#votes_empty'><code>votes_empty</code></a>, <a href='https://rpkg.dev/c2d/articles/codebook.html#votes_invalid'><code>votes_invalid</code></a> and <a href='https://rpkg.dev/c2d/articles/codebook.html#electorate_total'><code>electorate_total</code></a> and can be generated on demand via <code><a href='add_turnout.html'>add_turnout()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>ratio</strong> level.</p>
+
+
+
 <h4 class='hasAnchor' id='list-lower-house-yes-'><a class='anchor' href='#list-lower-house-yes-'></a><code>lower_house_yes</code></h4>
 
 
@@ -538,8 +783,8 @@
 <p>The government's recommendation on how to vote in the referendum.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>"yes"</code></td><td>The government recommends to approve the referendum.</td></tr>
-<tr><td><code>"no"</code></td><td>The government recommends to reject the referendum.</td></tr>
+<tr><td><code>"yes"</code></td><td>The government recommends to approve the referendum proposal.</td></tr>
+<tr><td><code>"no"</code></td><td>The government recommends to reject the referendum proposal.</td></tr>
 </table>
 
 
@@ -552,10 +797,10 @@
 
 
 
-<h4 class='hasAnchor' id='tags'><a class='anchor' href='#tags'></a>Tags</h4>
+<h4 class='hasAnchor' id='topics'><a class='anchor' href='#topics'></a>Topics</h4>
 
 
-<p>The tags (political topics) are organized on a three-tier hierarchy as follows:</p><ul>
+<p>The political topics to classify referendums are organized on a three-tier hierarchy as follows:</p><ul>
 <li><p>state organisation</p><ul>
 <li><p>national identity</p></li>
 <li><p>political system</p><ul>
@@ -772,10 +1017,10 @@
 </ul></li>
 </ul>
 
-<p>The hierarchical relations between the three tag variables <code>tags_tier_1</code>, <code>tags_tier_2</code> and <code>tags_tier_3</code> can be reconstructed at any time using <a href='https://rpkg.dev/c2d/reference/hierarchize_tags.html'><code><a href='hierarchize_tags.html'>hierarchize_tags()</a></code></a>. This function can also be used to simply determine the parent tag(s) of any tag.</p><h5 class='hasAnchor' id='list-tags-tier-'><a class='anchor' href='#list-tags-tier-'></a><code>tags_tier_1</code></h5>
+<p>The hierarchical relations between the three topic variables <code>topics_tier_1</code>, <code>topics_tier_2</code> and <code>topics_tier_3</code> can be reconstructed at any time using <a href='https://rpkg.dev/c2d/reference/hierarchize_topics.html'><code><a href='hierarchize_topics.html'>hierarchize_topics()</a></code></a>. This function can also be used to simply determine the parent topic(s) of any topic.</p><h5 class='hasAnchor' id='list-topics-tier-'><a class='anchor' href='#list-topics-tier-'></a><code>topics_tier_1</code></h5>
 
 
-<p>A maximum of 3 predefined top-tier political topics that best classify the referendum.</p>
+<p>A maximum of 3 predefined top-tier political topics that best classify the referendum proposal.</p>
 
 <h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
@@ -804,10 +1049,10 @@
 
 <p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
-<h5 class='hasAnchor' id='list-tags-tier-'><a class='anchor' href='#list-tags-tier-'></a><code>tags_tier_2</code></h5>
+<h5 class='hasAnchor' id='list-topics-tier-'><a class='anchor' href='#list-topics-tier-'></a><code>topics_tier_2</code></h5>
 
 
-<p>A maximum of 3 predefined second-tier political topics that best classify the referendum; the presence of a second-tier topic always implies presence of its parent top-tier topic.</p>
+<p>A maximum of 3 predefined second-tier political topics that best classify the referendum proposal; the presence of a second-tier topic always implies presence of its parent top-tier topic.</p>
 
 <h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
@@ -881,17 +1126,17 @@
 
 
 <p>This variable is only applicable under the following condition:</p>
-<p><div class="sourceCode r"></p><pre><span><span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>tags_tier_1</span>, .y <span class='op'>=</span> <span class='va'>tags_tier_2</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_tags.html'>infer_tags</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span></span></pre><p></div></p>
+<p><div class="sourceCode r"></p><pre><span><span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>topics_tier_1</span>, .y <span class='op'>=</span> <span class='va'>topics_tier_2</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_topics.html'>infer_topics</a></span><span class='op'>(</span>topics <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span></span></pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
 <p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
 
-<h5 class='hasAnchor' id='list-tags-tier-'><a class='anchor' href='#list-tags-tier-'></a><code>tags_tier_3</code></h5>
+<h5 class='hasAnchor' id='list-topics-tier-'><a class='anchor' href='#list-topics-tier-'></a><code>topics_tier_3</code></h5>
 
 
-<p>A maximum of 3 predefined third-tier political topics that best classify the referendum; the presence of a third-tier topic always implies presence of its parent second-tier topic and grandparent top-tier topic.</p>
+<p>A maximum of 3 predefined third-tier political topics that best classify the referendum proposal; the presence of a third-tier topic always implies presence of its parent second-tier topic and grandparent top-tier topic.</p>
 
 <h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
@@ -1012,7 +1257,7 @@
 
 
 <p>This variable is only applicable under the following condition:</p>
-<p><div class="sourceCode r"></p><pre><span><span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>tags_tier_2</span>, .y <span class='op'>=</span> <span class='va'>tags_tier_3</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_tags.html'>infer_tags</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>tags_tier_1</span>, .y <span class='op'>=</span> <span class='va'>tags_tier_3</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_tags.html'>infer_tags</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span></span></pre><p></div></p>
+<p><div class="sourceCode r"></p><pre><span><span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>topics_tier_2</span>, .y <span class='op'>=</span> <span class='va'>topics_tier_3</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_topics.html'>infer_topics</a></span><span class='op'>(</span>topics <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_lgl</a></span><span class='op'>(</span>.x <span class='op'>=</span> <span class='va'>topics_tier_1</span>, .y <span class='op'>=</span> <span class='va'>topics_tier_3</span>, .f <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='infer_topics.html'>infer_topics</a></span><span class='op'>(</span>topics <span class='op'>=</span> <span class='va'>.y</span>, tier <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='va'>.x</span><span class='op'>)</span><span class='op'>)</span></span></pre><p></div></p>
 
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
@@ -1504,16 +1749,14 @@ specific legal setting is in force).</p><h4 class='hasAnchor' id='list-inst-lega
 
 
 
-<h4 class='hasAnchor' id='list-inst-object-revision-divisibility-'><a class='anchor' href='#list-inst-object-revision-divisibility-'></a><code>inst_object_revision_divisibility</code></h4>
+<h4 class='hasAnchor' id='list-inst-is-divisible-'><a class='anchor' href='#list-inst-is-divisible-'></a><code>inst_is_divisible</code></h4>
 
 
-<p>The divisibility of <code>inst_object_type</code>.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<p>Whether or not <code>inst_object_type</code> (the proposed legal text) may be split up so voters can decide upon these parts separately.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
 <table class='table'>
 <tr><td>Value</td><td>Meaning</td></tr>
-<tr><td><code>"as a whole"</code></td><td>The proposed legal text can only be accepted/rejected as a whole.</td></tr>
-<tr><td><code>"split up"</code></td><td>The proposed legal text can be split up, the voters may vote upon these parts separately.</td></tr>
-<tr><td><code>"as variants"</code></td><td>The proposed legal text can be presented as two or more (alternative) variants.</td></tr>
-<tr><td><code>"both split up and as variants"</code></td><td>The proposed legal text can be both split up as well as presented as two or more (alternative) variants.</td></tr>
+<tr><td><code>TRUE</code></td><td>The proposed legal text may be split up.</td></tr>
+<tr><td><code>FALSE</code></td><td>The proposed legal text may not be split up.</td></tr>
 </table>
 
 
@@ -1528,7 +1771,33 @@ specific legal setting is in force).</p><h4 class='hasAnchor' id='list-inst-lega
 <h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
 
 
-<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-inst-is-variable-'><a class='anchor' href='#list-inst-is-variable-'></a><code>inst_is_variable</code></h4>
+
+
+<p>Whether or not the proposed legal text may be presented in two or more (alternative) variants for voters to choose amongst.</p><h5 class='hasAnchor' id='possible-values'><a class='anchor' href='#possible-values'></a>Possible values</h5>
+<table class='table'>
+<tr><td>Value</td><td>Meaning</td></tr>
+<tr><td><code>TRUE</code></td><td>The proposed legal text may be presented in variants.</td></tr>
+<tr><td><code>FALSE</code></td><td>The proposed legal text may not be presented in variants.</td></tr>
+</table>
+
+
+
+
+<h5 class='hasAnchor' id='applicability-constraint'><a class='anchor' href='#applicability-constraint'></a>Applicability constraint</h5>
+
+
+<p>This variable is only applicable under the following condition:</p>
+<p><div class="sourceCode r"></p><pre><span><span class='va'>inst_object_type</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'question'</span>, <span class='st'>'legal text (general proposal)'</span>, <span class='st'>'legal text (formulated proposal)'</span><span class='op'>)</span></span></pre><p></div></p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal (binary)</strong> level.</p>
 
 
 
@@ -1711,24 +1980,25 @@ specific legal setting is in force).</p><h4 class='hasAnchor' id='list-inst-lega
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>data_codebook</span></span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 70 × 13</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 87 × 16</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    variable_name varia…¹ varia…² is_mu…³ is_ne…⁴ appli…⁵ varia…⁶ value…⁷ value…⁸</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> id            C2D ID  a 24-c… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> id_official   Offici… the re… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> id_sudd       sudd.c… the re… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> country_code  ISO 31… the tw… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> country_code… ISO 31… the fo… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> country_name  Country the En… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> subnational_… Subnat… the En… FALSE   FALSE   level … &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> municipality  Munici… the mu… FALSE   FALSE   level … &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> level         Politi… the po… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   The re… &lt;chr&gt;  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> is_past_juri… Past j… whethe… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;lgl&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 60 more rows, 4 more variables: value_label_suffix &lt;chr&gt;,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   value_default &lt;list&gt;, value_scale &lt;chr&gt;, ptype &lt;list&gt;, and abbreviated</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   variable names ¹​variable_name_print, ²​variable_label, ³​is_multi_valued,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁴​is_nested, ⁵​applicability_constraint, ⁶​variable_values,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁷​value_label_prefix, ⁸​value_labels</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> country_code… ISO 31… the th… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> country_code… ISO 31… the cu… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> country_name  Country the En… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> country_name… Countr… the of… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> subnational_… Subnat… the En… FALSE   FALSE   level … &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> municipality  Munici… the mu… FALSE   FALSE   level … &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 77 more rows, 7 more variables: value_label_suffix &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   value_default &lt;list&gt;, value_scale &lt;chr&gt;, ptype &lt;list&gt;, derived_from &lt;list&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   gen_fn &lt;chr&gt;, is_opt &lt;lgl&gt;, and abbreviated variable names</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ¹​variable_name_print, ²​variable_label, ³​is_multi_valued, ⁴​is_nested,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁵​applicability_constraint, ⁶​variable_values, ⁷​value_label_prefix,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁸​value_labels</span></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -32,12 +32,12 @@ utils::globalVariables(names = c(".",
                                  "children_tier_3",
                                  "Code",
                                  "committee_name",
+                                 "Common_name",
                                  "content-disposition",
                                  "count",
                                  "country_code",
-                                 "country_code_historical",
                                  "country_code_long",
-                                 "country_code_synthetic",
+                                 "country_code_continual",
                                  "country_name",
                                  "country_name_de",
                                  "country_name_long",
@@ -62,7 +62,6 @@ utils::globalVariables(names = c(".",
                                  "inst_legal_basis_type",
                                  "inst_object_author",
                                  "inst_object_legal_level",
-                                 "inst_object_revision_divisibility",
                                  "inst_object_revision_extent",
                                  "inst_object_revision_modes",
                                  "inst_object_type",
@@ -78,7 +77,8 @@ utils::globalVariables(names = c(".",
                                  "inst_trigger_time_limit",
                                  "inst_trigger_type",
                                  "is_draft",
-                                 "is_past_jurisdiction",
+                                 "is_former_country",
+                                 "is_opt",
                                  "is_testing_server",
                                  "ISO_Alpha_3",
                                  "items",
@@ -90,14 +90,16 @@ utils::globalVariables(names = c(".",
                                  "municipality",
                                  "n",
                                  "Name",
+                                 "name_long",
                                  "number",
                                  "Official_name",
                                  "Parent",
-                                 "parent_tag",
+                                 "parent_topic",
                                  "position_government",
                                  "ptype",
                                  "question",
                                  "question_en",
+                                 "referendum_text_options",
                                  "remarks",
                                  "result",
                                  "rowid",
@@ -106,13 +108,14 @@ utils::globalVariables(names = c(".",
                                  "subterritories_no",
                                  "subterritories_yes",
                                  "sudd_prefix",
-                                 "tag",
-                                 "tag_tier_1",
-                                 "tag_tier_2",
-                                 "tag_tier_3",
-                                 "tags_tier_1",
-                                 "tags_tier_2",
-                                 "tags_tier_3",
+                                 "tags",
+                                 "topic",
+                                 "topic_tier_1",
+                                 "topic_tier_2",
+                                 "topic_tier_3",
+                                 "topics_tier_1",
+                                 "topics_tier_2",
+                                 "topics_tier_3",
                                  "territory_name_de",
                                  "territory_name_de_short",
                                  "title_de",
@@ -297,6 +300,17 @@ assemble_query_filter <- function(country_code = NULL,
   query_filter
 }
 
+assert_api_success <- function(x) {
+  
+  if (!is.null(x$error$id)) {
+    cli_div_id <- cli::cli_div(theme = cli_theme)
+    cli::cli_abort("API server responded with error {.err {x$error$id}}")
+    cli::cli_end(id = cli_div_id)
+  }
+  
+  invisible(x)
+}
+
 assert_cols_absent <- function(data,
                                type) {
   
@@ -322,6 +336,8 @@ assert_cols_absent <- function(data,
                     cli::cli_abort()
                 }
               })
+  
+  invisible(data)
 }
 
 assert_cols_valid <- function(data,
@@ -543,6 +559,43 @@ assert_cols_valid <- function(data,
   invisible(data)
 }
 
+assert_content <- function(x) {
+  
+  if (!nchar(x)) {
+    cli::cli_abort("Received empty response from C2D API. Please debug.",
+                   .internal = TRUE)
+  }
+  
+  invisible(x)
+}
+
+assert_vars <- function(data,
+                        vars) {
+  
+  vars %>% purrr::walk(~ {
+    
+    msg_suffix <- switch(EXPR         = .x,
+                         country_code = " with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.",
+                         "")
+    
+    if (!(.x %in% colnames(data))) {
+      cli::cli_abort(paste0("{.arg data} must contain a column {.var {.x}}", msg_suffix))
+    }
+    
+    # run additional content check
+    assert_content <- switch(EXPR         = .x,
+                             country_code = function(x) purrr::map_chr(.x = x,
+                                                                       .f = checkmate::assert_choice,
+                                                                       choices = val_set$country_code,
+                                                                       null.ok = TRUE,
+                                                                       .var.name = "data$country_code"),
+                             function(x) TRUE)
+    assert_content(data[[.x]])
+  })
+  
+  invisible(data)
+}
+
 #' Authenticate a user session for the [C2D API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
 #'
 #' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, a [tibble][tibble::tbl_df] with the columns
@@ -648,26 +701,25 @@ codebook_url <- function(var_names) {
   var_names %>% paste0("[`", ., "`](https://rpkg.dev/c2d/articles/codebook.html#", ., ")")
 }
 
-country_code_to_name <- function(country_code,
-                                 country_code_historical = NA_character_) {
+country_code_to_name <- function(country_code) {
   
   purrr::map2_chr(.x = country_code,
-                  .y = country_code_historical,
+                  .y = nchar(country_code) > 2L,
                   .f = ~ {
                     
-                    if (is.na(.y)) {
+                    if (isTRUE(.y)) {
                       
                       result <-
-                        ISOcodes::ISO_3166_1 %>%
-                        dplyr::filter(Alpha_2 == !!.x) %$%
-                        Name
+                        data_iso_3166_3 %>%
+                        dplyr::filter(Alpha_4 == !!.x) %$%
+                        name_short
                       
                     } else {
                       
                       result <-
-                        ISOcodes::ISO_3166_3 %>%
-                        dplyr::filter(Alpha_4 == !!.y) %$%
-                        Name
+                        data_iso_3166_1 %>%
+                        dplyr::filter(Alpha_2 == !!.x) %$%
+                        name_short
                     }
                     
                     if (length(result) == 0L) {
@@ -685,40 +737,34 @@ field_to_var_name <- function(x) {
 
 derive_country_vars <- function(country_code,
                                 date) {
+  country_code %<>%
+    as.character() %>%
+    # assign canonical pseudo codes
+    dplyr::recode("KS" = "XK")
   
-  country_code %<>% as.character()
+  data_former <- data_iso_3166_3 %>% dplyr::filter(Alpha_2 == !!country_code & !!date <= Date_withdrawn)
+  is_former <- nrow(data_former) > 0L
+  is_current <- !is_former && country_code %in% data_iso_3166_1$Alpha_2
   
-  data_historical <-
-    data_iso_3166_3 %>%
-    dplyr::filter(Alpha_2 == !!country_code & !!date <= Date_withdrawn) %>%
-    purrr::when(
-      # reduce to nearest country_code retirement
-      nrow(.) > 1L ~
-        dplyr::filter(.data = .,
-                      Date_withdrawn == min(Date_withdrawn)) %>%
-        assertr::verify(nrow(.) == 1L),
-      
-      # handle obsolete country_codes
-      !(country_code %in% ISOcodes::ISO_3166_1$Alpha_2) ~
-        data_iso_3166_3 %>%
-        dplyr::filter(Alpha_2 == !!country_code) %>%
-        dplyr::filter(dplyr::row_number() == which.min(date - Date_withdrawn)) %>%
-        assertr::verify(nrow(.) < 2L),
-      
-      ~ .
-    )
-
-  country_code_proper <- dplyr::if_else(nrow(data_historical) > 0L,
-                                        NA_character_,
-                                        country_code)
+  if (!(is_former || is_current)) {
+    cli::cli_alert_warning("Neither ISO 3166-1 alpha-2 nor ISO 3166-3 alpha-4 {.var country_code} found for {.val {country_code}}.")
+  }
   
-  country_code_historical <- data_historical$Alpha_4 %>% purrr::when(length(.) == 0L ~ NA_character_,
-                                                                     ~ .)
+  country_code <-
+    country_code %>%
+    purrr::when(is_former ~
+                  data_former %>%
+                  dplyr::filter(Date_withdrawn == min(Date_withdrawn)) %>%
+                  assertr::verify(nrow(.) == 1L) %$%
+                  Alpha_4,
+                is_current ~
+                  country_code,
+                ~
+                  NA_character_)
   
-  list(country_code = country_code_proper,
-       country_name = country_code_to_name(country_code = country_code_proper,
-                                           country_code_historical = country_code_historical),
-       country_code_historical = country_code_historical)
+  list(country_code = country_code,
+       country_name = country_code_to_name(country_code),
+       is_former_country = is_former)
 }
 
 drop_disabled_vars <- function(data,
@@ -776,66 +822,13 @@ drop_non_applicable_vars <- function(data) {
   }
   
   data %<>% dplyr::select(-any_of(c(
-    # TODO: remove this as soon as [issue #82](https://github.com/ccmdesign/c2d-app/issues/82) is fixed
-    "country_code_historical",
-    "is_past_jurisdiction",
+    "files",
+    "is_former_country",
     # TODO: remove this as soon as [issue #81](https://github.com/ccmdesign/c2d-app/issues/81) is fixed
     "sources"
   )))
   
   data
-}
-
-ensure_content <- function(x) {
-  
-  if (!nchar(x)) {
-    cli::cli_abort("Received empty response from C2D API. Please debug.",
-                   .internal = TRUE)
-  }
-  
-  x
-}
-
-ensure_country_code <- function(data) {
-  
-  if (!("country_code" %in% colnames(data))) {
-    cli::cli_abort("{.arg data} must contain a column {.var country_code} with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.")
-  }
-}
-
-ensure_no_error <- function(x) {
-  
-  if (!is.null(x$error$id)) {
-    cli_div_id <- cli::cli_div(theme = cli_theme)
-    cli::cli_abort("API server responded with error {.err {x$error$id}}")
-    cli::cli_end(id = cli_div_id)
-  }
-  
-  x
-}
-
-extend_data_codebook <- function(data) {
-  
-  data %>% dplyr::bind_rows(tibble::tribble(
-    ~variable_name, ~variable_name_print,
-    # periods
-    "week",                  "Week",
-    "month",                 "Month",
-    "quarter",               "Quarter",
-    "year",                  "Year",
-    "decade",                "Decade",
-    "century",               "Century",
-    # turnout
-    "turnout",               "Turnout",
-    # world regions
-    "un_country_code",       "UN M49 country code",
-    "un_region_tier_1_code", "UN tier-1 region's M49 area code",
-    "un_region_tier_1_name", "UN tier-1 region's English name",
-    "un_region_tier_2_code", "UN tier-2 region's M49 area code",
-    "un_region_tier_2_name", "UN tier-2 region's English name",
-    "un_region_tier_3_code", "UN tier-3 region's M49 area code",
-    "un_region_tier_3_name", "UN tier-3 region's English name",
-  ))
 }
 
 fct_flip <- function(x) {
@@ -857,17 +850,6 @@ flatten_array_as_is <- function(x) {
 }
 
 
-
-insert_after <- function(x,
-                         new,
-                         after) {
-  
-  i_after <- which(x == after) %>% checkmate::assert_int()
-  
-  c(x[1:i_after],
-    new,
-    x[(i_after + 1L):length(x)])
-}
 
 is_session_expired <- function(token,
                                use_testing_server = pal::pkg_config_val(key = "use_testing_server",
@@ -908,7 +890,7 @@ lower_non_abbrs <- function(x) {
 
 order_rfrnd_cols <- function(data) {
   
-  data %>% dplyr::relocate(any_of(rfrnd_cols_order))
+  data %>% dplyr::relocate(any_of(data_codebook$variable_name))
 }
 
 parse_datetime <- function(x) {
@@ -967,13 +949,13 @@ rename_from_list <- function(x,
   }
 }
 
-tag_frequency <- function(tags,
-                          tier) {
-  tags %>%
+topic_frequency <- function(topics,
+                            tier) {
+  topics %>%
     purrr::flatten_chr() %>%
-    factor(levels = c2d::tags(tiers = tier)) %>%
-    tibble::tibble(tag = .) %>%
-    dplyr::group_by(tag) %>%
+    factor(levels = c2d::topics(tiers = tier)) %>%
+    tibble::tibble(topic = .) %>%
+    dplyr::group_by(topic) %>%
     dplyr::summarise(n = dplyr::n())
 }
 
@@ -1036,14 +1018,9 @@ tidy_rfrnds <- function(data,
       
       l
     }) %>%
-    # provisionally replace empty (but actually mandatory) fields with NAs
+    # drop empty fields
     purrr::modify_depth(.depth = 1L,
-                        .f = ~ {
-                          if (!length(.x$date_time_last_edited)) .x$date_time_last_edited <- list("$date" = NA_real_)
-                          if (!length(.x$is_past_jurisdiction)) .x$is_past_jurisdiction <- NA
-                          if (!length(.x$country_code_historical)) .x$country_code_historical <- NA_character_
-                          .x
-                        }) %>%
+                        .f = purrr::compact) %>%
     # convert to tibble
     purrr::map_dfr(tibble::as_tibble_row)
   
@@ -1061,9 +1038,11 @@ tidy_rfrnds <- function(data,
           dplyr::across(any_of(c("subterritories_no",
                                  "subterritories_yes",
                                  # TODO: remove/adapt next two lines once [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
-                                 "date_time_created"[is.numeric(.$date_time_created[[1L]])],
-                                 "date_time_last_edited"[is.numeric(.$date_time_last_edited[[1L]])])),
-                        as.double),
+                                 "date_time_created"["date_time_created" %in% colnames(.)
+                                                     && any(purrr::map_lgl(.$date_time_created, is.numeric))],
+                                 "date_time_last_edited"["date_time_last_edited" %in% colnames(.)
+                                                         && any(purrr::map_lgl(.$date_time_last_edited, is.numeric))])),
+                        ~ purrr::map_dbl(.x, ~ if (is.null(.x)) NA_real_ else as.double(.x))),
           
           # use explicit NA values
           dplyr::across(where(is.integer),
@@ -1078,10 +1057,10 @@ tidy_rfrnds <- function(data,
                         ~ dplyr::if_else(.x %in% c(-1.0, -2.0),
                                          NA_real_,
                                          .x)),
-          result = result %>% dplyr::if_else(. %in% c("Unknown", "Not provided"),
-                                             NA_character_,
-                                             .),
-          
+          dplyr::across(any_of("result"),
+                        ~ dplyr::if_else(.x %in% c("Unknown", "Not provided"),
+                                         NA_character_,
+                                         .x)),
           # convert all values to lowercase
           ## vectors
           dplyr::across(any_of(c("result",
@@ -1140,14 +1119,16 @@ tidy_rfrnds <- function(data,
           ### flatten `id`
           id = purrr::flatten_chr(id),
           ### split `tags` into separate per-tier vars
-          tags_tier_1 = tags %>% purrr::map(infer_tags,
-                                            tier = 1L),
-          tags_tier_2 = tags %>% purrr::map(infer_tags,
-                                            tier = 2L),
-          tags_tier_3 = tags %>% purrr::map(~ .x[.x %in% tags_tier_3_]),
+          topics_tier_1 = tags %>% purrr::map(infer_topics,
+                                              tier = 1L),
+          topics_tier_2 = tags %>% purrr::map(infer_topics,
+                                              tier = 2L),
+          topics_tier_3 = tags %>% purrr::map(~ .x[.x %in% topics_tier_3_]),
           ### various cleanups
-          type = type %>% dplyr::recode("citizen assembly" = "citizens' assembly",
-                                        "not provided" = NA_character_),
+          dplyr::across(any_of("type"),
+                        dplyr::recode,
+                        "citizen assembly" = "citizens' assembly",
+                        "not provided" = NA_character_),
           dplyr::across(any_of(c("inst_trigger_actor",
                                  "inst_object_author")),
                         dplyr::recode,
@@ -1156,12 +1137,6 @@ tidy_rfrnds <- function(data,
                         dplyr::recode,
                         "legal text (ausformulierter vorschlag)" = "legal text (formulated proposal)",
                         "legal text (allg. anregung)" = "legal text (general proposal)"),
-          dplyr::across(any_of("inst_object_revision_divisibility"),
-                        dplyr::recode,
-                        "Whole text only" = "as a whole",
-                        "Splitting up possible" = "split up",
-                        "Variants possible" = "as variants",
-                        "Variants / splitting up possible" = "both split up and as variants"),
           dplyr::across(.cols = any_of("inst_topics_only"),
                         .fns = purrr::map,
                         .f = dplyr::recode,
@@ -1190,8 +1165,9 @@ tidy_rfrnds <- function(data,
           } else {
             clock::date_parse(date)
           },
-          date_time_created = parse_datetime(date_time_created),
-          date_time_last_edited = parse_datetime(date_time_last_edited),
+          dplyr::across(any_of(c("date_time_created",
+                                 "date_time_last_edited")),
+                        parse_datetime),
           ## undefined
           files = files %>% purrr::map(~ .x %>% purrr::map(~ .x %>%
                                                              # unnest and restore `date`
@@ -1226,16 +1202,40 @@ tidy_rfrnds <- function(data,
       if (!("id_official" %in% colnames(data))) data$id_official <- NA_character_
       if (!("id_sudd" %in% colnames(data))) data$id_sudd <- NA_character_
       
+      # TODO: remove this once [issue #]() has been resolved
+      # create `inst_is_variable/divisible` if necessary
+      if ("categories.referendum_text_options" %in% colnames(data)) {
+        
+        if (!("inst_is_variable" %in% colnames(data))) {
+          data %<>% dplyr::mutate(inst_is_variable = dplyr::case_when(
+            categories.referendum_text_options %in% c("Variants possible", "Variants / splitting up possible") ~ TRUE,
+            is.na(categories.referendum_text_options)                                                          ~ NA,
+            TRUE                                                                                               ~ FALSE
+          ))
+        }
+        if (!("inst_is_divisible" %in% colnames(data))) {
+          data %<>% dplyr::mutate(inst_is_divisible = dplyr::case_when(
+            categories.referendum_text_options %in% c("Splitting up possible", "Variants / splitting up possible") ~ TRUE,
+            is.na(categories.referendum_text_options)                                                              ~ NA,
+            TRUE                                                                                                   ~ FALSE
+          ))
+        }
+      }
+      
       data %<>%
         # variable creations
-        dplyr::mutate(url_sudd = dplyr::if_else(!is.na(id_sudd),
+        dplyr::mutate(is_former_country = nchar(country_code) > 2L,
+                      url_sudd = dplyr::if_else(!is.na(id_sudd),
                                                 paste0("https://sudd.ch/event.php?id=", id_sudd),
                                                 NA_character_),
                       url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
                                                       paste0("https://swissvotes.ch/vote/", id_official),
                                                       NA_character_)) %>%
         # remove obsolete vars
-        dplyr::select(-any_of(c("number",
+        dplyr::select(-any_of(c("categories.referendum_text_options",
+                                "country_code_historical",
+                                "is_past_jurisdiction",
+                                "number",
                                 "tags"))) %>%
         
         # convert to (ordered) factor where appropriate
@@ -1276,7 +1276,8 @@ tidy_rfrnds <- function(data,
                                     .fns = as.factor)) %>%
         # add vars which aren't always included and coerce to proper types
         vctrs::tib_cast(to =
-                          data_codebook %$%
+                          data_codebook %>%
+                          dplyr::filter(!is_opt) %$%
                           magrittr::set_names(x = ptype,
                                               value = variable_name) %>%
                           tibble::as_tibble(),
@@ -1380,13 +1381,6 @@ untidy_rfrnds <- function(data,
                     "financial acts (taxes)" = "financial act (taxes)",
                     "financial acts (obligations)" = "financial act (obligations)",
                     "total revisions of the constitution" = "total revision of the constitution"),
-      ## `inst_object_revision_divisibility`
-      dplyr::across(any_of("inst_object_revision_divisibility"),
-                    dplyr::recode,
-                    "as a whole" = "Whole text only",
-                    "split up" = "Splitting up possible",
-                    "as variants" = "Variants possible",
-                    "both split up and as variants" = "Variants / splitting up possible"),
       ## `inst_object_type`
       dplyr::across(any_of("inst_object_type"),
                     dplyr::recode,
@@ -1481,23 +1475,32 @@ untidy_rfrnds <- function(data,
     # restore variable names
     rename_from_list(names_list = var_names_inverse)
   
-  # restore `tags`
-  tags_var_names <- paste0("tags_tier_", 1:3)
-  tags_vars_present <- tags_var_names %in% colnames(data)
+  # restore `referendum_text_options`
+  if (all(c("inst_is_divisible", "inst_is_variable") %in% colnames(data))) {
+    data %<>% dplyr::mutate(referendum_text_options = dplyr::case_when(!inst_is_divisible & !inst_is_variable ~ "Whole text only",
+                                                                       inst_is_divisible & inst_is_variable   ~ "Variants / splitting up possible",
+                                                                       inst_is_divisible                      ~ "Splitting up possible",
+                                                                       inst_is_variable                       ~ "Variants possible",
+                                                                       TRUE                                   ~ NA_character_))
+  }
   
-  if (any(tags_vars_present)) {
+  # restore `tags`
+  topics_var_names <- paste0("topics_tier_", 1:3)
+  topics_vars_present <- topics_var_names %in% colnames(data)
+  
+  if (any(topics_vars_present)) {
     
-    if (!all(tags_vars_present)) {
-      tags_vars_missing <- tags_var_names %>% setdiff(tags_vars_present)
-      cli::cli_abort(paste0("{cli::qty(tags_vars_missing)}The following {.var {'tags_tier_#'}} variable{?s} {?is/are} missing from {.arg data}: ",
-                            "{.var {tags_vars_missing}}"))
+    if (!all(topics_vars_present)) {
+      topics_vars_missing <- topics_var_names %>% setdiff(topics_vars_present)
+      cli::cli_abort(paste0("{cli::qty(topics_vars_missing)}The following {.var {'topics_tier_#'}} variable{?s} {?is/are} missing from {.arg data}: ",
+                            "{.var {topics_vars_missing}}"))
     }
     
     data %<>%
-      dplyr::mutate(tags = restore_tags(tags_tier_1,
-                                        tags_tier_2,
-                                        tags_tier_3)) %>%
-      dplyr::select(-any_of(tags_var_names))
+      dplyr::mutate(tags = restore_topics(topics_tier_1,
+                                          topics_tier_2,
+                                          topics_tier_3)) %>%
+      dplyr::select(-any_of(topics_var_names))
   }
   
   data %<>%
@@ -2128,58 +2131,60 @@ sudd_rfrnd <- function(id_sudd) {
                   })
 }
 
-restore_tags <- function(tags_tier_1,
-                         tags_tier_2,
-                         tags_tier_3) {
-  list(tags_tier_1,
-       tags_tier_2,
-       tags_tier_3) %>%
+restore_topics <- function(topics_tier_1,
+                           topics_tier_2,
+                           topics_tier_3) {
+  list(topics_tier_1,
+       topics_tier_2,
+       topics_tier_3) %>%
     purrr::pmap(~ {
       
       ..1 %>%
         unlist() %>%
         as.character() %>%
         checkmate::assert_character(any.missing = FALSE,
-                                    max.len = 3L)
+                                    max.len = 3L,
+                                    .var.name = "topics_tier_1")
       ..2 %>%
         unlist() %>%
         as.character() %>%
         checkmate::assert_character(any.missing = FALSE,
-                                    max.len = 3L)
+                                    max.len = 3L,
+                                    .var.name = "topics_tier_2")
       ..3 %>%
         unlist() %>%
         as.character() %>%
         checkmate::assert_character(any.missing = FALSE,
                                     max.len = 3L,
-                                    .var.name = "tags_tier_3")
+                                    .var.name = "topics_tier_3")
       
-      tags_hierarchy <- hierarchize_tags(tibble::tibble(tags_tier_1 = list(..1),
-                                                        tags_tier_2 = list(..2),
-                                                        tags_tier_3 = list(..3)))
+      topics_hierarchy <- hierarchize_topics(tibble::tibble(topics_tier_1 = list(..1),
+                                                        topics_tier_2 = list(..2),
+                                                        topics_tier_3 = list(..3)))
       
-      tags <- tags_hierarchy$tag_tier_3 %>% setdiff(NA_character_)
+      topics <- topics_hierarchy$topic_tier_3 %>% setdiff(NA_character_)
       
-      if (length(tags) < 3L) {
+      if (length(topics) < 3L) {
         
-        tags <-
-          tags_hierarchy %>%
-          dplyr::filter(is.na(tag_tier_3)) %$%
-          tag_tier_2 %>%
+        topics <-
+          topics_hierarchy %>%
+          dplyr::filter(is.na(topic_tier_3)) %$%
+          topic_tier_2 %>%
           setdiff(NA_character_) %>%
-          c(tags)
+          c(topics)
       }
       
-      if (length(tags) < 3L) {
+      if (length(topics) < 3L) {
         
-        tags <-
-          tags_hierarchy %>%
-          dplyr::filter(is.na(tag_tier_3) & is.na(tag_tier_2)) %$%
-          tag_tier_1 %>%
+        topics <-
+          topics_hierarchy %>%
+          dplyr::filter(is.na(topic_tier_3) & is.na(topic_tier_2)) %$%
+          topic_tier_1 %>%
           setdiff(NA_character_) %>%
-          c(tags)
+          c(topics)
       }
       
-      tags
+      topics
     })
 }
 
@@ -2438,7 +2443,6 @@ var_names <- list("_id"                                                  = "id",
                   "categories.hierarchy_of_the_legal_norm"               = "inst_object_legal_level",
                   "categories.degree_of_revision"                        = "inst_object_revision_extent",
                   "categories.action"                                    = "inst_object_revision_modes",
-                  "categories.referendum_text_options"                   = "inst_object_revision_divisibility",
                   "categories.turnout_quorum"                            = "inst_quorum_turnout",
                   "categories.decision_quorum"                           = "inst_quorum_approval",
                   "categories.institutional_precondition"                = "inst_has_precondition",
@@ -2553,7 +2557,7 @@ rfrnds <- function(country_code = NULL,
       httr::content(as = "text",
                     encoding = "UTF-8") %>%
       # ensure body is not empty
-      ensure_content()
+      assert_content()
     
     if (!quiet) {
       status_msg <- "Converting JSON to list data..."
@@ -2641,7 +2645,7 @@ rfrnd <- function(id,
     httr::content(as = "text",
                   encoding = "UTF-8") %>%
     # ensure body is not empty
-    ensure_content() %>%
+    assert_content() %>%
     # convert JSON to list
     # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result
     jsonlite::fromJSON(simplifyVector = FALSE,
@@ -2649,7 +2653,7 @@ rfrnd <- function(id,
                        simplifyMatrix = FALSE,
                        flatten = FALSE) %>%
     # ensure no error occured
-    ensure_no_error() %>%
+    assert_api_success() %>%
     # tidy data
     tidy_rfrnds(tidy = tidy)
   
@@ -2776,9 +2780,6 @@ add_rfrnds <- function(data,
     dplyr::recode(!!!var_names) %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
-  # drop disabled variables
-  data %<>% drop_disabled_vars(to_drop = "files")
-  
   # drop non-applicable columns (they're supposed to be absent in MongoDB)
   data %<>% drop_non_applicable_vars()
   
@@ -2816,12 +2817,12 @@ add_rfrnds <- function(data,
                  httr::content(as = "text",
                                encoding = "UTF-8") %>%
                  # ensure body is not empty
-                 ensure_content() %>%
+                 assert_content() %>%
                  # convert to list
                  jsonlite::fromJSON(simplifyDataFrame = FALSE,
                                     simplifyMatrix = FALSE)) %>%
                  # ensure no error occured
-                 ensure_no_error()
+                 assert_api_success()
   
   # throw warnings for unsuccessful API calls
   purrr::walk2(.x = responses,
@@ -2881,9 +2882,6 @@ edit_rfrnds <- function(data,
     c("id") %>%
     purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
   
-  # drop disabled variables
-  data %<>% drop_disabled_vars(to_drop = "files")
-  
   # drop non-applicable columns (they're absent in MongoDB)
   data %<>% drop_non_applicable_vars()
   
@@ -2926,7 +2924,7 @@ edit_rfrnds <- function(data,
                              httr::content(as = "text",
                                            encoding = "UTF-8") %>%
                              # ensure body is not empty
-                             ensure_content())
+                             assert_content())
   
   # throw warnings for unsuccessful API calls
   purrr::walk(.x = seq_along(ids),
@@ -2987,7 +2985,7 @@ delete_rfrnds <- function(ids,
                             httr::content(as = "text",
                                           encoding = "UTF-8") %>%
                             # ensure body is not empty
-                            ensure_content())
+                            assert_content())
   
   # throw warnings for unsuccessful API calls
   purrr::walk2(.x = ids,
@@ -3385,253 +3383,322 @@ var_vals <- function(var_name) {
 #' c2d::printify_var_names("type")
 printify_var_names <- function(var_names) {
   
-  data_codebook_ <- extend_data_codebook(data_codebook)
   checkmate::assert_subset(var_names,
-                           choices = data_codebook_$variable_name)
+                           choices = data_codebook$variable_name)
   
-  tibble::tibble(variable_name = !!var_names) %>%
-    dplyr::left_join(data_codebook_,
-                     by = "variable_name") %$%
-    variable_name_print
+  data_codebook$variable_name_print[match(x = var_names,
+                                          table = data_codebook$variable_name)]
 }
 
-#' Tag hierarchy
+#' Topic hierarchy
 #'
-#' A tibble reflecting the complete [referendum tags hierarchy](https://rpkg.dev/c2d/articles/codebook.html#tags).
+#' A tibble reflecting the complete [referendum topics hierarchy](https://rpkg.dev/c2d/articles/codebook.html#topics).
 #'
 #' @format `r pkgsnip::return_label("data")`
-#' @family tags
+#' @family topics
 #' @export
 #'
 #' @examples
-#' c2d::data_tags
-"data_tags"
+#' c2d::data_topics
+"data_topics"
 
-#' List available tags
+#' List available topics
 #'
-#' Lists the set of available [referendum tags](https://rpkg.dev/c2d/articles/codebook.html#tags) on the specified `tiers`.
+#' Lists the set of available [referendum topics](https://rpkg.dev/c2d/articles/codebook.html#topics) on the specified `tiers`.
 #'
-#' @param tiers Tiers to include tags from. An integerish vector.
+#' @param tiers Tiers to include topics from. An integerish vector.
 #'
 #' @return A character vector.
-#' @family tags
+#' @family topics
 #' @export
 #'
 #' @examples
-#' c2d::tags(tiers = 1:2)
-tags <- function(tiers = 1:3) {
+#' c2d::topics(tiers = 1:2)
+topics <- function(tiers = 1:3) {
   
   checkmate::assert_integerish(tiers,
                                lower = 1L,
                                upper = 3L,
                                any.missing = FALSE,
                                unique = TRUE)
-  tag_set <- character()
+  topic_set <- character()
   
   if (1L %in% tiers) {
-    tag_set %<>% c(data_tags$tag_tier_1)
+    topic_set %<>% c(data_topics$topic_tier_1)
   }
   
   if (2L %in% tiers) {
-    tag_set %<>% c(data_tags$tag_tier_2)
+    topic_set %<>% c(data_topics$topic_tier_2)
   }
   
   if (3L %in% tiers) {
-    tag_set %<>% c(data_tags$tag_tier_3)
+    topic_set %<>% c(data_topics$topic_tier_3)
   }
   
-  tag_set %>%
+  topic_set %>%
     setdiff(NA_character_) %>%
     unique()
 }
 
-#' Hierarchize tags
+#' Hierarchize topics
 #'
-#' Reconstructs the hierarchical relations between the three tag variables `tags_tier_1`, `tags_tier_2` and `tags_tier_3`. Can also be used to simply determine
-#' the parent tag(s) of any tag.
+#' Reconstructs the hierarchical relations between the three topic variables `topics_tier_1`, `topics_tier_2` and `topics_tier_3`. Can also be used to simply
+#' determine the parent topic(s) of any topic.
 #'
-#' @param x The tags to hierarchize. Either a character vector of tags or a single-row data frame containing at least the columns `tags_tier_1`, `tags_tier_2`
-#'   and `tags_tier_3`.
+#' @param x The topics to hierarchize. Either a character vector of topics or a single-row data frame containing at least the columns `topics_tier_1`,
+#'   `topics_tier_2` and `topics_tier_3`.
 #'
-#' @return A [tibble][tibble::tbl_df] with the columns `tag_tier_1`, `tag_tier_2` and `tag_tier_3`.
-#' @family tags
+#' @return A [tibble][tibble::tbl_df] with the columns `topic_tier_1`, `topic_tier_2` and `topic_tier_3`.
+#' @family topics
 #' @export
 #'
 #' @examples
-#' c2d::hierarchize_tags("territorial questions")
+#' c2d::hierarchize_topics("territorial questions")
 #'
-#' # hierarchize the tags of all Austrian referendums
+#' # hierarchize the topics of all Austrian referendums
 #' c2d::rfrnds(country_code = "AT") |>
 #'   dplyr::group_split(id) |>
-#'   purrr::map(c2d::hierarchize_tags)
-hierarchize_tags <- function(x) {
+#'   purrr::map(c2d::hierarchize_topics)
+hierarchize_topics <- function(x) {
   
   test_char <- checkmate::test_character(x, any.missing = FALSE)
   
   if (!test_char) {
     
-    tag_var_names <- paste0("tags_tier_", 1:3)
+    topic_var_names <- paste0("topics_tier_", 1:3)
     test_df <- checkmate::test_data_frame(x,
                                           min.rows = 1L,
                                           max.rows = 1L)
-    has_tag_vars <- all(tag_var_names %in% colnames(x))
+    has_topic_vars <- all(topic_var_names %in% colnames(x))
     
-    if (!test_df || !has_tag_vars) {
-      cli::cli_abort(paste0("{.arg x} must be either a character vector of tags or a single-row data frame containing at least the columns ",
-                            "{.field tags_tier_1}, {.field tags_tier_2} and {.field tags_tier_3}."))
+    if (!test_df || !has_topic_vars) {
+      cli::cli_abort(paste0("{.arg x} must be either a character vector of topics or a single-row data frame containing at least the columns ",
+                            "{.field topics_tier_1}, {.field topics_tier_2} and {.field topics_tier_3}."))
     }
     
-    x <- unlist(x[, tag_var_names],
+    x <- unlist(x[, topic_var_names],
                 use.names = FALSE)
   }
   
   checkmate::assert_subset(x,
-                           choices = c(tags_tier_1_, tags_tier_2_, tags_tier_3_),
+                           choices = c(topics_tier_1_, topics_tier_2_, topics_tier_3_),
                            empty.ok = TRUE)
   
-  tags_tier_1 <- x[x %in% tags_tier_1_]
-  tags_tier_2 <- x[x %in% tags_tier_2_]
-  tags_tier_3 <- x[x %in% tags_tier_3_]
-  inferred_tags_tier_1 <- infer_tags(tags = c(tags_tier_2, tags_tier_3),
-                                     tier = 1L)
-  inferred_tags_tier_2 <- infer_tags(tags = tags_tier_3,
-                                     tier = 2L)
-  non_parent_tags_tier_1 <- setdiff(tags_tier_1, inferred_tags_tier_1)
-  non_parent_tags_tier_2 <- setdiff(tags_tier_2, inferred_tags_tier_2)
+  topics_tier_1 <- x[x %in% topics_tier_1_]
+  topics_tier_2 <- x[x %in% topics_tier_2_]
+  topics_tier_3 <- x[x %in% topics_tier_3_]
+  inferred_topics_tier_1 <- infer_topics(topics = c(topics_tier_2, topics_tier_3),
+                                         tier = 1L)
+  inferred_topics_tier_2 <- infer_topics(topics = topics_tier_3,
+                                         tier = 2L)
+  non_parent_topics_tier_1 <- setdiff(topics_tier_1, inferred_topics_tier_1)
+  non_parent_topics_tier_2 <- setdiff(topics_tier_2, inferred_topics_tier_2)
   
   # 0. initialize empty tibble
-  result <- tibble::tibble(tag_tier_1 = character(),
-                           tag_tier_2 = character(),
-                           tag_tier_3 = character())
+  result <- tibble::tibble(topic_tier_1 = character(),
+                           topic_tier_2 = character(),
+                           topic_tier_3 = character())
   
-  # 1. add third-tier tags
+  # 1. add third-tier topics
   result <-
-    tags_tier_3 %>%
-    purrr::map_dfr(~ tibble::tibble(tag_tier_1 = infer_tags(tags = .x,
-                                                            tier = 1L),
-                                    tag_tier_2 = infer_tags(tags = .x,
-                                                            tier = 2L),
-                                    tag_tier_3 = .x)) %>%
+    topics_tier_3 %>%
+    purrr::map_dfr(~ tibble::tibble(topic_tier_1 = infer_topics(topics = .x,
+                                                                tier = 1L),
+                                    topic_tier_2 = infer_topics(topics = .x,
+                                                                tier = 2L),
+                                    topic_tier_3 = .x)) %>%
     dplyr::bind_rows(result)
   
-  # 2. add remaining second-tier tags
+  # 2. add remaining second-tier topics
   result <-
-    non_parent_tags_tier_2 %>%
-    purrr::map_dfr(~ tibble::tibble(tag_tier_1 = infer_tags(tags = .x,
-                                                            tier = 1L),
-                                    tag_tier_2 = .x,
-                                    tag_tier_3 = NA_character_)) %>%
+    non_parent_topics_tier_2 %>%
+    purrr::map_dfr(~ tibble::tibble(topic_tier_1 = infer_topics(topics = .x,
+                                                                tier = 1L),
+                                    topic_tier_2 = .x,
+                                    topic_tier_3 = NA_character_)) %>%
     dplyr::bind_rows(result)
   
-  # 3. add remaining first-tier tags
+  # 3. add remaining first-tier topics
   result %>%
-    dplyr::bind_rows(tibble::tibble(tag_tier_1 = non_parent_tags_tier_1,
-                                    tag_tier_2 = NA_character_,
-                                    tag_tier_3 = NA_character_)) %>%
+    dplyr::bind_rows(tibble::tibble(topic_tier_1 = non_parent_topics_tier_1,
+                                    topic_tier_2 = NA_character_,
+                                    topic_tier_3 = NA_character_)) %>%
     # sort result
-    dplyr::arrange(tag_tier_1, tag_tier_2, tag_tier_3)
+    dplyr::arrange(topic_tier_1, topic_tier_2, topic_tier_3)
 }
 
-#' Hierarchize tags (fast)
+#' Hierarchize topics (fast)
 #'
-#' Reconstructs the hierarchical relations between the three tag variables `tags_tier_1`, `tags_tier_2` and `tags_tier_3`. Other than [hierarchize_tags()], this
-#' function assumes that the three tag variables are always *complete*, i.e. that no (grand)parent tags of lower-tier tags are missing. This assumption is met
-#' by [rfrnds()] and [rfrnd()].
+#' Reconstructs the hierarchical relations between the three topic variables `topics_tier_1`, `topics_tier_2` and `topics_tier_3`. Other than
+#' [hierarchize_topics()], this function assumes that the three topic variables are always *complete*, i.e. that no (grand)parent topics of lower-tier topics
+#' are missing. This assumption is met by [rfrnds()] and [rfrnd()].
 #'
-#' @param tags_tier_1 First-tier tags. A character vector.
-#' @param tags_tier_2 Second-tier tags. A character vector.
-#' @param tags_tier_3 Third-tier tags. A character vector.
+#' @param topics_tier_1 First-tier topics. A character vector.
+#' @param topics_tier_2 Second-tier topics. A character vector.
+#' @param topics_tier_3 Third-tier topics. A character vector.
 #'
-#' @inherit hierarchize_tags return
-#' @family tags
+#' @inherit hierarchize_topics return
+#' @family topics
 #' @export
 #'
 #' @examples
 #' library(magrittr)
 #'
 #' c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") %$%
-#'   c2d:::hierarchize_tags_fast(unlist(tags_tier_1),
-#'                               unlist(tags_tier_2),
-#'                               unlist(tags_tier_3))
+#'   c2d:::hierarchize_topics_fast(unlist(topics_tier_1),
+#'                               unlist(topics_tier_2),
+#'                               unlist(topics_tier_3))
 #'
-#' # hierarchize the tags of all Austrian referendums
+#' # hierarchize the topics of all Austrian referendums
 #' c2d::rfrnds(country_code = "AT") |>
 #'   dplyr::group_split(id) |>
-#'   purrr::map(~ c2d:::hierarchize_tags_fast(unlist(.x$tags_tier_1),
-#'                                            unlist(.x$tags_tier_2),
-#'                                            unlist(.x$tags_tier_3)))
-hierarchize_tags_fast <- function(tags_tier_1 = character(),
-                                  tags_tier_2 = character(),
-                                  tags_tier_3 = character()) {
+#'   purrr::map(~ c2d:::hierarchize_topics_fast(unlist(.x$topics_tier_1),
+#'                                            unlist(.x$topics_tier_2),
+#'                                            unlist(.x$topics_tier_3)))
+hierarchize_topics_fast <- function(topics_tier_1 = character(),
+                                  topics_tier_2 = character(),
+                                  topics_tier_3 = character()) {
   
-  checkmate::assert_subset(tags_tier_1,
-                           choices = tags_tier_1_)
-  checkmate::assert_subset(tags_tier_2,
-                           choices = tags_tier_2_)
-  checkmate::assert_subset(tags_tier_3,
-                           choices = tags_tier_3_)
+  checkmate::assert_subset(topics_tier_1,
+                           choices = topics_tier_1_)
+  checkmate::assert_subset(topics_tier_2,
+                           choices = topics_tier_2_)
+  checkmate::assert_subset(topics_tier_3,
+                           choices = topics_tier_3_)
   # add tier-3 hierarchy
-  result <- data_tags[data_tags$tag_tier_3 %in% tags_tier_3, ]
+  result <- data_topics[data_topics$topic_tier_3 %in% topics_tier_3, ]
   
   # add non-parent tier-2 hierarchy
-  tags_tier_2 %<>% setdiff(result$tag_tier_2)
-  result %<>% dplyr::bind_rows(unique(data_tags[data_tags$tag_tier_2 %in% tags_tier_2, 1:2]))
+  topics_tier_2 %<>% setdiff(result$topic_tier_2)
+  result %<>% dplyr::bind_rows(unique(data_topics[data_topics$topic_tier_2 %in% topics_tier_2, 1:2]))
   
-  # add non-parent tier-1 tags
-  tags_tier_1 %<>% setdiff(result$tag_tier_1)
-  result %>% dplyr::bind_rows(tibble::tibble(tag_tier_1 = tags_tier_1))
+  # add non-parent tier-1 topics
+  topics_tier_1 %<>% setdiff(result$topic_tier_1)
+  result %>% dplyr::bind_rows(tibble::tibble(topic_tier_1 = topics_tier_1))
 }
 
-#' Infer higher-tier tags
+#' Infer higher-tier topics
 #'
-#' Determines the top-tier (`tier = 1L`) or second-tier (`tier = 2L`) tags corresponding to `tags` in the
-#' [hierarchy][data_tags], i.e. either `tags` themselves or their (grand)parent tags.
+#' Determines the top-tier (`tier = 1L`) or second-tier (`tier = 2L`) topics corresponding to `topics` in the
+#' [hierarchy][data_topics], i.e. either `topics` themselves or their (grand)parent topics.
 #'
-#' @param tags Tags from which the corresponding tags are to be determined. A factor or character vector.
-#' @param tier Tier of the inferred tags. Either `1L` or `2L`.
+#' @param topics Topics from which the corresponding (grand)parent topics are to be determined. A factor or character vector.
+#' @param tier Tier of the inferred topics. Either `1L` or `2L`.
 #'
 #' @return A character vector.
-#' @family tags
+#' @family topics
 #' @export
 #'
 #' @examples
-#' c2d::infer_tags(tags = c("EU", "animal protection"),
-#'                 tier = 1L)
-#' c2d::infer_tags(tags = c("EU", "animal protection"),
-#'                 tier = 2L)
+#' c2d::infer_topics(topics = c("EU", "animal protection"),
+#'                   tier = 1L)
+#' c2d::infer_topics(topics = c("EU", "animal protection"),
+#'                   tier = 2L)
 #' 
-#' # tags of different tiers can mixed in `tags`
-#' c2d::infer_tags(tags = c("EU", "environment"),
-#'                 tier = 2L)
+#' # topics of different tiers can mixed in `topics`
+#' c2d::infer_topics(topics = c("EU", "environment"),
+#'                   tier = 2L)
 #' 
-#' # but `tags` of a higher tier than `tier` will be ignored
-#' c2d::infer_tags(tags = "foreign policy",
-#'                 tier = 2L)
-infer_tags <- function(tags,
-                       tier = 1L) {
+#' # but `topics` of a higher tier than `tier` will be ignored
+#' c2d::infer_topics(topics = "foreign policy",
+#'                   tier = 2L)
+infer_topics <- function(topics,
+                         tier = 1L) {
   
-  if (is.factor(tags)) tags <- as.character(tags)
+  if (is.factor(topics)) topics <- as.character(topics)
   
-  checkmate::assert_subset(tags,
-                           choices = c(tags_tier_1_, tags_tier_2_, tags_tier_3_))
+  checkmate::assert_subset(topics,
+                           choices = c(topics_tier_1_, topics_tier_2_, topics_tier_3_))
   checkmate::assert_int(tier,
                         lower = 1L,
                         upper = 2L)
   
-  # inferred from lower-tier tags
-  result <- data_tags[data_tags$tag_tier_2 %in% tags | data_tags$tag_tier_3 %in% tags, ]
-  result %<>% .[[paste0("tag_tier_", tier)]]
+  # inferred from lower-tier topics
+  result <- data_topics[data_topics$topic_tier_2 %in% topics | data_topics$topic_tier_3 %in% topics, ]
+  result %<>% .[[paste0("topic_tier_", tier)]]
   
-  # plus top-tier tags
-  if (tier == 1L) result %<>% c(tags[tags %in% tags_tier_1_])
+  # plus top-tier topics
+  if (tier == 1L) result %<>% c(topics[topics %in% topics_tier_1_])
   
   unique(result)
 }
 
+#' Add former country flag to referendum data
+#'
+#' Augments `data` with an additional column `is_former_country` indicating whether or not the column `country_code` holds an [ISO 3166-3
+#' alpha-4 code](https://en.wikipedia.org/wiki/ISO_3166-3) referring to a historical country which ceased to exist. `is_former_country` being `FALSE` means
+#' `country_code` holds an [ISO 3166-1 alpha-2 code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) instead.
+#'
+#' @inheritParams add_world_regions
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family augment
+#' @keywords internal
+#'
+#' @examples
+#' c2d::rfrnds(country_code = c("CD", "ZRCD")) |>
+#'   c2d:::add_former_country_flag() |>
+#'   dplyr::select(any_of("id"),
+#'                 starts_with("country_"),
+#'                 is_former_country)
+add_former_country_flag <- function(data) {
+  
+  # ensure minimal validity
+  checkmate::assert_data_frame(data)
+  assert_vars(data = data,
+              vars = c("country_code"))
+  
+  data %>%
+    dplyr::mutate(is_former_country = nchar(country_code) > 2L) %>%
+    # add var lbl
+    labelled::set_variable_labels(.labels = var_lbls["is_former_country"])
+}
+
+#' Add continual country code to referendum data
+#'
+#' Augments `data` with an additional column `country_code_continual` holding the current or future [ISO 3166-1
+#' alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code of the country where the referendum took place. If the country still exists,
+#' `country_code_continual` is identical to `country_code`, otherwise it is the `country_code` of the successor country. If the country was succeeded by
+#' multiple countries, the code of the largest one in terms of population is taken.
+#'
+#' @inheritParams add_world_regions
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family augment
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(country_code = c("CD", "ZRCD")) |>
+#'   c2d::add_country_code_continual() |>
+#'   dplyr::select(any_of("id"),
+#'                 starts_with("country_"))
+add_country_code_continual <- function(data) {
+  
+  # ensure minimal validity
+  checkmate::assert_data_frame(data)
+  assert_vars(data = data,
+              vars = c("country_code"))
+  
+  data %>%
+    dplyr::mutate(country_code_continual = purrr::map2_chr(.x = country_code,
+                                                           .y = add_former_country_flag(data)$is_former_country,
+                                                           .f = ~ {
+                                                             
+                                                             if (.y) {
+                                                               data_iso_3166_3$Alpha_2_new_main[data_iso_3166_3$Alpha_4 == .x]
+                                                               
+                                                             } else {
+                                                               .x
+                                                             }
+                                                           })) %>%
+    # add var lbl
+    labelled::set_variable_labels(.labels = var_lbls["country_code_continual"])
+}
+
 #' Add long country code to referendum data
 #'
-#' Augments `data` with an additional column holding the three-letter [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) code of the country
-#' in which the referendum took place.
+#' Augments `data` with an additional column holding the current or former three-letter [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3)
+#' code of the country in which the referendum took place (see [ISO 3166-3](https://en.wikipedia.org/wiki/ISO_3166-3_alpha-3) for former country codes).
 #'
 #' @inheritParams add_world_regions
 #'
@@ -3649,61 +3716,26 @@ add_country_code_long <- function(data) {
   
   # ensure minimal validity
   checkmate::assert_data_frame(data)
-  ensure_country_code(data)
+  assert_vars(data = data,
+              vars = "country_code")
   
-  # add row number to be able to restore exact column order after split-and-merge, and n chars col for split
-  ## use hash name to avoid possible colname collision
-  colname_rowid <- rlang::hash(stats::runif(n = 1L))
-  colname_n_char <- rlang::hash(stats::runif(n = 1L,
-                                             min = 1.1,
-                                             max = 2))
-  data %<>%
-    tibble::rowid_to_column(var = colname_rowid) %>%
-    dplyr::mutate(!!colname_n_char := nchar(country_code))
-  
-  # small integrity check
-  i_invalid_country_code <- which(!(data[[colname_n_char]] %in% c(2L, 4L)))
-  n_invalid_country_code <- length(i_invalid_country_code)
-  
-  if (n_invalid_country_code) {
-    cli::cli_abort("{.arg data} contains invalid {.var country_code}s. Affected are the rows {.and i_invalid_country_code}.")
-  }
-  
-  # remove possibly existing `country_code_long`
-  data %<>% dplyr::select(-any_of("country_code_long"))
-  
-  # split data into ISO 3166-1 and ISO 3166-3 code groups and new var
-  # NOTE: we need to use a left join in order to not lose `country_code`'s attrs
-  data_current <-
-    data %>%
-    dplyr::filter(!!as.symbol(colname_n_char) == 2L) %>%
-    dplyr::left_join(y = ISOcodes::ISO_3166_1 %>% dplyr::select(country_code = Alpha_2,
-                                                                country_code_long = Alpha_3),
-                     by = "country_code")
-  data_past <-
-    data %>%
-    dplyr::filter(!!as.symbol(colname_n_char) > 2L) %>%
-    dplyr::left_join(y = ISOcodes::ISO_3166_3 %>% dplyr::select(country_code = Alpha_4,
-                                                                country_code_long = Alpha_3),
-                     by = "country_code")
-  
-  # merge data back again
-  # NOTE: both `dplyr::bind_rows()` and `base::rbind()` lose col attrs under certain circumstances, which is why we use `dplyr::full_join()`
-  data_current %>%
-    dplyr::full_join(y = data_past,
-                     by = colnames(.)) %>%
+  data %>%
+    # remove possibly existing long country code
+    dplyr::select(-any_of("country_code_long")) %>%
+    # add long country code
+    dplyr::mutate(country_code_long = purrr::map2_chr(.x = country_code,
+                                                      .y = add_former_country_flag(data)$is_former_country,
+                                                      .f = ~ if (.y) {
+                                                        data_iso_3166_3$Alpha_3[data_iso_3166_3$Alpha_4 == .x]
+                                                      } else {
+                                                        data_iso_3166_1$Alpha_3[data_iso_3166_1$Alpha_2 == .x]
+                                                      })) %>%
     # ensure no NAs
     assertr::assert(predicate = assertr::not_na,
                     country_code_long) %>%
-    # restore original row order
-    dplyr::arrange(!!as.symbol(colname_rowid)) %>%
-    # clean up
-    dplyr::select(-any_of(c(colname_rowid,
-                            colname_n_char))) %>%
-    tibble::as_tibble() %>%
     order_rfrnd_cols() %>%
     # add var lbl
-    labelled::set_variable_labels(country_code_long = "the three-letter ISO 3166-1 alpha-3 code identifying the country in which the referendum took place")
+    labelled::set_variable_labels(.labels = var_lbls["country_code_long"])
 }
 
 #' Add long country name to referendum data
@@ -3726,77 +3758,38 @@ add_country_name_long <- function(data) {
   
   # ensure minimal validity
   checkmate::assert_data_frame(data)
-  ensure_country_code(data)
+  assert_vars(data = data,
+              vars = "country_code")
   
-  # add row number to be able to restore exact column order after split-and-merge, and n chars col for split
-  ## use hash name to avoid possible colname collision
-  colname_rowid <- rlang::hash(stats::runif(n = 1L))
-  colname_n_char <- rlang::hash(stats::runif(n = 1L,
-                                             min = 1.1,
-                                             max = 2))
-  data %<>%
-    tibble::rowid_to_column(var = colname_rowid) %>%
-    dplyr::mutate(!!colname_n_char := nchar(country_code))
+  # tweak ISO names
+  iso_3166_1 <-
+    data_iso_3166_1 %>%
+    dplyr::select(country_code = Alpha_2,
+                  country_name_long = name_long)
   
-  # small integrity check
-  i_invalid_country_code <- which(!(data[[colname_n_char]] %in% c(2L, 4L)))
-  n_invalid_country_code <- length(i_invalid_country_code)
-  
-  if (n_invalid_country_code) {
-    cli::cli_abort("{.arg data} contains invalid {.var country_code}s. Affected are the rows {.and i_invalid_country_code}.")
-  }
-  
-  # remove possibly existing `country_name_long`
-  data %<>% dplyr::select(-any_of("country_name_long"))
-  
-  # split data into ISO 3166-1 and ISO 3166-3 code groups
-  # NOTE: we need to use a left join in order to not lose `country_code`'s attrs
-  data_current <-
-    data %>%
-    dplyr::filter(!!as.symbol(colname_n_char) == 2L) %>%
-    dplyr::left_join(y =
-                       ISOcodes::ISO_3166_1 %>%
-                       # complement `Official_name` by shorter `Name`
-                       dplyr::mutate(Official_name = dplyr::if_else(is.na(Official_name),
-                                                                    Name,
-                                                                    Official_name)) %>%
-                       dplyr::select(country_code = Alpha_2,
-                                     country_name_long = Official_name),
-                     by = "country_code")
-  data_past <-
-    data %>%
-    dplyr::filter(!!as.symbol(colname_n_char) > 2L) %>%
-    dplyr::left_join(y =
-                       ISOcodes::ISO_3166_3 %>%
-                       dplyr::select(country_code = Alpha_4,
-                                     country_name_long = Name) %>%
-                       # harmonize name style
-                       dplyr::mutate(country_name_long = dplyr::case_when(country_code == "BYAA" ~ "Byelorussian Soviet Socialist Republic",
-                                                                          country_code == "CSHH" ~ country_name_long,
-                                                                          country_code == "SUHH" ~ "Union of Soviet Socialist Republics (USSR)",
-                                                                          country_code == "YDYE" ~ "Democratic Yemen, People's Democratic Republic of Yemen",
-                                                                          TRUE ~ stringr::str_replace(string = country_name_long,
-                                                                                                      pattern = "^([^,]+), (.+)$",
-                                                                                                      replacement = "\\2 \\1"))),
-                     by = "country_code")
-  
-  # merge data back again
-  # NOTE: both `dplyr::bind_rows()` and `base::rbind()` lose col attrs under certain circumstances, which is why we use `dplyr::full_join()`
-  data_current %>%
-    dplyr::full_join(y = data_past,
-                     by = colnames(.)) %>%
+  iso_3166_3 <-
+    data_iso_3166_3 %>%
+    dplyr::select(country_code = Alpha_4,
+                  country_name_long = name_long)
+  data %>%
+    # remove possibly existing long country name
+    dplyr::select(-any_of("country_name_long")) %>%
+    # add long country name
+    dplyr::mutate(country_name_long = purrr::map2_chr(
+      .x = country_code,
+      .y = add_former_country_flag(data)$is_former_country,
+      .f = ~ if (.y) {
+        iso_3166_3$country_name_long[iso_3166_3$country_code == .x]
+      } else {
+        iso_3166_1$country_name_long[iso_3166_1$country_code == .x]
+      }
+    )) %>%
     # ensure no NAs
     assertr::assert(predicate = assertr::not_na,
                     country_name_long) %>%
-    # restore original row order
-    dplyr::arrange(!!as.symbol(colname_rowid)) %>%
-    # clean up
-    dplyr::select(-any_of(c(colname_rowid,
-                            colname_n_char))) %>%
-    tibble::as_tibble() %>%
     order_rfrnd_cols() %>%
     # add var lbl
-    labelled::set_variable_labels(country_name_long = "the official full English name(s) of the country in which the referendum took place")
+    labelled::set_variable_labels(.labels = var_lbls["country_name_long"])
 }
 
 #' Add period to referendum data
@@ -3854,7 +3847,7 @@ add_period <- function(data,
     # harmonize col order
     order_rfrnd_cols() %>%
     # add var lbl
-    labelled::set_variable_labels(!!period := glue::glue("the {period_lbl} in which the referendum was held"))
+    labelled::set_variable_labels(.labels = var_lbls[period])
 }
 
 #' Add turnout to referendum data
@@ -3920,7 +3913,11 @@ add_turnout <- function(data,
     # harmonize col order
     order_rfrnd_cols() %>%
     # add var lbl
-    labelled::set_variable_labels(turnout = paste0("the voter turnout ", ifelse(rough, "(rough) ", ""), "at the referendum"))
+    labelled::set_variable_labels(turnout = var_lbls[["turnout"]] %>% ifelse(test = rough,
+                                                                             yes = stringr::str_replace(string = .,
+                                                                                                        pattern = "turnout",
+                                                                                                        replacement = "turnout (rough)"),
+                                                                             no = .))
 }
 
 #' Add UN world regions to referendum data
@@ -3962,7 +3959,8 @@ add_world_regions <- function(data) {
   
   # ensure minimal validity
   checkmate::assert_data_frame(data)
-  ensure_country_code(data)
+  assert_vars(data = data,
+              vars = "country_code")
   
   unknown_country_codes <-
     data$country_code %>%
@@ -3974,41 +3972,38 @@ add_world_regions <- function(data) {
                           "{unknown_country_codes}}"))
   }
   
+  has_country_code_continual <- "country_code_continual" %in% colnames(data)
+  
   # add UN regions to input data
-  data %>%
-    # add temp synthetic country code column
-    dplyr::mutate(country_code_synthetic =
-                    country_code %>%
-                    purrr::map_chr(~ {
-                      
-                      if (nchar(.x) > 2L) {
-                        data_iso_3166_3$Alpha_2_new_main[data_iso_3166_3$Alpha_4 == .x]
-                        
-                      } else {
-                        .x
-                      }
-                    })) %>%
+  data %<>%
+    # temporarily add required base var `country_code_continual` if necessary
+    add_country_code_continual() %>%
     # remove possibly existing UN region vars
     dplyr::select(-any_of(setdiff(colnames(un_regions),
                                   "country_code"))) %>%
     # add UN regions
     dplyr::left_join(y = un_regions,
-                     by = c("country_code_synthetic" = "country_code")) %>%
+                     by = c("country_code_continual" = "country_code")) %>%
     # ensure every row got at least a UN tier-1 region assigned
     assertr::assert(predicate = assertr::not_na,
                     un_region_tier_1_code) %>%
-    # drop temp col
-    dplyr::select(-country_code_synthetic) %>%
     # harmonize col order
     order_rfrnd_cols() %>%
     # add var lbl
-    labelled::set_variable_labels(un_country_code       = "the UN M49 code of the country in which the referendum took place",
-                                  un_region_tier_1_code = "the area code of the UN tier-1 region in which the referendum took place",
-                                  un_region_tier_1_name = "the name of the UN tier-1 region in which the referendum took place",
-                                  un_region_tier_2_code = "the area code of the UN tier-2 region in which the referendum took place",
-                                  un_region_tier_2_name = "the name of the UN tier-2 region in which the referendum took place",
-                                  un_region_tier_3_code = "the area code of the UN tier-3 region in which the referendum took place",
-                                  un_region_tier_3_name = "the name of the UN tier-3 region in which the referendum took place")
+    labelled::set_variable_labels(.labels = pal::list_keep(var_lbls,
+                                                           keep = c("un_country_code",
+                                                                    "un_region_tier_1_code",
+                                                                    "un_region_tier_1_name",
+                                                                    "un_region_tier_2_code",
+                                                                    "un_region_tier_2_name",
+                                                                    "un_region_tier_3_code",
+                                                                    "un_region_tier_3_name")))
+  # drop `country_code_continual` if necessary
+  if (!has_country_code_continual) {
+    data %<>% dplyr::select(-country_code_continual)
+  }
+  
+  data
 }
 
 #' Transform to ballot-date-level observations
@@ -4035,12 +4030,11 @@ as_ballot_dates <- function(data) {
     data %>%
     colnames() %>%
     setdiff(c("country_code",
-              "country_code_historical",
               "country_name",
+              "subnational_entity_code",
               "subnational_entity_name",
               "municipality",
               "level",
-              "is_past_jurisdiction",
               "date",
               "week",
               "month",
@@ -4048,6 +4042,7 @@ as_ballot_dates <- function(data) {
               "year",
               "decade",
               "century",
+              "is_former_country",
               "un_country_code",
               "un_region_tier_1_code",
               "un_region_tier_1_name",
@@ -4147,6 +4142,7 @@ n_rfrnds_per_period <- function(data,
                                          . == "week" ~ 53L,
                                          . == "month" ~ 12L,
                                          . == "quarter" ~ 4L)
+    
     period_seq <- seq(from = (period_min %/% period_step) * period_step,
                       to = period_max,
                       by = period_step)
@@ -4182,15 +4178,8 @@ n_rfrnds_per_period <- function(data,
 #' c2d::rfrnds(country_code = "IT") |> c2d::printify_col_names()
 printify_col_names <- function(data) {
   
-  data %>% dplyr::rename_with(~ tibble::tibble(variable_name = .x) %>%
-                                tibble::rowid_to_column()%>%
-                                dplyr::left_join(y = extend_data_codebook(data_codebook),
-                                                 by = "variable_name") %>%
-                                dplyr::mutate(variable_name_print = dplyr::if_else(is.na(variable_name_print),
-                                                                                   variable_name,
-                                                                                   variable_name_print)) %>%
-                                dplyr::arrange(rowid) %$%
-                                variable_name_print)
+  data %>% dplyr::rename_with(~ data_codebook$variable_name_print[match(x = .x,
+                                                                        table = data_codebook$variable_name)])
 }
 
 #' Referendum share per period stacked area chart
@@ -4245,27 +4234,27 @@ plot_rfrnd_share_per_period <- function(data,
                           period = period)
 }
 
-#' Tag segmentation sunburst chart
+#' Topic segmentation sunburst chart
 #'
-#' Creates a [Plotly sunburst chart](https://plotly.com/r/sunburst-charts/) that visualizes the hierarchical segmentation of referendum tag occurences.
+#' Creates a [Plotly sunburst chart](https://plotly.com/r/sunburst-charts/) that visualizes the hierarchical segmentation of referendum topic occurences.
 #'
-#' A *tag lineage* is the hierarchical compound of a `tag_tier_1` and optionally a grandchild `tag_tier_3` and/or a child `tag_tier_2`.
+#' A *topic lineage* is the hierarchical compound of a `topic_tier_1` and optionally a grandchild `topic_tier_3` and/or a child `topic_tier_2`.
 #'
-#' Note that tags can be assigned on any tier to referendums (i.e. in one case, a `tag_tier_1` plus a child `tag_tier_2` is assigned, and in another case only a
-#' `tag_tier_1` without any further child tag).
+#' Note that topics can be assigned on any tier to referendums (i.e. in one case, a `topic_tier_1` plus a child `topic_tier_2` is assigned, and in another case
+#' only a `topic_tier_1` without any further child topic).
 #'
-#' Furthermore, it should be noted that not every `tag_tier_2` has potential child `tag_tier_3`s. See the [full tag
-#' hierarchy](https://rpkg.dev/c2d/articles/codebook.html#tags) for details.
+#' Furthermore, it should be noted that not every `topic_tier_2` has potential child `topic_tier_3`s. See the [full topic
+#' hierarchy](https://rpkg.dev/c2d/articles/codebook.html#topics) for details.
 #'
-#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns `tags_tier_1`, `tags_tier_2` and
-#'   `tags_tier_3`.
-#' @param method Applied method to count the number of tag occurences. One of
-#'   - **`"per_rfrnd"`**: All *referendums* have the same weight. For a referendum with n different tags of the same tier, every tag is counted 1/n.
-#'   - **`"per_tag_lineage"`**: All *tag lineages* have the same weight. For a referendum with n different tags of the same tier, every tag is fully counted,
-#'     meaning that e.g. a referendum with three different tier-3 tags has a tripled impact on the result compared to a referendum that only has a single one.
-#'     Noticeably faster than `"per_rfrnd"`.
-#'   - **`"naive"`**: Naive procedure which doesn't properly reflect tag proportions on tier 2 and 3. Based on the (wrong) assumptions that a) all referendums
-#'     have the same number of tag lineages assigned and b) tags are not deduplicated per tier. By far the fastest method, though.
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns `topics_tier_1`, `topics_tier_2` and
+#'   `topics_tier_3`.
+#' @param method Applied method to count the number of topic occurences. One of
+#'   - **`"per_rfrnd"`**: All *referendums* have the same weight. For a referendum with n different topics of the same tier, every topic is counted 1/n.
+#'   - **`"per_topic_lineage"`**: All *topic lineages* have the same weight. For a referendum with n different topics of the same tier, every topic is fully
+#'     counted, meaning that e.g. a referendum with three different tier-3 topics has a tripled impact on the result compared to a referendum that only has a
+#'     single one. Noticeably faster than `"per_rfrnd"`.
+#'   - **`"naive"`**: Naive procedure which doesn't properly reflect topic proportions on tier 2 and 3. Based on the (wrong) assumptions that a) all referendums
+#'     have the same number of topic lineages assigned and b) topics are not deduplicated per tier. By far the fastest method, though.
 #'
 #' @return `r pkgsnip::param_label("plotly_obj")`
 #' @family visualize
@@ -4273,133 +4262,133 @@ plot_rfrnd_share_per_period <- function(data,
 #'
 #' @examples
 #' # count each referendum equally
-#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_rfrnd")
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_topic_segmentation(method = "per_rfrnd")
 #'
-#' # count each tag lineage equally
-#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "per_tag_lineage")
+#' # count each topic lineage equally
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_topic_segmentation(method = "per_topic_lineage")
 #'
 #' # naive count (way faster, but with misleading proportions on tier 2 and 3)
-#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_segmentation(method = "naive")
-plot_tag_segmentation <- function(data,
-                                  method = c("per_rfrnd", "per_tag_lineage", "naive")) {
-
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_topic_segmentation(method = "naive")
+plot_topic_segmentation <- function(data,
+                                    method = c("per_rfrnd", "per_topic_lineage", "naive")) {
+  
   method <- rlang::arg_match(method)
   pal::assert_pkg("plotly")
   is_naive <- method == "naive"
-
+  
   # assemble necessary data structure
   if (is_naive) {
-
+    
     ## naively
     data_plot <-
       dplyr::bind_rows(
-        data$tags_tier_1 %>%
-          tag_frequency(tier = 1L) %>%
-          dplyr::mutate(parent_tag = ""),
-        data$tags_tier_2 %>%
-          tag_frequency(tier = 2L) %>%
-          dplyr::mutate(parent_tag = purrr::map_chr(.x = as.character(tag),
-                                                    .f = infer_tags,
-                                                    tier = 1L)),
-        data$tags_tier_3 %>%
-          tag_frequency(tier = 3L) %>%
-          dplyr::mutate(parent_tag = purrr::map_chr(.x = as.character(tag),
-                                                    .f = infer_tags,
-                                                    tier = 2L))
+        data$topics_tier_1 %>%
+          topic_frequency(tier = 1L) %>%
+          dplyr::mutate(parent_topic = ""),
+        data$topics_tier_2 %>%
+          topic_frequency(tier = 2L) %>%
+          dplyr::mutate(parent_topic = purrr::map_chr(.x = as.character(topic),
+                                                      .f = infer_topics,
+                                                      tier = 1L)),
+        data$topics_tier_3 %>%
+          topic_frequency(tier = 3L) %>%
+          dplyr::mutate(parent_topic = purrr::map_chr(.x = as.character(topic),
+                                                      .f = infer_topics,
+                                                      tier = 2L))
       ) %>%
       dplyr::rename(value = n)
-
+    
   } else {
-
+    
     is_per_rfrnd <- method == "per_rfrnd"
-    data_plot <- data %>% dplyr::select(starts_with("tags_tier_"))
-
+    data_plot <- data %>% dplyr::select(starts_with("topics_tier_"))
+    
     ### per rfrnd, i.e. in fractional numbers
     if (is_per_rfrnd) {
-
+      
       data_plot %<>%
-        purrr::pmap_dfr(~ hierarchize_tags_fast(unlist(..1),
-                                                unlist(..2),
-                                                unlist(..3)) %>%
+        purrr::pmap_dfr(~ hierarchize_topics_fast(unlist(..1),
+                                                  unlist(..2),
+                                                  unlist(..3)) %>%
                           dplyr::mutate(value = 1 / nrow(.)))
-
-      ### per tag lineage
+      
+      ### per topic lineage
     } else {
-
+      
       data_plot %<>%
-        purrr::pmap_dfr(~ hierarchize_tags_fast(unlist(..1),
-                                                unlist(..2),
-                                                unlist(..3))) %>%
+        purrr::pmap_dfr(~ hierarchize_topics_fast(unlist(..1),
+                                                  unlist(..2),
+                                                  unlist(..3))) %>%
         dplyr::mutate(value = 1)
     }
-
+    
     data_plot <-
       dplyr::bind_rows(
         data_plot %>%
-          dplyr::group_by(tag_tier_1) %>%
+          dplyr::group_by(topic_tier_1) %>%
           dplyr::summarise(value = sum(value)) %>%
-          dplyr::transmute(tag = tag_tier_1,
-                           parent_tag = "",
+          dplyr::transmute(topic = topic_tier_1,
+                           parent_topic = "",
                            value),
         data_plot %>%
-          dplyr::group_by(tag_tier_2) %>%
+          dplyr::group_by(topic_tier_2) %>%
           dplyr::summarise(value = sum(value)) %>%
-          dplyr::transmute(tag = tag_tier_2,
-                           parent_tag =
-                             tag %>%
+          dplyr::transmute(topic = topic_tier_2,
+                           parent_topic =
+                             topic %>%
                              purrr::map_chr(~ {
                                if (is.na(.x)) {
                                  NA_character_
                                } else {
-                                 infer_tags(tags = .x,
-                                            tier = 1L)
+                                 infer_topics(topics = .x,
+                                              tier = 1L)
                                }}),
                            value),
         data_plot %>%
-          dplyr::group_by(tag_tier_3) %>%
+          dplyr::group_by(topic_tier_3) %>%
           dplyr::summarise(value = sum(value)) %>%
-          dplyr::transmute(tag = tag_tier_3,
-                           parent_tag =
-                             tag %>%
+          dplyr::transmute(topic = topic_tier_3,
+                           parent_topic =
+                             topic %>%
                              purrr::map_chr(~ {
                                if (is.na(.x)) {
                                  NA_character_
                                } else {
-                                 infer_tags(tags = .x,
-                                            tier = 2L)
+                                 infer_topics(topics = .x,
+                                              tier = 2L)
                                }}),
                            value)
       ) %>%
-      dplyr::filter(!is.na(tag))
-
+      dplyr::filter(!is.na(topic))
+    
     ### add NA rows filling the gaps
     data_plot %<>%
-      dplyr::filter(parent_tag != "") %>%
-      dplyr::group_by(parent_tag) %>%
+      dplyr::filter(parent_topic != "") %>%
+      dplyr::group_by(parent_topic) %>%
       dplyr::summarise(value_total = sum(value),
                        .groups = "drop") %>%
-      dplyr::transmute(tag = "<i>not defined</i>",
+      dplyr::transmute(topic = "<i>not defined</i>",
                        value = purrr::map2_dbl(.x = value_total,
-                                               .y = parent_tag,
+                                               .y = parent_topic,
                                                .f = ~
                                                  data_plot %>%
-                                                 dplyr::filter(tag == .y) %$%
+                                                 dplyr::filter(topic == .y) %$%
                                                  value %>%
                                                  checkmate::assert_number() %>%
                                                  magrittr::subtract(.x)),
-                       parent_tag) %>%
+                       parent_topic) %>%
       dplyr::bind_rows(data_plot, .) %>%
-      dplyr::mutate(id = ifelse(tag == "<i>not defined</i>",
-                                paste0("NA_", parent_tag),
-                                tag))
+      dplyr::mutate(id = ifelse(topic == "<i>not defined</i>",
+                                paste0("NA_", parent_topic),
+                                topic))
   }
-
+  
   # create plot
   plotly::plot_ly(data = data_plot,
                   type = "sunburst",
-                  labels = ~tag,
-                  parents = ~parent_tag,
-                  ids = if (is_naive) ~tag else ~id,
+                  labels = ~topic,
+                  parents = ~parent_topic,
+                  ids = if (is_naive) ~topic else ~id,
                   values = ~value,
                   branchvalues = ifelse(is_naive,
                                         "remainder",
@@ -4407,30 +4396,30 @@ plot_tag_segmentation <- function(data,
                   insidetextorientation = "radial")
 }
 
-#' Tag share per period stacked area chart
+#' Topic share per period stacked area chart
 #'
 #' Creates a [Plotly stacked area chart](https://plotly.com/r/filled-area-plots/#stacked-area-chart-with-cumulative-values) that visualizes the share of
-#' referendum tag occurences per period.
+#' referendum topic occurences per period.
 #'
 #' ```{r, child = "snippets/period_note.Rmd"}
 #' ```
 #'
-#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `tags_tier_#` of the specified `tier`.
-#' @param tier Tier of the tags variable to plot. `1L`, `2L` or `3L`.
-#' @param period Type of period to count tags by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
-#' @param weight_by_n_rfrnds Whether or not to weight tag occurences by number of referendums. If `TRUE`, for a referendum with n different tags of the same
-#'   `tier`, every tag is counted 1/n.
+#' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `topics_tier_#` of the specified `tier`.
+#' @param tier Tier of the topics variable to plot. `1L`, `2L` or `3L`.
+#' @param period Type of period to count topics by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
+#' @param weight_by_n_rfrnds Whether or not to weight topic occurences by number of referendums. If `TRUE`, for a referendum with n different topics of the same
+#'   `tier`, every topic is counted 1/n.
 #'
 #' @return `r pkgsnip::param_label("plotly_obj")`
 #' @family visualize
 #' @export
 #'
 #' @examples
-#' c2d::rfrnds(country_code = "AT") |> c2d::plot_tag_share_per_period()
-plot_tag_share_per_period <- function(data,
-                                      tier = 1L,
-                                      period = c("week", "month", "quarter", "year", "decade", "century"),
-                                      weight_by_n_rfrnds = TRUE) {
+#' c2d::rfrnds(country_code = "AT") |> c2d::plot_topic_share_per_period()
+plot_topic_share_per_period <- function(data,
+                                        tier = 1L,
+                                        period = c("week", "month", "quarter", "year", "decade", "century"),
+                                        weight_by_n_rfrnds = TRUE) {
   checkmate::assert_int(tier,
                         lower = 1L,
                         upper = 3L)
@@ -4443,29 +4432,29 @@ plot_tag_share_per_period <- function(data,
     data %<>% add_period(period = period)
   }
   
-  # ensure tags var is present
-  var_name_tags <- glue::glue("tags_tier_{tier}")
-  var_name_tag <- glue::glue("tag_tier_{tier}")
+  # ensure topics var is present
+  var_name_topics <- glue::glue("topics_tier_{tier}")
+  var_name_topic <- glue::glue("topic_tier_{tier}")
   
-  if (!(var_name_tags %in% colnames(data))) {
-    cli::cli_abort("Required column {.var {var_name_tags}} is missing from {.arg data}.")
+  if (!(var_name_topics %in% colnames(data))) {
+    cli::cli_abort("Required column {.var {var_name_topics}} is missing from {.arg data}.")
   }
   
   data %>%
     # add proper count var
-    dplyr::mutate(count = if (weight_by_n_rfrnds) 1 / purrr::map_int(!!as.symbol(var_name_tags), length) else 1) %>%
+    dplyr::mutate(count = if (weight_by_n_rfrnds) 1 / purrr::map_int(!!as.symbol(var_name_topics), length) else 1) %>%
     # transform data
-    tidyr::unnest_longer(col = all_of(var_name_tags),
-                         values_to = var_name_tag,
+    tidyr::unnest_longer(col = all_of(var_name_topics),
+                         values_to = var_name_topic,
                          ptype = character()) %>%
     # calculate freqs
-    dplyr::group_by(!!as.symbol(period), !!as.symbol(var_name_tag)) %>%
+    dplyr::group_by(!!as.symbol(period), !!as.symbol(var_name_topic)) %>%
     dplyr::summarise(n = sum(count),
                      .groups = "drop") %>%
-    dplyr::mutate(!!as.symbol(var_name_tag) := factor(x = !!as.symbol(var_name_tag),
-                                                      levels = var_vals(var_name_tags))) %>%
+    dplyr::mutate(!!as.symbol(var_name_topic) := factor(x = !!as.symbol(var_name_topic),
+                                                        levels = var_vals(var_name_topics))) %>%
     # plot
-    plot_share_per_period(x = var_name_tag,
+    plot_share_per_period(x = var_name_topic,
                           period = period)
 }
 
@@ -4610,53 +4599,6 @@ tbl_n_rfrnds_per_period <- function(data,
     gt::tab_style(style = gt::cell_text(align = "left",
                                         v_align = "middle"),
                   locations = gt::cells_stubhead())
-}
-
-#' Test C2D API availability
-#'
-#' Checks if the C2D API server is online and operational.
-#'
-#' @inheritParams url_api
-#' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
-#'
-#' @return A logical scalar.
-#' @family api_status
-#' @export
-is_online <- function(use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                               pkg = this_pkg),
-                      quiet = FALSE) {
-  
-  checkmate::assert_flag(quiet)
-  
-  result <- FALSE
-  response <- tryCatch(expr = httr::RETRY(verb = "GET",
-                                          url = url_api("health",
-                                                        .use_testing_server = use_testing_server),
-                                          times = 3L),
-                       error = function(e) e$message)
-  
-  if ("response" %in% class(response)) {
-    
-    response %<>%
-      # ensure we actually got a plaintext response
-      pal::assert_mime_type(mime_type = "text/plain",
-                            msg_suffix = mime_error_suffix) %>%
-      # parse response
-      httr::content(as = "text",
-                    encoding = "UTF-8")
-    
-    if (response == "OK") {
-      result <- TRUE
-      
-    } else if (!quiet) {
-      cli::cli_alert_warning("C2D API server responded with: {.val {response}}")
-    }
-    
-  } else {
-    cli::cli_alert_warning(response)
-  }
-  
-  result
 }
 
 #' List referendum territories from [sudd.ch](https://sudd.ch/)
@@ -4939,10 +4881,9 @@ list_sudd_rfrnds <- function(mode = c("by_date",
     result %>%
       # derive vars from `id_sudd`
       dplyr::bind_cols(.$id_sudd %>% purrr::map_dfr(parse_sudd_id)) %>%
-      dplyr::mutate(is_past_jurisdiction = !is.na(country_code_historical)) %>%
       dplyr::select(id_sudd,
                     starts_with("country_"),
-                    is_past_jurisdiction,
+                    is_former_country,
                     everything())
   },
   pkg = this_pkg,
@@ -5016,7 +4957,6 @@ sudd_rfrnds <- function(ids_sudd,
       # reorder columns
       dplyr::relocate(id_sudd,
                       country_code,
-                      country_code_historical,
                       country_name,
                       territory_name_de,
                       any_of(c("territory_type_de",
@@ -5024,6 +4964,7 @@ sudd_rfrnds <- function(ids_sudd,
                                "year",
                                "month",
                                "day",
+                               "is_former_country",
                                "title_de",
                                "question_type_de",
                                "types",
@@ -5057,6 +4998,53 @@ sudd_rfrnds <- function(ids_sudd,
   ids_sudd,
   use_cache = use_cache,
   cache_lifespan = cache_lifespan)
+}
+
+#' Test C2D API availability
+#'
+#' Checks if the C2D API server is online and operational.
+#'
+#' @inheritParams url_api
+#' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
+#'
+#' @return A logical scalar.
+#' @family api_status
+#' @export
+is_online <- function(use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                               pkg = this_pkg),
+                      quiet = FALSE) {
+  
+  checkmate::assert_flag(quiet)
+  
+  result <- FALSE
+  response <- tryCatch(expr = httr::RETRY(verb = "GET",
+                                          url = url_api("health",
+                                                        .use_testing_server = use_testing_server),
+                                          times = 3L),
+                       error = function(e) e$message)
+  
+  if ("response" %in% class(response)) {
+    
+    response %<>%
+      # ensure we actually got a plaintext response
+      pal::assert_mime_type(mime_type = "text/plain",
+                            msg_suffix = mime_error_suffix) %>%
+      # parse response
+      httr::content(as = "text",
+                    encoding = "UTF-8")
+    
+    if (response == "OK") {
+      result <- TRUE
+      
+    } else if (!quiet) {
+      cli::cli_alert_warning("C2D API server responded with: {.val {response}}")
+    }
+    
+  } else {
+    cli::cli_alert_warning(response)
+  }
+  
+  result
 }
 
 #' `r this_pkg` package configuration metadata

@@ -161,8 +161,10 @@ country doesn't belong to any UN tier-3 region, the corresponding <code>un_regio
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other referendum data augmentation functions:
+<code><a href='add_country_code_continual.html'>add_country_code_continual</a>()</code>,
 <code><a href='add_country_code_long.html'>add_country_code_long</a>()</code>,
 <code><a href='add_country_name_long.html'>add_country_name_long</a>()</code>,
+<code><a href='add_former_country_flag.html'>add_former_country_flag</a>()</code>,
 <code><a href='add_period.html'>add_period</a>()</code>,
 <code><a href='add_turnout.html'>add_turnout</a>()</code></p></div>
 
@@ -172,14 +174,14 @@ country doesn't belong to any UN tier-3 region, the corresponding <code>un_regio
 <span class='r-in'><span>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fu'>any_of</span><span class='op'>(</span><span class='st'>"id"</span><span class='op'>)</span>,</span></span>
 <span class='r-in'><span>                <span class='fu'>starts_with</span><span class='op'>(</span><span class='st'>"country_"</span><span class='op'>)</span>,</span></span>
 <span class='r-in'><span>                <span class='fu'>starts_with</span><span class='op'>(</span><span class='st'>"un_"</span><span class='op'>)</span><span class='op'>)</span></span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 1 × 11</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   id     count…¹ count…² count…³ un_co…⁴ un_re…⁵ un_re…⁶ un_re…⁷ un_re…⁸ un_re…⁹</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 1 × 10</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   id     count…¹ count…² un_co…³ un_re…⁴ un_re…⁵ un_re…⁶ un_re…⁷ un_re…⁸ un_re…⁹</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> 5bbbe… CH      <span style='color: #BB0000;'>NA</span>      Switze… 756     Europe  150     Wester… 155     <span style='color: #BB0000;'>NA</span>     </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 1 more variable: un_region_tier_3_code &lt;chr&gt;, and abbreviated variable</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   names ¹​country_code, ²​country_code_historical, ³​country_name,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁴​un_country_code, ⁵​un_region_tier_1_name, ⁶​un_region_tier_1_code,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁷​un_region_tier_2_name, ⁸​un_region_tier_2_code, ⁹​un_region_tier_3_name</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> 5bbbe… CH      Switze… 756     150     Europe  155     Wester… <span style='color: #BB0000;'>NA</span>      <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with abbreviated variable names ¹​country_code, ²​country_name,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ³​un_country_code, ⁴​un_region_tier_1_code, ⁵​un_region_tier_1_name,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁶​un_region_tier_2_code, ⁷​un_region_tier_2_name, ⁸​un_region_tier_3_code,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁹​un_region_tier_3_name</span></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

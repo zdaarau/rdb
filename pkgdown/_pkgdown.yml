@@ -46,17 +46,18 @@ reference:
   - val_lbls
   - var_vals
   - printify_var_names
-- title: Tags
-  desc: Functions to work with referendum [tags](https://rpkg.dev/c2d/articles/codebook.html#tags).
+- title: Referendum topics
+  desc: Functions to work with referendum [topics](https://rpkg.dev/c2d/articles/codebook.html#topics).
 - contents:
-  - data_tags
-  - tags
-  - hierarchize_tags
-  - hierarchize_tags_fast
-  - infer_tags
+  - data_topics
+  - topics
+  - hierarchize_topics
+  - hierarchize_topics_fast
+  - infer_topics
 - title: Augmentation
   desc: Functions to augment the C2D referendum data by additional information (columns).
 - contents:
+  - add_country_code_continual
   - add_country_code_long
   - add_country_name_long
   - add_period
@@ -70,14 +71,15 @@ reference:
   - n_rfrnds_per_period
   - printify_col_names
 - title: Visualization
+  desc: Functions to visualize the C2D referendum data (using [plotly](https://plotly-r.com/)).
 - contents:
   - plot_rfrnd_share_per_period
-  - plot_tag_segmentation
-  - plot_tag_share_per_period
+  - plot_topic_segmentation
+  - plot_topic_share_per_period
 - title: Tabulation
+  desc: Functions to create analyses in tabular form (using [gt](https://gt.rstudio.com/)
+    tables).
 - contents: tbl_n_rfrnds_per_period
-- title: C2D API Status
-- contents: is_online
 - title: sudd.ch scraping
   desc: Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database.
 - contents:
@@ -86,4 +88,6 @@ reference:
   - list_sudd_rfrnds
   - sudd_rfrnds
 - title: Miscellaneous
-- contents: pkg_config
+- contents:
+  - is_online
+  - pkg_config

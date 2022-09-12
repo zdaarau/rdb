@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tag hierarchy — data_tags • c2d</title>
+<title>Topic hierarchy — data_topics • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Tag hierarchy — data_tags" />
-<meta name="description" content="A tibble reflecting the complete referendum tags hierarchy.">
-<meta property="og:description" content="A tibble reflecting the complete referendum tags hierarchy." />
+<meta property="og:title" content="Topic hierarchy — data_topics" />
+<meta name="description" content="A tibble reflecting the complete referendum topics hierarchy.">
+<meta property="og:description" content="A tibble reflecting the complete referendum topics hierarchy." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -118,16 +118,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Tag hierarchy</h1>
+    <h1>Topic hierarchy</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
-    <div class="hidden name"><code>data_tags.Rd</code></div>
+    <div class="hidden name"><code>data_topics.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A tibble reflecting the complete <a href='https://rpkg.dev/c2d/articles/codebook.html#tags'>referendum tags hierarchy</a>.</p>
+    <p>A tibble reflecting the complete <a href='https://rpkg.dev/c2d/articles/codebook.html#topics'>referendum topics hierarchy</a>.</p>
     </div>
 
-    <pre class="usage"><span><span class='va'>data_tags</span></span></pre>
+    <pre class="usage"><span><span class='va'>data_topics</span></span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -135,16 +135,16 @@
     <p>A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other tag-related functions:
-<code><a href='hierarchize_tags_fast.html'>hierarchize_tags_fast</a>()</code>,
-<code><a href='hierarchize_tags.html'>hierarchize_tags</a>()</code>,
-<code><a href='infer_tags.html'>infer_tags</a>()</code>,
-<code><a href='tags.html'>tags</a>()</code></p></div>
+    <div class='dont-index'><p>Other referendum topic functions:
+<code><a href='hierarchize_topics_fast.html'>hierarchize_topics_fast</a>()</code>,
+<code><a href='hierarchize_topics.html'>hierarchize_topics</a>()</code>,
+<code><a href='infer_topics.html'>infer_topics</a>()</code>,
+<code><a href='topics.html'>topics</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>data_tags</span></span></span>
+    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>data_topics</span></span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 136 × 3</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    tag_tier_1         tag_tier_2        tag_tier_3                         </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    topic_tier_1       topic_tier_2      topic_tier_3                       </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>              <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>             <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                              </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> state organisation national identity <span style='color: #BB0000;'>NA</span>                                 </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> state organisation political system  constitution                       </span>

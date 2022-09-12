@@ -5,6 +5,7 @@ single_rfrnd <- rfrnd(id = "5bbbe26a92a21351232dd73f")
 test_augmentation <- function(fns = c("add_world_regions",
                                       "add_period",
                                       "add_turnout",
+                                      "add_country_code_continual",
                                       "add_country_code_long",
                                       "add_country_name_long")) {
 

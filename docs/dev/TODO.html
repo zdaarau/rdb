@@ -242,20 +242,20 @@ original language</li>
 </ul>
 </li>
 <li>
-<p><code>tags</code>: Adapt back-end to apply the same 3-tier tags
-logic that the R package does:</p>
+<p><code>topics</code>: Adapt back-end to apply the same 3-tier
+topics logic that the R package does:</p>
 <ul>
-<li>Parent tags should be implicit, i.e. it should be impossible to
-select a parent tag and one of its respective childs tags at the same
-time (selecting a child tag should always result in implicit selection
-of its parent (e.g. in a different (e.g. faded) color)).</li>
-<li>The upper limit of 3 tags should refer to <em>main</em> tags
-(i.e. excluding any implicit parent tags).</li>
-<li>Based on the user’s selection of <em>main</em> tags, parent tags
-should automatically be derived from child tags based on the <a href="https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json" class="external-link">hierarchical
-tag structure</a> and all the tags should be assigned to the 3 variables
-<code>tags_tier_1</code>, <code>tags_tier_2</code>,
-<code>tags_tier_3</code>.</li>
+<li>Parent topics should be implicit, i.e. it should be impossible to
+select a parent topic and one of its respective childs topics at the
+same time (selecting a child topic should always result in implicit
+selection of its parent (e.g. in a different (e.g. faded) color)).</li>
+<li>The upper limit of 3 topics should refer to <em>main</em> topics
+(i.e. excluding any implicit parent topics).</li>
+<li>Based on the user’s selection of <em>main</em> topics, parent topics
+should automatically be derived from child topics based on the <a href="https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json" class="external-link">hierarchical
+topic structure</a> and all the topics should be assigned to the 3
+variables <code>topics_tier_1</code>, <code>topics_tier_2</code>,
+<code>topics_tier_3</code>.</li>
 </ul>
 <p>-&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/41" class="external-link">issue
 #41</a></p>
@@ -325,7 +325,7 @@ government (executive) but also ones that originate from the parliament
 <code>description</code>, holding a short prosa description of the
 referendum.</li>
 <li>
-<code>tags_ad_hoc</code> (maybe we’ll find a better name,
+<code>tags</code> (maybe we’ll find a better name,
 e.g. <code>keywords</code>?), holding a list of freely definable tags,
 so we can create ad-hoc collections of referendums that share some
 common characteristic</li>
@@ -754,12 +754,12 @@ schlau…)?</p></li>
 <li><p><code>inst_quorum_turnout</code> sollte standardisiert werden
 -&gt; was wäre eine geeignete, abschliessende Menge an Werten?</p></li>
 <li>
-<p>Woher genau stammt die Tag-Hierarchie? Ist sie “custom”?</p>
+<p>Woher genau stammt die Topics-Hierarchie? Ist sie “custom”?</p>
 <p>Falls ja, sollten wir</p>
 <ul>
-<li>den <code>tag_tier_3</code> “homosexuals” wohl etwas breiter fassen,
-bspw. “sexual orientation / gender identity”.</li>
-<li>den <code>tag_tier_3</code> “compensation for loss of earnings for
+<li>den <code>topic_tier_3</code> “homosexuals” wohl etwas breiter
+fassen, bspw. “sexual orientation / gender identity”.</li>
+<li>den <code>topic_tier_3</code> “compensation for loss of earnings for
 persons on military service or civil protection duty” kürzen!</li>
 </ul>
 </li>

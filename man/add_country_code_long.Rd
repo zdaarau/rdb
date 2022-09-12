@@ -13,8 +13,8 @@ add_country_code_long(data)
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Augments \code{data} with an additional column holding the three-letter \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3}{ISO 3166-1 alpha-3} code of the country
-in which the referendum took place.
+Augments \code{data} with an additional column holding the current or former three-letter \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3}{ISO 3166-1 alpha-3}
+code of the country in which the referendum took place (see \href{https://en.wikipedia.org/wiki/ISO_3166-3_alpha-3}{ISO 3166-3} for former country codes).
 }
 \examples{
 c2d::rfrnds(date_max = clock::date_today(zone = "UTC"),
@@ -25,7 +25,9 @@ c2d::rfrnds(date_max = clock::date_today(zone = "UTC"),
 }
 \seealso{
 Other referendum data augmentation functions:
+\code{\link{add_country_code_continual}()},
 \code{\link{add_country_name_long}()},
+\code{\link{add_former_country_flag}()},
 \code{\link{add_period}()},
 \code{\link{add_turnout}()},
 \code{\link{add_world_regions}()}

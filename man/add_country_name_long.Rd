@@ -24,7 +24,9 @@ c2d::rfrnds(date_max = clock::date_today(zone = "UTC"),
 }
 \seealso{
 Other referendum data augmentation functions:
+\code{\link{add_country_code_continual}()},
 \code{\link{add_country_code_long}()},
+\code{\link{add_former_country_flag}()},
 \code{\link{add_period}()},
 \code{\link{add_turnout}()},
 \code{\link{add_world_regions}()}

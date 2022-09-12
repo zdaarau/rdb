@@ -4,10 +4,16 @@
     <loc>https://rpkg.dev/c2d/index.html</loc>
   </url>
   <url>
+    <loc>https://rpkg.dev/c2d/reference/add_country_code_continual.html</loc>
+  </url>
+  <url>
     <loc>https://rpkg.dev/c2d/reference/add_country_code_long.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/add_country_name_long.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/add_former_country_flag.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/add_period.html</loc>
@@ -40,7 +46,7 @@
     <loc>https://rpkg.dev/c2d/reference/data_codebook.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/data_tags.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/data_topics.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/delete_rfrnds.html</loc>
@@ -52,13 +58,13 @@
     <loc>https://rpkg.dev/c2d/reference/edit_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/hierarchize_tags.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/hierarchize_topics.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/hierarchize_tags_fast.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/hierarchize_topics_fast.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/infer_tags.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/infer_topics.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/is_online.html</loc>
@@ -85,10 +91,10 @@
     <loc>https://rpkg.dev/c2d/reference/plot_rfrnd_share_per_period.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/plot_tag_segmentation.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/plot_topic_segmentation.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/plot_tag_share_per_period.html</loc>
+    <loc>https://rpkg.dev/c2d/reference/plot_topic_share_per_period.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/printify_col_names.html</loc>
@@ -115,13 +121,13 @@
     <loc>https://rpkg.dev/c2d/reference/sudd_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://rpkg.dev/c2d/reference/tags.html</loc>
-  </url>
-  <url>
     <loc>https://rpkg.dev/c2d/reference/tbl_n_rfrnds_per_period.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/tidy_rfrnds.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/topics.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/untidy_rfrnds.html</loc>

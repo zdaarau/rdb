@@ -19,22 +19,41 @@ variable_label = "the referendum's identifier assigned by [sudd.ch](https://sudd
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "country_code"
-variable_name_print = "ISO 3166-1 alpha-2"
-variable_label = "the two-letter [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code identifying the country in which the referendum took place; only set if `is_past_jurisdiction = FALSE`"
+variable_name_print = "ISO 3166-1 alpha-2 / ISO 3166-3 alpha-4"
+variable_label = "the two- or four-letter code identifying the country in which the referendum took place; an [ISO 3166-3 alpha-4 code](https://en.wikipedia.org/wiki/ISO_3166-3) for historical countries which ceased to exist, otherwise an [ISO 3166-1 alpha-2 code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)"
 value_scale = "nominal"
 [[01_main.item]]
-variable_name = "country_code_historical"
-variable_name_print = "ISO 3166-3"
-variable_label = "the four-letter [ISO 3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) code identifying the *historical* (i.e. ceased to exist) country in which the referendum took place; only set if `is_past_jurisdiction = TRUE`"
+variable_name = "country_code_long"
+variable_name_print = "ISO 3166-1 alpha-3"
+variable_label = "the three-letter ISO 3166-1 alpha-3 code identifying the country in which the referendum took place"
 value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_country_code_long"
+is_opt = true
+[[01_main.item]]
+variable_name = "country_code_continual"
+variable_name_print = "ISO 3166-1 alpha-2 (continual)"
+variable_label = "the current or future [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code of the country where the referendum took place; identical to `country_code` if the country still exists, otherwise the `country_code` of the successor country (the largest one in terms of population if it was succeeded by multiple countries)"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_country_code_continual"
+is_opt = true
 [[01_main.item]]
 variable_name = "country_name"
 variable_name_print = "Country"
 variable_label = "the English name of the country in which the referendum took place"
 value_scale = "nominal"
 [[01_main.item]]
+variable_name = "country_name_long"
+variable_name_print = "Country (full name)"
+variable_label = "the official full English name(s) of the country in which the referendum took place"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_country_name_long"
+is_opt = true
+[[01_main.item]]
 variable_name = "subnational_entity_name"
-variable_name_print = "Subnational entity name"
+variable_name_print = "Subnational entity"
 variable_label = "the English name of the [subnational political entity](https://en.wikipedia.org/wiki/Administrative_division) in which the referendum took place"
 applicability_constraint = "level %in% c('local', 'subnational')"
 value_scale = "nominal"
@@ -45,6 +64,62 @@ variable_label = "the municipality in which the referendum took place"
 applicability_constraint = "level == 'local'"
 value_scale = "nominal"
 [[01_main.item]]
+variable_name = "un_country_code"
+variable_name_print = "UN M49 country code"
+variable_label = "the UN M49 code of the country in which the referendum took place"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_world_regions"
+is_opt = true
+[[01_main.item]]
+variable_name = "un_region_tier_1_code"
+variable_name_print = "UN tier-1 region's M49 area code"
+variable_label = "the area code of the UN tier-1 region in which the referendum took place"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_world_regions"
+is_opt = true
+[[01_main.item]]
+variable_name = "un_region_tier_1_name"
+variable_name_print = "UN tier-1 region's English name"
+variable_label = "the name of the UN tier-1 region in which the referendum took place"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_world_regions"
+is_opt = true
+[[01_main.item]]
+variable_name = "un_region_tier_2_code"
+variable_name_print = "UN tier-2 region's M49 area code"
+variable_label = "the area code of the UN tier-2 region in which the referendum took place"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_world_regions"
+is_opt = true
+[[01_main.item]]
+variable_name = "un_region_tier_2_name"
+variable_name_print = "UN tier-2 region's English name"
+variable_label = "the name of the UN tier-2 region in which the referendum took place"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_world_regions"
+is_opt = true
+[[01_main.item]]
+variable_name = "un_region_tier_3_code"
+variable_name_print = "UN tier-3 region's M49 area code"
+variable_label = "the area code of the UN tier-3 region in which the referendum took place"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_world_regions"
+is_opt = true
+[[01_main.item]]
+variable_name = "un_region_tier_3_name"
+variable_name_print = "UN tier-3 region's English name"
+variable_label = "the name of the UN tier-3 region in which the referendum took place"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_world_regions"
+is_opt = true
+[[01_main.item]]
 variable_name = "level"
 variable_name_print = "Political level"
 variable_label = "the political level at which the referendum took place"
@@ -53,36 +128,92 @@ value_label_prefix = "The referendum took place at the"
 value_labels = [ "local political level", "subnational political level", "national political level" ]
 value_scale = "ordinal_ascending"
 [[01_main.item]]
-variable_name = "is_past_jurisdiction"
-variable_name_print = "Past jurisdiction?"
-variable_label = "whether or not the country where the referendum took place ceased to exist and thus has a [`country_code_historical`](#country_code_historical) instead of a [`country_code`](#country_code) assigned"
-variable_values = [ true, false]
-value_scale = "binary"
-[[01_main.item]]
 variable_name = "date"
 variable_name_print = "Date"
 variable_label = "the date on which the referendum took place"
 value_scale = "interval"
 ptype = "vctrs::new_date()"
 [[01_main.item]]
+variable_name = "week"
+variable_name_print = "Week number"
+variable_label = "the week number (1–53) in which the referendum was held"
+value_scale = "interval"
+ptype = "integer()"
+derived_from = [ "date" ]
+gen_fn = "add_period"
+is_opt = true
+[[01_main.item]]
+variable_name = "month"
+variable_name_print = "Month number"
+variable_label = "the month number (1–12) in which the referendum was held"
+value_scale = "interval"
+ptype = "integer()"
+derived_from = [ "date" ]
+gen_fn = "add_period"
+is_opt = true
+[[01_main.item]]
+variable_name = "quarter"
+variable_name_print = "Quarter number"
+variable_label = "the quarter number (1–4) in which the referendum was held"
+value_scale = "interval"
+ptype = "integer()"
+derived_from = [ "date" ]
+gen_fn = "add_period"
+is_opt = true
+[[01_main.item]]
+variable_name = "year"
+variable_name_print = "Year"
+variable_label = "the year in which the referendum was held"
+value_scale = "interval"
+ptype = "integer()"
+derived_from = [ "date" ]
+gen_fn = "add_period"
+is_opt = true
+[[01_main.item]]
+variable_name = "decade"
+variable_name_print = "Decade"
+variable_label = "the decade in which the referendum was held"
+value_scale = "interval"
+ptype = "integer()"
+derived_from = [ "date" ]
+gen_fn = "add_period"
+is_opt = true
+[[01_main.item]]
+variable_name = "century"
+variable_name_print = "Century"
+variable_label = "the century in which the referendum was held"
+value_scale = "interval"
+ptype = "integer()"
+derived_from = [ "date" ]
+gen_fn = "add_period"
+is_opt = true
+[[01_main.item]]
+variable_name = "is_former_country"
+variable_name_print = "Former country?"
+variable_label = "whether or not the country where the referendum took place ceased to exist and thus has an [ISO 3166-3 alpha-4](https://en.wikipedia.org/wiki/ISO_3166-3) instead of an [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) [`country_code`](#country_code)"
+variable_values = [ true, false]
+value_scale = "binary"
+derived_from = [ "country_code" ]
+gen_fn = "add_former_country_flag"
+[[01_main.item]]
+variable_name = "title_en"
+variable_name_print = "Title"
+variable_label = "the referendum proposal's English title"
+value_scale = "nominal"
+[[01_main.item]]
 variable_name = "title_de"
 variable_name_print = "Titel"
-variable_label = "the referendum's German title"
+variable_label = "the referendum proposal's German title"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "title_fr"
 variable_name_print = "Titre"
-variable_label = "the referendum's French title"
-value_scale = "nominal"
-[[01_main.item]]
-variable_name = "title_en"
-variable_name_print = "Title"
-variable_label = "the referendum's English title"
+variable_label = "the referendum proposal's French title"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "question"
 variable_name_print = "Original question"
-variable_label = "the question exactly as it was asked in the referendum"
+variable_label = "the proposal question exactly as it was asked in the referendum"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "question_en"
@@ -92,7 +223,7 @@ value_scale = "nominal"
 [[01_main.item]]
 variable_name = "committee_name"
 variable_name_print = "Committee name"
-variable_label = "the name of the committee that initiated the referendum"
+variable_label = "the name of the committee that initiated the referendum proposal"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "result"
@@ -105,14 +236,14 @@ value_scale = "binary"
 [[01_main.item]]
 variable_name = "subterritories_yes"
 variable_name_print = "Approving subterritories"
-variable_label = "the number of [administrative divisions](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level) that approved the referendum"
+variable_label = "the number of [administrative divisions](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level) that approved the referendum proposal"
 applicability_constraint = "level != 'local'"
 ptype = "numeric()"
 value_scale = "ratio"
 [[01_main.item]]
 variable_name = "subterritories_no"
 variable_name_print = "Rejecting subterritories"
-variable_label = "the number of [administrative divisions](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level) that rejected the referendum"
+variable_label = "the number of [administrative divisions](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level) that rejected the referendum proposal"
 applicability_constraint = "level != 'local'"
 ptype = "numeric()"
 value_scale = "ratio"
@@ -154,6 +285,20 @@ is_nested = true
 applicability_constraint = "level != 'local'"
 value_scale = "ratio"
 [[01_main.item]]
+variable_name = "turnout"
+variable_name_print = "Turnout"
+variable_label = "the voter turnout at the referendum"
+value_scale = "ratio"
+derived_from = [
+  "votes_yes",
+  "votes_no",
+  "votes_empty",
+  "votes_invalid",
+  "electorate_total"
+]
+gen_fn = "add_turnout"
+is_opt = true
+[[01_main.item]]
 variable_name = "lower_house_yes"
 variable_name_print = "Lower house yes votes"
 variable_label = "the number of parliamentarians that approved the referendum proposal in the corresponding parliamentary voting; in [bicameral legislatures](https://en.wikipedia.org/wiki/Bicameralism), this number includes only members of the _lower house_, in [unicameral legislatures](https://en.wikipedia.org/wiki/Unicameralism) all parliamentarians; currently only filled for Swiss referendums on the national level ([National Council](https://en.wikipedia.org/wiki/National_Council_(Switzerland)))"
@@ -190,13 +335,13 @@ variable_label = "the government's recommendation on how to vote in the referend
 variable_values = [ "yes", "no" ]
 value_label_prefix = "The government recommends to"
 value_labels = [ "approve", "reject" ]
-value_label_suffix = "the referendum"
+value_label_suffix = "the referendum proposal"
 value_scale = "binary"
-# tags intro: On each of the following three tiers, coders can assign a maximum of 3 predefined political topics that best classify the referendum.
+# topics intro: On each of the following three tiers, coders can assign a maximum of 3 predefined political topics that best classify the referendum proposal.
 [[01_main.item]]
-variable_name = "tags_tier_1"
+variable_name = "topics_tier_1"
 variable_name_print = "Top-tier political topics"
-variable_label = "a maximum of 3 predefined top-tier political topics that best classify the referendum"
+variable_label = "a maximum of 3 predefined top-tier political topics that best classify the referendum proposal"
 is_multi_valued = true
 variable_values = [
   "state organisation",
@@ -214,11 +359,11 @@ variable_values = [
 ]
 value_scale = "nominal"
 [[01_main.item]]
-variable_name = "tags_tier_2"
+variable_name = "topics_tier_2"
 variable_name_print = "Second-tier political topics"
-variable_label = "a maximum of 3 predefined second-tier political topics that best classify the referendum; the presence of a second-tier topic always implies presence of its parent [top-tier topic](#tags_tier_1)"
+variable_label = "a maximum of 3 predefined second-tier political topics that best classify the referendum proposal; the presence of a second-tier topic always implies presence of its parent [top-tier topic](#topics_tier_1)"
 is_multi_valued = true
-applicability_constraint = "purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_2, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) %in% .x))"
+applicability_constraint = "purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_2, .f = ~ all(c2d::infer_topics(topics = .y, tier = 1L) %in% .x))"
 variable_values = [
   "national identity",
   "political system",
@@ -281,11 +426,11 @@ variable_values = [
 ]
 value_scale = "nominal"
 [[01_main.item]]
-variable_name = "tags_tier_3"
+variable_name = "topics_tier_3"
 variable_name_print = "Third-tier political topics"
-variable_label = "a maximum of 3 predefined third-tier political topics that best classify the referendum; the presence of a third-tier topic always implies presence of its parent [second-tier topic](#tags_tier_2) and grandparent [top-tier topic](#tags_tier_1)"
+variable_label = "a maximum of 3 predefined third-tier political topics that best classify the referendum proposal; the presence of a third-tier topic always implies presence of its parent [second-tier topic](#topics_tier_2) and grandparent [top-tier topic](#topics_tier_1)"
 is_multi_valued = true
-applicability_constraint = "purrr::map2_lgl(.x = tags_tier_2, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 2L) %in% .x)) & purrr::map2_lgl(.x = tags_tier_1, .y = tags_tier_3, .f = ~ all(c2d::infer_tags(tags = .y, tier = 1L) %in% .x))"
+applicability_constraint = "purrr::map2_lgl(.x = topics_tier_2, .y = topics_tier_3, .f = ~ all(c2d::infer_topics(topics = .y, tier = 2L) %in% .x)) & purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_3, .f = ~ all(c2d::infer_topics(topics = .y, tier = 1L) %in% .x))"
 variable_values = [
   "constitution",
   "procedure for constitutional reform",
@@ -675,20 +820,31 @@ value_labels = [
 value_default = [ "introduce", "revise", "abrogate" ]
 value_scale = "nominal"
 [[02_institutional.03_object.item]]
-variable_name = "inst_object_revision_divisibility"
-variable_name_print = "Object divisibility"
-variable_label = "the divisibility of [`inst_object_type`](#inst_object_type)"
+variable_name = "inst_is_divisible"
+variable_name_print = "Divisible?"
+variable_label = "whether or not [`inst_object_type`](#inst_object_type) (the proposed legal text) may be split up so voters can decide upon these parts separately"
 applicability_constraint = "inst_object_type %in% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')"
-variable_values = [ "as a whole", "split up", "as variants", "both split up and as variants" ]
-value_label_prefix = "The proposed legal text"
+variable_values = [ true, false ]
 value_labels = [
-  "can only be accepted/rejected as a whole",
-  "can be split up, the voters may vote upon these parts separately",
-  "can be presented as two or more (alternative) variants",
-  "can be both split up as well as presented as two or more (alternative) variants"
+  "may be split up",
+  "may not be split up"
 ]
-value_default = "as a whole"
-value_scale = "nominal"
+value_label_prefix = "The proposed legal text"
+value_default = [ "{NA}" ]
+value_scale = "binary"
+[[02_institutional.03_object.item]]
+variable_name = "inst_is_variable"
+variable_name_print = "Variable?"
+variable_label = "whether or not the proposed legal text may be presented in two or more (alternative) variants for voters to choose amongst"
+applicability_constraint = "inst_object_type %in% c('question', 'legal text (general proposal)', 'legal text (formulated proposal)')"
+variable_values = [ true, false ]
+value_labels = [
+  "may be presented in variants",
+  "may not be presented in variants"
+]
+value_label_prefix = "The proposed legal text"
+value_default = [ "{NA}" ]
+value_scale = "binary"
 [[02_institutional.04_other.item]]
 variable_name = "inst_topics_only"
 variable_name_print = "Allowed topics"

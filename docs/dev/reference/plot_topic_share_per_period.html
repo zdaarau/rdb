@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tag share per period stacked area chart — plot_tag_share_per_period • c2d</title>
+<title>Topic share per period stacked area chart — plot_topic_share_per_period • c2d</title>
 
 
 
@@ -44,9 +44,9 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Tag share per period stacked area chart — plot_tag_share_per_period" />
-<meta name="description" content="Creates a Plotly stacked area chart that visualizes the share of referendum tag occurences per period.">
-<meta property="og:description" content="Creates a Plotly stacked area chart that visualizes the share of referendum tag occurences per period." />
+<meta property="og:title" content="Topic share per period stacked area chart — plot_topic_share_per_period" />
+<meta name="description" content="Creates a Plotly stacked area chart that visualizes the share of referendum topic occurences per period.">
+<meta property="og:description" content="Creates a Plotly stacked area chart that visualizes the share of referendum topic occurences per period." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -118,17 +118,17 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Tag share per period stacked area chart</h1>
+    <h1>Topic share per period stacked area chart</h1>
     <small class="dont-index">Source: <a href='https://gitlab.com/zdaarau/rpkgs/c2d/blob/master/R/c2d.gen.R'><code>R/c2d.gen.R</code></a></small>
-    <div class="hidden name"><code>plot_tag_share_per_period.Rd</code></div>
+    <div class="hidden name"><code>plot_topic_share_per_period.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>Creates a <a href='https://plotly.com/r/filled-area-plots/#stacked-area-chart-with-cumulative-values'>Plotly stacked area chart</a> that visualizes the share of
-referendum tag occurences per period.</p>
+referendum topic occurences per period.</p>
     </div>
 
-    <pre class="usage"><span><span class='fu'>plot_tag_share_per_period</span><span class='op'>(</span></span>
+    <pre class="usage"><span><span class='fu'>plot_topic_share_per_period</span><span class='op'>(</span></span>
 <span>  <span class='va'>data</span>,</span>
 <span>  tier <span class='op'>=</span> <span class='fl'>1L</span>,</span>
 <span>  period <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"week"</span>, <span class='st'>"month"</span>, <span class='st'>"quarter"</span>, <span class='st'>"year"</span>, <span class='st'>"decade"</span>, <span class='st'>"century"</span><span class='op'>)</span>,</span>
@@ -140,20 +140,20 @@ referendum tag occurences per period.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>C2D referendum data as returned by <code><a href='rfrnds.html'>rfrnds()</a></code>. A data frame that at minimum contains the column <code>tags_tier_#</code> of the specified <code>tier</code>.</p></td>
+      <td><p>C2D referendum data as returned by <code><a href='rfrnds.html'>rfrnds()</a></code>. A data frame that at minimum contains the column <code>topics_tier_#</code> of the specified <code>tier</code>.</p></td>
     </tr>
     <tr>
       <th>tier</th>
-      <td><p>Tier of the tags variable to plot. <code>1L</code>, <code>2L</code> or <code>3L</code>.</p></td>
+      <td><p>Tier of the topics variable to plot. <code>1L</code>, <code>2L</code> or <code>3L</code>.</p></td>
     </tr>
     <tr>
       <th>period</th>
-      <td><p>Type of period to count tags by. One of <code>"week"</code>,<code>"month"</code>,<code>"quarter"</code>,<code>"year"</code>,<code>"decade"</code> or <code>"century"</code>.</p></td>
+      <td><p>Type of period to count topics by. One of <code>"week"</code>,<code>"month"</code>,<code>"quarter"</code>,<code>"year"</code>,<code>"decade"</code> or <code>"century"</code>.</p></td>
     </tr>
     <tr>
       <th>weight_by_n_rfrnds</th>
-      <td><p>Whether or not to weight tag occurences by number of referendums. If <code>TRUE</code>, for a referendum with n different tags of the same
-<code>tier</code>, every tag is counted 1/n.</p></td>
+      <td><p>Whether or not to weight topic occurences by number of referendums. If <code>TRUE</code>, for a referendum with n different topics of the same
+<code>tier</code>, every topic is counted 1/n.</p></td>
     </tr>
     </table>
 
@@ -167,10 +167,11 @@ referendum tag occurences per period.</p>
 
     <div class='dont-index'><p>Other visualization functions:
 <code><a href='plot_rfrnd_share_per_period.html'>plot_rfrnd_share_per_period</a>()</code>,
-<code><a href='plot_tag_segmentation.html'>plot_tag_segmentation</a>()</code></p></div>
+<code><a href='plot_topic_segmentation.html'>plot_topic_segmentation</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>plot_tag_share_per_period</span><span class='op'>(</span><span class='op'>)</span></span></span>
+    <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'><a href='rfrnds.html'>rfrnds</a></span><span class='op'>(</span>country_code <span class='op'>=</span> <span class='st'>"AT"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>c2d</span><span class='fu'>::</span><span class='fu'>plot_topic_share_per_period</span><span class='op'>(</span><span class='op'>)</span></span></span>
+<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in c2d::plot_topic_share_per_period(c2d::rfrnds(country_code = "AT")):</span> Required column `topics_tier_1` is missing from `data`.</span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

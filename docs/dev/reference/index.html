@@ -240,8 +240,8 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-tags" class="hasAnchor"><a href="#section-tags" class="anchor"></a>Tags</h2>
-          <p class="section-desc"><p>Functions to work with referendum <a href="https://rpkg.dev/c2d/articles/codebook.html#tags">tags</a>.</p></p>
+          <h2 id="section-referendum-topics" class="hasAnchor"><a href="#section-referendum-topics" class="anchor"></a>Referendum topics</h2>
+          <p class="section-desc"><p>Functions to work with referendum <a href="https://rpkg.dev/c2d/articles/codebook.html#topics">topics</a>.</p></p>
         </th>
       </tr>
       
@@ -252,33 +252,33 @@
       <tr>
         
         <td>
-          <p><code><a href="data_tags.html">data_tags</a></code> </p>
+          <p><code><a href="data_topics.html">data_topics</a></code> </p>
         </td>
-        <td><p>Tag hierarchy</p></td>
+        <td><p>Topic hierarchy</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="tags.html">tags()</a></code> </p>
+          <p><code><a href="topics.html">topics()</a></code> </p>
         </td>
-        <td><p>List available tags</p></td>
+        <td><p>List available topics</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="hierarchize_tags.html">hierarchize_tags()</a></code> </p>
+          <p><code><a href="hierarchize_topics.html">hierarchize_topics()</a></code> </p>
         </td>
-        <td><p>Hierarchize tags</p></td>
+        <td><p>Hierarchize topics</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="hierarchize_tags_fast.html">hierarchize_tags_fast()</a></code> </p>
+          <p><code><a href="hierarchize_topics_fast.html">hierarchize_topics_fast()</a></code> </p>
         </td>
-        <td><p>Hierarchize tags (fast)</p></td>
+        <td><p>Hierarchize topics (fast)</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="infer_tags.html">infer_tags()</a></code> </p>
+          <p><code><a href="infer_topics.html">infer_topics()</a></code> </p>
         </td>
-        <td><p>Infer higher-tier tags</p></td>
+        <td><p>Infer higher-tier topics</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -294,6 +294,12 @@ information (columns).</p></p>
       
       
       <tr>
+        
+        <td>
+          <p><code><a href="add_country_code_continual.html">add_country_code_continual()</a></code> </p>
+        </td>
+        <td><p>Add continual country code to referendum data</p></td>
+      </tr><tr>
         
         <td>
           <p><code><a href="add_country_code_long.html">add_country_code_long()</a></code> </p>
@@ -360,7 +366,7 @@ each with a specific purpose.</p></p>
       <tr>
         <th colspan="2">
           <h2 id="section-visualization" class="hasAnchor"><a href="#section-visualization" class="anchor"></a>Visualization</h2>
-          <p class="section-desc"></p>
+          <p class="section-desc"><p>Functions to visualize the C2D referendum data (using <a href="https://plotly-r.com/" class="external-link">plotly</a>).</p></p>
         </th>
       </tr>
       
@@ -377,21 +383,21 @@ each with a specific purpose.</p></p>
       </tr><tr>
         
         <td>
-          <p><code><a href="plot_tag_segmentation.html">plot_tag_segmentation()</a></code> </p>
+          <p><code><a href="plot_topic_segmentation.html">plot_topic_segmentation()</a></code> </p>
         </td>
-        <td><p>Tag segmentation sunburst chart</p></td>
+        <td><p>Topic segmentation sunburst chart</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="plot_tag_share_per_period.html">plot_tag_share_per_period()</a></code> </p>
+          <p><code><a href="plot_topic_share_per_period.html">plot_topic_share_per_period()</a></code> </p>
         </td>
-        <td><p>Tag share per period stacked area chart</p></td>
+        <td><p>Topic share per period stacked area chart</p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
           <h2 id="section-tabulation" class="hasAnchor"><a href="#section-tabulation" class="anchor"></a>Tabulation</h2>
-          <p class="section-desc"></p>
+          <p class="section-desc"><p>Functions to create analyses in tabular form (using <a href="https://gt.rstudio.com/" class="external-link">gt</a> tables).</p></p>
         </th>
       </tr>
       
@@ -405,25 +411,6 @@ each with a specific purpose.</p></p>
           <p><code><a href="tbl_n_rfrnds_per_period.html">tbl_n_rfrnds_per_period()</a></code> </p>
         </td>
         <td><p>Tabulate number of referendums per period</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-c-d-api-status" class="hasAnchor"><a href="#section-c-d-api-status" class="anchor"></a>C2D API Status</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="is_online.html">is_online()</a></code> </p>
-        </td>
-        <td><p>Test C2D API availability</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -475,6 +462,12 @@ each with a specific purpose.</p></p>
       
       
       <tr>
+        
+        <td>
+          <p><code><a href="is_online.html">is_online()</a></code> </p>
+        </td>
+        <td><p>Test C2D API availability</p></td>
+      </tr><tr>
         
         <td>
           <p><code><a href="pkg_config.html">pkg_config</a></code> </p>

@@ -131,9 +131,10 @@ measure</a> is the <strong>nominal</strong> level.</p>
 <h3 class="hasAnchor">
 <a href="#country_code" class="anchor"></a><code>country_code</code>
 </h3>
-<p>The two-letter <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" class="external-link">ISO 3166-1
-alpha-2</a> code identifying the country in which the referendum took
-place; only set if <code>is_past_jurisdiction = FALSE</code>.</p>
+<p>The two- or four-letter code identifying the country in which the
+referendum took place; an <a href="https://en.wikipedia.org/wiki/ISO_3166-3" class="external-link">ISO 3166-3 alpha-4
+code</a> for historical countries which ceased to exist, otherwise an <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" class="external-link">ISO 3166-1
+alpha-2 code</a>.</p>
 <div id="country_code-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#country_code-scale" class="anchor"></a>Level of measurement</h4>
@@ -141,17 +142,44 @@ place; only set if <code>is_past_jurisdiction = FALSE</code>.</p>
 measure</a> is the <strong>nominal</strong> level.</p>
 </div>
 </div>
-<div id="country_code_historical" class="section level3">
+<div id="country_code_long" class="section level3">
 <h3 class="hasAnchor">
-<a href="#country_code_historical" class="anchor"></a><code>country_code_historical</code>
+<a href="#country_code_long" class="anchor"></a><code>country_code_long</code>
 </h3>
-<p>The four-letter <a href="https://en.wikipedia.org/wiki/ISO_3166-3" class="external-link">ISO 3166-3</a> code
-identifying the <em>historical</em> (i.e. ceased to exist) country in
-which the referendum took place; only set if
-<code>is_past_jurisdiction = TRUE</code>.</p>
-<div id="country_code_historical-scale" class="section level4">
+<p>The three-letter ISO 3166-1 alpha-3 code identifying the country in
+which the referendum took place.</p>
+<div id="origin" class="section level4">
 <h4 class="hasAnchor">
-<a href="#country_code_historical-scale" class="anchor"></a>Level of measurement</h4>
+<a href="#origin" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_country_code_long.html"><code>add_country_code_long()</code></a>.</p>
+</div>
+<div id="country_code_long-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#country_code_long-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="country_code_continual" class="section level3">
+<h3 class="hasAnchor">
+<a href="#country_code_continual" class="anchor"></a><code>country_code_continual</code>
+</h3>
+<p>The current or future <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" class="external-link">ISO 3166-1
+alpha-2</a> code of the country where the referendum took place;
+identical to <code>country_code</code> if the country still exists,
+otherwise the <code>country_code</code> of the successor country (the
+largest one in terms of population if it was succeeded by multiple
+countries).</p>
+<div id="origin-1" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-1" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_country_code_continual.html"><code>add_country_code_continual()</code></a>.</p>
+</div>
+<div id="country_code_continual-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#country_code_continual-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
 measure</a> is the <strong>nominal</strong> level.</p>
 </div>
@@ -165,6 +193,25 @@ place.</p>
 <div id="country_name-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#country_name-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="country_name_long" class="section level3">
+<h3 class="hasAnchor">
+<a href="#country_name_long" class="anchor"></a><code>country_name_long</code>
+</h3>
+<p>The official full English name(s) of the country in which the
+referendum took place.</p>
+<div id="origin-2" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-2" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_country_name_long.html"><code>add_country_name_long()</code></a>.</p>
+</div>
+<div id="country_name_long-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#country_name_long-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
 measure</a> is the <strong>nominal</strong> level.</p>
 </div>
@@ -204,6 +251,139 @@ measure</a> is the <strong>nominal</strong> level.</p>
 <div id="municipality-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#municipality-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="un_country_code" class="section level3">
+<h3 class="hasAnchor">
+<a href="#un_country_code" class="anchor"></a><code>un_country_code</code>
+</h3>
+<p>The UN M49 code of the country in which the referendum took
+place.</p>
+<div id="origin-3" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-3" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
+</div>
+<div id="un_country_code-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#un_country_code-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="un_region_tier_1_code" class="section level3">
+<h3 class="hasAnchor">
+<a href="#un_region_tier_1_code" class="anchor"></a><code>un_region_tier_1_code</code>
+</h3>
+<p>The area code of the UN tier-1 region in which the referendum took
+place.</p>
+<div id="origin-4" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-4" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
+</div>
+<div id="un_region_tier_1_code-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#un_region_tier_1_code-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="un_region_tier_1_name" class="section level3">
+<h3 class="hasAnchor">
+<a href="#un_region_tier_1_name" class="anchor"></a><code>un_region_tier_1_name</code>
+</h3>
+<p>The name of the UN tier-1 region in which the referendum took
+place.</p>
+<div id="origin-5" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-5" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
+</div>
+<div id="un_region_tier_1_name-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#un_region_tier_1_name-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="un_region_tier_2_code" class="section level3">
+<h3 class="hasAnchor">
+<a href="#un_region_tier_2_code" class="anchor"></a><code>un_region_tier_2_code</code>
+</h3>
+<p>The area code of the UN tier-2 region in which the referendum took
+place.</p>
+<div id="origin-6" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-6" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
+</div>
+<div id="un_region_tier_2_code-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#un_region_tier_2_code-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="un_region_tier_2_name" class="section level3">
+<h3 class="hasAnchor">
+<a href="#un_region_tier_2_name" class="anchor"></a><code>un_region_tier_2_name</code>
+</h3>
+<p>The name of the UN tier-2 region in which the referendum took
+place.</p>
+<div id="origin-7" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-7" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
+</div>
+<div id="un_region_tier_2_name-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#un_region_tier_2_name-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="un_region_tier_3_code" class="section level3">
+<h3 class="hasAnchor">
+<a href="#un_region_tier_3_code" class="anchor"></a><code>un_region_tier_3_code</code>
+</h3>
+<p>The area code of the UN tier-3 region in which the referendum took
+place.</p>
+<div id="origin-8" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-8" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
+</div>
+<div id="un_region_tier_3_code-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#un_region_tier_3_code-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal</strong> level.</p>
+</div>
+</div>
+<div id="un_region_tier_3_name" class="section level3">
+<h3 class="hasAnchor">
+<a href="#un_region_tier_3_name" class="anchor"></a><code>un_region_tier_3_name</code>
+</h3>
+<p>The name of the UN tier-3 region in which the referendum took
+place.</p>
+<div id="origin-9" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-9" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
+</div>
+<div id="un_region_tier_3_name-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#un_region_tier_3_name-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
 measure</a> is the <strong>nominal</strong> level.</p>
 </div>
@@ -251,17 +431,137 @@ level.</td>
 measure</a> is the <strong>ordinal (ascending)</strong> level.</p>
 </div>
 </div>
-<div id="is_past_jurisdiction" class="section level3">
+<div id="date" class="section level3">
 <h3 class="hasAnchor">
-<a href="#is_past_jurisdiction" class="anchor"></a><code>is_past_jurisdiction</code>
+<a href="#date" class="anchor"></a><code>date</code>
+</h3>
+<p>The date on which the referendum took place.</p>
+<div id="date-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#date-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>interval</strong> level.</p>
+</div>
+</div>
+<div id="week" class="section level3">
+<h3 class="hasAnchor">
+<a href="#week" class="anchor"></a><code>week</code>
+</h3>
+<p>The week number (1–53) in which the referendum was held.</p>
+<div id="origin-10" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-10" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html"><code>add_period()</code></a>.</p>
+</div>
+<div id="week-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#week-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>interval</strong> level.</p>
+</div>
+</div>
+<div id="month" class="section level3">
+<h3 class="hasAnchor">
+<a href="#month" class="anchor"></a><code>month</code>
+</h3>
+<p>The month number (1–12) in which the referendum was held.</p>
+<div id="origin-11" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-11" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html"><code>add_period()</code></a>.</p>
+</div>
+<div id="month-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#month-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>interval</strong> level.</p>
+</div>
+</div>
+<div id="quarter" class="section level3">
+<h3 class="hasAnchor">
+<a href="#quarter" class="anchor"></a><code>quarter</code>
+</h3>
+<p>The quarter number (1–4) in which the referendum was held.</p>
+<div id="origin-12" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-12" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html"><code>add_period()</code></a>.</p>
+</div>
+<div id="quarter-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#quarter-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>interval</strong> level.</p>
+</div>
+</div>
+<div id="year" class="section level3">
+<h3 class="hasAnchor">
+<a href="#year" class="anchor"></a><code>year</code>
+</h3>
+<p>The year in which the referendum was held.</p>
+<div id="origin-13" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-13" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html"><code>add_period()</code></a>.</p>
+</div>
+<div id="year-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#year-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>interval</strong> level.</p>
+</div>
+</div>
+<div id="decade" class="section level3">
+<h3 class="hasAnchor">
+<a href="#decade" class="anchor"></a><code>decade</code>
+</h3>
+<p>The decade in which the referendum was held.</p>
+<div id="origin-14" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-14" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html"><code>add_period()</code></a>.</p>
+</div>
+<div id="decade-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#decade-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>interval</strong> level.</p>
+</div>
+</div>
+<div id="century" class="section level3">
+<h3 class="hasAnchor">
+<a href="#century" class="anchor"></a><code>century</code>
+</h3>
+<p>The century in which the referendum was held.</p>
+<div id="origin-15" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-15" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html"><code>add_period()</code></a>.</p>
+</div>
+<div id="century-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#century-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>interval</strong> level.</p>
+</div>
+</div>
+<div id="is_former_country" class="section level3">
+<h3 class="hasAnchor">
+<a href="#is_former_country" class="anchor"></a><code>is_former_country</code>
 </h3>
 <p>Whether or not the country where the referendum took place ceased to
-exist and thus has a <a href="#country_code_historical"><code>country_code_historical</code></a>
-instead of a <a href="#country_code"><code>country_code</code></a>
-assigned.</p>
-<div id="is_past_jurisdiction-values" class="section level4">
+exist and thus has an <a href="https://en.wikipedia.org/wiki/ISO_3166-3" class="external-link">ISO 3166-3 alpha-4</a>
+instead of an <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" class="external-link">ISO 3166-1
+alpha-2</a> <a href="#country_code"><code>country_code</code></a>.</p>
+<div id="is_former_country-values" class="section level4">
 <h4 class="hasAnchor">
-<a href="#is_past_jurisdiction-values" class="anchor"></a>Possible values</h4>
+<a href="#is_former_country-values" class="anchor"></a>Possible values</h4>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Value</th>
@@ -276,30 +576,30 @@ assigned.</p>
 </tbody>
 </table>
 </div>
-<div id="is_past_jurisdiction-scale" class="section level4">
+<div id="is_former_country-scale" class="section level4">
 <h4 class="hasAnchor">
-<a href="#is_past_jurisdiction-scale" class="anchor"></a>Level of measurement</h4>
+<a href="#is_former_country-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
 measure</a> is the <strong>nominal (binary)</strong> level.</p>
 </div>
 </div>
-<div id="date" class="section level3">
+<div id="title_en" class="section level3">
 <h3 class="hasAnchor">
-<a href="#date" class="anchor"></a><code>date</code>
+<a href="#title_en" class="anchor"></a><code>title_en</code>
 </h3>
-<p>The date on which the referendum took place.</p>
-<div id="date-scale" class="section level4">
+<p>The referendum proposal’s English title.</p>
+<div id="title_en-scale" class="section level4">
 <h4 class="hasAnchor">
-<a href="#date-scale" class="anchor"></a>Level of measurement</h4>
+<a href="#title_en-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
-measure</a> is the <strong>interval</strong> level.</p>
+measure</a> is the <strong>nominal</strong> level.</p>
 </div>
 </div>
 <div id="title_de" class="section level3">
 <h3 class="hasAnchor">
 <a href="#title_de" class="anchor"></a><code>title_de</code>
 </h3>
-<p>The referendum’s German title.</p>
+<p>The referendum proposal’s German title.</p>
 <div id="title_de-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#title_de-scale" class="anchor"></a>Level of measurement</h4>
@@ -311,22 +611,10 @@ measure</a> is the <strong>nominal</strong> level.</p>
 <h3 class="hasAnchor">
 <a href="#title_fr" class="anchor"></a><code>title_fr</code>
 </h3>
-<p>The referendum’s French title.</p>
+<p>The referendum proposal’s French title.</p>
 <div id="title_fr-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#title_fr-scale" class="anchor"></a>Level of measurement</h4>
-<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
-measure</a> is the <strong>nominal</strong> level.</p>
-</div>
-</div>
-<div id="title_en" class="section level3">
-<h3 class="hasAnchor">
-<a href="#title_en" class="anchor"></a><code>title_en</code>
-</h3>
-<p>The referendum’s English title.</p>
-<div id="title_en-scale" class="section level4">
-<h4 class="hasAnchor">
-<a href="#title_en-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
 measure</a> is the <strong>nominal</strong> level.</p>
 </div>
@@ -335,7 +623,7 @@ measure</a> is the <strong>nominal</strong> level.</p>
 <h3 class="hasAnchor">
 <a href="#question" class="anchor"></a><code>question</code>
 </h3>
-<p>The question exactly as it was asked in the referendum.</p>
+<p>The proposal question exactly as it was asked in the referendum.</p>
 <div id="question-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#question-scale" class="anchor"></a>Level of measurement</h4>
@@ -360,7 +648,7 @@ measure</a> is the <strong>nominal</strong> level.</p>
 <h3 class="hasAnchor">
 <a href="#committee_name" class="anchor"></a><code>committee_name</code>
 </h3>
-<p>The name of the committee that initiated the referendum.</p>
+<p>The name of the committee that initiated the referendum proposal.</p>
 <div id="committee_name-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#committee_name-scale" class="anchor"></a>Level of measurement</h4>
@@ -406,7 +694,7 @@ measure</a> is the <strong>nominal (binary)</strong> level.</p>
 </h3>
 <p>The number of <a href="https://en.wikipedia.org/wiki/Administrative_division" class="external-link">administrative
 divisions</a> one level below <a href="#level"><code>level</code></a>
-that approved the referendum.</p>
+that approved the referendum proposal.</p>
 <div id="subterritories_yes-constraint" class="section level4">
 <h4 class="hasAnchor">
 <a href="#subterritories_yes-constraint" class="anchor"></a>Applicability constraint</h4>
@@ -427,7 +715,7 @@ measure</a> is the <strong>ratio</strong> level.</p>
 </h3>
 <p>The number of <a href="https://en.wikipedia.org/wiki/Administrative_division" class="external-link">administrative
 divisions</a> one level below <a href="#level"><code>level</code></a>
-that rejected the referendum.</p>
+that rejected the referendum proposal.</p>
 <div id="subterritories_no-constraint" class="section level4">
 <h4 class="hasAnchor">
 <a href="#subterritories_no-constraint" class="anchor"></a>Applicability constraint</h4>
@@ -533,6 +821,28 @@ currently only filled for Swiss referendums on the national level.</p>
 <div id="votes_per_subterritory-scale" class="section level4">
 <h4 class="hasAnchor">
 <a href="#votes_per_subterritory-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>ratio</strong> level.</p>
+</div>
+</div>
+<div id="turnout" class="section level3">
+<h3 class="hasAnchor">
+<a href="#turnout" class="anchor"></a><code>turnout</code>
+</h3>
+<p>The voter turnout at the referendum.</p>
+<div id="origin-16" class="section level4">
+<h4 class="hasAnchor">
+<a href="#origin-16" class="anchor"></a>Origin</h4>
+<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#votes_yes"><code>votes_yes</code></a>,
+<a href="https://rpkg.dev/c2d/articles/codebook.html#votes_no"><code>votes_no</code></a>,
+<a href="https://rpkg.dev/c2d/articles/codebook.html#votes_empty"><code>votes_empty</code></a>,
+<a href="https://rpkg.dev/c2d/articles/codebook.html#votes_invalid"><code>votes_invalid</code></a>
+and <a href="https://rpkg.dev/c2d/articles/codebook.html#electorate_total"><code>electorate_total</code></a>
+and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_turnout.html"><code>add_turnout()</code></a>.</p>
+</div>
+<div id="turnout-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#turnout-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
 measure</a> is the <strong>ratio</strong> level.</p>
 </div>
@@ -648,6 +958,10 @@ measure</a> is the <strong>ratio</strong> level.</p>
 <h4 class="hasAnchor">
 <a href="#position_government-values" class="anchor"></a>Possible values</h4>
 <table class="table">
+<colgroup>
+<col width="41%">
+<col width="58%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">Value</th>
 <th align="left">Meaning</th>
@@ -655,13 +969,13 @@ measure</a> is the <strong>ratio</strong> level.</p>
 <tbody>
 <tr class="odd">
 <td align="left"><code>"yes"</code></td>
-<td align="left">The government recommends to approve the
-referendum.</td>
+<td align="left">The government recommends to approve the referendum
+proposal.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>"no"</code></td>
-<td align="left">The government recommends to reject the
-referendum.</td>
+<td align="left">The government recommends to reject the referendum
+proposal.</td>
 </tr>
 </tbody>
 </table>
@@ -673,11 +987,11 @@ referendum.</td>
 measure</a> is the <strong>nominal (binary)</strong> level.</p>
 </div>
 </div>
-<div id="tags" class="section level3">
+<div id="topics" class="section level3">
 <h3 class="hasAnchor">
-<a href="#tags" class="anchor"></a>Tags</h3>
-<p>The tags (political topics) are organized on a three-tier hierarchy
-as follows:</p>
+<a href="#topics" class="anchor"></a>Topics</h3>
+<p>The political topics to classify referendums are organized on a
+three-tier hierarchy as follows:</p>
 <ul>
 <li>
 <span class="color-azure">state organisation</span>
@@ -1021,22 +1335,22 @@ media</span></li>
 </ul>
 </li>
 </ul>
-<p><sup><a href="#tags_tier_1" class="color-azure"><code>tags_tier_1</code></a> are colored in <span class="color-azure">azure</span>, <a href="#tags_tier_2" class="color-violet"><code>tags_tier_2</code></a> in <span class="color-violet">violet</span> and <a href="#tags_tier_3" class="color-rose"><code>tags_tier_3</code></a> in <span class="color-rose">rose</span>.</sup></p>
-<p>The hierarchical relations between the three tag variables
-<code>tags_tier_1</code>, <code>tags_tier_2</code> and
-<code>tags_tier_3</code> can be reconstructed at any time using <a href="https://rpkg.dev/c2d/reference/hierarchize_tags.html"><code>hierarchize_tags()</code></a>.
-This function can also be used to simply determine the parent tag(s) of
-any tag.</p>
-<div id="tags_tier_1" class="section level4">
+<p><sup><a href="#topics_tier_1" class="color-azure"><code>topics_tier_1</code></a> are colored in <span class="color-azure">azure</span>, <a href="#topics_tier_2" class="color-violet"><code>topics_tier_2</code></a> in <span class="color-violet">violet</span> and <a href="#topics_tier_3" class="color-rose"><code>topics_tier_3</code></a> in <span class="color-rose">rose</span>.</sup></p>
+<p>The hierarchical relations between the three topic variables
+<code>topics_tier_1</code>, <code>topics_tier_2</code> and
+<code>topics_tier_3</code> can be reconstructed at any time using
+[hierarchize_topics()]. This function can also be used to simply
+determine the parent topic(s) of any topic.</p>
+<div id="topics_tier_1" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_1" class="anchor"></a><code>tags_tier_1</code>
+<a href="#topics_tier_1" class="anchor"></a><code>topics_tier_1</code>
 </h4>
 <p>A maximum of 3 predefined top-tier political topics that best
-classify the referendum.</p>
+classify the referendum proposal.</p>
 </div>
-<div id="tags_tier_1-values" class="section level4">
+<div id="topics_tier_1-values" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_1-values" class="anchor"></a>Possible values</h4>
+<a href="#topics_tier_1-values" class="anchor"></a>Possible values</h4>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Value</th>
@@ -1083,24 +1397,24 @@ classify the referendum.</p>
 <p><em>This is a multi-value variable<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> and thus of type
 <code>list</code>.</em></p>
 </div>
-<div id="tags_tier_1-scale" class="section level4">
+<div id="topics_tier_1-scale" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_1-scale" class="anchor"></a>Level of measurement</h4>
+<a href="#topics_tier_1-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
 measure</a> is the <strong>nominal</strong> level.</p>
 </div>
-<div id="tags_tier_2" class="section level4">
+<div id="topics_tier_2" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_2" class="anchor"></a><code>tags_tier_2</code>
+<a href="#topics_tier_2" class="anchor"></a><code>topics_tier_2</code>
 </h4>
 <p>A maximum of 3 predefined second-tier political topics that best
-classify the referendum; the presence of a second-tier topic always
-implies presence of its parent <a href="#tags_tier_1">top-tier
+classify the referendum proposal; the presence of a second-tier topic
+always implies presence of its parent <a href="#topics_tier_1">top-tier
 topic</a>.</p>
 </div>
-<div id="tags_tier_2-values" class="section level4">
+<div id="topics_tier_2-values" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_2-values" class="anchor"></a>Possible values</h4>
+<a href="#topics_tier_2-values" class="anchor"></a>Possible values</h4>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Value</th>
@@ -1285,31 +1599,30 @@ topic</a>.</p>
 <p><em>This is a multi-value variable<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> and thus of type
 <code>list</code>.</em></p>
 </div>
-<div id="tags_tier_2-constraint" class="section level4">
+<div id="topics_tier_2-constraint" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_2-constraint" class="anchor"></a>Applicability constraint</h4>
+<a href="#topics_tier_2-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">tags_tier_1</span>, .y <span class="op">=</span> <span class="va">tags_tier_2</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_tags.html">infer_tags</a></span><span class="op">(</span>tags <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">topics_tier_1</span>, .y <span class="op">=</span> <span class="va">topics_tier_2</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_topics.html">infer_topics</a></span><span class="op">(</span>topics <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="tags_tier_2-scale" class="section level4">
+<div id="topics_tier_2-scale" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_2-scale" class="anchor"></a>Level of measurement</h4>
+<a href="#topics_tier_2-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
 measure</a> is the <strong>nominal</strong> level.</p>
 </div>
-<div id="tags_tier_3" class="section level4">
+<div id="topics_tier_3" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_3" class="anchor"></a><code>tags_tier_3</code>
+<a href="#topics_tier_3" class="anchor"></a><code>topics_tier_3</code>
 </h4>
 <p>A maximum of 3 predefined third-tier political topics that best
-classify the referendum; the presence of a third-tier topic always
-implies presence of its parent <a href="#tags_tier_2">second-tier
-topic</a> and grandparent <a href="#tags_tier_1">top-tier topic</a>.</p>
+classify the referendum proposal; the presence of a third-tier topic
+always implies presence of its parent <a href="#topics_tier_2">second-tier topic</a> and grandparent <a href="#topics_tier_1">top-tier topic</a>.</p>
 </div>
-<div id="tags_tier_3-values" class="section level4">
+<div id="topics_tier_3-values" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_3-values" class="anchor"></a>Possible values</h4>
+<a href="#topics_tier_3-values" class="anchor"></a>Possible values</h4>
 <table class="table">
 <colgroup><col width="100%"></colgroup>
 <thead><tr class="header">
@@ -1636,16 +1949,16 @@ topic</a> and grandparent <a href="#tags_tier_1">top-tier topic</a>.</p>
 <p><em>This is a multi-value variable<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> and thus of type
 <code>list</code>.</em></p>
 </div>
-<div id="tags_tier_3-constraint" class="section level4">
+<div id="topics_tier_3-constraint" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_3-constraint" class="anchor"></a>Applicability constraint</h4>
+<a href="#topics_tier_3-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">tags_tier_2</span>, .y <span class="op">=</span> <span class="va">tags_tier_3</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_tags.html">infer_tags</a></span><span class="op">(</span>tags <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">tags_tier_1</span>, .y <span class="op">=</span> <span class="va">tags_tier_3</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_tags.html">infer_tags</a></span><span class="op">(</span>tags <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">topics_tier_2</span>, .y <span class="op">=</span> <span class="va">topics_tier_3</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_topics.html">infer_topics</a></span><span class="op">(</span>topics <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">topics_tier_1</span>, .y <span class="op">=</span> <span class="va">topics_tier_3</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_topics.html">infer_topics</a></span><span class="op">(</span>topics <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="tags_tier_3-scale" class="section level4">
+<div id="topics_tier_3-scale" class="section level4">
 <h4 class="hasAnchor">
-<a href="#tags_tier_3-scale" class="anchor"></a>Level of measurement</h4>
+<a href="#topics_tier_3-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
 measure</a> is the <strong>nominal</strong> level.</p>
 </div>
@@ -2605,59 +2918,87 @@ the legal text / to recall a person/institution.</td>
 measure</a> is the <strong>nominal</strong> level.</p>
 </div>
 </div>
-<div id="inst_object_revision_divisibility" class="section level3">
+<div id="inst_is_divisible" class="section level3">
 <h3 class="hasAnchor">
-<a href="#inst_object_revision_divisibility" class="anchor"></a><code>inst_object_revision_divisibility</code>
+<a href="#inst_is_divisible" class="anchor"></a><code>inst_is_divisible</code>
 </h3>
-<p>The divisibility of <a href="#inst_object_type"><code>inst_object_type</code></a>.</p>
-<div id="inst_object_revision_divisibility-values" class="section level4">
+<p>Whether or not <a href="#inst_object_type"><code>inst_object_type</code></a> (the proposed
+legal text) may be split up so voters can decide upon these parts
+separately.</p>
+<div id="inst_is_divisible-values" class="section level4">
 <h4 class="hasAnchor">
-<a href="#inst_object_revision_divisibility-values" class="anchor"></a>Possible values</h4>
+<a href="#inst_is_divisible-values" class="anchor"></a>Possible values</h4>
 <table class="table">
-<colgroup>
-<col width="41%">
-<col width="58%">
-</colgroup>
 <thead><tr class="header">
 <th align="left">Value</th>
 <th align="left">Meaning</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left"><code>"as a whole"</code></td>
-<td align="left">The proposed legal text can only be accepted/rejected
-as a whole.</td>
+<td align="left"><code>TRUE</code></td>
+<td align="left">The proposed legal text may be split up.</td>
 </tr>
 <tr class="even">
-<td align="left"><code>"split up"</code></td>
-<td align="left">The proposed legal text can be split up, the voters may
-vote upon these parts separately.</td>
-</tr>
-<tr class="odd">
-<td align="left"><code>"as variants"</code></td>
-<td align="left">The proposed legal text can be presented as two or more
-(alternative) variants.</td>
-</tr>
-<tr class="even">
-<td align="left"><code>"both split up and as variants"</code></td>
-<td align="left">The proposed legal text can be both split up as well as
-presented as two or more (alternative) variants.</td>
+<td align="left"><code>FALSE</code></td>
+<td align="left">The proposed legal text may not be split up.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div id="inst_object_revision_divisibility-constraint" class="section level4">
+<div id="inst_is_divisible-constraint" class="section level4">
 <h4 class="hasAnchor">
-<a href="#inst_object_revision_divisibility-constraint" class="anchor"></a>Applicability constraint</h4>
+<a href="#inst_is_divisible-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inst_object_type</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'question'</span>, <span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="inst_object_revision_divisibility-scale" class="section level4">
+<div id="inst_is_divisible-scale" class="section level4">
 <h4 class="hasAnchor">
-<a href="#inst_object_revision_divisibility-scale" class="anchor"></a>Level of measurement</h4>
+<a href="#inst_is_divisible-scale" class="anchor"></a>Level of measurement</h4>
 <p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
-measure</a> is the <strong>nominal</strong> level.</p>
+measure</a> is the <strong>nominal (binary)</strong> level.</p>
+</div>
+</div>
+<div id="inst_is_variable" class="section level3">
+<h3 class="hasAnchor">
+<a href="#inst_is_variable" class="anchor"></a><code>inst_is_variable</code>
+</h3>
+<p>Whether or not the proposed legal text may be presented in two or
+more (alternative) variants for voters to choose amongst.</p>
+<div id="inst_is_variable-values" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_is_variable-values" class="anchor"></a>Possible values</h4>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Value</th>
+<th align="left">Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>TRUE</code></td>
+<td align="left">The proposed legal text may be presented in
+variants.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>FALSE</code></td>
+<td align="left">The proposed legal text may not be presented in
+variants.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="inst_is_variable-constraint" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_is_variable-constraint" class="anchor"></a>Applicability constraint</h4>
+<p>This variable is only applicable under the following condition:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">inst_object_type</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'question'</span>, <span class="st">'legal text (general proposal)'</span>, <span class="st">'legal text (formulated proposal)'</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="inst_is_variable-scale" class="section level4">
+<h4 class="hasAnchor">
+<a href="#inst_is_variable-scale" class="anchor"></a>Level of measurement</h4>
+<p>This variable’s <a href="https://en.wikipedia.org/wiki/Level_of_measurement" class="external-link">scale of
+measure</a> is the <strong>nominal (binary)</strong> level.</p>
 </div>
 </div>
 <div id="inst_topics_only" class="section level3">
@@ -2733,7 +3074,7 @@ limited to TODO.</td>
 <h4 class="hasAnchor">
 <a href="#inst_topics_only-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inst_topics_excluded</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_lgl</a></span><span class="op">(</span><span class="fu">rlang</span><span class="fu">::</span><span class="va"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div id="inst_topics_only-scale" class="section level4">
@@ -2798,7 +3139,7 @@ measure</a> is the <strong>nominal</strong> level.</p>
 <h4 class="hasAnchor">
 <a href="#inst_topics_excluded-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inst_topics_only</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_lgl</a></span><span class="op">(</span><span class="fu">rlang</span><span class="fu">::</span><span class="va"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div id="inst_topics_excluded-scale" class="section level4">
@@ -2960,7 +3301,7 @@ People’s Liberation Movement</a>.</td>
 <h4 class="hasAnchor">
 <a href="#inst_precondition_actor-constraint" class="anchor"></a>Applicability constraint</h4>
 <p>This variable is only applicable under the following condition:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">inst_has_precondition</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div id="inst_precondition_actor-scale" class="section level4">
@@ -3018,10 +3359,10 @@ measure</a> is the <strong>nominal (binary)</strong> level.</p>
 per observation and thus breaks with the <a href="https://tidyr.tidyverse.org/articles/tidy-data.html" class="external-link">tidy-data
 convention</a>. Use <a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link"><code>tidyr::unnest_longer()</code></a>
 to convert data containing such a variable to long format. To unnest
-<code>tags_tier_1</code> to <code>tag_tier_1</code> for example,
+<code>topics_tier_1</code> to <code>topic_tier_1</code> for example,
 use:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">tags_tier_1</span>, values_to <span class="op">=</span> <span class="st">"tag_tier_1"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">topics_tier_1</span>, values_to <span class="op">=</span> <span class="st">"topic_tier_1"</span><span class="op">)</span></span></code></pre></div>
 <a href="#fnref1" class="footnote-back">↩︎</a>
 </li>
 <li id="fn2">
@@ -3029,10 +3370,10 @@ use:</p>
 per observation and thus breaks with the <a href="https://tidyr.tidyverse.org/articles/tidy-data.html" class="external-link">tidy-data
 convention</a>. Use <a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link"><code>tidyr::unnest_longer()</code></a>
 to convert data containing such a variable to long format. To unnest
-<code>tags_tier_1</code> to <code>tag_tier_1</code> for example,
+<code>topics_tier_1</code> to <code>topic_tier_1</code> for example,
 use:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">tags_tier_1</span>, values_to <span class="op">=</span> <span class="st">"tag_tier_1"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">topics_tier_1</span>, values_to <span class="op">=</span> <span class="st">"topic_tier_1"</span><span class="op">)</span></span></code></pre></div>
 <a href="#fnref2" class="footnote-back">↩︎</a>
 </li>
 <li id="fn3">
@@ -3040,10 +3381,10 @@ use:</p>
 per observation and thus breaks with the <a href="https://tidyr.tidyverse.org/articles/tidy-data.html" class="external-link">tidy-data
 convention</a>. Use <a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link"><code>tidyr::unnest_longer()</code></a>
 to convert data containing such a variable to long format. To unnest
-<code>tags_tier_1</code> to <code>tag_tier_1</code> for example,
+<code>topics_tier_1</code> to <code>topic_tier_1</code> for example,
 use:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">tags_tier_1</span>, values_to <span class="op">=</span> <span class="st">"tag_tier_1"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">topics_tier_1</span>, values_to <span class="op">=</span> <span class="st">"topic_tier_1"</span><span class="op">)</span></span></code></pre></div>
 <a href="#fnref3" class="footnote-back">↩︎</a>
 </li>
 <li id="fn4">
@@ -3051,10 +3392,10 @@ use:</p>
 per observation and thus breaks with the <a href="https://tidyr.tidyverse.org/articles/tidy-data.html" class="external-link">tidy-data
 convention</a>. Use <a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link"><code>tidyr::unnest_longer()</code></a>
 to convert data containing such a variable to long format. To unnest
-<code>tags_tier_1</code> to <code>tag_tier_1</code> for example,
+<code>topics_tier_1</code> to <code>topic_tier_1</code> for example,
 use:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">tags_tier_1</span>, values_to <span class="op">=</span> <span class="st">"tag_tier_1"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">topics_tier_1</span>, values_to <span class="op">=</span> <span class="st">"topic_tier_1"</span><span class="op">)</span></span></code></pre></div>
 <a href="#fnref4" class="footnote-back">↩︎</a>
 </li>
 <li id="fn5">
@@ -3062,10 +3403,10 @@ use:</p>
 per observation and thus breaks with the <a href="https://tidyr.tidyverse.org/articles/tidy-data.html" class="external-link">tidy-data
 convention</a>. Use <a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link"><code>tidyr::unnest_longer()</code></a>
 to convert data containing such a variable to long format. To unnest
-<code>tags_tier_1</code> to <code>tag_tier_1</code> for example,
+<code>topics_tier_1</code> to <code>topic_tier_1</code> for example,
 use:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">tags_tier_1</span>, values_to <span class="op">=</span> <span class="st">"tag_tier_1"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">topics_tier_1</span>, values_to <span class="op">=</span> <span class="st">"topic_tier_1"</span><span class="op">)</span></span></code></pre></div>
 <a href="#fnref5" class="footnote-back">↩︎</a>
 </li>
 <li id="fn6">
@@ -3073,10 +3414,10 @@ use:</p>
 per observation and thus breaks with the <a href="https://tidyr.tidyverse.org/articles/tidy-data.html" class="external-link">tidy-data
 convention</a>. Use <a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link"><code>tidyr::unnest_longer()</code></a>
 to convert data containing such a variable to long format. To unnest
-<code>tags_tier_1</code> to <code>tag_tier_1</code> for example,
+<code>topics_tier_1</code> to <code>topic_tier_1</code> for example,
 use:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">tags_tier_1</span>, values_to <span class="op">=</span> <span class="st">"tag_tier_1"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html" class="external-link">unnest_longer</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">topics_tier_1</span>, values_to <span class="op">=</span> <span class="st">"topic_tier_1"</span><span class="op">)</span></span></code></pre></div>
 <a href="#fnref6" class="footnote-back">↩︎</a>
 </li>
 </ol>

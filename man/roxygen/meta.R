@@ -5,7 +5,7 @@ list(
                          rfrnd      = "Other referendum data functions:",
                          sudd       = "Other sudd.ch scraping functions:",
                          tabulate   = "Other tabulation functions:",
-                         tags       = "Other tag-related functions:",
+                         topics     = "Other referendum topic functions:",
                          transform  = "Other referendum data transformation functions:",
                          visualize  = "Other visualization functions:")
 )

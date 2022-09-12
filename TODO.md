@@ -76,14 +76,14 @@
     -   [ ] Specialities of the institution (e.g. special quorum or 2 collecting periods)
     -   [ ] Specialities of the result (e.g. contradictory numbers)
 
--   `tags`: Adapt back-end to apply the same 3-tier tags logic that the R package does:
+-   `topics`: Adapt back-end to apply the same 3-tier topics logic that the R package does:
 
-    -   Parent tags should be implicit, i.e. it should be impossible to select a parent tag and one of its respective childs tags at the same time (selecting a
-        child tag should always result in implicit selection of its parent (e.g. in a different (e.g. faded) color)).
-    -   The upper limit of 3 tags should refer to *main* tags (i.e. excluding any implicit parent tags).
-    -   Based on the user's selection of *main* tags, parent tags should automatically be derived from child tags based on the [hierarchical tag
-        structure](https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json) and all the tags should be assigned to the 3 variables
-        `tags_tier_1`, `tags_tier_2`, `tags_tier_3`.
+    -   Parent topics should be implicit, i.e. it should be impossible to select a parent topic and one of its respective childs topics at the same time
+        (selecting a child topic should always result in implicit selection of its parent (e.g. in a different (e.g. faded) color)).
+    -   The upper limit of 3 topics should refer to *main* topics (i.e. excluding any implicit parent topics).
+    -   Based on the user's selection of *main* topics, parent topics should automatically be derived from child topics based on the [hierarchical topic
+        structure](https://github.com/ccmdesign/c2d-app/blob/master/ch.c2d.admin/web/themes.json) and all the topics should be assigned to the 3 variables
+        `topics_tier_1`, `topics_tier_2`, `topics_tier_3`.
 
     -\> see [issue #41](https://github.com/ccmdesign/c2d-app/issues/41)
 
@@ -123,8 +123,8 @@
 -   We might wanna add even more database fields:
 
     -   `description`, holding a short prosa description of the referendum.
-    -   `tags_ad_hoc` (maybe we'll find a better name, e.g. `keywords`?), holding a list of freely definable tags, so we can create ad-hoc collections of
-        referendums that share some common characteristic
+    -   `tags` (maybe we'll find a better name, e.g. `keywords`?), holding a list of freely definable tags, so we can create ad-hoc collections of referendums
+        that share some common characteristic
 
 -   According to Uwe, we only capture "official"/"authorized" votings, but there are already inofficial ones present in the database like [this
     one](https://c2d.ch/referendum/HU/5bbbfee992a21351232e4f37) for which sudd.ch [reports](https://sudd.ch/event.php?id=hu042008):
@@ -400,12 +400,12 @@
 
 -   `inst_quorum_turnout` sollte standardisiert werden -\> was wäre eine geeignete, abschliessende Menge an Werten?
 
--   Woher genau stammt die Tag-Hierarchie? Ist sie "custom"?
+-   Woher genau stammt die Topics-Hierarchie? Ist sie "custom"?
 
     Falls ja, sollten wir
 
-    -   den `tag_tier_3` "homosexuals" wohl etwas breiter fassen, bspw. "sexual orientation / gender identity".
-    -   den `tag_tier_3` "compensation for loss of earnings for persons on military service or civil protection duty" kürzen!
+    -   den `topic_tier_3` "homosexuals" wohl etwas breiter fassen, bspw. "sexual orientation / gender identity".
+    -   den `topic_tier_3` "compensation for loss of earnings for persons on military service or civil protection duty" kürzen!
 
 -   `inst_object_legal_level` sollte m. E. in Relation zu `level` stehen, tut es aber nicht. Dementsprechend kann `inst_object_legal_level` mehrdeutig sein
     (Beispiel: Ist `inst_object_legal_level = "law"` lokales, kantonales oder nationales Recht bei Referendum auf CH-Gemeindeebene?)

@@ -33,7 +33,7 @@ c2d::rfrnds(country_code = "AT") |> c2d::plot_rfrnd_share_per_period(by = "level
 }
 \seealso{
 Other visualization functions:
-\code{\link{plot_tag_segmentation}()},
-\code{\link{plot_tag_share_per_period}()}
+\code{\link{plot_topic_segmentation}()},
+\code{\link{plot_topic_share_per_period}()}
 }
 \concept{visualize}

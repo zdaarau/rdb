@@ -78,7 +78,14 @@ data_codebook <- {
                                       .x$ptype %>%
                                       purrr::when(!is.null(.) ~ eval(parse(text = .)),
                                                   ~ .) %>%
-                                      list())) %>%
+                                      list(),
+                                    derived_from =
+                                      .x$derived_from %>%
+                                      purrr::when(is.null(.) ~ list(character()),
+                                                  is.character(.) ~ list(.),
+                                                  ~ .),
+                                    gen_fn = .x$gen_fn %||% NA_character_,
+                                    is_opt = .x$is_opt %||% FALSE)) %>%
     # infer missing prototypes
     dplyr::mutate(ptype = purrr::pmap(.l = list(variable_name,
                                                 is_multi_valued,
@@ -119,7 +126,8 @@ data_codebook <- {
                     value_scale,
                     is_multi_valued,
                     is_nested,
-                    ptype) %>%
+                    ptype,
+                    is_opt) %>%
     ## not empty string
     assertr::assert(predicate = function(x) if (x == "") FALSE else TRUE,
                     variable_name,
@@ -127,6 +135,24 @@ data_codebook <- {
                     variable_label,
                     value_scale)
 }
+```
+
+## `data_iso_3166_1`
+
+ISO 3166-1 data extended by unofficial information for countries which are not covered by the ISO standard yet.
+
+```{r}
+data_iso_3166_1 <-
+  ISOcodes::ISO_3166_1 %>%
+  tibble::as_tibble() %>%
+  dplyr::add_row(Alpha_2 = "XK",
+                 Alpha_3 = "XKS",
+                 Numeric = NA_character_,
+                 Name = "Kosovo, Republic of",
+                 Official_name = "Republic of Kosovo",
+                 Common_name = "Kosovo") %>%
+  dplyr::mutate(name_short = Common_name %|% Name,
+                name_long = Official_name %|% name_short)
 ```
 
 ## `data_iso_3166_3`
@@ -154,7 +180,6 @@ data_iso_3166_3 <-
                              SUHH = "RU",
                              cli::abort(paste0("No ISO 3166-3 alpha-4 \"n-to-1\" ISO 3166-1 alpha-2 conversion rule defined for {.val .x}. Please update ",
                                                "{.var data_iso_3166_3} accordingly and run again.")))
-                      
                     } else {
                       stringr::str_sub(.x, start = 3L)
                     }
@@ -171,13 +196,25 @@ data_iso_3166_3 <-
                   }) %>%
                   purrr::reduce(c)) %>%
   dplyr::relocate(Alpha_2, Alpha_2_new, Alpha_2_new_main,
-                  .after = Alpha_3)
+                  .after = Alpha_3) %>%
+  # harmonize name style
+  dplyr::mutate(name_short = dplyr::case_when(Alpha_4 == "BYAA" ~ "Byelorussian SSR",
+                                              Alpha_4 == "FXFR" ~ "Metropolitan France",
+                                              TRUE ~ stringr::str_extract(string = Name,
+                                                                          pattern = "[^,]+")),
+                name_long = dplyr::case_when(Alpha_4 == "BYAA" ~ "Byelorussian Soviet Socialist Republic",
+                                             Alpha_4 == "CSHH" ~ Name,
+                                             Alpha_4 == "SUHH" ~ "Union of Soviet Socialist Republics (USSR)",
+                                             Alpha_4 == "YDYE" ~ "Democratic Yemen, People's Democratic Republic of Yemen",
+                                             TRUE ~ stringr::str_replace(string = Name,
+                                                                         pattern = "^([^,]+), (.+)$",
+                                                                         replacement = "\\2 \\1")))
 ```
 
-## `data_tags`
+## `data_topics`
 
 ```{r}
-data_tags <-
+data_topics <-
   # download file from private CCM Design repo
   pal::gh_text_file(owner = "ccmdesign",
                     name = "c2d-app",
@@ -186,15 +223,15 @@ data_tags <-
   jsonlite::fromJSON(flatten = FALSE) %>%
   tibble::as_tibble() %>%
   # create tidy data version
-  dplyr::rename(tag_tier_1 = name,
-                tag_tier_2 = children) %>%
-  tidyr::unnest(cols = tag_tier_2,
+  dplyr::rename(topic_tier_1 = name,
+                topic_tier_2 = children) %>%
+  tidyr::unnest(cols = topic_tier_2,
                 keep_empty = TRUE) %>%
-  dplyr::rename(tag_tier_2 = name,
-                tag_tier_3 = children) %>%
+  dplyr::rename(topic_tier_2 = name,
+                topic_tier_3 = children) %>%
   # ensure consistent col subtypes
-  dplyr::mutate(tag_tier_3 = tag_tier_3 %>% purrr::map(~ { if (is.list(.x)) character() else .x })) %>%
-  tidyr::unnest(cols = tag_tier_3,
+  dplyr::mutate(topic_tier_3 = topic_tier_3 %>% purrr::map(~ { if (is.list(.x)) character() else .x })) %>%
+  tidyr::unnest(cols = topic_tier_3,
                 keep_empty = TRUE)
 ```
 
@@ -209,14 +246,14 @@ months_de <-
   as.list()
 ```
 
-## `tags_tier_#_`
+## `topics_tier_#_`
 
 Only for performance-reasons.
 
 ```{r}
-tags_tier_1_ <- c2d::tags(tiers = 1L)
-tags_tier_2_ <- c2d::tags(tiers = 2L)
-tags_tier_3_ <- c2d::tags(tiers = 3L)
+topics_tier_1_ <- c2d::topics(tiers = 1L)
+topics_tier_2_ <- c2d::topics(tiers = 2L)
+topics_tier_3_ <- c2d::topics(tiers = 3L)
 ```
 
 ## `un_regions`
@@ -308,27 +345,11 @@ var_lbls <-
 ```{r}
 val_set <- list()
 val_set$country_code <- c(ISOcodes::ISO_3166_1$Alpha_2,
-                          ISOcodes::ISO_3166_3$Alpha_4)
-```
-
-## `rfrnd_cols_order`
-
-```{r}
-rfrnd_cols_order <-
-  data_codebook$variable_name %>%
-  ## country_code_long after country_code
-  c2d:::insert_after(new = "country_code_long",
-                     after = "country_code") %>%
-  ## period cols after `date`
-  c2d:::insert_after(new = c("week", "month", "quarter", "year", "decade", "century"),
-                     after = "date") %>%
-  ## cols `un_tier_*` after `municipality`
-  c2d:::insert_after(new = setdiff(colnames(un_regions),
-                                   "country_code"),
-                     after = "municipality") %>%
-  ## `turnout` after `votes_per_subterritory`
-  c2d:::insert_after(new = "turnout",
-                     after = "votes_per_subterritory")
+                          ISOcodes::ISO_3166_3$Alpha_4,
+                          "XK")
+val_set$country_code_long <- c(ISOcodes::ISO_3166_1$Alpha_3,
+                               ISOcodes::ISO_3166_3$Alpha_3,
+                               "XKS")
 ```
 
 ## Write data
@@ -338,13 +359,13 @@ to package users.
 
 ```{r}
 usethis::use_data(data_codebook,
+                  data_iso_3166_1,
                   data_iso_3166_3,
-                  data_tags,
+                  data_topics,
                   months_de,
-                  rfrnd_cols_order,
-                  tags_tier_1_,
-                  tags_tier_2_,
-                  tags_tier_3_,
+                  topics_tier_1_,
+                  topics_tier_2_,
+                  topics_tier_3_,
                   un_regions,
                   var_lbls,
                   val_set,

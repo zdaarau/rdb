@@ -144,7 +144,9 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other referendum data augmentation functions:
+<code><a href='add_country_code_continual.html'>add_country_code_continual</a>()</code>,
 <code><a href='add_country_code_long.html'>add_country_code_long</a>()</code>,
+<code><a href='add_former_country_flag.html'>add_former_country_flag</a>()</code>,
 <code><a href='add_period.html'>add_period</a>()</code>,
 <code><a href='add_turnout.html'>add_turnout</a>()</code>,
 <code><a href='add_world_regions.html'>add_world_regions</a>()</code></p></div>
@@ -155,20 +157,20 @@
 <span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>:::</span><span class='fu'>add_country_name_long</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
 <span class='r-in'><span>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fu'>any_of</span><span class='op'>(</span><span class='st'>"id"</span><span class='op'>)</span>,</span></span>
 <span class='r-in'><span>                <span class='fu'>starts_with</span><span class='op'>(</span><span class='st'>"country_name"</span><span class='op'>)</span><span class='op'>)</span></span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 83 × 3</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 88 × 3</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    id                       country_name country_name_long          </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                      </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 62d7d8b3a52c3995043a8ad4 Uruguay      Eastern Republic of Uruguay</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 62d7bd48a52c3995043a8ace Belarus      Republic of Belarus        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 62d6760ca52c3995043a8a1e Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 62d67203a52c3995043a8a16 Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 62d66e97a52c3995043a8a0f Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 62d66ce0a52c3995043a8a08 Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 62d016a313bed420d6ffbeb8 Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 62d0138d13bed420d6ffbeb5 Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 62d0025e13bed420d6ffbeb2 Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 62cfefee13bed420d6ffbead Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 73 more rows</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 6319f91da52c3995043a9036 Hungary      Hungary                    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 6319f6f2a52c3995043a902f Hungary      Hungary                    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 6319f6e1a52c3995043a902d Hungary      Hungary                    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 6319f11ea52c3995043a902b Hungary      Hungary                    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 6319d738a52c3995043a9025 Serbia       Republic of Serbia         </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 62d7d8b3a52c3995043a8ad4 Uruguay      Eastern Republic of Uruguay</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 62d7bd48a52c3995043a8ace Belarus      Republic of Belarus        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 62d6760ca52c3995043a8a1e Switzerland  Swiss Confederation        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 62d67203a52c3995043a8a16 Switzerland  Swiss Confederation        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 62d66e97a52c3995043a8a0f Switzerland  Swiss Confederation        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 78 more rows</span></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
