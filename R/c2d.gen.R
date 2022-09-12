@@ -1616,8 +1616,8 @@ url_api <- function(...,
          "stagservices.c2d.ch",
          "services.c2d.ch") %>%
     fs::path(...) %>%
-    # TODO: use HTTPS for staging as well as soon as <https://github.com/ccmdesign/c2d-app/issues/71#issuecomment-1222579616> is fixed
-    paste0(ifelse(.use_testing_server, "http://", "https://"), .)
+    # TODO: re-enable HTTPS for staging as well as soon as <https://github.com/ccmdesign/c2d-app/issues/71> is fixed
+    paste0(ifelse(.use_testing_server, "http://", "http://"), .)
 }
 
 #' Assemble C2D admin portal URL
