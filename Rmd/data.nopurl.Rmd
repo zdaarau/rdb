@@ -152,7 +152,12 @@ data_iso_3166_1 <-
                  Official_name = "Republic of Kosovo",
                  Common_name = "Kosovo") %>%
   dplyr::mutate(name_short = Common_name %|% Name,
-                name_long = Official_name %|% name_short)
+                name_long = Official_name %|% name_short) %>%
+  dplyr::arrange(Alpha_2) %>%
+  # ensure there are no duplicates
+  assertr::assert(predicate = assertr::is_uniq,
+                  Alpha_2,
+                  Alpha_3)
 ```
 
 ## `data_iso_3166_3`
@@ -208,7 +213,11 @@ data_iso_3166_3 <-
                                              Alpha_4 == "YDYE" ~ "Democratic Yemen, People's Democratic Republic of Yemen",
                                              TRUE ~ stringr::str_replace(string = Name,
                                                                          pattern = "^([^,]+), (.+)$",
-                                                                         replacement = "\\2 \\1")))
+                                                                         replacement = "\\2 \\1"))) %>%
+  dplyr::arrange(Alpha_4) %>%
+  # ensure there are no duplicates
+  assertr::assert(predicate = assertr::is_uniq,
+                  Alpha_4)
 ```
 
 ## `data_topics`
@@ -343,13 +352,17 @@ var_lbls <-
 ## `val_set`
 
 ```{r}
-val_set <- list()
-val_set$country_code <- c(ISOcodes::ISO_3166_1$Alpha_2,
-                          ISOcodes::ISO_3166_3$Alpha_4,
-                          "XK")
-val_set$country_code_long <- c(ISOcodes::ISO_3166_1$Alpha_3,
-                               ISOcodes::ISO_3166_3$Alpha_3,
-                               "XKS")
+val_set                        <- list()
+val_set$country_code           <- c(data_iso_3166_1$Alpha_2,
+                                    data_iso_3166_3$Alpha_4)
+val_set$country_code_long      <- sort(unique(c(data_iso_3166_1$Alpha_3,
+                                                data_iso_3166_3$Alpha_3)))
+val_set$country_code_continual <- sort(unique(data_iso_3166_1$Alpha_2,
+                                              data_iso_3166_3$Alpha_2_new_main))
+val_set$country_name           <- sort(unique(c(data_iso_3166_1$name_short,
+                                                data_iso_3166_3$name_short)))
+val_set$country_name_long      <- sort(unique(c(data_iso_3166_1$name_long,
+                                                data_iso_3166_3$name_long)))
 ```
 
 ## Write data

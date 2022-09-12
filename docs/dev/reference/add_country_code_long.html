@@ -147,6 +147,7 @@ code of the country in which the referendum took place (see <a href='https://en.
     <div class='dont-index'><p>Other referendum data augmentation functions:
 <code><a href='add_country_code_continual.html'>add_country_code_continual</a>()</code>,
 <code><a href='add_country_name_long.html'>add_country_name_long</a>()</code>,
+<code><a href='add_country_name.html'>add_country_name</a>()</code>,
 <code><a href='add_former_country_flag.html'>add_former_country_flag</a>()</code>,
 <code><a href='add_period.html'>add_period</a>()</code>,
 <code><a href='add_turnout.html'>add_turnout</a>()</code>,
@@ -157,20 +158,20 @@ code of the country in which the referendum took place (see <a href='https://en.
 <span class='r-in'><span>            date_min <span class='op'>=</span> <span class='fu'>clock</span><span class='fu'>::</span><span class='fu'><a href='https://clock.r-lib.org/reference/date-today.html'>date_today</a></span><span class='op'>(</span>zone <span class='op'>=</span> <span class='st'>"UTC"</span><span class='op'>)</span> <span class='op'>|&gt;</span> <span class='fu'>clock</span><span class='fu'>::</span><span class='fu'><a href='https://clock.r-lib.org/reference/clock-arithmetic.html'>add_years</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1L</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
 <span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>:::</span><span class='fu'>add_country_code_long</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
 <span class='r-in'><span>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fu'>any_of</span><span class='op'>(</span><span class='st'>"id"</span><span class='op'>)</span>,</span></span>
-<span class='r-in'><span>                <span class='fu'>starts_with</span><span class='op'>(</span><span class='st'>"country_code"</span><span class='op'>)</span><span class='op'>)</span></span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 88 × 3</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    id                       country_code country_code_long</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>            </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 6319f91da52c3995043a9036 HU           HUN              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 6319f6f2a52c3995043a902f HU           HUN              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 6319f6e1a52c3995043a902d HU           HUN              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 6319f11ea52c3995043a902b HU           HUN              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 6319d738a52c3995043a9025 RS           SRB              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 62d7d8b3a52c3995043a8ad4 UY           URY              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 62d7bd48a52c3995043a8ace BY           BLR              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 62d6760ca52c3995043a8a1e CH           CHE              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 62d67203a52c3995043a8a16 CH           CHE              </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 62d66e97a52c3995043a8a0f CH           CHE              </span>
+<span class='r-in'><span>                <span class='fu'>starts_with</span><span class='op'>(</span><span class='st'>"country_"</span><span class='op'>)</span><span class='op'>)</span></span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 88 × 4</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    id                       country_code country_code_long country_name</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>             <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 6319f91da52c3995043a9036 HU           HUN               Hungary     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 6319f6f2a52c3995043a902f HU           HUN               Hungary     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 6319f6e1a52c3995043a902d HU           HUN               Hungary     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 6319f11ea52c3995043a902b HU           HUN               Hungary     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 6319d738a52c3995043a9025 RS           SRB               Serbia      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 62d7d8b3a52c3995043a8ad4 UY           URY               Uruguay     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 62d7bd48a52c3995043a8ace BY           BLR               Belarus     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 62d6760ca52c3995043a8a1e CH           CHE               Switzerland </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 62d67203a52c3995043a8a16 CH           CHE               Switzerland </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 62d66e97a52c3995043a8a0f CH           CHE               Switzerland </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 78 more rows</span></span>
 </pre>
   </div>

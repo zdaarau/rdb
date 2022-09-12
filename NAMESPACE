@@ -2,6 +2,7 @@
 
 export(add_country_code_continual)
 export(add_country_code_long)
+export(add_country_name)
 export(add_country_name_long)
 export(add_period)
 export(add_rfrnds)

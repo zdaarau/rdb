@@ -21,12 +21,13 @@ c2d::rfrnds(date_max = clock::date_today(zone = "UTC"),
             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
   c2d:::add_country_code_long() |>
   dplyr::select(any_of("id"),
-                starts_with("country_code"))
+                starts_with("country_"))
 }
 \seealso{
 Other referendum data augmentation functions:
 \code{\link{add_country_code_continual}()},
 \code{\link{add_country_name_long}()},
+\code{\link{add_country_name}()},
 \code{\link{add_former_country_flag}()},
 \code{\link{add_period}()},
 \code{\link{add_turnout}()},

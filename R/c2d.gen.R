@@ -584,12 +584,25 @@ assert_vars <- function(data,
     
     # run additional content check
     assert_content <- switch(EXPR         = .x,
-                             country_code = function(x) purrr::map_chr(.x = x,
-                                                                       .f = checkmate::assert_choice,
-                                                                       choices = val_set$country_code,
-                                                                       null.ok = TRUE,
-                                                                       .var.name = "data$country_code"),
+                             country_code = function(x) {
+                               checkmate::assert_vector(x = x,
+                                                        .var.name = "data$country_code")
+                               check <- checkmate::check_subset(x = as.character(x),
+                                                                choices = val_set$country_code)
+                               if (isFALSE(check)) {
+                                 
+                                 expired_codes <- intersect(as.character(x),
+                                                            data_iso_3166_3$Alpha_2)
+                                 cli::cli_abort(paste0(
+                                   "Assertion on {.var data$country_code} failed: ",
+                                                       ifelse(length(expired_codes),
+                                                              paste0("The following country codes have been deleted from ISO 3166-1 and were moved to ISO ",
+                                                                     "3166-3 (former countries) instead: {.val {expired_codes}}"),
+                                                              check)))
+                               }
+                             },
                              function(x) TRUE)
+    
     assert_content(data[[.x]])
   })
   
@@ -1222,6 +1235,9 @@ tidy_rfrnds <- function(data,
         }
       }
       
+      # ensure all country codes are known and assign canonical country name
+      data %<>% add_country_name()
+      
       data %<>%
         # variable creations
         dplyr::mutate(is_former_country = nchar(country_code) > 2L,
@@ -1266,14 +1282,17 @@ tidy_rfrnds <- function(data,
           } else .x
         })) %>%
         ## fctrs without explicit variable_values set in codebook
-        dplyr::mutate(dplyr::across(.cols = country_code,
-                                    .fns = factor,
-                                    levels = val_set$country_code,
-                                    ordered = FALSE),
-                      dplyr::across(.cols = any_of(c("country_name",
-                                                     "subnational_entity_name",
-                                                     "municipality")),
-                                    .fns = as.factor)) %>%
+        dplyr::mutate(
+          ### fctrs where we defined a finite set of values
+          country_code = factor(x = country_code,
+                                levels = val_set$country_code,
+                                ordered = FALSE),
+          
+          ### fctrs where we did not define a finite set of values (yet)
+          dplyr::across(.cols = any_of(c("subnational_entity_name",
+                                         "municipality")),
+                        .fns = as.factor)
+        ) %>%
         # add vars which aren't always included and coerce to proper types
         vctrs::tib_cast(to =
                           data_codebook %>%
@@ -3680,17 +3699,18 @@ add_country_code_continual <- function(data) {
               vars = c("country_code"))
   
   data %>%
-    dplyr::mutate(country_code_continual = purrr::map2_chr(.x = country_code,
-                                                           .y = add_former_country_flag(data)$is_former_country,
-                                                           .f = ~ {
-                                                             
-                                                             if (.y) {
-                                                               data_iso_3166_3$Alpha_2_new_main[data_iso_3166_3$Alpha_4 == .x]
-                                                               
-                                                             } else {
-                                                               .x
-                                                             }
-                                                           })) %>%
+    dplyr::mutate(country_code_continual = factor(x = purrr::map2_chr(.x = country_code,
+                                                                      .y = add_former_country_flag(data)$is_former_country,
+                                                                      .f = ~ {
+                                                                        if (.y) {
+                                                                          data_iso_3166_3$Alpha_2_new_main[data_iso_3166_3$Alpha_4 == .x]
+                                                                          
+                                                                        } else {
+                                                                          .x
+                                                                        }
+                                                                      }),
+                                                  levels = val_set$country_code_continual,
+                                                  ordered = FALSE)) %>%
     # add var lbl
     labelled::set_variable_labels(.labels = var_lbls["country_code_continual"])
 }
@@ -3711,7 +3731,7 @@ add_country_code_continual <- function(data) {
 #'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
 #'   c2d:::add_country_code_long() |>
 #'   dplyr::select(any_of("id"),
-#'                 starts_with("country_code"))
+#'                 starts_with("country_"))
 add_country_code_long <- function(data) {
   
   # ensure minimal validity
@@ -3723,19 +3743,64 @@ add_country_code_long <- function(data) {
     # remove possibly existing long country code
     dplyr::select(-any_of("country_code_long")) %>%
     # add long country code
-    dplyr::mutate(country_code_long = purrr::map2_chr(.x = country_code,
-                                                      .y = add_former_country_flag(data)$is_former_country,
-                                                      .f = ~ if (.y) {
-                                                        data_iso_3166_3$Alpha_3[data_iso_3166_3$Alpha_4 == .x]
-                                                      } else {
-                                                        data_iso_3166_1$Alpha_3[data_iso_3166_1$Alpha_2 == .x]
-                                                      })) %>%
+    dplyr::mutate(country_code_long = factor(x = purrr::map2_chr(.x = country_code,
+                                                                 .y = add_former_country_flag(data)$is_former_country,
+                                                                 .f = ~ if (.y) {
+                                                                   data_iso_3166_3$Alpha_3[data_iso_3166_3$Alpha_4 == .x]
+                                                                 } else {
+                                                                   data_iso_3166_1$Alpha_3[data_iso_3166_1$Alpha_2 == .x]
+                                                                 }),
+                                             levels = val_set$country_code_long,
+                                             ordered = FALSE)) %>%
     # ensure no NAs
     assertr::assert(predicate = assertr::not_na,
                     country_code_long) %>%
     order_rfrnd_cols() %>%
     # add var lbl
     labelled::set_variable_labels(.labels = var_lbls["country_code_long"])
+}
+
+#' Add short country name to referendum data
+#'
+#' Augments `data` with an additional column holding the common English name of the country in which the referendum took place.
+#'
+#' @inheritParams add_world_regions
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family augment
+#' @export
+#'
+#' @examples
+#' c2d::rfrnds(date_max = clock::date_today(zone = "UTC"),
+#'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
+#'   c2d:::add_country_name() |>
+#'   dplyr::select(any_of("id"),
+#'                 starts_with("country_"))
+add_country_name <- function(data) {
+  
+  # ensure minimal validity
+  checkmate::assert_data_frame(data)
+  assert_vars(data = data,
+              vars = "country_code")
+  data %>%
+    # remove possibly existing country name
+    dplyr::select(-any_of("country_name")) %>%
+    # add country name
+    dplyr::mutate(country_name = factor(x = purrr::map2_chr(.x = country_code,
+                                                            .y = add_former_country_flag(data)$is_former_country,
+                                                            .f = ~ if (.y) {
+                                                              data_iso_3166_3$name_short[data_iso_3166_3$Alpha_4 == .x]
+                                                            } else {
+                                                              data_iso_3166_1$name_short[data_iso_3166_1$Alpha_2 == .x]
+                                                            }),
+                                        levels = val_set$country_name,
+                                        ordered = FALSE)) %>%
+    # ensure no NAs
+    assertr::assert(predicate = assertr::not_na,
+                    country_name) %>%
+    order_rfrnd_cols() %>%
+    # add var lbl
+    labelled::set_variable_labels(.labels = var_lbls["country_name"])
 }
 
 #' Add long country name to referendum data
@@ -3760,30 +3825,19 @@ add_country_name_long <- function(data) {
   checkmate::assert_data_frame(data)
   assert_vars(data = data,
               vars = "country_code")
-  
-  # tweak ISO names
-  iso_3166_1 <-
-    data_iso_3166_1 %>%
-    dplyr::select(country_code = Alpha_2,
-                  country_name_long = name_long)
-  
-  iso_3166_3 <-
-    data_iso_3166_3 %>%
-    dplyr::select(country_code = Alpha_4,
-                  country_name_long = name_long)
   data %>%
     # remove possibly existing long country name
     dplyr::select(-any_of("country_name_long")) %>%
     # add long country name
-    dplyr::mutate(country_name_long = purrr::map2_chr(
-      .x = country_code,
-      .y = add_former_country_flag(data)$is_former_country,
-      .f = ~ if (.y) {
-        iso_3166_3$country_name_long[iso_3166_3$country_code == .x]
-      } else {
-        iso_3166_1$country_name_long[iso_3166_1$country_code == .x]
-      }
-    )) %>%
+    dplyr::mutate(country_name_long = factor(x = purrr::map2_chr(.x = country_code,
+                                                                 .y = add_former_country_flag(data)$is_former_country,
+                                                                 .f = ~ if (.y) {
+                                                                   data_iso_3166_3$name_long[data_iso_3166_3$Alpha_4 == .x]
+                                                                 } else {
+                                                                   data_iso_3166_1$name_long[data_iso_3166_1$Alpha_2 == .x]
+                                                                 }),
+                                             levels = val_set$country_name_long,
+                                             ordered = FALSE)) %>%
     # ensure no NAs
     assertr::assert(predicate = assertr::not_na,
                     country_name_long) %>%
@@ -3961,16 +4015,6 @@ add_world_regions <- function(data) {
   checkmate::assert_data_frame(data)
   assert_vars(data = data,
               vars = "country_code")
-  
-  unknown_country_codes <-
-    data$country_code %>%
-    unique() %>%
-    setdiff(val_set$country_code)
-  
-  if (length(unknown_country_codes)) {
-    cli::cli_abort(paste0("Column {.var country_code} of {.arg data} contains unknown codes (neither ISO 3166-1 alpha-2 nor ISO 3166-3 alpha-4): {.val ",
-                          "{unknown_country_codes}}"))
-  }
   
   has_country_code_continual <- "country_code_continual" %in% colnames(data)
   

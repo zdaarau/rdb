@@ -2,13 +2,14 @@
 single_rfrnd <- rfrnd(id = "5bbbe26a92a21351232dd73f")
 
 # define fn to run common augmentation tests
-test_augmentation <- function(fns = c("add_world_regions",
-                                      "add_period",
-                                      "add_turnout",
+test_augmentation <- function(fns = c("add_former_country_flag",
                                       "add_country_code_continual",
                                       "add_country_code_long",
-                                      "add_country_name_long")) {
-
+                                      "add_country_name",
+                                      "add_country_name_long",
+                                      "add_period",
+                                      "add_turnout",
+                                      "add_world_regions")) {
   fns %>% purrr::walk(~ {
 
     fn <- get(.x)

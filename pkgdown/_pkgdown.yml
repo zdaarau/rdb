@@ -59,6 +59,7 @@ reference:
 - contents:
   - add_country_code_continual
   - add_country_code_long
+  - add_country_name
   - add_country_name_long
   - add_period
   - add_turnout
