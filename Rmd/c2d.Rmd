@@ -4674,11 +4674,8 @@ add_period <- function(data,
   
   checkmate::assert_data_frame(data)
   period <- rlang::arg_match(period)
-  
-  # ensure date col is present
-  if (!("date" %in% colnames(data))) {
-    cli::cli_abort("Unable to compute {.var {period}} period since no {.var {date}} column is present in {.arg data}.")
-  }
+  assert_vars(data = data,
+              vars = "date")
   
   # define necessary date transformations
   get_period <- switch(EXPR    = period,
@@ -4757,13 +4754,12 @@ add_turnout <- function(data,
   checkmate::assert_data_frame(data)
   checkmate::assert_flag(rough)
   checkmate::assert_flag(excl_dubious)
-  
-  # ensure necessary cols are present
-  if (!all(c("electorate_total", "votes_yes", "votes_no", "votes_empty", "votes_invalid") %in% colnames(data))) {
-    cli::cli_abort(paste0("Unable to compute {.var turnout} since at least one of the required columns {.var electorate_total}, {.var votes_yes}, {.var ",
-                   "votes_no}, {.var votes_empty} or {.var votes_invalid} is missing from {.arg data}."))
-  }
-  
+  assert_vars(data = data,
+              vars = c("electorate_total",
+                       "votes_yes",
+                       "votes_no",
+                       "votes_empty",
+                       "votes_invalid"))
   data %>%
     dplyr::rowwise() %>%
     dplyr::mutate(turnout = sum(votes_yes, votes_no, votes_empty, votes_invalid, na.rm = rough) / electorate_total) %>%
