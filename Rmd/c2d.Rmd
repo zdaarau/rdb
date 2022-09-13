@@ -1931,8 +1931,7 @@ url_api <- function(...,
          "stagservices.c2d.ch",
          "services.c2d.ch") %>%
     fs::path(...) %>%
-    # TODO: re-enable HTTPS for staging as well as soon as <https://github.com/ccmdesign/c2d-app/issues/71> is fixed
-    paste0(ifelse(.use_testing_server, "http://", "http://"), .)
+    paste0("https://", .)
 }
 ```
 
