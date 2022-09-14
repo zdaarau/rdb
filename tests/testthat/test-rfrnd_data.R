@@ -14,6 +14,7 @@ test_rfrnd_data <- function(use_testing_server = FALSE) {
 
     expect_gte(nrow(rfrnds(country_code = "AT",
                            use_testing_server = use_testing_server,
+                           use_cache = FALSE,
                            quiet = TRUE)),
                1L)
   })

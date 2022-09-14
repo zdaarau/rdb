@@ -158,20 +158,20 @@
 <span class='r-in'><span>  <span class='fu'>c2d</span><span class='fu'>:::</span><span class='fu'>add_country_name_long</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span></span></span>
 <span class='r-in'><span>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fu'>any_of</span><span class='op'>(</span><span class='st'>"id"</span><span class='op'>)</span>,</span></span>
 <span class='r-in'><span>                <span class='fu'>starts_with</span><span class='op'>(</span><span class='st'>"country_name"</span><span class='op'>)</span><span class='op'>)</span></span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 88 × 3</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    id                       country_name country_name_long          </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>                      </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 6319f91da52c3995043a9036 Hungary      Hungary                    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 6319f6f2a52c3995043a902f Hungary      Hungary                    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 6319f6e1a52c3995043a902d Hungary      Hungary                    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 6319f11ea52c3995043a902b Hungary      Hungary                    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 6319d738a52c3995043a9025 Serbia       Republic of Serbia         </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 62d7d8b3a52c3995043a8ad4 Uruguay      Eastern Republic of Uruguay</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 62d7bd48a52c3995043a8ace Belarus      Republic of Belarus        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 62d6760ca52c3995043a8a1e Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 62d67203a52c3995043a8a16 Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 62d66e97a52c3995043a8a0f Switzerland  Swiss Confederation        </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 78 more rows</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 97 × 3</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    id                       country_name  country_name_long            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>                        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 632092c2a52c3995043a9109 Liechtenstein Principality of Liechtenstein</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 63208effa52c3995043a9101 Italy         Italian Republic             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 63208da3a52c3995043a90fb Italy         Italian Republic             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 63208be1a52c3995043a90f6 Italy         Italian Republic             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 63208a15a52c3995043a90eb Italy         Italian Republic             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 632085cda52c3995043a90e3 Italy         Italian Republic             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 6320522fa52c3995043a90cc Kazakhstan    Republic of Kazakhstan       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 632035b5a52c3995043a90c3 Denmark       Kingdom of Denmark           </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 6319fe9fa52c3995043a904f Mexico        United Mexican States        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 6319f91da52c3995043a9036 Hungary       Hungary                      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 87 more rows</span></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

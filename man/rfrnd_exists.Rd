@@ -23,3 +23,16 @@ Tests whether the referendum with the supplied \code{id} exists or not.
 \examples{
 c2d::rfrnd_exists("6303a4cba52c3995043a8c24")
 }
+\seealso{
+Other referendum data functions:
+\code{\link{add_rfrnds}()},
+\code{\link{count_rfrnds}()},
+\code{\link{delete_rfrnds}()},
+\code{\link{download_file_attachment}()},
+\code{\link{edit_rfrnds}()},
+\code{\link{rfrnds}()},
+\code{\link{rfrnd}()},
+\code{\link{search_rfrnds}()},
+\code{\link{validate_rfrnds}()}
+}
+\concept{rfrnd}

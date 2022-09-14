@@ -3297,6 +3297,7 @@ search_rfrnds <- function(term,
 #' @inheritParams url_api
 #'
 #' @return A logical scalar.
+#' @family rfrnd
 #' @export
 #'
 #' @examples
