@@ -52,5 +52,5 @@ test_that("`add_world_regions()` works for ISO 3166-3 Alpha-4 codes (former coun
 test_that("`add_turnout()` throws an error when required input col is missing", {
 
   expect_error(object = single_rfrnd %>% dplyr::select(-votes_invalid) %>% add_turnout(),
-               regexp = "votes_invalid.*is missing")
+               regexp = "must contain a column `votes_invalid`")
 })

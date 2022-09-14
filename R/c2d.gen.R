@@ -104,6 +104,7 @@ utils::globalVariables(names = c(".",
                                  "result",
                                  "rowid",
                                  "sources",
+                                 "subnational_entity_code",
                                  "subnational_entity_name",
                                  "subterritories_no",
                                  "subterritories_yes",
@@ -709,7 +710,7 @@ auth_session <- function(email = pal::pkg_config_val(key = "api_username",
   invisible(token)
 }
 
-codebook_url <- function(var_names) {
+md_link_codebook <- function(var_names) {
   
   var_names %>% paste0("[`", ., "`](https://rpkg.dev/c2d/articles/codebook.html#", ., ")")
 }
@@ -1257,9 +1258,9 @@ tidy_rfrnds <- function(data,
       data %<>%
         # variable creations
         dplyr::mutate(is_former_country = nchar(country_code) > 2L,
-                      url_sudd = dplyr::if_else(!is.na(id_sudd),
-                                                paste0("https://sudd.ch/event.php?id=", id_sudd),
-                                                NA_character_),
+                      url_sudd = dplyr::if_else(is.na(id_sudd),
+                                                NA_character_,
+                                                url_sudd(glue::glue("event.php?id={id_sudd}"))),
                       url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
                                                       paste0("https://swissvotes.ch/vote/", id_official),
                                                       NA_character_)) %>%
@@ -1720,22 +1721,6 @@ query_filter_in <- function(x) {
 
 
 
-complete_sudd_url <- function(x) {
-  
-  httr::parse_url(x) %>%
-    purrr::modify_in(.where = "scheme",
-                     .f = ~ .x %||% "https") %>%
-    purrr::modify_in(.where = "hostname",
-                     .f = ~ .x %||% "sudd.ch") %>%
-    # work around "Error: All components of query must be named" in `httr::build_url()`
-    purrr::modify_in(.where = "query",
-                     .f = ~ {
-                       .x[names(.x) == ""] <- NULL
-                       .x
-                     }) %>%
-    httr::build_url()
-}
-
 parse_sudd_date <- function(x) {
   
   x_split <- stringr::str_split(string = x,
@@ -1793,7 +1778,7 @@ sudd_rfrnd <- function(id_sudd) {
   
   html <-
     httr::RETRY(verb = "GET",
-                url = "https://sudd.ch/event.php",
+                url = url_sudd("event.php"),
                 query = list(id = id_sudd),
                 times = 3L) %>%
     xml2::read_html() %>%
@@ -1909,7 +1894,7 @@ sudd_rfrnd <- function(id_sudd) {
                                   rvest::html_elements(css = "a") %>%
                                   purrr::map_chr(~ .x %>%
                                                    rvest::html_attr(name = "href") %>%
-                                                   complete_sudd_url()),
+                                                   url_sudd()),
                                 html =
                                   remarks_field %>%
                                   xml2::xml_contents() %>%
@@ -2053,7 +2038,7 @@ sudd_rfrnd <- function(id_sudd) {
                         rvest::html_elements(css = "a") %>%
                         purrr::map_chr(~ .x %>%
                                          rvest::html_attr(name = "href") %>%
-                                         complete_sudd_url())
+                                         url_sudd())
                     }
                     
                     tibble::tibble(!!col_name :=
@@ -2151,7 +2136,7 @@ sudd_rfrnd <- function(id_sudd) {
                                          rvest::html_elements(css = "a") %>%
                                          purrr::map_dfr(~ .x %>%
                                                           rvest::html_attr(name = "href") %>%
-                                                          complete_sudd_url() %>%
+                                                          url_sudd() %>%
                                                           tibble::tibble(description = rvest::html_text(.x),
                                                                          url = .)) %>%
                                          list(),
@@ -2163,6 +2148,14 @@ sudd_rfrnd <- function(id_sudd) {
                                        ~ "PARSING ERROR; PLEASE DEBUG"
                                      ))
                   })
+}
+
+url_sudd <- function(x = "") {
+
+  purrr::map_chr(x,
+                 ~ httr::modify_url(url = .x %|% "",
+                                    scheme = "https",
+                                    hostname = "sudd.ch"))
 }
 
 restore_topics <- function(topics_tier_1,
@@ -2431,7 +2424,8 @@ rfrnd_fields$never_empty <- c("_id",
 mime_error_suffix <- "This indicates either some network issue or a change in the C2D API."
 
 sudd_years <-
-  xml2::read_html("https://sudd.ch/index.php") %>%
+  url_sudd("index.php") %>%
+  xml2::read_html() %>%
   rvest::html_element(css = "select[id='first']") %>%
   rvest::html_elements("option") %>%
   rvest::html_attr("value") %>%
@@ -2778,7 +2772,7 @@ download_file_attachment <- function(s3_object_key,
 #'
 #' @inheritParams url_api
 #' @param data The new referendum data. A [tibble][tibble::tbl_df] that in any case must contain the columns
-#' `r rfrnd_fields$required_for_additions %>% dplyr::recode(!!!var_names) %>% codebook_url() %>% pal::as_md_list()`
+#' `r rfrnd_fields$required_for_additions %>% dplyr::recode(!!!var_names) %>% md_link_codebook() %>% pal::as_md_list()`
 #'   
 #' plus the column [`subnational_entity_name`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) for referendums of
 #' [`level`](https://rpkg.dev/c2d/articles/codebook.html#subnational_entity_name) below `"national"`, and the column
@@ -2890,7 +2884,7 @@ add_rfrnds <- function(data,
 #'   identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
 #'   due to [current API requirements](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683), the following columns must always be supplied:
 #'   
-#'   `r rfrnd_fields$required_for_edits %>% dplyr::recode(!!!var_names) %>% setdiff("id") %>% codebook_url() %>% pal::as_md_list()`.
+#'   `r rfrnd_fields$required_for_edits %>% dplyr::recode(!!!var_names) %>% setdiff("id") %>% md_link_codebook() %>% pal::as_md_list()`.
 #'
 #' @return `data`, invisibly.
 #' @family rfrnd
@@ -4676,9 +4670,9 @@ list_sudd_territories <- function() {
   
   rows <-
     httr::RETRY(verb = "GET",
-              url = "https://sudd.ch/list.php",
-              query = list(mode = "allareas"),
-              times = 3L) %>%
+                url = url_sudd("list.php"),
+                query = list(mode = "allareas"),
+                times = 3L) %>%
     xml2::read_html() %>%
     rvest::html_elements(css = "main table tr") %>%
     purrr::map(rvest::html_elements,
@@ -4695,7 +4689,7 @@ list_sudd_territories <- function() {
                      .x %>%
                        rvest::html_element(css = "a") %>%
                        rvest::html_attr(name = "href") %>%
-                       complete_sudd_url()
+                       url_sudd()
                    } else {
                      NA_character_
                    }
@@ -4726,7 +4720,7 @@ list_sudd_titles <- function() {
   
   rows <-
     httr::RETRY(verb = "GET",
-                url = "https://sudd.ch/list.php",
+                url = url_sudd("list.php"),
                 query = list(mode = "alltopics"),
                 times = 3L) %>%
     xml2::read_html() %>%
@@ -4741,7 +4735,7 @@ list_sudd_titles <- function() {
                  filter_url = col_1 %>% purrr::map_chr(~ .x %>%
                                                          rvest::html_element(css = "a") %>%
                                                          rvest::html_attr(name = "href") %>%
-                                                         complete_sudd_url()),
+                                                         url_sudd()),
                  n = col_2 %>% purrr::map_chr(rvest::html_text))
 }
 
@@ -4879,7 +4873,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
     
     html <-
       httr::RETRY(verb = "GET",
-                  url = "https://sudd.ch/list.php",
+                  url = url_sudd("list.php"),
                   query = query,
                   times = 3L) %>%
       xml2::read_html()

@@ -164,7 +164,7 @@ var_sections <- function(data,
     if (is_opt) {
       c("#### Origin",
         "",
-        glue::glue("This variable is derived from ", pal::prose_ls(c2d:::codebook_url(unlist(derived_from))), " and can be generated on demand via ",
+        glue::glue("This variable is derived from ", pal::prose_ls(c2d:::md_link_codebook(unlist(derived_from))), " and can be generated on demand via ",
                    ifelse(!strip_extended_pandoc,
                           "[`{gen_fn}()`](https://rpkg.dev/c2d/reference/{gen_fn}.html)",
                           "[{gen_fn}()]"),
