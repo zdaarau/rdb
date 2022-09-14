@@ -750,16 +750,31 @@ field_to_var_name <- function(x) {
 
 derive_country_vars <- function(country_code,
                                 date) {
-  country_code %<>%
-    as.character() %>%
-    # assign canonical pseudo codes
-    dplyr::recode("KS" = "XK")
   
-  data_former <- data_iso_3166_3 %>% dplyr::filter(Alpha_2 == !!country_code & !!date <= Date_withdrawn)
+  country_code %<>% as.character()
+  subnational_entity_code <- NA_character_
+  
+  # handle subnational entities
+  ## Ascension
+  if (country_code == "AC") {
+    
+    country_code <- "SH"
+    subnational_entity_code <- "SH-AC"
+  }
+  
+  # assign canonical pseudo codes
+  ## Kosovo
+  country_code %<>% dplyr::recode("KS" = "XK")
+  
+  data_former <-
+    data_iso_3166_3 %>%
+    dplyr::filter(Alpha_2 == !!country_code & !!date <= (clock::add_years(Date_withdrawn, 50L))) %>%
+    dplyr::filter(Date_withdrawn == pal::safe_max(Date_withdrawn))
+  
   is_former <- nrow(data_former) > 0L
   is_current <- !is_former && country_code %in% data_iso_3166_1$Alpha_2
   
-  if (!(is_former || is_current)) {
+  if (!(is_former || is_current) && !(country_code %in% country_codes_sudd_invalid)) {
     cli::cli_alert_warning("Neither ISO 3166-1 alpha-2 nor ISO 3166-3 alpha-4 {.var country_code} found for {.val {country_code}}.")
   }
   
@@ -777,7 +792,8 @@ derive_country_vars <- function(country_code,
   
   list(country_code = country_code,
        country_name = country_code_to_name(country_code),
-       is_former_country = is_former)
+       is_former_country = is_former,
+       subnational_entity_code = subnational_entity_code)
 }
 
 drop_disabled_vars <- function(data,
@@ -4923,6 +4939,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
       dplyr::select(id_sudd,
                     starts_with("country_"),
                     is_former_country,
+                    starts_with("subnational_entity_"),
                     everything())
   },
   pkg = this_pkg,
@@ -4997,13 +5014,14 @@ sudd_rfrnds <- function(ids_sudd,
       dplyr::relocate(id_sudd,
                       country_code,
                       country_name,
+                      is_former_country,
+                      subnational_entity_code,
                       territory_name_de,
                       any_of(c("territory_type_de",
                                "date",
                                "year",
                                "month",
                                "day",
-                               "is_former_country",
                                "title_de",
                                "question_type_de",
                                "types",

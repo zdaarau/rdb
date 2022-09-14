@@ -162,6 +162,12 @@ data_iso_3166_1 <-
 
 ## `data_iso_3166_3`
 
+NOTES:
+
+-   ISO monetizes the standards itselves as well as derived datasets like the [Country Codes Collection](https://www.iso.org/publication/PUB500001.html) instead
+    of offering open data APIs! 🤬 So most open-source projects including the R package source their ISO 3166 data from [Debian's `iso-codes`
+    project](https://salsa.debian.org/iso-codes-team/iso-codes) which might lack behind official standard updates.
+
 ```{r}
 data_iso_3166_3 <-
   ISOcodes::ISO_3166_3 %>%
@@ -190,7 +196,13 @@ data_iso_3166_3 <-
                     }
                   }),
                 Date_withdrawn =
-                  Date_withdrawn %>%
+                  # fix withdrawn date of AN and YU
+                  # TODO: remove this once pkg ISOcodes is recent enough to include
+                  #       [iso-codes MR #28](https://salsa.debian.org/iso-codes-team/iso-codes/-/merge_requests/28)
+                  dplyr::case_when(Alpha_4 == "ANHH" ~ "2010-12-15",
+                                   Alpha_4 == "CSXX" ~ "2006-09-26",
+                                   Alpha_4 == "YUCS" ~ "2003-07-23",
+                                   TRUE ~ Date_withdrawn) %>%
                   purrr::map(~ {
                     if (nchar(.x) == 4L) {
                       clock::date_build(year = as.integer(.x))
@@ -218,6 +230,20 @@ data_iso_3166_3 <-
   # ensure there are no duplicates
   assertr::assert(predicate = assertr::is_uniq,
                   Alpha_4)
+```
+
+## `country_codes_sudd_invalid`
+
+```{r}
+country_codes_sudd_invalid <- c("MB", "ZZ")
+
+# ensure they aren't used in ISO 3166
+if (any(country_codes_sudd_invalid %in% c(data_iso_3166_1$Alpha_2,
+                                          data_iso_3166_3$Alpha_2,
+                                          data_iso_3166_3$Alpha_2_new_main))) {
+  
+  cli::cli_abort("At least one of {.var country_codes_sudd_invalid} is used in regular ISO 3166 alpha-2 codes. Please investigate.")
+}
 ```
 
 ## `data_topics`
@@ -371,7 +397,8 @@ Save all the small data objects as a single internal file `R/sysdata.rda`. Note 
 to package users.
 
 ```{r}
-usethis::use_data(data_codebook,
+usethis::use_data(country_codes_sudd_invalid,
+                  data_codebook,
                   data_iso_3166_1,
                   data_iso_3166_3,
                   data_topics,
