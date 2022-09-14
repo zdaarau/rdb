@@ -5788,6 +5788,15 @@ list_sudd_rfrnds <- function(mode = c("by_date",
                              null.ok = TRUE)
     checkmate::assert_string(filter$title_de,
                              null.ok = TRUE)
+    has_filter <-
+      filter %>%
+      purrr::map_lgl(is.null) %>%
+      all() %>%
+      magrittr::not()
+    
+    if (has_filter && mode != "filter") {
+      cli::cli_alert_warning("{.arg filter} is ignored because {.arg mode} is set to {.val {mode}}.")
+    }
     
     filter$year_min <- checkmate::assert_int(filter$year_min,
                                              lower = sudd_min_year,
@@ -5800,7 +5809,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
                                              null.ok = TRUE,
                                              coerce = TRUE)
     
-    is_year_missing <- purrr::map_lgl(c(filter$year_min, filter$year_max), is.null) %>% { !all(.) && any(!.) }
+    is_year_missing <- purrr::map_lgl(c(filter$year_min, filter$year_max), is.null) %>% { any(.) && any(!.) }
     
     if (is_year_missing) {
       filter$year_min <- filter$year_min %||% sudd_min_year
