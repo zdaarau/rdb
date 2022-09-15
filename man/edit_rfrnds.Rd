@@ -12,7 +12,7 @@ edit_rfrnds(
 )
 }
 \arguments{
-\item{data}{The updated referendum data. A \link[tibble:tbl_df-class]{tibble} that must contain an \href{https://rpkg.dev/c2d/articles/codebook.html#id}{\code{id}} column
+\item{data}{Updated referendum data. A \link[tibble:tbl_df-class]{tibble} that must contain an \href{https://rpkg.dev/c2d/articles/codebook.html#id}{\code{id}} column
 identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
 due to \href{https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683}{current API requirements}, the following columns must always be supplied:
 \itemize{
@@ -43,6 +43,7 @@ Note that adding/editing the column \code{files} is not supported, i.e. it is si
 \seealso{
 Other referendum data functions:
 \code{\link{add_rfrnds}()},
+\code{\link{assert_vars}()},
 \code{\link{count_rfrnds}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},

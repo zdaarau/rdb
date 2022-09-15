@@ -12,7 +12,7 @@ rfrnd(
 )
 }
 \arguments{
-\item{id}{The referendum's unique \href{https://rpkg.dev/c2d/articles/codebook.html#id}{identifier}.}
+\item{id}{Referendum's unique \href{https://rpkg.dev/c2d/articles/codebook.html#id}{identifier}.}
 
 \item{incl_archive}{Whether or not to include an \code{archive} column containing data from an earlier, obsolete state of the C2D database.}
 
@@ -34,6 +34,7 @@ c2d::rfrnd(id = "5bbbe26a92a21351232dd73f")
 \seealso{
 Other referendum data functions:
 \code{\link{add_rfrnds}()},
+\code{\link{assert_vars}()},
 \code{\link{count_rfrnds}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},

@@ -10,7 +10,7 @@ rfrnd_exists(
 )
 }
 \arguments{
-\item{id}{The referendum's unique \href{https://rpkg.dev/c2d/articles/codebook.html#id}{identifier}.}
+\item{id}{Referendum's unique \href{https://rpkg.dev/c2d/articles/codebook.html#id}{identifier}.}
 
 \item{.use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
@@ -26,6 +26,7 @@ c2d::rfrnd_exists("6303a4cba52c3995043a8c24")
 \seealso{
 Other referendum data functions:
 \code{\link{add_rfrnds}()},
+\code{\link{assert_vars}()},
 \code{\link{count_rfrnds}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},

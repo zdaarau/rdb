@@ -703,50 +703,6 @@ assert_content <- function(x) {
 }
 ```
 
-### `assert_vars`
-
-```{r}
-assert_vars <- function(data,
-                        vars) {
-  
-  vars %>% purrr::walk(~ {
-    
-    msg_suffix <- switch(EXPR         = .x,
-                         country_code = " with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.",
-                         "")
-    
-    if (!(.x %in% colnames(data))) {
-      cli::cli_abort(paste0("{.arg data} must contain a column {.var {.x}}", msg_suffix))
-    }
-    
-    # run additional content check
-    assert_content <- switch(EXPR         = .x,
-                             country_code = function(x) {
-                               checkmate::assert_vector(x = x,
-                                                        .var.name = "data$country_code")
-                               check <- checkmate::check_subset(x = as.character(x),
-                                                                choices = val_set$country_code)
-                               if (isFALSE(check)) {
-                                 
-                                 expired_codes <- intersect(as.character(x),
-                                                            data_iso_3166_3$Alpha_2)
-                                 cli::cli_abort(paste0(
-                                   "Assertion on {.var data$country_code} failed: ",
-                                                       ifelse(length(expired_codes),
-                                                              paste0("The following country codes have been deleted from ISO 3166-1 and were moved to ISO ",
-                                                                     "3166-3 (former countries) instead: {.val {expired_codes}}"),
-                                                              check)))
-                               }
-                             },
-                             function(x) TRUE)
-    
-    assert_content(data[[.x]])
-  })
-  
-  invisible(data)
-}
-```
-
 ### `auth_session`
 
 TODO:
@@ -2066,54 +2022,6 @@ query_filter_in <- function(x) {
 
 ### sudd.ch-related
 
-#### `add_sudd_country_name_de`
-
-DEPRECATED!
-
-NOTES:
-
--   To map the `territory_name_de` of `list_sudd_territories()` unambiguously to the `territory_name_de` of `sudd_rfrnds()` and `list_sudd_rfrnds()`, the latter
-    needs to be truncated first using `shorten_sudd_territory_name_de()`.
-
-    Simple mapping by substring as follows leads to ambiguous results:
-
-    ``` r
-    sudd_t <- c2d::list_sudd_territories()
-
-    c2d::list_sudd_rfrnds() %>%
-      dplyr::mutate(country_name_de =
-                      territory_name_de %>%
-                      purrr::map(~ sudd_t %>%
-                                   dplyr::filter(stringr::str_detect(string = .x,
-                                                                     pattern = paste0("\\Q", territory_name_de, "\\E"))) %$%
-                                   country_name_de %>% unique())) %>%
-      dplyr::filter(country_name_de %>% purrr::map_lgl(~ length(.x) > 1L)) %>%
-      View()
-    ```
-
--   The function below still leads to multiple results in certain cases due to ambiguities in sudd territories, which would need to be resolved first:
-
-    ``` r
-    list_sudd_territories() %>%
-      dplyr::filter(territory_name_de %in% territory_name_de[duplicated(territory_name_de)]) %>%
-      dplyr::arrange(territory_name_de)
-    ```
-
-```{r, purl = FALSE}
-add_sudd_country_name_de <- function(data) {
-  
-  data %>%
-    dplyr::mutate(territory_name_de_short = shorten_sudd_territory_name_de(territory_name_de)) %>%
-    dplyr::left_join(list_sudd_territories() %>% dplyr::select(country_name_de, territory_name_de),
-                     by = c("territory_name_de_short" = "territory_name_de")) %>%
-    dplyr::select(-territory_name_de_short) %>%
-    dplyr::relocate(country_name_de,
-                    .before = territory_name_de) %>%
-    assertr::assert(predicate = assertr::not_na,
-                    country_name_de)
-}
-```
-
 #### `parse_sudd_date`
 
 Parses pseudo ISO 8601 strings like `"1999-03-17"` (valid) and `"2000-09-00"` or `1992-05` (missing day).
@@ -2178,16 +2086,6 @@ parse_sudd_id <- function(id_sudd) {
                       date = clock::date_build(year = sudd_year,
                                                month = 1L,
                                                day = 1L))
-}
-```
-
-#### `shorten_sudd_territory_name_de`
-
-```{r}
-shorten_sudd_territory_name_de <- function(x) {
-  
-  stringr::str_remove(string = x,
-                      pattern = "\\s*\\([^\\)]+\\).*")
 }
 ```
 
@@ -3246,7 +3144,7 @@ NOTES:
 #' Downloads a single referendum's data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
 #'
 #' @inheritParams rfrnds
-#' @param id The referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
+#' @param id Referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
 #'
 #' @inherit rfrnds return
 #' @family rfrnd
@@ -3581,7 +3479,7 @@ NOTES:
 #' @inherit add_rfrnds details
 #' 
 #' @inheritParams add_rfrnds
-#' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
+#' @param data Updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column
 #'   identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
 #'   due to [current API requirements](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683), the following columns must always be supplied:
 #'   
@@ -3744,7 +3642,7 @@ delete_rfrnds <- function(ids,
 #'
 #' Performs various data validation steps to ensure there are no errors in the supplied `data`.
 #'
-#' @param data The referendum data to validate, as returned by [rfrnds()].
+#' @param data Referendum data to validate, as returned by [rfrnds()].
 #' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
 #' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
 #'
@@ -3982,7 +3880,7 @@ title](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-refer
 #' titles.
 #'
 #' @inheritParams url_api
-#' @param term The Search term. A character scalar.
+#' @param term Search term. A character scalar.
 #'
 #' @return A character vector of English referendum titles matching the search `term`.
 #' @family rfrnd
@@ -4040,6 +3938,67 @@ rfrnd_exists <- function(id,
 }
 ```
 
+### `assert_vars`
+
+```{r}
+#' Assert referendum variables are present
+#'
+#' Asserts the specified `vars` are present in the supplied referendum `data`. Depending on `vars`, additional integrity checks are performed.
+#'
+#' @param data C2D referendum data as returned by [rfrnds()].
+#' @param vars Names of the variables to check. A character vector.
+#'
+#' @return `data`, invisibly.
+#' @family rfrnd
+#' @export
+#'
+#' @examples
+#' c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |> c2d::assert_vars(vars = "country_code")
+#' 
+#' try(
+#'   tibble::tibble(country_code = "AN") |> c2d::assert_vars(vars = "country_code")
+#' )
+assert_vars <- function(data,
+                        vars) {
+  
+  vars %>% purrr::walk(~ {
+    
+    msg_suffix <- switch(EXPR         = .x,
+                         country_code = " with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.",
+                         "")
+    
+    if (!(.x %in% colnames(data))) {
+      cli::cli_abort(paste0("{.arg data} must contain a column {.var {.x}}", msg_suffix))
+    }
+    
+    # run additional content check
+    assert_content <- switch(EXPR         = .x,
+                             country_code = function(x) {
+                               checkmate::assert_vector(x = x,
+                                                        .var.name = "data$country_code")
+                               check <- checkmate::check_subset(x = as.character(x),
+                                                                choices = val_set$country_code)
+                               if (!isTRUE(check)) {
+                                 
+                                 expired_codes <- intersect(as.character(x),
+                                                            data_iso_3166_3$Alpha_2)
+                                 cli::cli_abort(paste0(
+                                   "Assertion on {.var data$country_code} failed: ",
+                                                       ifelse(length(expired_codes),
+                                                              paste0("The following country codes have been deleted from ISO 3166-1 and were moved to ISO ",
+                                                                     "3166-3 (former countries) instead: {.val {expired_codes}}"),
+                                                              check)))
+                               }
+                             },
+                             function(x) TRUE)
+    
+    assert_content(data[[.x]])
+  })
+  
+  invisible(data)
+}
+```
+
 ## Referendum metadata
 
 ### `data_codebook`
@@ -4071,7 +4030,7 @@ rfrnd_exists <- function(id,
 #' Returns a character vector of value labels of a specific [rfrnds()] column, in the same order as [var_vals()], or of length `0` if `var_name`'s values are
 #' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
 #'
-#' @param var_name A variable name. Must be one of the column names of [`data_codebook`].
+#' @param var_name Variable name for which the labels are to be returned. Must be one of the column names of [`data_codebook`].
 #' @param incl_affixes Whether or not to add the corresponding `value_label_prefix` and `value_label_suffix` to the returned labels.
 #'
 #' @return A character vector. Of length `0` if `var_name`'s values are not restricted to a predefined set or no value labels are defined in the
@@ -5727,8 +5686,9 @@ list_sudd_titles <- function() {
 #' @export
 #'
 #' @examples
-#' # list all referendums by modification date
-#' c2d::list_sudd_rfrnds(mode = "by_mod_date")
+#' # list all referendums by modification date (takes a while)
+#' \dontrun{
+#' c2d::list_sudd_rfrnds(mode = "by_mod_date")}
 #' 
 #' # list all referendums whose title matches "AHV"
 #' c2d::list_sudd_rfrnds(mode = "filter",

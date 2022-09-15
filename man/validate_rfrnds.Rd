@@ -11,7 +11,7 @@ validate_rfrnds(
 )
 }
 \arguments{
-\item{data}{The referendum data to validate, as returned by \code{\link[=rfrnds]{rfrnds()}}.}
+\item{data}{Referendum data to validate, as returned by \code{\link[=rfrnds]{rfrnds()}}.}
 
 \item{check_applicability_constraint}{Whether or not to check that no applicability constraints as defined in the \link[=data_codebook]{codebook} are violated.}
 
@@ -26,6 +26,7 @@ Performs various data validation steps to ensure there are no errors in the supp
 \seealso{
 Other referendum data functions:
 \code{\link{add_rfrnds}()},
+\code{\link{assert_vars}()},
 \code{\link{count_rfrnds}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},

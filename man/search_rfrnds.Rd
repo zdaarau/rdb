@@ -10,7 +10,7 @@ search_rfrnds(
 )
 }
 \arguments{
-\item{term}{The Search term. A character scalar.}
+\item{term}{Search term. A character scalar.}
 
 \item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.}
 }
@@ -35,6 +35,7 @@ c2d::search_rfrnds("freedom")
 \seealso{
 Other referendum data functions:
 \code{\link{add_rfrnds}()},
+\code{\link{assert_vars}()},
 \code{\link{count_rfrnds}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},

@@ -570,46 +570,6 @@ assert_content <- function(x) {
   invisible(x)
 }
 
-assert_vars <- function(data,
-                        vars) {
-  
-  vars %>% purrr::walk(~ {
-    
-    msg_suffix <- switch(EXPR         = .x,
-                         country_code = " with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.",
-                         "")
-    
-    if (!(.x %in% colnames(data))) {
-      cli::cli_abort(paste0("{.arg data} must contain a column {.var {.x}}", msg_suffix))
-    }
-    
-    # run additional content check
-    assert_content <- switch(EXPR         = .x,
-                             country_code = function(x) {
-                               checkmate::assert_vector(x = x,
-                                                        .var.name = "data$country_code")
-                               check <- checkmate::check_subset(x = as.character(x),
-                                                                choices = val_set$country_code)
-                               if (isFALSE(check)) {
-                                 
-                                 expired_codes <- intersect(as.character(x),
-                                                            data_iso_3166_3$Alpha_2)
-                                 cli::cli_abort(paste0(
-                                   "Assertion on {.var data$country_code} failed: ",
-                                                       ifelse(length(expired_codes),
-                                                              paste0("The following country codes have been deleted from ISO 3166-1 and were moved to ISO ",
-                                                                     "3166-3 (former countries) instead: {.val {expired_codes}}"),
-                                                              check)))
-                               }
-                             },
-                             function(x) TRUE)
-    
-    assert_content(data[[.x]])
-  })
-  
-  invisible(data)
-}
-
 #' Authenticate a user session for the [C2D API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
 #'
 #' Creates a new user session token if necessary. The token is stored in the R option `c2d.user_session_tokens`, a [tibble][tibble::tbl_df] with the columns
@@ -1719,8 +1679,6 @@ query_filter_in <- function(x) {
                     ~ list(`$in` = .))
 }
 
-
-
 parse_sudd_date <- function(x) {
   
   x_split <- stringr::str_split(string = x,
@@ -1762,12 +1720,6 @@ parse_sudd_id <- function(id_sudd) {
                       date = clock::date_build(year = sudd_year,
                                                month = 1L,
                                                day = 1L))
-}
-
-shorten_sudd_territory_name_de <- function(x) {
-  
-  stringr::str_remove(string = x,
-                      pattern = "\\s*\\([^\\)]+\\).*")
 }
 
 
@@ -2641,7 +2593,7 @@ rfrnds <- function(country_code = NULL,
 #' Downloads a single referendum's data from the C2D Database. See the [`codebook`][codebook] for a detailed description of all variables.
 #'
 #' @inheritParams rfrnds
-#' @param id The referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
+#' @param id Referendum's unique [identifier](https://rpkg.dev/c2d/articles/codebook.html#id).
 #'
 #' @inherit rfrnds return
 #' @family rfrnd
@@ -2880,7 +2832,7 @@ add_rfrnds <- function(data,
 #' @inherit add_rfrnds details
 #' 
 #' @inheritParams add_rfrnds
-#' @param data The updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column 
+#' @param data Updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](https://rpkg.dev/c2d/articles/codebook.html#id) column
 #'   identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
 #'   due to [current API requirements](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683), the following columns must always be supplied:
 #'   
@@ -3035,7 +2987,7 @@ delete_rfrnds <- function(ids,
 #'
 #' Performs various data validation steps to ensure there are no errors in the supplied `data`.
 #'
-#' @param data The referendum data to validate, as returned by [rfrnds()].
+#' @param data Referendum data to validate, as returned by [rfrnds()].
 #' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
 #' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](https://rpkg.dev/c2d/articles/codebook.html#id-sudd) prefixes are valid.
 #'
@@ -3262,7 +3214,7 @@ count_rfrnds <- function(is_draft = FALSE,
 #' titles.
 #'
 #' @inheritParams url_api
-#' @param term The Search term. A character scalar.
+#' @param term Search term. A character scalar.
 #'
 #' @return A character vector of English referendum titles matching the search `term`.
 #' @family rfrnd
@@ -3315,6 +3267,63 @@ rfrnd_exists <- function(id,
     magrittr::not()
 }
 
+#' Assert referendum variables are present
+#'
+#' Asserts the specified `vars` are present in the supplied referendum `data`. Depending on `vars`, additional integrity checks are performed.
+#'
+#' @param data C2D referendum data as returned by [rfrnds()].
+#' @param vars Names of the variables to check. A character vector.
+#'
+#' @return `data`, invisibly.
+#' @family rfrnd
+#' @export
+#'
+#' @examples
+#' c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |> c2d::assert_vars(vars = "country_code")
+#' 
+#' try(
+#'   tibble::tibble(country_code = "AN") |> c2d::assert_vars(vars = "country_code")
+#' )
+assert_vars <- function(data,
+                        vars) {
+  
+  vars %>% purrr::walk(~ {
+    
+    msg_suffix <- switch(EXPR         = .x,
+                         country_code = " with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.",
+                         "")
+    
+    if (!(.x %in% colnames(data))) {
+      cli::cli_abort(paste0("{.arg data} must contain a column {.var {.x}}", msg_suffix))
+    }
+    
+    # run additional content check
+    assert_content <- switch(EXPR         = .x,
+                             country_code = function(x) {
+                               checkmate::assert_vector(x = x,
+                                                        .var.name = "data$country_code")
+                               check <- checkmate::check_subset(x = as.character(x),
+                                                                choices = val_set$country_code)
+                               if (!isTRUE(check)) {
+                                 
+                                 expired_codes <- intersect(as.character(x),
+                                                            data_iso_3166_3$Alpha_2)
+                                 cli::cli_abort(paste0(
+                                   "Assertion on {.var data$country_code} failed: ",
+                                                       ifelse(length(expired_codes),
+                                                              paste0("The following country codes have been deleted from ISO 3166-1 and were moved to ISO ",
+                                                                     "3166-3 (former countries) instead: {.val {expired_codes}}"),
+                                                              check)))
+                               }
+                             },
+                             function(x) TRUE)
+    
+    assert_content(data[[.x]])
+  })
+  
+  invisible(data)
+}
+
 #' C2D Codebook
 #'
 #' A tibble containing the complete metadata of all [rfrnds()] variables. The Codebook below is also available
@@ -3337,7 +3346,7 @@ rfrnd_exists <- function(id,
 #' Returns a character vector of value labels of a specific [rfrnds()] column, in the same order as [var_vals()], or of length `0` if `var_name`'s values are
 #' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
 #'
-#' @param var_name A variable name. Must be one of the column names of [`data_codebook`].
+#' @param var_name Variable name for which the labels are to be returned. Must be one of the column names of [`data_codebook`].
 #' @param incl_affixes Whether or not to add the corresponding `value_label_prefix` and `value_label_suffix` to the returned labels.
 #'
 #' @return A character vector. Of length `0` if `var_name`'s values are not restricted to a predefined set or no value labels are defined in the
@@ -4771,8 +4780,9 @@ list_sudd_titles <- function() {
 #' @export
 #'
 #' @examples
-#' # list all referendums by modification date
-#' c2d::list_sudd_rfrnds(mode = "by_mod_date")
+#' # list all referendums by modification date (takes a while)
+#' \dontrun{
+#' c2d::list_sudd_rfrnds(mode = "by_mod_date")}
 #' 
 #' # list all referendums whose title matches "AHV"
 #' c2d::list_sudd_rfrnds(mode = "filter",

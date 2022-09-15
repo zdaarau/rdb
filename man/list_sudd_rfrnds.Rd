@@ -52,8 +52,9 @@ licensed under \href{https://creativecommons.org/licenses/by-nc-sa/4.0/}{Creativ
 }
 
 \examples{
-# list all referendums by modification date
-c2d::list_sudd_rfrnds(mode = "by_mod_date")
+# list all referendums by modification date (takes a while)
+\dontrun{
+c2d::list_sudd_rfrnds(mode = "by_mod_date")}
 
 # list all referendums whose title matches "AHV"
 c2d::list_sudd_rfrnds(mode = "filter",

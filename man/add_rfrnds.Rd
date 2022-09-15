@@ -55,6 +55,7 @@ Note that adding/editing the column \code{files} is not supported, i.e. it is si
 }
 \seealso{
 Other referendum data functions:
+\code{\link{assert_vars}()},
 \code{\link{count_rfrnds}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
