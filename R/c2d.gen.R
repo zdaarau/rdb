@@ -4237,8 +4237,8 @@ n_rfrnds_per_period <- function(data,
 #' c2d::rfrnds(country_code = "IT") |> c2d::printify_col_names()
 printify_col_names <- function(data) {
   
-  data %>% dplyr::rename_with(~ data_codebook$variable_name_print[match(x = .x,
-                                                                        table = data_codebook$variable_name)])
+  data %>%
+    dplyr::rename_with(~ data_codebook$variable_name_print[match(.x, data_codebook$variable_name)] %|% .x)
 }
 
 #' Referendum share per period stacked area chart
