@@ -22,11 +22,13 @@ variable_name = "country_code"
 variable_name_print = "ISO 3166-1 alpha-2 / ISO 3166-3 alpha-4"
 variable_label = "the two- or four-letter code identifying the country in which the referendum took place; an [ISO 3166-3 alpha-4 code](https://en.wikipedia.org/wiki/ISO_3166-3) for historical countries which ceased to exist, otherwise an [ISO 3166-1 alpha-2 code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)"
 value_scale = "nominal"
+ptype = "vctrs::new_factor(levels = c2d:::val_set$country_code)"
 [[01_main.item]]
 variable_name = "country_code_long"
 variable_name_print = "ISO 3166-1 alpha-3"
 variable_label = "the three-letter ISO 3166-1 alpha-3 code identifying the country in which the referendum took place"
 value_scale = "nominal"
+ptype = "vctrs::new_factor(levels = c2d:::val_set$country_code_long)"
 derived_from = [ "country_code" ]
 gen_fn = "add_country_code_long"
 is_opt = true
@@ -35,6 +37,7 @@ variable_name = "country_code_continual"
 variable_name_print = "ISO 3166-1 alpha-2 (continual)"
 variable_label = "the current or future [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code of the country where the referendum took place; identical to `country_code` if the country still exists, otherwise the `country_code` of the successor country (the largest one in terms of population if it was succeeded by multiple countries)"
 value_scale = "nominal"
+ptype = "vctrs::new_factor(levels = c2d:::val_set$country_code_continual)"
 derived_from = [ "country_code" ]
 gen_fn = "add_country_code_continual"
 is_opt = true
@@ -43,11 +46,15 @@ variable_name = "country_name"
 variable_name_print = "Country"
 variable_label = "the English name of the country in which the referendum took place"
 value_scale = "nominal"
+ptype = "vctrs::new_factor(levels = c2d:::val_set$country_name)"
+derived_from = [ "country_code" ]
+gen_fn = "add_country_name"
 [[01_main.item]]
 variable_name = "country_name_long"
 variable_name_print = "Country (full name)"
 variable_label = "the official full English name(s) of the country in which the referendum took place"
 value_scale = "nominal"
+ptype = "vctrs::new_factor(levels = c2d:::val_set$country_name_long)"
 derived_from = [ "country_code" ]
 gen_fn = "add_country_name_long"
 is_opt = true

@@ -293,10 +293,15 @@ topics_tier_3_ <- c2d::topics(tiers = 3L)
 
 ## `un_regions`
 
+NOTES:
+
+-   Antarctica (AQ) is not part of any UN regions (i.e. it's [directly below
+    *World*](https://en.wikipedia.org/wiki/List_of_countries_by_United_Nations_geoscheme)).
+
 ```{r}
 # compile `country_code` <-> `un_country_code` dict
 codes <-
-  ISOcodes::ISO_3166_1 %>%
+  data_iso_3166_1 %>%
   # temporarily add ISO 3166-1 alpha-3 codes for matching with M49 codes
   dplyr::select(country_code = Alpha_2,
                 Alpha_3) %>%
@@ -305,10 +310,15 @@ codes <-
                                                                      Alpha_3 = ISO_Alpha_3),
                    by = "Alpha_3") %>%
   dplyr::select(-Alpha_3) %>%
-  # manually assign China's M49 code to Taiwan, cf. https://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Asia#Note_on_Taiwan
-  dplyr::mutate(un_country_code = dplyr::if_else(country_code == "TW",
-                                                 "156",
-                                                 un_country_code))
+  # manual corrections
+  dplyr::mutate(
+    # assign M49 code of
+    # - China to Taiwan, cf. https://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Asia#Note_on_Taiwan
+    # - Serbia to Kosovo, cf. https://en.wikipedia.org/wiki/XK_(user_assigned_code)#Potential_assignment_of_an_official_ISO_3166-1_code_for_Kosovo
+    un_country_code = dplyr::case_when(country_code == "TW" ~ "156",
+                                       country_code == "XK" ~ "688",
+                                       TRUE ~ un_country_code)
+  )
 # extract UN regions of the 3 different tiers
 un_regions_tier_1 <-
   ISOcodes::UN_M.49_Regions %>%
@@ -358,9 +368,52 @@ un_regions <-
   dplyr::left_join(y = codes,
                    by = "un_country_code") %>%
   dplyr::relocate(country_code) %>%
+  # remove rows without `country_code` (Sark)
+  dplyr::filter(!is.na(country_code)) %>%
   # ensure there are no NAs left
   assertr::assert(predicate = assertr::not_na,
-                  un_country_code)
+                  un_country_code) %>%
+  # convert UN cols to type fct
+  dplyr::mutate(
+    # tier-1 name lvls are ordered alphabetically
+    un_region_tier_1_name = factor(x = un_region_tier_1_name,
+                                   levels = sort(unique(un_region_tier_1_name))),
+    # tier-2 name lvls are ordered by tier-1 name, then ~ clockwise cardinal direction (except for Oceania)
+    un_region_tier_2_name = factor(x = un_region_tier_2_name,
+                                   levels = c("Northern Africa",
+                                              "Sub-Saharan Africa",
+                                              "Northern America",
+                                              "Latin America and the Caribbean",
+                                              "Central Asia",
+                                              "Eastern Asia",
+                                              "South-eastern Asia",
+                                              "Southern Asia",
+                                              "Western Asia",
+                                              "Northern Europe",
+                                              "Eastern Europe",
+                                              "Southern Europe",
+                                              "Western Europe",
+                                              "Australia and New Zealand",
+                                              "Melanesia",
+                                              "Micronesia",
+                                              "Polynesia")),
+    # tier-3 name lvls are ordered by tier-2 name, then ~ clockwise cardinal direction (except for Latin America and the Caribbean)
+    un_region_tier_3_name = factor(x = un_region_tier_3_name,
+                                   levels = c("Middle Africa",
+                                              "Eastern Africa",
+                                              "Southern Africa",
+                                              "Western Africa",
+                                              "South America",
+                                              "Central America",
+                                              "Caribbean",
+                                              "Channel Islands")),
+    # code lvls are simply in ascending order
+    un_country_code = factor(x = un_country_code,
+                             levels = sort(unique(ISOcodes::UN_M.49_Countries$Code))),
+    dplyr::across(.cols = matches("un_region_tier_\\d+_code"),
+                  .fns = ~ factor(x = .x,
+                                  levels = sort(unique(.x))))
+  )
 ```
 
 ## `var_lbls`

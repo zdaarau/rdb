@@ -678,7 +678,7 @@ md_link_codebook <- function(var_names) {
 country_code_to_name <- function(country_code) {
   
   purrr::map2_chr(.x = country_code,
-                  .y = nchar(country_code) > 2L,
+                  .y = nchar(as.character(country_code)) > 2L,
                   .f = ~ {
                     
                     if (isTRUE(.y)) {
@@ -1217,7 +1217,7 @@ tidy_rfrnds <- function(data,
       
       data %<>%
         # variable creations
-        dplyr::mutate(is_former_country = nchar(country_code) > 2L,
+        dplyr::mutate(is_former_country = nchar(as.character(country_code)) > 2L,
                       url_sudd = dplyr::if_else(is.na(id_sudd),
                                                 NA_character_,
                                                 url_sudd(glue::glue("event.php?id={id_sudd}"))),
@@ -1244,7 +1244,7 @@ tidy_rfrnds <- function(data,
           
           if (is.factor(unlist(metadata$ptype))) {
             
-            lvls <- purrr::flatten_chr(metadata$variable_values)
+            lvls <- levels(unlist(metadata$ptype))
             is_ordered <- metadata$value_scale %in% c("ordinal_ascending", "ordinal_descending")
             
             if (is.list(.x)) {
@@ -3313,7 +3313,10 @@ assert_vars <- function(data,
                                                        ifelse(length(expired_codes),
                                                               paste0("The following country codes have been deleted from ISO 3166-1 and were moved to ISO ",
                                                                      "3166-3 (former countries) instead: {.val {expired_codes}}"),
-                                                              check)))
+                                                              # escape curly braces from checkmate msg
+                                                              stringr::str_replace_all(string = check,
+                                                                                       pattern = "([\\{\\}])",
+                                                                                       replacement = "\\1\\1"))))
                                }
                              },
                              function(x) TRUE)
@@ -3687,7 +3690,7 @@ add_former_country_flag <- function(data) {
               vars = c("country_code"))
   
   data %>%
-    dplyr::mutate(is_former_country = nchar(country_code) > 2L) %>%
+    dplyr::mutate(is_former_country = nchar(as.character(country_code)) > 2L) %>%
     # add var lbl
     labelled::set_variable_labels(.labels = var_lbls["is_former_country"])
 }
@@ -3718,7 +3721,7 @@ add_country_code_continual <- function(data) {
               vars = c("country_code"))
   
   data %>%
-    dplyr::mutate(country_code_continual = factor(x = purrr::map2_chr(.x = country_code,
+    dplyr::mutate(country_code_continual = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                                       .y = add_former_country_flag(data)$is_former_country,
                                                                       .f = ~ {
                                                                         if (.y) {
@@ -3762,7 +3765,7 @@ add_country_code_long <- function(data) {
     # remove possibly existing long country code
     dplyr::select(-any_of("country_code_long")) %>%
     # add long country code
-    dplyr::mutate(country_code_long = factor(x = purrr::map2_chr(.x = country_code,
+    dplyr::mutate(country_code_long = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                                  .y = add_former_country_flag(data)$is_former_country,
                                                                  .f = ~ if (.y) {
                                                                    data_iso_3166_3$Alpha_3[data_iso_3166_3$Alpha_4 == .x]
@@ -3805,7 +3808,7 @@ add_country_name <- function(data) {
     # remove possibly existing country name
     dplyr::select(-any_of("country_name")) %>%
     # add country name
-    dplyr::mutate(country_name = factor(x = purrr::map2_chr(.x = country_code,
+    dplyr::mutate(country_name = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                             .y = add_former_country_flag(data)$is_former_country,
                                                             .f = ~ if (.y) {
                                                               data_iso_3166_3$name_short[data_iso_3166_3$Alpha_4 == .x]
@@ -3848,7 +3851,7 @@ add_country_name_long <- function(data) {
     # remove possibly existing long country name
     dplyr::select(-any_of("country_name_long")) %>%
     # add long country name
-    dplyr::mutate(country_name_long = factor(x = purrr::map2_chr(.x = country_code,
+    dplyr::mutate(country_name_long = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                                  .y = add_former_country_flag(data)$is_former_country,
                                                                  .f = ~ if (.y) {
                                                                    data_iso_3166_3$name_long[data_iso_3166_3$Alpha_4 == .x]
@@ -4519,7 +4522,7 @@ plot_topic_share_per_period <- function(data,
 
 #' Tabulate number of referendums per period
 #'
-#' Creates a ready-to-print [gt][gt::gt] table with the number of referendums per period, optionally counted `by` one or more additional columns.
+#' Creates a ready-to-print [gt][gt::gt] table with the number of referendums per period, optionally counted `by` up to two additional columns.
 #'
 #' ```{r, child = "snippets/period_note.Rmd"}
 #' ```

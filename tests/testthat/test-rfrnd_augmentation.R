@@ -43,8 +43,7 @@ test_that("`add_world_regions()` works for ISO 3166-3 Alpha-4 codes (former coun
   expect_identical(tibble::tibble(country_code = "SUHH") %>%
                      add_world_regions() %$%
                      un_region_tier_2_name %>%
-                     magrittr::set_attr(which = "label",
-                                        value = NULL),
+                     as.character(),
                    "Eastern Europe")
 })
 

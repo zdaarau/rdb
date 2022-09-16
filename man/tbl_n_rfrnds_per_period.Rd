@@ -46,7 +46,7 @@ relevant if \code{fill_gaps = TRUE} and \code{period} is set to a unique timespa
 A \code{\link[gt:gt]{gt_tbl}} object.
 }
 \description{
-Creates a ready-to-print \link[gt:gt]{gt} table with the number of referendums per period, optionally counted \code{by} one or more additional columns.
+Creates a ready-to-print \link[gt:gt]{gt} table with the number of referendums per period, optionally counted \code{by} up to two additional columns.
 }
 \details{
 Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
