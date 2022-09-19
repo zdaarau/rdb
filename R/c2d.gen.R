@@ -4100,7 +4100,10 @@ as_ballot_dates <- function(data) {
     data %>%
     colnames() %>%
     setdiff(c("country_code",
+              "country_code_long",
+              "country_code_continual",
               "country_name",
+              "country_name_long",
               "subnational_entity_code",
               "subnational_entity_name",
               "municipality",
@@ -4112,6 +4115,7 @@ as_ballot_dates <- function(data) {
               "year",
               "decade",
               "century",
+              "era",
               "is_former_country",
               "un_country_code",
               "un_region_tier_1_code",
@@ -4120,7 +4124,7 @@ as_ballot_dates <- function(data) {
               "un_region_tier_2_name",
               "un_region_tier_3_code",
               "un_region_tier_3_name",
-              "subregion"))
+              "un_subregion"))
   
   data %>% tidyr::nest(rfrnd_data = any_of(cols_to_nest))
 }
