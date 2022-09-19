@@ -295,7 +295,7 @@ topics_tier_3_ <- c2d::topics(tiers = 3L)
 
 NOTES:
 
--   Antarctica (AQ) is not part of any UN regions (i.e. it's [directly below
+-   Antarctica (AQ) is not part of any UN subregions (i.e. it's [directly below
     *World*](https://en.wikipedia.org/wiki/List_of_countries_by_United_Nations_geoscheme)).
 
 ```{r}
@@ -360,11 +360,16 @@ un_regions <-
                                                        children_tier_2),
                 un_country_code = dplyr::if_else(is.na(children_tier_3),
                                                  children_tier_2,
-                                                 children_tier_3)) %>%
+                                                 children_tier_3),
+                # add UN subregion which, except for Northern Europe, corresponds to the lowest `un_region_tier_*_name`
+                un_subregion = dplyr::if_else(un_region_tier_1_name != "Europe",
+                                              un_region_tier_3_name %|% un_region_tier_2_name,
+                                              un_region_tier_2_name)) %>%
   dplyr::select(un_country_code,
                 starts_with("un_region_tier_1_"),
                 starts_with("un_region_tier_2_"),
-                starts_with("un_region_tier_3_")) %>%
+                starts_with("un_region_tier_3_"),
+                un_subregion) %>%
   dplyr::left_join(y = codes,
                    by = "un_country_code") %>%
   dplyr::relocate(country_code) %>%
@@ -378,35 +383,75 @@ un_regions <-
     # tier-1 name lvls are ordered alphabetically
     un_region_tier_1_name = factor(x = un_region_tier_1_name,
                                    levels = sort(unique(un_region_tier_1_name))),
-    # tier-2 name lvls are ordered by tier-1 name, then ~ clockwise cardinal direction (except for Oceania)
+    # tier-2 name lvls are ordered by tier-1 name, then ~ clockwise cardinal direction
     un_region_tier_2_name = factor(x = un_region_tier_2_name,
-                                   levels = c("Northern Africa",
-                                              "Sub-Saharan Africa",
-                                              "Northern America",
-                                              "Latin America and the Caribbean",
-                                              "Central Asia",
-                                              "Eastern Asia",
-                                              "South-eastern Asia",
-                                              "Southern Asia",
-                                              "Western Asia",
-                                              "Northern Europe",
-                                              "Eastern Europe",
-                                              "Southern Europe",
-                                              "Western Europe",
-                                              "Australia and New Zealand",
-                                              "Melanesia",
-                                              "Micronesia",
-                                              "Polynesia")),
-    # tier-3 name lvls are ordered by tier-2 name, then ~ clockwise cardinal direction (except for Latin America and the Caribbean)
+                                   levels = c(
+                                     # Africa
+                                     "Northern Africa",
+                                     "Sub-Saharan Africa",
+                                     # Americas
+                                     "Northern America",
+                                     "Latin America and the Caribbean",
+                                     # Asia
+                                     "Central Asia",
+                                     "Eastern Asia",
+                                     "South-eastern Asia",
+                                     "Southern Asia",
+                                     "Western Asia",
+                                     # Europe
+                                     "Northern Europe",
+                                     "Eastern Europe",
+                                     "Southern Europe",
+                                     "Western Europe",
+                                     # Oceania
+                                     "Micronesia",
+                                     "Polynesia",
+                                     "Australia and New Zealand",
+                                     "Melanesia")),
+    # tier-3 name lvls are ordered by tier-2 name, then ~ clockwise cardinal direction
     un_region_tier_3_name = factor(x = un_region_tier_3_name,
-                                   levels = c("Middle Africa",
-                                              "Eastern Africa",
-                                              "Southern Africa",
-                                              "Western Africa",
-                                              "South America",
-                                              "Central America",
-                                              "Caribbean",
-                                              "Channel Islands")),
+                                   levels = c(
+                                     # Africa
+                                     "Middle Africa",
+                                     "Eastern Africa",
+                                     "Southern Africa",
+                                     "Western Africa",
+                                     # Americas
+                                     "Caribbean",
+                                     "South America",
+                                     "Central America",
+                                     # Europe
+                                     "Channel Islands")),
+    # subregion lvls inherit the order of tier-2 and -3 names
+    un_subregion = factor(x = un_subregion,
+                          levels = c(
+                            # Africa
+                            "Northern Africa",
+                            "Eastern Africa",
+                            "Southern Africa",
+                            "Middle Africa",
+                            "Western Africa",
+                            # Americas
+                            "Northern America",
+                            "Caribbean",
+                            "South America",
+                            "Central America",
+                            # Asia
+                            "Central Asia",
+                            "Eastern Asia",
+                            "South-eastern Asia",
+                            "Southern Asia",
+                            "Western Asia",
+                            # Europe
+                            "Northern Europe",
+                            "Eastern Europe",
+                            "Southern Europe",
+                            "Western Europe",
+                            # Oceania
+                            "Micronesia",
+                            "Polynesia",
+                            "Australia and New Zealand",
+                            "Melanesia")),
     # code lvls are simply in ascending order
     un_country_code = factor(x = un_country_code,
                              levels = sort(unique(ISOcodes::UN_M.49_Countries$Code))),

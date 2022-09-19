@@ -45,8 +45,8 @@
   
 
 <meta property="og:title" content="Add UN world regions to referendum data — add_world_regions" />
-<meta name="description" content="Augments data with information about the United Nations (UN) geoscheme on three different grouping tiers based on the UN M49 area code hierarchy. In total, seven different columns are added: un_country_code: UN M49 country code un_region_tier_1_code: UN tier-1 region's M49 area code un_region_tier_1_name: UN tier-1 region's English name un_region_tier_2_code: UN tier-2 region's M49 area code un_region_tier_2_name: UN tier-2 region's English name un_region_tier_3_code: UN tier-3 region's M49 area code un_region_tier_3_name: UN tier-3 region's English name Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as &quot;subregions&quot; and tier-3 regions as &quot;sub-subregions&quot;.">
-<meta property="og:description" content="Augments data with information about the United Nations (UN) geoscheme on three different grouping tiers based on the UN M49 area code hierarchy. In total, seven different columns are added: un_country_code: UN M49 country code un_region_tier_1_code: UN tier-1 region's M49 area code un_region_tier_1_name: UN tier-1 region's English name un_region_tier_2_code: UN tier-2 region's M49 area code un_region_tier_2_name: UN tier-2 region's English name un_region_tier_3_code: UN tier-3 region's M49 area code un_region_tier_3_name: UN tier-3 region's English name Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as &quot;subregions&quot; and tier-3 regions as &quot;sub-subregions&quot;." />
+<meta name="description" content="Augments data with information about the United Nations (UN) geoscheme on three different grouping tiers based on the UN M49 area code hierarchy. In total, eight different columns are added: un_country_code: UN M49 country code un_region_tier_1_code: UN tier-1 region's M49 area code un_region_tier_1_name: UN tier-1 region's English name un_region_tier_2_code: UN tier-2 region's M49 area code un_region_tier_2_name: UN tier-2 region's English name un_region_tier_3_code: UN tier-3 region's M49 area code un_region_tier_3_name: UN tier-3 region's English name un_subregion: Combinatiorial English UN subregion name which, except for Northern Europe, corresponds to the lowest un_region_tier_*_name. Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as &quot;subregions&quot; and tier-3 regions as &quot;sub-subregions&quot;. Only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a country doesn't belong to any UN tier-3 region, the corresponding un_region_tier_3_* values will simply be NA. The un_subregion column specifically addresses this issue by providing a uniform combination of un_region_tier_2_name and un_region_tier_3_name.">
+<meta property="og:description" content="Augments data with information about the United Nations (UN) geoscheme on three different grouping tiers based on the UN M49 area code hierarchy. In total, eight different columns are added: un_country_code: UN M49 country code un_region_tier_1_code: UN tier-1 region's M49 area code un_region_tier_1_name: UN tier-1 region's English name un_region_tier_2_code: UN tier-2 region's M49 area code un_region_tier_2_name: UN tier-2 region's English name un_region_tier_3_code: UN tier-3 region's M49 area code un_region_tier_3_name: UN tier-3 region's English name un_subregion: Combinatiorial English UN subregion name which, except for Northern Europe, corresponds to the lowest un_region_tier_*_name. Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as &quot;subregions&quot; and tier-3 regions as &quot;sub-subregions&quot;. Only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a country doesn't belong to any UN tier-3 region, the corresponding un_region_tier_3_* values will simply be NA. The un_subregion column specifically addresses this issue by providing a uniform combination of un_region_tier_2_name and un_region_tier_3_name." />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@2BSalim" />
 <meta name="twitter:site" content="@2BSalim" />
@@ -126,7 +126,7 @@
     <div class="ref-description">
     <p>Augments <code>data</code> with information about the <a href='https://en.wikipedia.org/wiki/United_Nations_geoscheme'>United Nations (UN) geoscheme</a> on three different
 grouping tiers based on the <a href='https://en.wikipedia.org/wiki/UN_M49#Code_lists'>UN M49 area code hierarchy</a>.</p>
-<p>In total, seven different columns are added:</p><ul>
+<p>In total, eight different columns are added:</p><ul>
 <li><p><code>un_country_code</code>: UN M49 country code</p></li>
 <li><p><code>un_region_tier_1_code</code>: UN tier-1 region's M49 area code</p></li>
 <li><p><code>un_region_tier_1_name</code>: UN tier-1 region's English name</p></li>
@@ -134,13 +134,17 @@ grouping tiers based on the <a href='https://en.wikipedia.org/wiki/UN_M49#Code_l
 <li><p><code>un_region_tier_2_name</code>: UN tier-2 region's English name</p></li>
 <li><p><code>un_region_tier_3_code</code>: UN tier-3 region's M49 area code</p></li>
 <li><p><code>un_region_tier_3_name</code>: UN tier-3 region's English name</p></li>
+<li><p><code>un_subregion</code>: Combinatiorial English UN subregion name which, except for Northern Europe, corresponds to the lowest <code>un_region_tier_*_name</code>.</p></li>
 </ul>
 
 <p>Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as "subregions" and tier-3
 regions as "sub-subregions".</p>
+<p>Only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a country
+doesn't belong to any UN tier-3 region, the corresponding <code>un_region_tier_3_*</code> values will simply be <code>NA</code>. The <code>un_subregion</code> column specifically addresses
+this issue by providing a uniform combination of <code>un_region_tier_2_name</code> and <code>un_region_tier_3_name</code>.</p>
     </div>
 
-    <pre class="usage"><span><span class='fu'>add_world_regions</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span></span></pre>
+    <pre class="usage"><span><span class='fu'>add_world_regions</span><span class='op'>(</span><span class='va'>data</span>, add_un_country_code <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -149,15 +153,15 @@ regions as "sub-subregions".</p>
       <th>data</th>
       <td><p>C2D referendum data as returned by <code><a href='rfrnds.html'>rfrnds()</a></code>. A data frame that at minimum contains the column <code>country_code</code> (with <a href='https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2'>ISO 3166-1 alpha-2</a> or <a href='https://en.wikipedia.org/wiki/ISO_3166-3'>ISO 3166-3 alpha-4</a> codes).</p></td>
     </tr>
+    <tr>
+      <th>add_un_country_code</th>
+      <td><p>Whether or not to also add a column <code>un_country_code</code> holding the UN M49 code of the country in which the referendum took place.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <a href='https://tibble.tidyverse.org/reference/tbl_df-class.html'>tibble</a>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Note that only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a
-country doesn't belong to any UN tier-3 region, the corresponding <code>un_region_tier_3_*</code> values will simply be <code>NA</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other referendum data augmentation functions:
@@ -175,14 +179,14 @@ country doesn't belong to any UN tier-3 region, the corresponding <code>un_regio
 <span class='r-in'><span>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fu'>any_of</span><span class='op'>(</span><span class='st'>"id"</span><span class='op'>)</span>,</span></span>
 <span class='r-in'><span>                <span class='fu'>starts_with</span><span class='op'>(</span><span class='st'>"country_"</span><span class='op'>)</span>,</span></span>
 <span class='r-in'><span>                <span class='fu'>starts_with</span><span class='op'>(</span><span class='st'>"un_"</span><span class='op'>)</span><span class='op'>)</span></span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 1 × 10</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 1 × 11</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   id     count…¹ count…² un_co…³ un_re…⁴ un_re…⁵ un_re…⁶ un_re…⁷ un_re…⁸ un_re…⁹</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> 5bbbe… CH      Switze… 756     150     Europe  155     Wester… <span style='color: #BB0000;'>NA</span>      <span style='color: #BB0000;'>NA</span>     </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with abbreviated variable names ¹​country_code, ²​country_name,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ³​un_country_code, ⁴​un_region_tier_1_code, ⁵​un_region_tier_1_name,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁶​un_region_tier_2_code, ⁷​un_region_tier_2_name, ⁸​un_region_tier_3_code,</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁹​un_region_tier_3_name</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 1 more variable: un_subregion &lt;fct&gt;, and abbreviated variable names</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ¹​country_code, ²​country_name, ³​un_country_code, ⁴​un_region_tier_1_code,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁵​un_region_tier_1_name, ⁶​un_region_tier_2_code, ⁷​un_region_tier_2_name,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ⁸​un_region_tier_3_code, ⁹​un_region_tier_3_name</span></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

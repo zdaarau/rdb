@@ -182,7 +182,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 \subsection{\code{un_region_tier_1_name}}{
 
-The name of the UN tier-1 region in which the referendum took place.
+The English name of the UN tier-1 region in which the referendum took place.
 \subsection{Origin}{
 
 This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
@@ -212,7 +212,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 \subsection{\code{un_region_tier_2_name}}{
 
-The name of the UN tier-2 region in which the referendum took place.
+The English name of the UN tier-2 region in which the referendum took place.
 \subsection{Origin}{
 
 This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
@@ -242,7 +242,22 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 \subsection{\code{un_region_tier_3_name}}{
 
-The name of the UN tier-3 region in which the referendum took place.
+The English name of the UN tier-3 region in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.
+}
+
+\subsection{Level of measurement}{
+
+This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
+}
+
+}
+
+\subsection{\code{un_subregion}}{
+
+The UN subregion in which the referendum took place; corresponds to the English UN region name of the lowest available tier (except for Northern Europe).
 \subsection{Origin}{
 
 This variable is derived from \href{https://rpkg.dev/c2d/articles/codebook.html#country_code}{\code{country_code}} and can be generated on demand via \code{\link[=add_world_regions]{add_world_regions()}}.

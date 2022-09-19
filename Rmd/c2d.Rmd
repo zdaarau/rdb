@@ -206,7 +206,7 @@ utils::globalVariables(names = c(".",
                                  "turnout",
                                  "type",
                                  "Type",
-                                 "un_code",
+                                 "un_country_code",
                                  "un_region_tier_1_code",
                                  "un_region_tier_2_name",
                                  "un_region_tier_3_name",
@@ -4781,7 +4781,7 @@ add_turnout <- function(data,
 #' Augments `data` with information about the [United Nations (UN) geoscheme](https://en.wikipedia.org/wiki/United_Nations_geoscheme) on three different
 #' grouping tiers based on the [UN M49 area code hierarchy](https://en.wikipedia.org/wiki/UN_M49#Code_lists).
 #' 
-#' In total, seven different columns are added:
+#' In total, eight different columns are added:
 #' - `un_country_code`: UN M49 country code
 #' - `un_region_tier_1_code`: UN tier-1 region's M49 area code
 #' - `un_region_tier_1_name`: UN tier-1 region's English name
@@ -4789,16 +4789,18 @@ add_turnout <- function(data,
 #' - `un_region_tier_2_name`: UN tier-2 region's English name
 #' - `un_region_tier_3_code`: UN tier-3 region's M49 area code
 #' - `un_region_tier_3_name`: UN tier-3 region's English name
+#' - `un_subregion`: Combinatiorial English UN subregion name which, except for Northern Europe, corresponds to the lowest `un_region_tier_*_name`.
 #'
 #' Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as "subregions" and tier-3
 #' regions as "sub-subregions".
 #'
-#' @details
-#' Note that only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a
-#' country doesn't belong to any UN tier-3 region, the corresponding `un_region_tier_3_*` values will simply be `NA`.
+#' Only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a country
+#' doesn't belong to any UN tier-3 region, the corresponding `un_region_tier_3_*` values will simply be `NA`. The `un_subregion` column specifically addresses
+#' this issue by providing a uniform combination of `un_region_tier_2_name` and `un_region_tier_3_name`.
 #'
 #' @param data C2D referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `country_code` (with [ISO 3166-1
 #'   alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) or [ISO 3166-3 alpha-4](https://en.wikipedia.org/wiki/ISO_3166-3) codes).
+#' @param add_un_country_code Whether or not to also add a column `un_country_code` holding the UN M49 code of the country in which the referendum took place.
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @family augment
@@ -4810,12 +4812,14 @@ add_turnout <- function(data,
 #'   dplyr::select(any_of("id"),
 #'                 starts_with("country_"),
 #'                 starts_with("un_"))
-add_world_regions <- function(data) {
+add_world_regions <- function(data,
+                              add_un_country_code = TRUE) {
   
   # ensure minimal validity
   checkmate::assert_data_frame(data)
   assert_vars(data = data,
               vars = "country_code")
+  checkmate::assert_flag(add_un_country_code)
   
   has_country_code_continual <- "country_code_continual" %in% colnames(data)
   
@@ -4842,10 +4846,14 @@ add_world_regions <- function(data) {
                                                                     "un_region_tier_2_code",
                                                                     "un_region_tier_2_name",
                                                                     "un_region_tier_3_code",
-                                                                    "un_region_tier_3_name")))
-  # drop `country_code_continual` if necessary
+                                                                    "un_region_tier_3_name",
+                                                                    "un_subregion")))
+  # drop vars if necessary/requested
   if (!has_country_code_continual) {
     data %<>% dplyr::select(-country_code_continual)
+  }
+  if (!add_un_country_code) {
+    data %<>% dplyr::select(-un_country_code)
   }
   
   data

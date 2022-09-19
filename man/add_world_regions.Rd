@@ -4,10 +4,12 @@
 \alias{add_world_regions}
 \title{Add UN world regions to referendum data}
 \usage{
-add_world_regions(data)
+add_world_regions(data, add_un_country_code = TRUE)
 }
 \arguments{
 \item{data}{C2D referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column \code{country_code} (with \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} or \href{https://en.wikipedia.org/wiki/ISO_3166-3}{ISO 3166-3 alpha-4} codes).}
+
+\item{add_un_country_code}{Whether or not to also add a column \code{un_country_code} holding the UN M49 code of the country in which the referendum took place.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
@@ -16,7 +18,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 Augments \code{data} with information about the \href{https://en.wikipedia.org/wiki/United_Nations_geoscheme}{United Nations (UN) geoscheme} on three different
 grouping tiers based on the \href{https://en.wikipedia.org/wiki/UN_M49#Code_lists}{UN M49 area code hierarchy}.
 
-In total, seven different columns are added:
+In total, eight different columns are added:
 \itemize{
 \item \code{un_country_code}: UN M49 country code
 \item \code{un_region_tier_1_code}: UN tier-1 region's M49 area code
@@ -25,14 +27,15 @@ In total, seven different columns are added:
 \item \code{un_region_tier_2_name}: UN tier-2 region's English name
 \item \code{un_region_tier_3_code}: UN tier-3 region's M49 area code
 \item \code{un_region_tier_3_name}: UN tier-3 region's English name
+\item \code{un_subregion}: Combinatiorial English UN subregion name which, except for Northern Europe, corresponds to the lowest \verb{un_region_tier_*_name}.
 }
 
 Tier-1 regions are the highest, i.e. most aggregated UN regions, commonly referred to as continents. Tier-2 regions are also known as "subregions" and tier-3
 regions as "sub-subregions".
-}
-\details{
-Note that only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a
-country doesn't belong to any UN tier-3 region, the corresponding \verb{un_region_tier_3_*} values will simply be \code{NA}.
+
+Only part of all UN tier-2 regions are further divided into UN tier-3 regions, meaning that not all countries are part of a UN tier-3 region. If a country
+doesn't belong to any UN tier-3 region, the corresponding \verb{un_region_tier_3_*} values will simply be \code{NA}. The \code{un_subregion} column specifically addresses
+this issue by providing a uniform combination of \code{un_region_tier_2_name} and \code{un_region_tier_3_name}.
 }
 \examples{
 c2d::rfrnd(id = "5bbbe26a92a21351232dd73f") |>

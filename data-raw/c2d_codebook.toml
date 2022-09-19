@@ -89,7 +89,7 @@ is_opt = true
 [[01_main.item]]
 variable_name = "un_region_tier_1_name"
 variable_name_print = "UN tier-1 region's English name"
-variable_label = "the name of the UN tier-1 region in which the referendum took place"
+variable_label = "the English name of the UN tier-1 region in which the referendum took place"
 value_scale = "nominal"
 derived_from = [ "country_code" ]
 gen_fn = "add_world_regions"
@@ -105,7 +105,7 @@ is_opt = true
 [[01_main.item]]
 variable_name = "un_region_tier_2_name"
 variable_name_print = "UN tier-2 region's English name"
-variable_label = "the name of the UN tier-2 region in which the referendum took place"
+variable_label = "the English name of the UN tier-2 region in which the referendum took place"
 value_scale = "nominal"
 derived_from = [ "country_code" ]
 gen_fn = "add_world_regions"
@@ -121,7 +121,15 @@ is_opt = true
 [[01_main.item]]
 variable_name = "un_region_tier_3_name"
 variable_name_print = "UN tier-3 region's English name"
-variable_label = "the name of the UN tier-3 region in which the referendum took place"
+variable_label = "the English name of the UN tier-3 region in which the referendum took place"
+value_scale = "nominal"
+derived_from = [ "country_code" ]
+gen_fn = "add_world_regions"
+is_opt = true
+[[01_main.item]]
+variable_name = "un_subregion"
+variable_name_print = "UN subregion"
+variable_label = "the UN subregion in which the referendum took place; corresponds to the English UN region name of the lowest available tier (except for Northern Europe)"
 value_scale = "nominal"
 derived_from = [ "country_code" ]
 gen_fn = "add_world_regions"

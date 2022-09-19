@@ -300,7 +300,7 @@
 <h4 class='hasAnchor' id='list-un-region-tier-name-'><a class='anchor' href='#list-un-region-tier-name-'></a><code>un_region_tier_1_name</code></h4>
 
 
-<p>The name of the UN tier-1 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+<p>The English name of the UN tier-1 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
 
 
 <p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
@@ -330,7 +330,7 @@
 <h4 class='hasAnchor' id='list-un-region-tier-name-'><a class='anchor' href='#list-un-region-tier-name-'></a><code>un_region_tier_2_name</code></h4>
 
 
-<p>The name of the UN tier-2 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+<p>The English name of the UN tier-2 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
 
 
 <p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
@@ -360,7 +360,22 @@
 <h4 class='hasAnchor' id='list-un-region-tier-name-'><a class='anchor' href='#list-un-region-tier-name-'></a><code>un_region_tier_3_name</code></h4>
 
 
-<p>The name of the UN tier-3 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+<p>The English name of the UN tier-3 region in which the referendum took place.</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
+
+
+<p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
+
+<h5 class='hasAnchor' id='level-of-measurement'><a class='anchor' href='#level-of-measurement'></a>Level of measurement</h5>
+
+
+<p>This variable's <a href='https://en.wikipedia.org/wiki/Level_of_measurement'>scale of measure</a> is the <strong>nominal</strong> level.</p>
+
+
+
+<h4 class='hasAnchor' id='list-un-subregion-'><a class='anchor' href='#list-un-subregion-'></a><code>un_subregion</code></h4>
+
+
+<p>The UN subregion in which the referendum took place; corresponds to the English UN region name of the lowest available tier (except for Northern Europe).</p><h5 class='hasAnchor' id='origin'><a class='anchor' href='#origin'></a>Origin</h5>
 
 
 <p>This variable is derived from <a href='https://rpkg.dev/c2d/articles/codebook.html#country_code'><code>country_code</code></a> and can be generated on demand via <code><a href='add_world_regions.html'>add_world_regions()</a></code>.</p>
@@ -1980,7 +1995,7 @@ specific legal setting is in force).</p><h4 class='hasAnchor' id='list-inst-lega
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span><span class='fu'>c2d</span><span class='fu'>::</span><span class='va'>data_codebook</span></span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 87 × 16</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 88 × 16</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    variable_name varia…¹ varia…² is_mu…³ is_ne…⁴ appli…⁵ varia…⁶ value…⁷ value…⁸</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> id            C2D ID  a 24-c… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
@@ -1993,7 +2008,7 @@ specific legal setting is in force).</p><h4 class='hasAnchor' id='list-inst-lega
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> country_name… Countr… the of… FALSE   FALSE   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> subnational_… Subnat… the En… FALSE   FALSE   level … &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> municipality  Munici… the mu… FALSE   FALSE   level … &lt;chr&gt;   <span style='color: #BB0000;'>NA</span>      &lt;chr&gt;  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 77 more rows, 7 more variables: value_label_suffix &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 78 more rows, 7 more variables: value_label_suffix &lt;chr&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   value_default &lt;list&gt;, value_scale &lt;chr&gt;, ptype &lt;list&gt;, derived_from &lt;list&gt;,</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   gen_fn &lt;chr&gt;, is_opt &lt;lgl&gt;, and abbreviated variable names</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   ¹​variable_name_print, ²​variable_label, ³​is_multi_valued, ⁴​is_nested,</span></span>
