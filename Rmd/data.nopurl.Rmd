@@ -137,14 +137,30 @@ data_codebook <- {
 }
 ```
 
-## `data_iso_3166_1`
+## ISO 3166-1
 
-ISO 3166-1 data extended by unofficial information for countries which are not covered by the ISO standard yet.
+NOTES:
+
+-   ISO monetizes the standards itselves as well as derived datasets like the [Country Codes Collection](https://www.iso.org/publication/PUB500001.html) instead
+    of offering open data APIs! 🤬 So most open-source projects including the R package source their ISO 3166 data from [Debian's `iso-codes`
+    project](https://salsa.debian.org/iso-codes-team/iso-codes) which might lack behind official standard updates.
+
+### `data_iso_3166_1`
+
+ISO 3166-1 data, corrected and extended by unofficial information for countries which are not covered by the ISO standard yet.
 
 ```{r}
 data_iso_3166_1 <-
   ISOcodes::ISO_3166_1 %>%
   tibble::as_tibble() %>%
+  # add `Common_name` where it's currently missing
+  # TODO: consider submitting PR once [upstream issue #44](https://salsa.debian.org/iso-codes-team/iso-codes/-/issues/44) is answered
+  dplyr::mutate(Common_name = dplyr::case_when(Alpha_2 == "CD" ~ "Congo",
+                                               Alpha_2 == "FM" ~ "Micronesia",
+                                               Alpha_2 == "IR" ~ "Iran",
+                                               Alpha_2 == "PS" ~ "Palestine",
+                                               TRUE ~ Common_name)) %>%
+  # extend with unofficial information
   dplyr::add_row(Alpha_2 = "XK",
                  Alpha_3 = "XKS",
                  Numeric = NA_character_,
@@ -160,13 +176,7 @@ data_iso_3166_1 <-
                   Alpha_3)
 ```
 
-## `data_iso_3166_3`
-
-NOTES:
-
--   ISO monetizes the standards itselves as well as derived datasets like the [Country Codes Collection](https://www.iso.org/publication/PUB500001.html) instead
-    of offering open data APIs! 🤬 So most open-source projects including the R package source their ISO 3166 data from [Debian's `iso-codes`
-    project](https://salsa.debian.org/iso-codes-team/iso-codes) which might lack behind official standard updates.
+### `data_iso_3166_3`
 
 ```{r}
 data_iso_3166_3 <-
