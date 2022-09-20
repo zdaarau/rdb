@@ -155,10 +155,15 @@ data_iso_3166_1 <-
   tibble::as_tibble() %>%
   # add `Common_name` where it's currently missing
   # TODO: consider submitting PR once [upstream issue #44](https://salsa.debian.org/iso-codes-team/iso-codes/-/issues/44) is answered
-  dplyr::mutate(Common_name = dplyr::case_when(Alpha_2 == "CD" ~ "Congo",
+  dplyr::mutate(Common_name = dplyr::case_when(Alpha_2 == "BN" ~ "Brunei",
+                                               Alpha_2 == "CD" ~ "Congo",
+                                               Alpha_2 == "FK" ~ "Falkland Islands",
                                                Alpha_2 == "FM" ~ "Micronesia",
                                                Alpha_2 == "IR" ~ "Iran",
+                                               Alpha_2 == "LA" ~ "Laos",
                                                Alpha_2 == "PS" ~ "Palestine",
+                                               Alpha_2 == "SY" ~ "Syria",
+                                               Alpha_2 == "VA" ~ "Vatican City",
                                                TRUE ~ Common_name)) %>%
   # extend with unofficial information
   dplyr::add_row(Alpha_2 = "XK",
@@ -168,7 +173,7 @@ data_iso_3166_1 <-
                  Official_name = "Republic of Kosovo",
                  Common_name = "Kosovo") %>%
   dplyr::mutate(name_short = Common_name %|% Name,
-                name_long = Official_name %|% name_short) %>%
+                name_long = Official_name %|% Name) %>%
   dplyr::arrange(Alpha_2) %>%
   # ensure there are no duplicates
   assertr::assert(predicate = assertr::is_uniq,
