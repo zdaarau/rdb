@@ -66,7 +66,7 @@ strip_anchors <- function(x) {
 
 ## assemble variable sections in Markdown
 var_sections <- function(data,
-                         # useful when target format doesn't support them like GFM in roxygen2 documentation
+                         # useful when target format doesn't support full Pandoc Markdown syntax like GFM in roxygen2 documentation
                          strip_extended_pandoc = FALSE,
                          strip_anchors = FALSE) {
   
@@ -147,8 +147,8 @@ var_sections <- function(data,
         paste0("The hierarchical relations between the three topic variables `topics_tier_1`, `topics_tier_2` and `topics_tier_3` can be reconstructed at any ",
                "time using ",
                ifelse(strip_extended_pandoc,
-                      "[`hierarchize_topics()`](https://rpkg.dev/c2d/reference/hierarchize_topics.html)",
-                      "[hierarchize_topics()]"),
+                      "[hierarchize_topics()]",
+                      "[`hierarchize_topics()`](https://rpkg.dev/c2d/reference/hierarchize_topics.html)"),
                ". This function can also be used to simply determine the ",
                "parent topic(s) of any topic."),
         "")
@@ -165,9 +165,9 @@ var_sections <- function(data,
       c("#### Origin",
         "",
         glue::glue("This variable is derived from ", pal::prose_ls(c2d:::md_link_codebook(unlist(derived_from))), " and can be generated on demand via ",
-                   ifelse(!strip_extended_pandoc,
-                          "[`{gen_fn}()`](https://rpkg.dev/c2d/reference/{gen_fn}.html)",
-                          "[{gen_fn}()]"),
+                   ifelse(strip_extended_pandoc,
+                          "[{gen_fn}()]",
+                          "[`{gen_fn}()`](https://rpkg.dev/c2d/reference/{gen_fn}.html)"),
                    "."),
         "")
     },

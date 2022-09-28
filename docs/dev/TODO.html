@@ -139,6 +139,46 @@ codebook).</p></li>
 resolved.</p></li>
 <li><p>Automated vote entry creation by feeding scraped sudd.ch data to
 <code><a href="reference/add_rfrnds.html">c2d::add_rfrnds()</a></code>.</p></li>
+<li>
+<p>For meaningful cross-time analyses, we need additional
+information about countries (“jurisdictions”):</p>
+<ul>
+<li>
+<p>Information about <em>territorial</em> changes. This is (at least
+for the most essential part) covered by our current ISO 3166-based
+country classification.</p>
+<p>TODO: Investigate whether additional information could be sourced
+from the <a href="https://en.wikipedia.org/wiki/Correlates_of_War" class="external-link">Correlates of
+War</a> project’s <a href="https://correlatesofwar.org/data-sets/territorial-change/" class="external-link">Territorial
+Change</a> dataset.</p>
+</li>
+<li>
+<p>Information about <em>political/jurisdictional</em> changes.
+Currently we don’t cover this beyond ISO 3166. <a href="https://en.wikipedia.org/wiki/ISO_3166-1_numeric" class="external-link">ISO 3166-1
+<em>numeric</em></a> does indirectly cover those political changes which
+are also accompanied by territorial changes, but no intra-territorial
+changes.</p>
+<p>Consider for example the country <em>Lybia</em> (<code>LY</code>)
+which already experienced 4 major political systems which are not
+reflected in ISO 3166:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Kingdom_of_Libya" class="external-link">(United)
+Kingdom of Libya (1951–1969)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/History_of_Libya_under_Muammar_Gaddafi#Libyan_Arab_Republic_(1969%E2%80%931977)" class="external-link">Libyan
+Arab Republic (1969–1977)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/History_of_Libya_under_Muammar_Gaddafi#Great_Socialist_People's_Libyan_Arab_Jamahiriya_(1977%E2%80%932011)" class="external-link">Great
+Socialist People’s Libyan Arab Jamahiriya (1977–2011)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/National_Transitional_Council" class="external-link">National
+Transitional Council of Libya (2011–2012) / Libya (2012–)</a></li>
+</ul>
+<p>Viable sources for political/jurisdictional changes of countries
+include:</p>
+<ul>
+<li>Wikidata</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <div id="reported-to-ccm-design" class="section level2">
@@ -301,17 +341,16 @@ follow-up requesting an improved UX.</p>
 <li><p><a href="https://gitlab.com/zdaarau/rpkgs/c2d/-/issues/5" class="external-link">Rethink
 how to capture referendums with other or more than yes-or-no answer
 options</a></p></li>
-<li><p>The referendum <code>type</code>
-<strong><code>"governmental referendum"</code></strong> should be
-renamed since it’s used (and most probably intended, too) to catch all
-kinds of top-down referendums, not only ones that originate from the
-government (executive) but also ones that originate from the parliament
-(legislative).</p></li>
 <li><p>There is at least one “Landsgemeinde” referendum
 (<code>id = 5bbc004292a21351232e52e7</code>) with no result
 (<code>NA</code>) where the result should actually be <code>"no"</code>
 (Landsgemeinde rejected proposal) if I’m not mistaken. Do we handle
 “Landsgemeinde” votes specially or why is that?</p></li>
+<li><p>Should we also try to collect “surrounding conditions”
+information besides the formal institutional stuff? For example,
+international law recognizes a <a href="https://specials.dekoder.org/faq-schein-referendum-donezk-luhansk-cherson-saporishshja#q2" class="external-link">set
+of conditions that must be met for a secession referendum to be
+considered legal</a>.</p></li>
 </ul>
 </div>
 <div id="internal-at-least-for-now" class="section level2">

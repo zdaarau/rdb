@@ -137,17 +137,50 @@ data_codebook <- {
 }
 ```
 
-## ISO 3166-1
+## ISO 3166
 
 NOTES:
 
 -   ISO monetizes the standards itselves as well as derived datasets like the [Country Codes Collection](https://www.iso.org/publication/PUB500001.html) instead
     of offering open data APIs! 🤬 So most open-source projects including the R package source their ISO 3166 data from [Debian's `iso-codes`
-    project](https://salsa.debian.org/iso-codes-team/iso-codes) which might lack behind official standard updates.
+    project](https://salsa.debian.org/iso-codes-team/iso-codes) which might deviate from the official standard and lack behind updates.
+
+-   ISO 3166-1 does not specify the time dimensions of countries. It maintains only information with regard to their most recent status. A [period of
+    validity](https://salsa.debian.org/iso-codes-team/iso-codes/-/issues/43) is only defined when a country is deleted from ISO 3166-1 and moved to ISO 3166-3.
+    Thus, this information must be retrieved from another source.
+
+    Noteworthy candidates for this include:
+
+    -   The [*Territory Information System
+        (TIS)*](https://www.gema.de/en/help/help-topics-for-creators/works-repertoire/submit-a-notification-for-your-works/what-are-tis-codes-where-can-i-find-information-on-the-territory-standard-tis/)
+        by the [CISAC](https://en.wikipedia.org/wiki/Conf%C3%A9d%C3%A9ration_Internationale_des_Soci%C3%A9t%C3%A9s_d%27Auteurs_et_Compositeurs) which at first
+        glance seems to be exactly what we're looking for. The latest revision can be downloaded
+        [here](https://members.cisac.org/CisacPortal/documentPack20.do?method=detail&id=21). But as it turns out, it's tailored to the CISAC's specific needs
+        and doesn't go back further than the 1990s. ☹
+
+    -   The [*Standard Classification of Countries and Areas of Interest (SCCAI)*](https://www150.statcan.gc.ca/n1/en/catalogue/12-608-X) by Statistics Canada
+        which includes a list of *Current and Historical Countries and Areas of Interest* that define a start and end date for each country/area. The latest
+        version from 2019 is available [here](https://www.statcan.gc.ca/en/subjects/standard/sccai/2019/countries). Countries there are identified by a
+        five-digit SCCAI code where the last three digit [correspond to the United Nations numeric code (NUM-3) for countries or
+        areas](https://www.statcan.gc.ca/en/subjects/standard/sccai/2019/introduction). To get the ISO 3166-1 alpha-2 code, one can also simply join the data
+        with the [main SCCAI 2019 data](https://www23.statcan.gc.ca/imdb/p3VD.pl?Function=getVD&TVD=1251826). Unfortunately, the precision of the provided start
+        and end dates is only years, not actual dates. Also it's unclear when and how SCCAI gets updated, i.e. how well it'll be maintained in the future.
+
+    -   The [Correlates of War](https://en.wikipedia.org/wiki/Correlates_of_War) project's [State System
+        Membership](https://correlatesofwar.org/data-sets/state-system-membership/) dataset
+
+    -   Wikidata!
+
+    To verify periods of validity of countries, the following resources are useful:
+
+    -   Wikipedia's [List of sovereign states by date of formation](https://en.wikipedia.org/wiki/List_of_sovereign_states_by_date_of_formation)
+    -   Wikipedia's [List of former sovereign states](https://en.wikipedia.org/wiki/List_of_former_sovereign_states)
+    -   Wikipedia's [List of national independence days](https://en.wikipedia.org/wiki/List_of_national_independence_days)
 
 ### `data_iso_3166_1`
 
-ISO 3166-1 data, corrected and extended by unofficial information for countries which are not covered by the ISO standard yet.
+ISO 3166-1 data, corrected and extended by unofficial information for countries which are not covered by the ISO standard yet. See also the [Differences between
+SCCAI 2019 and ISO 3166-1:2013](https://www.statcan.gc.ca/en/subjects/standard/sccai/2019/sccai2019-iso3166-12013) for inspiration on name corrections.
 
 ```{r}
 data_iso_3166_1 <-

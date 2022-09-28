@@ -13,6 +13,29 @@
 
 -   Automated vote entry creation by feeding scraped sudd.ch data to `c2d::add_rfrnds()`.
 
+-   For meaningful cross-time analyses, we need additional information about countries ("jurisdictions"):
+
+    -   Information about *territorial* changes. This is (at least for the most essential part) covered by our current ISO 3166-based country classification.
+
+        TODO: Investigate whether additional information could be sourced from the [Correlates of War](https://en.wikipedia.org/wiki/Correlates_of_War)
+        project's [Territorial Change](https://correlatesofwar.org/data-sets/territorial-change/) dataset.
+
+    -   Information about *political/jurisdictional* changes. Currently we don't cover this beyond ISO 3166. [ISO 3166-1
+        *numeric*](https://en.wikipedia.org/wiki/ISO_3166-1_numeric) does indirectly cover those political changes which are also accompanied by territorial
+        changes, but no intra-territorial changes.
+
+        Consider for example the country *Lybia* (`LY`) which already experienced 4 major political systems which are not reflected in ISO 3166:
+
+        -   [(United) Kingdom of Libya (1951--1969)](https://en.wikipedia.org/wiki/Kingdom_of_Libya)
+        -   [Libyan Arab Republic (1969--1977)](https://en.wikipedia.org/wiki/History_of_Libya_under_Muammar_Gaddafi#Libyan_Arab_Republic_(1969%E2%80%931977))
+        -   [Great Socialist People's Libyan Arab Jamahiriya
+            (1977--2011)](https://en.wikipedia.org/wiki/History_of_Libya_under_Muammar_Gaddafi#Great_Socialist_People's_Libyan_Arab_Jamahiriya_(1977%E2%80%932011))
+        -   [National Transitional Council of Libya (2011--2012) / Libya (2012--)](https://en.wikipedia.org/wiki/National_Transitional_Council)
+
+        Viable sources for political/jurisdictional changes of countries include:
+
+        -   Wikidata
+
 ## Reported to [CCM Design](https://github.com/ccmdesign/c2d-app/issues/)
 
 -   Publish code under AGPL \>= 3, see [issue #26](https://github.com/ccmdesign/c2d-app/issues/26)
@@ -112,11 +135,12 @@
 
 -   [Rethink how to capture referendums with other or more than yes-or-no answer options](https://gitlab.com/zdaarau/rpkgs/c2d/-/issues/5)
 
--   The referendum `type` **`"governmental referendum"`** should be renamed since it's used (and most probably intended, too) to catch all kinds of top-down
-    referendums, not only ones that originate from the government (executive) but also ones that originate from the parliament (legislative).
-
 -   There is at least one "Landsgemeinde" referendum (`id = 5bbc004292a21351232e52e7`) with no result (`NA`) where the result should actually be `"no"`
     (Landsgemeinde rejected proposal) if I'm not mistaken. Do we handle "Landsgemeinde" votes specially or why is that?
+
+-   Should we also try to collect "surrounding conditions" information besides the formal institutional stuff? For example, international law recognizes a [set
+    of conditions that must be met for a secession referendum to be considered
+    legal](https://specials.dekoder.org/faq-schein-referendum-donezk-luhansk-cherson-saporishshja#q2).
 
 ## Internal (at least for now)
 
