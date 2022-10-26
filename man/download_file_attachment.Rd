@@ -28,7 +28,7 @@ by \code{\link[=rfrnds]{rfrnds()}}.
 \dontrun{
 # get all file object keys...
 c2d::rfrnds()$files |>
-  purrr::map_depth(2L, purrr::pluck, "s3_object_key") |>
+  purrr::map_depth(1L, purrr::pluck, "s3_object_key") |>
   purrr::flatten() |>
   purrr::flatten_chr() |>
   # ...select first three keys...

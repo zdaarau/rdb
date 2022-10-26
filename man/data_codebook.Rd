@@ -951,7 +951,7 @@ The political topics to classify referendums are organized on a three-tier hiera
 }
 }
 
-The hierarchical relations between the three topic variables \code{topics_tier_1}, \code{topics_tier_2} and \code{topics_tier_3} can be reconstructed at any time using \href{https://rpkg.dev/c2d/reference/hierarchize_topics.html}{\code{hierarchize_topics()}}. This function can also be used to simply determine the parent topic(s) of any topic.
+The hierarchical relations between the three topic variables \code{topics_tier_1}, \code{topics_tier_2} and \code{topics_tier_3} can be reconstructed at any time using \code{\link[=hierarchize_topics]{hierarchize_topics()}}. This function can also be used to simply determine the parent topic(s) of any topic.
 \subsection{\code{topics_tier_1}}{
 
 A maximum of 3 predefined top-tier political topics that best classify the referendum proposal.
