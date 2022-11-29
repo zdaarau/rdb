@@ -142,8 +142,9 @@ data_codebook <- {
 NOTES:
 
 -   ISO monetizes the standards itselves as well as derived datasets like the [Country Codes Collection](https://www.iso.org/publication/PUB500001.html) instead
-    of offering open data APIs! 🤬 So most open-source projects including the R package source their ISO 3166 data from [Debian's `iso-codes`
-    project](https://salsa.debian.org/iso-codes-team/iso-codes) which might deviate from the official standard and lack behind updates.
+    of offering open data APIs! 🤬 So most open-source projects including the R package [ISOcodes](https://cran.r-project.org/package=ISOcodes) source their ISO
+    3166 data from [Debian's `iso-codes` project](https://salsa.debian.org/iso-codes-team/iso-codes) which might deviate from the official standard and lack
+    behind updates.
 
 -   ISO 3166-1 does not specify the time dimensions of countries. It maintains only information with regard to their most recent status. A [period of
     validity](https://salsa.debian.org/iso-codes-team/iso-codes/-/issues/43) is only defined when a country is deleted from ISO 3166-1 and moved to ISO 3166-3.
