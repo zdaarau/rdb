@@ -379,10 +379,10 @@ assemble_query_filter <- function(country_code = NULL,
     
     date_min %<>% lubridate::as_date()
     date_max %<>% lubridate::as_date()
-    date_time_created_min %<>% lubridate::as_datetime()
-    date_time_created_max %<>% lubridate::as_datetime()
-    date_time_last_edited_min %<>% lubridate::as_datetime()
-    date_time_last_edited_max %<>% lubridate::as_datetime()
+    date_time_created_min %<>% lubridate::as_datetime(tz = "UTC")
+    date_time_created_max %<>% lubridate::as_datetime(tz = "UTC")
+    date_time_last_edited_min %<>% lubridate::as_datetime(tz = "UTC")
+    date_time_last_edited_max %<>% lubridate::as_datetime(tz = "UTC")
     
     query_filter <-
       list(country_code = query_filter_in(country_code),

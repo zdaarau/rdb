@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://rpkg.dev/c2d/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/TODO.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/articles/codebook.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/authors.html</loc>
+  </url>
+  <url>
     <loc>https://rpkg.dev/c2d/index.html</loc>
   </url>
   <url>
@@ -68,6 +83,9 @@
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/hierarchize_topics_fast.html</loc>
+  </url>
+  <url>
+    <loc>https://rpkg.dev/c2d/reference/index.html</loc>
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/infer_topics.html</loc>
@@ -155,8 +173,5 @@
   </url>
   <url>
     <loc>https://rpkg.dev/c2d/reference/var_vals.html</loc>
-  </url>
-  <url>
-    <loc>https://rpkg.dev/c2d/articles/codebook.html</loc>
   </url>
 </urlset>
