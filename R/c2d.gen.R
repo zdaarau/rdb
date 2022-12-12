@@ -864,18 +864,18 @@ is_session_expired <- function(token,
 #'
 #' @param x A character vector.
 #'
-#' @return A character vector of the same lenght as `x`.
+#' @return A character vector of the same length as `x`.
 #' @keywords internal
 lower_non_abbrs <- function(x) {
   
   x %>%
-    stringr::str_split(pattern = "\\s") %>%
+    stringr::str_split(pattern = "\\b") %>%
     purrr::map_chr(~ .x %>%
                      dplyr::if_else(stringr::str_detect(string = .,
                                                         pattern = "^[^[:lower:]]+$"),
                                     .,
                                     stringr::str_to_lower(.)) %>%
-                     paste0(collapse = " "))
+                     paste0(collapse = ""))
 }
 
 order_rfrnd_cols <- function(data) {
@@ -1681,27 +1681,28 @@ query_filter_in <- function(x) {
 
 parse_sudd_date <- function(x) {
   
-  x_split <- stringr::str_split(string = x,
-                                pattern = "-",
-                                simplify = TRUE)
+  x_parts <- stringr::str_split_1(string = x,
+                                  pattern = "-")
   to_int <- function(x) {
     x %<>% as.integer()
     x[x == 0L] <- NA_integer_
     x
   }
   
-  list(year = to_int(x_split[, 1L]),
-       month = to_int(x_split[, 2L]),
-       day = to_int(x_split[, 3L]))
+  list(year = to_int(x_parts[1L]),
+       month = to_int(x_parts[2L]),
+       day = to_int(x_parts[3L]))
 }
 
 parse_sudd_date_de <- function(x) {
   
-  components <- x %>% stringr::str_split(pattern = "\\s")
+  components <- stringr::str_split_fixed(string = x,
+                                         pattern = "\\s+",
+                                         n = 3L)
   
-  list(year = components %>% purrr::map_chr(magrittr::extract, 3L) %>% stringr::str_extract(pattern = "\\d+") %>% as.integer(),
-       month = components %>% purrr::map_chr(magrittr::extract, 2L) %>% dplyr::recode(!!!months_de),
-       day = components %>% purrr::map_chr(magrittr::extract, 1L) %>% stringr::str_extract(pattern = "\\d+") %>% as.integer())
+  list(year = components[, 3L] %>% stringr::str_extract(pattern = "\\d+") %>% as.integer(),
+       month = components[, 2L] %>% dplyr::recode(!!!months_de),
+       day = components[, 1L] %>% stringr::str_extract(pattern = "\\d+") %>% as.integer())
 }
 
 parse_sudd_id <- function(id_sudd) {
@@ -2679,8 +2680,8 @@ download_file_attachment <- function(s3_object_key,
   if (isTRUE(use_testing_server)) cli::cli_abort("Accessing file attachments is not yet supported on the testing servers.")
   
   if (fs::dir_exists(path)) {
-    checkmate::assert_directory(path,
-                                access = "rw")
+    checkmate::assert_directory_exists(path,
+                                       access = "rw")
     use_original_filename <- TRUE
   } else {
     checkmate::assert_path_for_output(path,

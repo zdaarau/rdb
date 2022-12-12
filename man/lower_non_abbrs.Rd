@@ -10,7 +10,7 @@ lower_non_abbrs(x)
 \item{x}{A character vector.}
 }
 \value{
-A character vector of the same lenght as \code{x}.
+A character vector of the same length as \code{x}.
 }
 \description{
 Lowercase non-abbreviations
