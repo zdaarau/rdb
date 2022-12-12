@@ -1,10 +1,14 @@
 # c2d: Download Data from the C2D Database, Which Covers Direct Democratic Votes Worldwide
 
+<a href="https://cran.r-project.org/package=c2d" class="pkgdown-release"><img src="https://r-pkg.org/badges/version/c2d" alt="CRAN Status" /></a>
+
 c2d provides access to the C2D Database (https://c2d.ch) from R. This database aims to record all direct democratic votes worldwide and is operated by the Centre for Democracy Studies Aarau (ZDA) at the University of Zurich, Switzerland.
 
 ## Documentation
 
-The documentation of this package is found [here](https://rpkg.dev/c2d).
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a8c23b19-d831-4621-81a8-0a5a346c3df9/deploy-status)](https://app.netlify.com/sites/c2d-rpkg-dev/deploys)
+
+The documentation of this package is found [here](https://c2d.rpkg.dev).
 
 ## Installation
 
