@@ -153,7 +153,7 @@ utils::globalVariables(names = c(".",
   # clear pkgpins cache
   tryCatch(expr = pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
                                        max_age = pal::pkg_config_val(key = "max_cache_lifespan",
-                                                                     pkg = this_pkg)),
+                                                                     pkg = pkgname)),
            error = function(e) cli::cli_alert_warning(text = "Failed to clear pkgpins cache on load of {.pkg pkgname}. Error message: {e$message}"))
 }
 
