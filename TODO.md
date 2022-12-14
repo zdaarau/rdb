@@ -404,9 +404,10 @@
 
 -   Der C2D-Link auf der [ZDA-Webseite](https://www.zdaarau.ch/en/applications) sollte auf HTTP**S** geändert werden!
 
--   Mögliche IT-Firmen, die als Nachfolge für CCM Design in Frage kämen:
+-   Mögliche IT-Firmen, die als Nachfolge für CCM Design möglicherweise in Frage kommen:
 
     -   [Brudi](https://www.brudi.com/), Zürich
+    -   [Cloud68](https://cloud68.co/), Estland
     -   [Liip](https://www.liip.ch/), Zürich (und weitere CH-Städte)
     -   [Ops One](https://opsone.ch/), Zürich
 
