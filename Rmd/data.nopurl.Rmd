@@ -55,7 +55,7 @@ NOTES:
 ```{r}
 data_codebook <- {
   
-  codebook <- c2d:::read_toml("data-raw/c2d_codebook.toml")
+  codebook <- pal::toml_read("data-raw/c2d_codebook.toml")
   
   c(codebook$`01_main`$item,
     codebook$`02_institutional`$`01_status`$item,
@@ -76,14 +76,14 @@ data_codebook <- {
                                     value_scale = .x$value_scale %||% NA_character_,
                                     ptype =
                                       .x$ptype %>%
-                                      purrr::when(!is.null(.) ~ eval(parse(text = .)),
-                                                  ~ .) %>%
+                                      pal::when(!is.null(.) ~ eval(parse(text = .)),
+                                                ~ .) %>%
                                       list(),
                                     derived_from =
                                       .x$derived_from %>%
-                                      purrr::when(is.null(.) ~ list(character()),
-                                                  is.character(.) ~ list(.),
-                                                  ~ .),
+                                      pal::when(is.null(.) ~ list(character()),
+                                                is.character(.) ~ list(.),
+                                                ~ .),
                                     gen_fn = .x$gen_fn %||% NA_character_,
                                     is_opt = .x$is_opt %||% FALSE)) %>%
     # infer missing prototypes
@@ -103,19 +103,19 @@ data_codebook <- {
                                                     ptype) {
                                         
                                         value_scale %>%
-                                          purrr::when(!is.null(ptype) ~
-                                                        ptype,
-                                                      . == "undefined" || is_multi_valued || is_nested ~
-                                                        list(),
-                                                      . == "binary" && (length(value_labels) == 0L || all(is.logical(unlist(variable_values)))) ~
-                                                        logical(),
-                                                      . %in% c("nominal") && length(value_labels) == 0L ~
-                                                        character(),
-                                                      . %in% c("nominal", "binary", "ordinal_ascending", "ordinal_descending") ~
-                                                        factor(levels = variable_values,
-                                                               ordered = . %in% c("ordinal_ascending", "ordinal_descending")),
-                                                      . %in% c("interval", "ratio") ~
-                                                        integer())
+                                          pal::when(!is.null(ptype) ~
+                                                      ptype,
+                                                    . == "undefined" || is_multi_valued || is_nested ~
+                                                      list(),
+                                                    . == "binary" && (length(value_labels) == 0L || all(is.logical(unlist(variable_values)))) ~
+                                                      logical(),
+                                                    . %in% c("nominal") && length(value_labels) == 0L ~
+                                                      character(),
+                                                    . %in% c("nominal", "binary", "ordinal_ascending", "ordinal_descending") ~
+                                                      factor(levels = variable_values,
+                                                             ordered = . %in% c("ordinal_ascending", "ordinal_descending")),
+                                                    . %in% c("interval", "ratio") ~
+                                                      integer())
                                       })) %>%
     # integrity checks
     ## not NA

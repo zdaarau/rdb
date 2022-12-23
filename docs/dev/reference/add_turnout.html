@@ -91,7 +91,7 @@
 <span class="r-in"><span>                <span class="va">electorate_total</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"votes_"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                <span class="va">turnout</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 129 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 128 × 8</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id                       electorate_total votes_yes votes_no votes_empty votes_invalid votes_per_subterritory turnout</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 63208effa52c3995043a9101         50<span style="text-decoration: underline;">910</span>473   6<span style="text-decoration: underline;">776</span>491  2<span style="text-decoration: underline;">684</span>184      <span style="text-decoration: underline;">721</span>157        <span style="text-decoration: underline;">239</span>995 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.205</span>
@@ -104,7 +104,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 5d1cba4edc0aeb467bfcbfad          4<span style="text-decoration: underline;">068</span>560   2<span style="text-decoration: underline;">273</span>985    <span style="text-decoration: underline;">43</span>938        <span style="text-decoration: underline;">5</span>165          <span style="text-decoration: underline;">5</span>865 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.572</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 5d19ffd1fe65c2bfeba00bb9         50<span style="text-decoration: underline;">773</span>284  13<span style="text-decoration: underline;">431</span>087 19<span style="text-decoration: underline;">421</span>025       <span style="text-decoration: underline;">83</span>418        <span style="text-decoration: underline;">308</span>728 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.655</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 5cb86b29cb48652399618eda         50<span style="text-decoration: underline;">681</span>765  13<span style="text-decoration: underline;">334</span>607  2<span style="text-decoration: underline;">198</span>715      <span style="text-decoration: underline;">104</span>413        <span style="text-decoration: underline;">168</span>753 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 119 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 118 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># strict turnout numbers</span></span></span>
 <span class="r-in"><span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>country_code <span class="op">=</span> <span class="st">"IT"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
@@ -113,7 +113,7 @@
 <span class="r-in"><span>                <span class="va">electorate_total</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"votes_"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                <span class="va">turnout</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 129 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 128 × 8</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id                       electorate_total votes_yes votes_no votes_empty votes_invalid votes_per_subterritory turnout</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 63208effa52c3995043a9101         50<span style="text-decoration: underline;">910</span>473   6<span style="text-decoration: underline;">776</span>491  2<span style="text-decoration: underline;">684</span>184      <span style="text-decoration: underline;">721</span>157        <span style="text-decoration: underline;">239</span>995 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.205</span>
@@ -126,7 +126,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 5d1cba4edc0aeb467bfcbfad          4<span style="text-decoration: underline;">068</span>560   2<span style="text-decoration: underline;">273</span>985    <span style="text-decoration: underline;">43</span>938        <span style="text-decoration: underline;">5</span>165          <span style="text-decoration: underline;">5</span>865 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.572</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 5d19ffd1fe65c2bfeba00bb9         50<span style="text-decoration: underline;">773</span>284  13<span style="text-decoration: underline;">431</span>087 19<span style="text-decoration: underline;">421</span>025       <span style="text-decoration: underline;">83</span>418        <span style="text-decoration: underline;">308</span>728 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.655</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 5cb86b29cb48652399618eda         50<span style="text-decoration: underline;">681</span>765  13<span style="text-decoration: underline;">334</span>607  2<span style="text-decoration: underline;">198</span>715      <span style="text-decoration: underline;">104</span>413        <span style="text-decoration: underline;">168</span>753 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 119 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 118 more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -138,7 +138,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
     </footer></div>

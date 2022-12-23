@@ -38,8 +38,8 @@ flatten_list_col <- function(x) {
   
   x %>%
     unlist() %>%
-    purrr::when(is.character(.) && length(.) > 0L ~ pal::wrap_chr(.),
-                ~ .)
+    pal::when(is.character(.) && length(.) > 0L ~ pal::wrap_chr(.),
+              ~ .)
 }
 
 ## prettify value scale
@@ -92,10 +92,10 @@ var_sections <- function(data,
     value_scale %<>% prettify_value_scale()
     value_labels %<>%
       unlist() %>%
-      purrr::when(is.na(value_label_prefix) ~ .,
-                  ~ paste(value_label_prefix, .)) %>%
-      purrr::when(is.na(value_label_suffix) ~ .,
-                  ~ paste(., value_label_suffix)) %>%
+      pal::when(is.na(value_label_prefix) ~ .,
+                ~ paste(value_label_prefix, .)) %>%
+      pal::when(is.na(value_label_suffix) ~ .,
+                ~ paste(., value_label_suffix)) %>%
       pal::sentenceify() %>%
       salim::n_ify()
     
@@ -207,8 +207,8 @@ var_sections <- function(data,
         glue::glue("This variable's [scale of measure](https://en.wikipedia.org/wiki/Level_of_measurement) is the **{value_scale}** level."),
         "")
     }) %>%
-      purrr::when(strip_anchors ~ strip_anchors(.),
-                  ~ .)
+      pal::when(strip_anchors ~ strip_anchors(.),
+                ~ .)
   })
 }
 
@@ -244,8 +244,8 @@ jurisdicion is dependent on the geographical jurisdiction plus the [`date`](#dat
 specific legal setting is in force).
 
 " %>%
-  purrr::when(!to_pandoc ~ strip_anchors(.),
-              ~ .) %>%
+  pal::when(!to_pandoc ~ strip_anchors(.),
+            ~ .) %>%
   cat()
 
 c2d::data_codebook %>%

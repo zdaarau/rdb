@@ -275,8 +275,8 @@ assemble_query_filter <- function(country_code = NULL,
            level = query_filter_in(level),
            institution =
              type %>%
-             purrr::when(length(.) == 0L ~ .,
-                         ~ dplyr::recode(., "citizens' assembly" = "citizen assembly") %>% stringr::str_to_sentence()) %>%
+             pal::when(length(.) == 0L ~ .,
+                       ~ dplyr::recode(., "citizens' assembly" = "citizen assembly") %>% stringr::str_to_sentence()) %>%
              query_filter_in(),
            date = query_filter_date(min = date_min,
                                     max = date_max),
@@ -603,11 +603,11 @@ auth_session <- function(email = pal::pkg_config_val(key = "api_username",
   # get existing tokens or initialize empty tibble
   tokens <-
     getOption("c2d.user_session_tokens") %>%
-    purrr::when(all(c("email", "token", "date_time_last_active") %in% colnames(.)) ~ .,
-                ~ tibble::tibble(email = character(),
-                                 token = character(),
-                                 is_testing_server = logical(),
-                                 date_time_last_active = as.POSIXct(NULL)))
+    pal::when(all(c("email", "token", "date_time_last_active") %in% colnames(.)) ~ .,
+              ~ tibble::tibble(email = character(),
+                               token = character(),
+                               is_testing_server = logical(),
+                               date_time_last_active = as.POSIXct(NULL)))
   # extract latest token
   token <- tokens %>% dplyr::filter(email == !!email & is_testing_server == !!use_testing_server)
   
@@ -741,15 +741,15 @@ derive_country_vars <- function(country_code,
   
   country_code <-
     country_code %>%
-    purrr::when(is_former ~
-                  data_former %>%
-                  dplyr::filter(Date_withdrawn == min(Date_withdrawn)) %>%
-                  assertr::verify(nrow(.) == 1L) %$%
-                  Alpha_4,
-                is_current ~
-                  country_code,
-                ~
-                  NA_character_)
+    pal::when(is_former ~
+                data_former %>%
+                dplyr::filter(Date_withdrawn == min(Date_withdrawn)) %>%
+                assertr::verify(nrow(.) == 1L) %$%
+                Alpha_4,
+              is_current ~
+                country_code,
+              ~
+                NA_character_)
   
   list(country_code = country_code,
        country_name = country_code_to_name(country_code),
@@ -835,8 +835,13 @@ fct_flip <- function(x) {
 
 flatten_array_as_is <- function(x) {
   
-  unlist(x) %>% purrr::when(is.null(.) ~ .,
-                            ~ I(.))
+  x %<>% unlist()
+  
+  if (!is.null(x)) {
+    x %<>% I()
+  }
+  
+  x
 }
 
 
@@ -906,24 +911,6 @@ parse_datetime <- function(x) {
   }
   
   result
-}
-
-#' Read in a TOML file
-#'
-#' @param path Path to the TOML file. A [path][fs::fs_path] or something coercible to.
-#'
-#' @return The TOML file's content as a [strict list][xfun::strict_list].
-#' @keywords internal
-read_toml <- function(path) {
-  
-  pal::assert_pkg("RcppTOML")
-  pal::assert_pkg("xfun")
-  
-  path %>%
-    purrr::when(length(.) > 0L ~ RcppTOML::parseTOML(input = .,
-                                                     escape = FALSE),
-                ~ NULL) %>%
-    xfun::as_strict_list()
 }
 
 rename_from_list <- function(x,
@@ -1557,11 +1544,11 @@ untidy_rfrnds <- function(data,
                             purrr::modify_at(.at = "files",
                                              .f = ~
                                                .x[[1L]] %>%
-                                               purrr::when(is.null(.) ~ list(),
-                                                           ~ dplyr::group_split(.tbl = .,
-                                                                                dplyr::row_number(),
-                                                                                .keep = FALSE) %>%
-                                                             purrr::map(as.list))) %>%
+                                               pal::when(is.null(.) ~ list(),
+                                                         ~ dplyr::group_split(.tbl = .,
+                                                                              dplyr::row_number(),
+                                                                              .keep = FALSE) %>%
+                                                           purrr::map(as.list))) %>%
                             purrr::modify_at(.at = c("archive",
                                                      "categories",
                                                      "context",
@@ -1571,23 +1558,23 @@ untidy_rfrnds <- function(data,
                                                purrr::map(as.list) %>%
                                                unlist(recursive = FALSE)) %>%
                             # reduce nesting of nested tibble
-                            purrr::when(is.null(purrr::pluck(., "context", "votes_per_canton")) ~ .,
-                                        ~ purrr::modify_in(.x = .,
-                                                           .where = c("context", "votes_per_canton"),
-                                                           .f = dplyr::first)) %>%
+                            pal::when(is.null(purrr::pluck(., "context", "votes_per_canton")) ~ .,
+                                      ~ purrr::modify_in(.x = .,
+                                                         .where = c("context", "votes_per_canton"),
+                                                         .f = dplyr::first)) %>%
                             # reduce nesting of array fields
-                            purrr::when(is.null(purrr::pluck(., "categories", "action")) ~ .,
-                                        ~ purrr::modify_in(.x = .,
-                                                           .where = c("categories", "action"),
-                                                           .f = flatten_array_as_is)) %>%
-                            purrr::when(is.null(purrr::pluck(., "categories", "excluded_topics")) ~ .,
-                                        ~ purrr::modify_in(.x = .,
-                                                           .where = c("categories", "excluded_topics"),
-                                                           .f = flatten_array_as_is)) %>%
-                            purrr::when(is.null(purrr::pluck(., "categories", "special_topics")) ~ .,
-                                        ~ purrr::modify_in(.x = .,
-                                                           .where = c("categories", "special_topics"),
-                                                           .f = flatten_array_as_is)))
+                            pal::when(is.null(purrr::pluck(., "categories", "action")) ~ .,
+                                      ~ purrr::modify_in(.x = .,
+                                                         .where = c("categories", "action"),
+                                                         .f = flatten_array_as_is)) %>%
+                            pal::when(is.null(purrr::pluck(., "categories", "excluded_topics")) ~ .,
+                                      ~ purrr::modify_in(.x = .,
+                                                         .where = c("categories", "excluded_topics"),
+                                                         .f = flatten_array_as_is)) %>%
+                            pal::when(is.null(purrr::pluck(., "categories", "special_topics")) ~ .,
+                                      ~ purrr::modify_in(.x = .,
+                                                         .where = c("categories", "special_topics"),
+                                                         .f = flatten_array_as_is)))
   }
   
   data
@@ -1674,9 +1661,9 @@ query_filter_datetime <- function(min,
 
 query_filter_in <- function(x) {
   
-  x %>% purrr::when(length(.) == 0L ~ NULL,
-                    length(.) == 1 ~ .,
-                    ~ list(`$in` = .))
+  x %>% pal::when(length(.) == 0L ~ NULL,
+                  length(.) == 1 ~ .,
+                  ~ list(`$in` = .))
 }
 
 parse_sudd_date <- function(x) {
@@ -1789,10 +1776,10 @@ sudd_rfrnd <- function(id_sudd) {
       # rename field names
       option_suffixes <-
         option_names %>%
-        purrr::imap_chr(~ .x %>% purrr::when(. %in% option_names_counter                        ~ "counter_proposal",
-                                             . %in% option_names_tie_breaker                    ~ "tie_breaker",
-                                             has_counter_proposal && n_proposals_original == 1L ~ "proposal",
-                                             ~ glue::glue("option_{.y}")))
+        purrr::imap_chr(~ .x %>% pal::when(. %in% option_names_counter                        ~ "counter_proposal",
+                                           . %in% option_names_tie_breaker                    ~ "tie_breaker",
+                                           has_counter_proposal && n_proposals_original == 1L ~ "proposal",
+                                           ~ glue::glue("option_{.y}")))
       renamings <-
         purrr::map2(.x = setdiff(option_names,
                                  option_names_tie_breaker),
@@ -1838,8 +1825,8 @@ sudd_rfrnd <- function(id_sudd) {
   ## move content of exotic fields to `remarks`
   remarks_field <-
     html[field_names == "Bemerkungen"] %>%
-    purrr::when(length(.) > 0L ~ rvest::html_elements(x = ., css = "td")[[2L]],
-                ~ .)
+    pal::when(length(.) > 0L ~ rvest::html_elements(x = ., css = "td")[[2L]],
+              ~ .)
   
   remarks_list_col <- list(list(text = rvest::html_text2(remarks_field),
                                 urls =
@@ -1996,7 +1983,7 @@ sudd_rfrnd <- function(id_sudd) {
                     
                     tibble::tibble(!!col_name :=
                                      col_name %>%
-                                     purrr::when(
+                                     pal::when(
                                        # character scalars
                                        . %in% c("territory_name_de",
                                                 "territory_type_de",
@@ -2042,8 +2029,8 @@ sudd_rfrnd <- function(id_sudd) {
                                          rvest::html_elements(css = "data") %>%
                                          rvest::html_attr("value") %>%
                                          # fall back to parsing text if no semantic data could be extracted
-                                         purrr::when(length(.) == 0L ~ col_text %>% stringr::str_remove_all(pattern = "[^\\d]"),
-                                                     ~ .) %>%
+                                         pal::when(length(.) == 0L ~ col_text %>% stringr::str_remove_all(pattern = "[^\\d]"),
+                                                   ~ .) %>%
                                          as.integer(),
                                        
                                        stringr::str_detect(string = .,
@@ -2052,8 +2039,8 @@ sudd_rfrnd <- function(id_sudd) {
                                          rvest::html_elements(css = "data") %>%
                                          rvest::html_attr("value") %>%
                                          # fall back to parsing text if no semantic data could be extracted
-                                         purrr::when(length(.) == 0L ~ col_text %>% stringr::str_remove_all(pattern = "[^\\d]"),
-                                                     ~ .) %>%
+                                         pal::when(length(.) == 0L ~ col_text %>% stringr::str_remove_all(pattern = "[^\\d]"),
+                                                   ~ .) %>%
                                          as.numeric(),
                                        
                                        # date scalars
@@ -4209,14 +4196,14 @@ n_rfrnds_per_period <- function(data,
                           century = 100L,
                           decade = 10L,
                           1L)
-    period_min <- period %>% purrr::when(is.null(period_floor) && !is_recurring_period ~ pal::safe_min(data[[.]]),
-                                         !is_recurring_period ~ period_floor,
-                                         ~ 1L)
-    period_max <- period %>% purrr::when(is.null(period_ceiling) && !is_recurring_period ~ pal::safe_max(data[[.]]),
-                                         !is_recurring_period ~ period_ceiling,
-                                         . == "week" ~ 53L,
-                                         . == "month" ~ 12L,
-                                         . == "quarter" ~ 4L)
+    period_min <- period %>% pal::when(is.null(period_floor) && !is_recurring_period ~ pal::safe_min(data[[.]]),
+                                       !is_recurring_period ~ period_floor,
+                                       ~ 1L)
+    period_max <- period %>% pal::when(is.null(period_ceiling) && !is_recurring_period ~ pal::safe_max(data[[.]]),
+                                       !is_recurring_period ~ period_ceiling,
+                                       . == "week" ~ 53L,
+                                       . == "month" ~ 12L,
+                                       . == "quarter" ~ 4L)
     
     period_seq <- seq(from = (period_min %/% period_step) * period_step,
                       to = period_max,
@@ -4608,15 +4595,15 @@ tbl_n_rfrnds_per_period <- function(data,
     dplyr::mutate(dplyr::across(.cols = where(is.factor),
                                 .fns = forcats::fct_explicit_na,
                                 na_level = "N/A")) %>%
-    purrr::when(has_by ~ tidyr::pivot_wider(data = .,
-                                            names_from = {{ by }},
-                                            names_sort = TRUE,
-                                            values_from = n),
-                ~ .) %>%
-    purrr::when(add_total_col ~ dplyr::mutate(.data = .,
-                                              Total = rowSums(x = dplyr::across(.cols = -!!as.symbol(period)),
-                                                              na.rm = TRUE)),
-                ~ .) %>%
+    pal::when(has_by ~ tidyr::pivot_wider(data = .,
+                                          names_from = {{ by }},
+                                          names_sort = TRUE,
+                                          values_from = n),
+              ~ .) %>%
+    pal::when(add_total_col ~ dplyr::mutate(.data = .,
+                                            Total = rowSums(x = dplyr::across(.cols = -!!as.symbol(period)),
+                                                            na.rm = TRUE)),
+              ~ .) %>%
     dplyr::mutate(dplyr::across(.fns = tidyr::replace_na,
                                 replace = 0L),
                   dplyr::across(.cols = all_of(period),
@@ -4663,11 +4650,11 @@ tbl_n_rfrnds_per_period <- function(data,
   data_to_plot %>%
     dplyr::filter(!(dplyr::row_number() %in% ix_rm)) %>%
     gt::gt(rowname_col = period) %>%
-    purrr::when(add_total_row ~ gt::summary_rows(data = .,
-                                                 fns = list(Total = ~ sum(., na.rm = TRUE)),
-                                                 formatter = gt::fmt_integer,
-                                                 sep_mark = ""),
-                ~ .) %>%
+    pal::when(add_total_row ~ gt::summary_rows(data = .,
+                                               fns = list(Total = ~ sum(., na.rm = TRUE)),
+                                               formatter = gt::fmt_integer,
+                                               sep_mark = ""),
+              ~ .) %>%
     gt::tab_spanner_delim(delim = "_",
                           split = "last") %>%
     gt::tab_stubhead(label = gt::md(by_names_print)) %>%
