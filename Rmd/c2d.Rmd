@@ -4823,15 +4823,15 @@ add_world_regions <- function(data,
     # harmonize col order
     order_rfrnd_cols() %>%
     # add var lbl
-    labelled::set_variable_labels(.labels = pal::list_keep(var_lbls,
-                                                           keep = c("un_country_code",
-                                                                    "un_region_tier_1_code",
-                                                                    "un_region_tier_1_name",
-                                                                    "un_region_tier_2_code",
-                                                                    "un_region_tier_2_name",
-                                                                    "un_region_tier_3_code",
-                                                                    "un_region_tier_3_name",
-                                                                    "un_subregion")))
+    labelled::set_variable_labels(.labels = purrr::keep_at(x = var_lbls,
+                                                           at = c("un_country_code",
+                                                                  "un_region_tier_1_code",
+                                                                  "un_region_tier_1_name",
+                                                                  "un_region_tier_2_code",
+                                                                  "un_region_tier_2_name",
+                                                                  "un_region_tier_3_code",
+                                                                  "un_region_tier_3_name",
+                                                                  "un_subregion")))
   # drop vars if necessary/requested
   if (!has_country_code_continual) {
     data %<>% dplyr::select(-country_code_continual)
