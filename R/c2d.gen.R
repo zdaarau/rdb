@@ -929,7 +929,7 @@ rename_from_list <- function(x,
 topic_frequency <- function(topics,
                             tier) {
   topics %>%
-    purrr::flatten_chr() %>%
+    purrr::list_c(ptype = character()) %>%
     factor(levels = c2d::topics(tiers = tier)) %>%
     tibble::tibble(topic = .) %>%
     dplyr::group_by(topic) %>%
@@ -984,7 +984,7 @@ tidy_rfrnds <- function(data,
                      "categories.action",
                      "categories.special_topics",
                      "categories.excluded_topics")) {
-        l[[name]] %<>% purrr::flatten_chr() %>% list()
+        l[[name]] %<>% purrr::list_c(ptype = character()) %>% list()
       }
       
       for (name in c("archive",
@@ -1094,7 +1094,8 @@ tidy_rfrnds <- function(data,
                                            TRUE ~ NA)),
           ## nominal
           ### flatten `id`
-          id = purrr::flatten_chr(id),
+          id = purrr::list_c(id,
+                             ptype = character()),
           ### split `tags` into separate per-tier vars
           topics_tier_1 = tags %>% purrr::map(infer_topics,
                                               tier = 1L),
@@ -1307,8 +1308,8 @@ untidy_rfrnds <- function(data,
                           as_tibble = FALSE) {
   
   checkmate::assert_flag(as_tibble)
-  var_names_inverse <- names(var_names) %>% magrittr::set_names(purrr::flatten_chr(var_names))
-  sub_var_names_files_inverse <- names(sub_var_names$files) %>% magrittr::set_names(purrr::flatten_chr(sub_var_names$files))
+  var_names_inverse <- names(var_names) %>% magrittr::set_names(purrr::list_c(var_names, ptype = character()))
+  sub_var_names_files_inverse <- names(sub_var_names$files) %>% magrittr::set_names(purrr::list_c(sub_var_names$files, ptype = character()))
   
   # restore `number`
   if (all(c("id_official", "id_sudd") %in% colnames(data))) {
@@ -1787,7 +1788,7 @@ sudd_rfrnd <- function(id_sudd) {
                                  "tie_breaker"),
                     .f = ~ rlang::list2(!!paste("\u2517\u2501", .x) := glue::glue("votes_tie_breaker_{.y}"),
                                         !!paste("\u2517\u2501 St\u00e4nde", .x) := glue::glue("subterritories_{.y}_tie_breaker"))) %>%
-        purrr::flatten()
+        purrr::list_flatten()
       
       for (i in seq_along(option_names)) {
         
@@ -1948,7 +1949,7 @@ sudd_rfrnd <- function(id_sudd) {
                   .f = function(old_name, old_names) paste0("votes_option_", which(old_names == old_name)),
                   old_names = stringr::str_subset(string = .,
                                                   pattern = "^\u2517\u2501 ")) %>%
-    purrr::flatten_chr()
+    purrr::list_c(ptype = character())
 
   # assert no original uppercase field names are left over
   ix_field_names_unknown <-
@@ -2650,8 +2651,8 @@ rfrnd <- function(id,
 #' # get all file object keys...
 #' c2d::rfrnds()$files |>
 #'   purrr::map_depth(1L, purrr::pluck, "s3_object_key") |>
-#'   purrr::flatten() |>
-#'   purrr::flatten_chr() |>
+#'   purrr::list_flatten() |>
+#'   purrr::list_c(ptype = character()) |>
 #'   # ...select first three keys...
 #'   magrittr::extract(1:3) |>
 #'   # ...and download the corresponding files to the current working dir
@@ -3226,7 +3227,7 @@ search_rfrnds <- function(term,
     # parse response
     httr::content(as = "parsed") %$%
     items %>%
-    purrr::flatten_chr() 
+    purrr::list_c(ptype = character()) 
 }
 
 #' Test if referendum ID exists
@@ -3357,7 +3358,7 @@ val_lbls <- function(var_name,
   var_name <- rlang::arg_match(arg = var_name,
                                values = data_codebook$variable_name)
   metadata <- data_codebook %>% dplyr::filter(variable_name == !!var_name)
-  result <- metadata$value_labels %>% purrr::flatten_chr()
+  result <- metadata$value_labels %>% purrr::list_c(ptype = character())
   
   if (incl_affixes) {
     if (!is.na(metadata$value_label_prefix)) result <- paste(metadata$value_label_prefix, result)

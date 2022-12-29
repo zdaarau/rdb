@@ -29,8 +29,8 @@ by \code{\link[=rfrnds]{rfrnds()}}.
 # get all file object keys...
 c2d::rfrnds()$files |>
   purrr::map_depth(1L, purrr::pluck, "s3_object_key") |>
-  purrr::flatten() |>
-  purrr::flatten_chr() |>
+  purrr::list_flatten() |>
+  purrr::list_c(ptype = character()) |>
   # ...select first three keys...
   magrittr::extract(1:3) |>
   # ...and download the corresponding files to the current working dir
