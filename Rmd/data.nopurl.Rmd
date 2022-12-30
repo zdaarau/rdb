@@ -62,30 +62,31 @@ data_codebook <- {
     codebook$`02_institutional`$`02_trigger`$item,
     codebook$`02_institutional`$`03_object`$item,
     codebook$`02_institutional`$`04_other`$item) %>%
-    purrr::map_dfr(~ tibble::tibble(variable_name = .x$variable_name %||% NA_character_,
-                                    variable_name_print = .x$variable_name_print %||% NA_character_,
-                                    variable_label = .x$variable_label %||% NA_character_,
-                                    is_multi_valued = .x$is_multi_valued %||% FALSE,
-                                    is_nested = .x$is_nested %||% FALSE,
-                                    applicability_constraint = .x$applicability_constraint %||% NA_character_,
-                                    variable_values = list(.x$variable_values %||% character()),
-                                    value_label_prefix = .x$value_label_prefix %||% NA_character_,
-                                    value_labels = list(.x$value_labels %||% character()),
-                                    value_label_suffix = .x$value_label_suffix %||% NA_character_,
-                                    value_default = list(.x$value_default),
-                                    value_scale = .x$value_scale %||% NA_character_,
-                                    ptype =
-                                      .x$ptype %>%
-                                      pal::when(!is.null(.) ~ eval(parse(text = .)),
-                                                ~ .) %>%
-                                      list(),
-                                    derived_from =
-                                      .x$derived_from %>%
-                                      pal::when(is.null(.) ~ list(character()),
-                                                is.character(.) ~ list(.),
-                                                ~ .),
-                                    gen_fn = .x$gen_fn %||% NA_character_,
-                                    is_opt = .x$is_opt %||% FALSE)) %>%
+    purrr::map(~ tibble::tibble(variable_name = .x$variable_name %||% NA_character_,
+                                variable_name_print = .x$variable_name_print %||% NA_character_,
+                                variable_label = .x$variable_label %||% NA_character_,
+                                is_multi_valued = .x$is_multi_valued %||% FALSE,
+                                is_nested = .x$is_nested %||% FALSE,
+                                applicability_constraint = .x$applicability_constraint %||% NA_character_,
+                                variable_values = list(.x$variable_values %||% character()),
+                                value_label_prefix = .x$value_label_prefix %||% NA_character_,
+                                value_labels = list(.x$value_labels %||% character()),
+                                value_label_suffix = .x$value_label_suffix %||% NA_character_,
+                                value_default = list(.x$value_default),
+                                value_scale = .x$value_scale %||% NA_character_,
+                                ptype =
+                                  .x$ptype %>%
+                                  pal::when(!is.null(.) ~ eval(parse(text = .)),
+                                            ~ .) %>%
+                                  list(),
+                                derived_from =
+                                  .x$derived_from %>%
+                                  pal::when(is.null(.) ~ list(character()),
+                                            is.character(.) ~ list(.),
+                                            ~ .),
+                                gen_fn = .x$gen_fn %||% NA_character_,
+                                is_opt = .x$is_opt %||% FALSE)) %>%
+    purrr::list_rbind() %>%
     # infer missing prototypes
     dplyr::mutate(ptype = purrr::pmap(.l = list(variable_name,
                                                 is_multi_valued,
