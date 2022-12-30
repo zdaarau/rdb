@@ -999,7 +999,8 @@ tidy_rfrnds <- function(data,
     purrr::modify_depth(.depth = 1L,
                         .f = purrr::compact) %>%
     # convert to tibble
-    purrr::map_dfr(tibble::as_tibble_row)
+    purrr::map(tibble::as_tibble_row) %>%
+    purrr::list_rbind()
   
   # tidy data
   if (nrow(data)) {
@@ -1275,7 +1276,7 @@ tidy_rfrnds <- function(data,
   data %>%
     dplyr::mutate(dplyr::across(any_of(c("files",
                                          "votes_per_subterritory")),
-                                ~ .x %>% purrr::map(~ { if (length(.x)) .x %>% purrr::map_dfr(tibble::as_tibble) else NULL })),
+                                ~ .x %>% purrr::map(~ { if (length(.x)) .x %>% purrr::map(tibble::as_tibble) %>% purrr::list_rbind() else NULL })),
                   dplyr::across(any_of("archive"),
                                 ~ .x %>% purrr::map(~ { if (length(.x)) tibble::as_tibble(.x) else NULL }))) %>%
     # add variable labels (must be done at last since mutations above drop attrs)
@@ -2075,11 +2076,12 @@ sudd_rfrnd <- function(id_sudd) {
                                        . == "files" ~
                                          cells[[2L]] %>%
                                          rvest::html_elements(css = "a") %>%
-                                         purrr::map_dfr(~ .x %>%
-                                                          rvest::html_attr(name = "href") %>%
-                                                          url_sudd() %>%
-                                                          tibble::tibble(description = rvest::html_text(.x),
-                                                                         url = .)) %>%
+                                         purrr::map(~ .x %>%
+                                                      rvest::html_attr(name = "href") %>%
+                                                      url_sudd() %>%
+                                                      tibble::tibble(description = rvest::html_text(.x),
+                                                                     url = .)) %>%
+                                         purrr::list_rbind() %>%
                                          list(),
                                        . == "ids_sudd_simultaneous" ~
                                          urls %>%
@@ -3532,20 +3534,22 @@ hierarchize_topics <- function(x) {
   # 1. add third-tier topics
   result <-
     topics_tier_3 %>%
-    purrr::map_dfr(~ tibble::tibble(topic_tier_1 = infer_topics(topics = .x,
-                                                                tier = 1L),
-                                    topic_tier_2 = infer_topics(topics = .x,
-                                                                tier = 2L),
-                                    topic_tier_3 = .x)) %>%
+    purrr::map(~ tibble::tibble(topic_tier_1 = infer_topics(topics = .x,
+                                                            tier = 1L),
+                                topic_tier_2 = infer_topics(topics = .x,
+                                                            tier = 2L),
+                                topic_tier_3 = .x)) %>%
+    purrr::list_rbind() %>%
     dplyr::bind_rows(result)
   
   # 2. add remaining second-tier topics
   result <-
     non_parent_topics_tier_2 %>%
-    purrr::map_dfr(~ tibble::tibble(topic_tier_1 = infer_topics(topics = .x,
-                                                                tier = 1L),
-                                    topic_tier_2 = .x,
-                                    topic_tier_3 = NA_character_)) %>%
+    purrr::map(~ tibble::tibble(topic_tier_1 = infer_topics(topics = .x,
+                                                            tier = 1L),
+                                topic_tier_2 = .x,
+                                topic_tier_3 = NA_character_)) %>%
+    purrr::list_rbind() %>%
     dplyr::bind_rows(result)
   
   # 3. add remaining first-tier topics
@@ -4370,18 +4374,20 @@ plot_topic_segmentation <- function(data,
     if (is_per_rfrnd) {
       
       data_plot %<>%
-        purrr::pmap_dfr(~ hierarchize_topics_fast(unlist(..1),
-                                                  unlist(..2),
-                                                  unlist(..3)) %>%
-                          dplyr::mutate(value = 1 / nrow(.)))
+        purrr::pmap(~ hierarchize_topics_fast(unlist(..1),
+                                              unlist(..2),
+                                              unlist(..3)) %>%
+                      dplyr::mutate(value = 1 / nrow(.))) %>%
+        purrr::list_rbind()
       
       ### per topic lineage
     } else {
       
       data_plot %<>%
-        purrr::pmap_dfr(~ hierarchize_topics_fast(unlist(..1),
-                                                  unlist(..2),
-                                                  unlist(..3))) %>%
+        purrr::pmap(~ hierarchize_topics_fast(unlist(..1),
+                                              unlist(..2),
+                                              unlist(..3))) %>%
+        purrr::list_rbind() %>%
         dplyr::mutate(value = 1)
     }
     
@@ -4953,7 +4959,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
     
     result %>%
       # derive vars from `id_sudd`
-      dplyr::bind_cols(.$id_sudd %>% purrr::map_dfr(parse_sudd_id)) %>%
+      dplyr::bind_cols(.$id_sudd %>% purrr::map(parse_sudd_id) %>% purrr::list_rbind()) %>%
       dplyr::select(id_sudd,
                     starts_with("country_"),
                     is_former_country,
@@ -5016,9 +5022,10 @@ sudd_rfrnds <- function(ids_sudd,
     
     ids_sudd %>%
       cli::cli_progress_along(name = "Scraping referendum data from sudd.ch") %>%
-      purrr::map_dfr(~ sudd_rfrnd(ids_sudd[.x])) %>%
+      purrr::map(~ sudd_rfrnd(ids_sudd[.x])) %>%
+      purrr::list_rbind() %>%
       # properly parse `date`
-      dplyr::bind_cols(.$date %>% purrr::map_dfr(parse_sudd_date)) %>%
+      dplyr::bind_cols(.$date %>% purrr::map(parse_sudd_date) %>% purrr::list_rbind()) %>%
       dplyr::mutate(date = clock::date_build(year = year,
                                              month = month,
                                              day = day,
@@ -5027,7 +5034,7 @@ sudd_rfrnds <- function(ids_sudd,
       tibble::add_column(id_sudd = ids_sudd,
                          .before = 1L) %>%
       # derive vars from `id_sudd`
-      dplyr::bind_cols(ids_sudd %>% purrr::map_dfr(parse_sudd_id)) %>%
+      dplyr::bind_cols(ids_sudd %>% purrr::map(parse_sudd_id) %>% purrr::list_rbind()) %>%
       # reorder columns
       dplyr::relocate(id_sudd,
                       country_code,

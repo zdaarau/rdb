@@ -57,7 +57,7 @@ test_rfrnd_data <- function(use_testing_server = FALSE) {
           checkmate::test_int(national,
                               lower = 1L))
       }) %>%
-      purrr::flatten_lgl() %>%
+      purrr::list_c(ptype = logical()) %>%
       all() %>%
       expect_true()
   })
