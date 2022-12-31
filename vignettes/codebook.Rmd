@@ -54,7 +54,7 @@ prettify_value_scale <- function(x) {
 ## strip MD anchor links (recursively)
 strip_anchors <- function(x) {
   
-  if (purrr::vec_depth(x) > 1L) {
+  if (purrr::pluck_depth(x) > 1L) {
     x %>% purrr::map(strip_anchors)
   } else if (is.character(x)) {
     x %>% stringr::str_replace_all(pattern = "(\\[)([^\\]]+?)(\\]\\(#[^\\)]+?\\))",
