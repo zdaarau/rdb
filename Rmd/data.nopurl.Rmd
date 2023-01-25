@@ -373,24 +373,24 @@ codes <-
 un_regions_tier_1 <-
   ISOcodes::UN_M.49_Regions %>%
   dplyr::filter(Type == "Region" & Parent == "001") %>%
-  tidyr::separate_rows(Children,
-                       sep = ", ") %>%
+  tidyr::separate_longer_delim(cols = Children,
+                               delim = ", ") %>%
   dplyr::transmute(un_region_tier_1_name = Name,
                    un_region_tier_1_code = Code,
                    children_tier_1 = Children)
 un_regions_tier_2 <-
   ISOcodes::UN_M.49_Regions %>%
   dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_1$un_region_tier_1_code) %>%
-  tidyr::separate_rows(Children,
-                       sep = ", ") %>%
+  tidyr::separate_longer_delim(cols = Children,
+                               delim = ", ") %>%
   dplyr::transmute(un_region_tier_2_name = Name,
                    un_region_tier_2_code = Code,
                    children_tier_2 = Children)
 un_regions_tier_3 <-
   ISOcodes::UN_M.49_Regions %>%
   dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_2$un_region_tier_2_code) %>%
-  tidyr::separate_rows(Children,
-                       sep = ", ") %>%
+  tidyr::separate_longer_delim(cols = Children,
+                               delim = ", ") %>%
   dplyr::transmute(un_region_tier_3_name = Name,
                    un_region_tier_3_code = Code,
                    children_tier_3 = Children)
