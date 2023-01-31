@@ -2,7 +2,7 @@
 # See `README.md#r-markdown-format` for more information on the literate programming approach used applying the R Markdown format.
 
 # c2d: Download Data from the C2D Database, Which Covers Direct Democratic Votes Worldwide
-# Copyright (C) 2022 Centre for Democracy Studies Aarau (ZDA)
+# Copyright (C) 2023 Centre for Democracy Studies Aarau (ZDA)
 # 
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or any later version.
@@ -355,7 +355,8 @@ assert_cols_valid <- function(data,
   na_col_names <-
     data %>%
     dplyr::select(any_of(non_na_col_names)) %>%
-    dplyr::filter(dplyr::if_any(.fns = is.na)) %>%
+    dplyr::filter(dplyr::if_any(.cols = everything(),
+                                .fns = is.na)) %>%
     dplyr::select(where(~ any(is.na(.x)))) %>%
     colnames()
   n_na_col_names <- length(na_col_names)
@@ -4600,8 +4601,8 @@ tbl_n_rfrnds_per_period <- function(data,
                         period_ceiling = period_ceiling,
                         descending = descending) %>%
     dplyr::mutate(dplyr::across(.cols = where(is.factor),
-                                .fns = forcats::fct_explicit_na,
-                                na_level = "N/A")) %>%
+                                .fns = forcats::fct_na_value_to_level,
+                                level = "N/A")) %>%
     pal::when(has_by ~ tidyr::pivot_wider(data = .,
                                           names_from = {{ by }},
                                           names_sort = TRUE,
