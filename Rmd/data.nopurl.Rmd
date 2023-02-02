@@ -320,7 +320,7 @@ data_topics <-
                 keep_empty = TRUE)
 ```
 
-## `months_de`
+## `months_de*`
 
 ```{r}
 pal::assert_pkg("clock")
@@ -329,6 +329,8 @@ months_de <-
   1:12 %>%
   magrittr::set_names(clock::clock_labels_lookup("de")$month) %>%
   as.list()
+
+months_de_fms <- c2d:::as_fm_list(months_de)
 ```
 
 ## `topics_tier_#_`
@@ -362,46 +364,61 @@ codes <-
   dplyr::select(-Alpha_3) %>%
   # manual corrections
   dplyr::mutate(
+    # certain countries share the same UN country code / don't have their own one for stupid political reasons (like China & Taiwan or Serbia & Kosovo), thus we
     # assign M49 code of
     # - China to Taiwan, cf. https://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Asia#Note_on_Taiwan
     # - Serbia to Kosovo, cf. https://en.wikipedia.org/wiki/XK_(user_assigned_code)#Potential_assignment_of_an_official_ISO_3166-1_code_for_Kosovo
     un_country_code = dplyr::case_when(country_code == "TW" ~ "156",
                                        country_code == "XK" ~ "688",
                                        TRUE ~ un_country_code)
-  )
+  ) %>%
+  # ensure there are no NAs left
+  assertr::assert(predicate = assertr::not_na,
+                  un_country_code)
+
 # extract UN regions of the 3 different tiers
 un_regions_tier_1 <-
   ISOcodes::UN_M.49_Regions %>%
+  tibble::as_tibble() %>%
   dplyr::filter(Type == "Region" & Parent == "001") %>%
   tidyr::separate_longer_delim(cols = Children,
                                delim = ", ") %>%
-  dplyr::transmute(un_region_tier_1_name = Name,
-                   un_region_tier_1_code = Code,
-                   children_tier_1 = Children)
+  dplyr::mutate(un_region_tier_1_name = Name,
+                un_region_tier_1_code = Code,
+                children_tier_1 = Children,
+                .keep = "none")
+
 un_regions_tier_2 <-
   ISOcodes::UN_M.49_Regions %>%
+  tibble::as_tibble() %>%
   dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_1$un_region_tier_1_code) %>%
   tidyr::separate_longer_delim(cols = Children,
                                delim = ", ") %>%
-  dplyr::transmute(un_region_tier_2_name = Name,
-                   un_region_tier_2_code = Code,
-                   children_tier_2 = Children)
+  dplyr::mutate(un_region_tier_2_name = Name,
+                un_region_tier_2_code = Code,
+                children_tier_2 = Children,
+                .keep = "none")
+
 un_regions_tier_3 <-
   ISOcodes::UN_M.49_Regions %>%
+  tibble::as_tibble() %>%
   dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_2$un_region_tier_2_code) %>%
   tidyr::separate_longer_delim(cols = Children,
                                delim = ", ") %>%
-  dplyr::transmute(un_region_tier_3_name = Name,
-                   un_region_tier_3_code = Code,
-                   children_tier_3 = Children)
+  dplyr::mutate(un_region_tier_3_name = Name,
+                un_region_tier_3_code = Code,
+                children_tier_3 = Children,
+                .keep = "none")
 
 # combine UN regions of different tiers into single dataset and add `country_code`
 un_regions <-
   un_regions_tier_1 %>%
   dplyr::full_join(y = un_regions_tier_2,
-                   by = c("children_tier_1" = "un_region_tier_2_code")) %>%
+                   by = dplyr::join_by(children_tier_1 == un_region_tier_2_code),
+                   multiple = "all") %>%
   dplyr::full_join(y = un_regions_tier_3,
-                   by = c("children_tier_2" = "un_region_tier_3_code")) %>%
+                   by = dplyr::join_by(children_tier_2 == un_region_tier_3_code),
+                   multiple = "all") %>%
   dplyr::mutate(un_region_tier_2_code = dplyr::if_else(is.na(un_region_tier_2_name),
                                                        NA_character_,
                                                        children_tier_1),
@@ -421,7 +438,9 @@ un_regions <-
                 starts_with("un_region_tier_3_"),
                 un_subregion) %>%
   dplyr::left_join(y = codes,
-                   by = "un_country_code") %>%
+                   by = "un_country_code",
+                   # NOTE: we must allow multiple matches because of the manual "corrections" in `codes` above
+                   multiple = "all") %>%
   dplyr::relocate(country_code) %>%
   # remove rows without `country_code` (Sark)
   dplyr::filter(!is.na(country_code)) %>%
@@ -551,6 +570,7 @@ usethis::use_data(country_codes_sudd_invalid,
                   data_iso_3166_3,
                   data_topics,
                   months_de,
+                  months_de_fms,
                   topics_tier_1_,
                   topics_tier_2_,
                   topics_tier_3_,

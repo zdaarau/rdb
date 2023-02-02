@@ -9,8 +9,8 @@ output:
     toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{C2D Codebook}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ## Referendum-level variables
@@ -48,7 +48,9 @@ prettify_value_scale <- function(x) {
   x %>%
     stringr::str_replace(pattern = "_(.*)",
                          replacement = " (\\1)") %>%
-    dplyr::recode("binary" = "nominal (binary)")
+    dplyr::case_match(.x = .,
+                      "binary" ~ "nominal (binary)",
+                      .default = .)
 }
 
 ## strip MD anchor links (recursively)
