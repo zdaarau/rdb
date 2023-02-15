@@ -199,7 +199,7 @@ data_iso_3166_1 <-
                                                Alpha_2 == "PS" ~ "Palestine",
                                                Alpha_2 == "SY" ~ "Syria",
                                                Alpha_2 == "VA" ~ "Vatican City",
-                                               TRUE ~ Common_name)) %>%
+                                               .default = Common_name)) %>%
   # extend with unofficial information
   dplyr::add_row(Alpha_2 = "XK",
                  Alpha_3 = "XKS",
@@ -252,7 +252,7 @@ data_iso_3166_3 <-
                   dplyr::case_when(Alpha_4 == "ANHH" ~ "2010-12-15",
                                    Alpha_4 == "CSXX" ~ "2006-09-26",
                                    Alpha_4 == "YUCS" ~ "2003-07-23",
-                                   TRUE ~ Date_withdrawn) %>%
+                                   .default = Date_withdrawn) %>%
                   purrr::map(~ {
                     if (nchar(.x) == 4L) {
                       clock::date_build(year = as.integer(.x))
@@ -267,15 +267,15 @@ data_iso_3166_3 <-
   # harmonize name style
   dplyr::mutate(name_short = dplyr::case_when(Alpha_4 == "BYAA" ~ "Byelorussian SSR",
                                               Alpha_4 == "FXFR" ~ "Metropolitan France",
-                                              TRUE ~ stringr::str_extract(string = Name,
-                                                                          pattern = "[^,]+")),
+                                              .default = stringr::str_extract(string = Name,
+                                                                              pattern = "[^,]+")),
                 name_long = dplyr::case_when(Alpha_4 == "BYAA" ~ "Byelorussian Soviet Socialist Republic",
                                              Alpha_4 == "CSHH" ~ Name,
                                              Alpha_4 == "SUHH" ~ "Union of Soviet Socialist Republics (USSR)",
                                              Alpha_4 == "YDYE" ~ "Democratic Yemen, People's Democratic Republic of Yemen",
-                                             TRUE ~ stringr::str_replace(string = Name,
-                                                                         pattern = "^([^,]+), (.+)$",
-                                                                         replacement = "\\2 \\1"))) %>%
+                                             .default = stringr::str_replace(string = Name,
+                                                                             pattern = "^([^,]+), (.+)$",
+                                                                             replacement = "\\2 \\1"))) %>%
   dplyr::arrange(Alpha_4) %>%
   # ensure there are no duplicates
   assertr::assert(predicate = assertr::is_uniq,
@@ -370,7 +370,7 @@ codes <-
     # - Serbia to Kosovo, cf. https://en.wikipedia.org/wiki/XK_(user_assigned_code)#Potential_assignment_of_an_official_ISO_3166-1_code_for_Kosovo
     un_country_code = dplyr::case_when(country_code == "TW" ~ "156",
                                        country_code == "XK" ~ "688",
-                                       TRUE ~ un_country_code)
+                                       .default = un_country_code)
   ) %>%
   # ensure there are no NAs left
   assertr::assert(predicate = assertr::not_na,

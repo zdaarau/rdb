@@ -1389,27 +1389,27 @@ tidy_rfrnds <- function(data,
           dplyr::across(any_of("position_government"),
                         ~ dplyr::case_when(.x == "Acceptance" ~ "yes",
                                            .x == "Rejection" ~ "no",
-                                           TRUE ~ NA_character_)),
+                                           .default = NA_character_)),
           dplyr::across(any_of("inst_has_urgent_legal_basis"),
                         ~ dplyr::case_when(.x == "Urgent" ~ TRUE,
                                            .x == "Normal" ~ FALSE,
-                                           TRUE ~ NA)),
+                                           .default = NA)),
           dplyr::across(any_of("inst_is_binding"),
                         ~ dplyr::case_when(.x == "Binding" ~ TRUE,
                                            .x == "Non-binding" ~ FALSE,
-                                           TRUE ~ NA)),
+                                           .default = NA)),
           dplyr::across(any_of("inst_is_counter_proposal"),
                         ~ dplyr::case_when(.x == "Yes" ~ TRUE,
                                            .x == "No" ~ FALSE,
-                                           TRUE ~ NA)),
+                                           .default = NA)),
           dplyr::across(any_of("inst_is_assembly"),
                         ~ dplyr::case_when(.x == "Assembly" ~ TRUE,
                                            .x == "Ballot" ~ FALSE,
-                                           TRUE ~ NA)),
+                                           .default = NA)),
           dplyr::across(any_of("inst_has_precondition"),
                         ~ dplyr::case_when(.x == "Exists" ~ TRUE,
                                            .x == "Does not exist" ~ FALSE,
-                                           TRUE ~ NA)),
+                                           .default = NA)),
           ## nominal
           ### flatten `id`
           id = purrr::list_c(id,
@@ -1511,14 +1511,14 @@ tidy_rfrnds <- function(data,
           data %<>% dplyr::mutate(inst_is_variable = dplyr::case_when(
             categories.referendum_text_options %in% c("Variants possible", "Variants / splitting up possible") ~ TRUE,
             is.na(categories.referendum_text_options)                                                          ~ NA,
-            TRUE                                                                                               ~ FALSE
+            .default                                                                                           = FALSE
           ))
         }
         if (!("inst_is_divisible" %in% colnames(data))) {
           data %<>% dplyr::mutate(inst_is_divisible = dplyr::case_when(
             categories.referendum_text_options %in% c("Splitting up possible", "Variants / splitting up possible") ~ TRUE,
             is.na(categories.referendum_text_options)                                                              ~ NA,
-            TRUE                                                                                                   ~ FALSE
+            .default                                                                                               = FALSE
           ))
         }
       }
@@ -1813,7 +1813,7 @@ untidy_rfrnds <- function(data,
                                                                        inst_is_divisible & inst_is_variable   ~ "Variants / splitting up possible",
                                                                        inst_is_divisible                      ~ "Splitting up possible",
                                                                        inst_is_variable                       ~ "Variants possible",
-                                                                       TRUE                                   ~ NA_character_))
+                                                                       .default                               = NA_character_))
   }
   
   # restore `tags`
