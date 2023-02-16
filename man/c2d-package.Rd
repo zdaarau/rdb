@@ -8,6 +8,19 @@
 \description{
 c2d provides access to the C2D Database (https://c2d.ch) from R. This database aims to record all direct democratic votes worldwide and is operated by the Centre for Democracy Studies Aarau (ZDA) at the University of Zurich, Switzerland.
 }
+\section{Package configuration}{
+
+
+Some of c2d's functionality is controlled via package-specific global configuration which can either be set via \R \link{options} or \href{https://en.wikipedia.org/wiki/Environment_variable}{environment variables} (the former take precedence). This configuration includes:\tabular{llll}{
+   \strong{Description} \tab \strong{R option} \tab \strong{Environment variable} \tab \strong{Default value} \cr
+   C2D Services API username \tab \code{c2d.api_username} \tab \code{C2D_API_USERNAME} \tab  \cr
+   C2D Services API password \tab \code{c2d.api_password} \tab \code{C2D_API_PASSWORD} \tab  \cr
+   Maximal timespan to preserve the package's \href{https://rpkg.dev/pkgpins/}{pkgpins} cache. Cache entries older than this will be deleted upon package loading. \tab \code{c2d.max_cache_lifespan} \tab \code{C2D_MAX_CACHE_LIFESPAN} \tab \code{"30 days"} \cr
+   Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc. \tab \code{c2d.use_testing_server} \tab \code{C2D_USE_TESTING_SERVER} \tab \code{FALSE} \cr
+   Whether or not to run the tests that use the testing servers for C2D Services API calls etc. during \code{devtools::test()}. \tab \code{c2d.test_testing_server} \tab \code{C2D_TEST_TESTING_SERVER} \tab \code{FALSE} \cr
+}
+}
+
 \seealso{
 Useful links:
 \itemize{

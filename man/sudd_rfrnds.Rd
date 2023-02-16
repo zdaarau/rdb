@@ -12,7 +12,7 @@ sudd_rfrnds(ids_sudd, use_cache = TRUE, cache_lifespan = "1 week")
 
 \item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{cache_lifespan}.}
 
-\item{cache_lifespan}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Only relevant if \code{use_cache = TRUE}.}
+\item{cache_lifespan}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Use \code{Inf} to disable cache expiry. Only relevant if \code{use_cache = TRUE}.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}. The column names are aligned with those of \code{\link[=rfrnds]{rfrnds()}} as closely as possible.

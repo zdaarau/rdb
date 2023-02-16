@@ -51,6 +51,12 @@
 
 
     <div class="section level2">
+    <h2 id="package-configuration">Package configuration<a class="anchor" aria-label="anchor" href="#package-configuration"></a></h2>
+    
+
+
+<p>Some of c2d's functionality is controlled via package-specific global configuration which can either be set via <span style="R">R</span> <a href="https://rdrr.io/r/base/options.html" class="external-link">options</a> or <a href="https://en.wikipedia.org/wiki/Environment_variable" class="external-link">environment variables</a> (the former take precedence). This configuration includes:</p><table class="table table"><tr><td><strong>Description</strong></td><td><strong>R option</strong></td><td><strong>Environment variable</strong></td><td><strong>Default value</strong></td></tr><tr><td>C2D Services API username</td><td><code>c2d.api_username</code></td><td><code>C2D_API_USERNAME</code></td><td></td></tr><tr><td>C2D Services API password</td><td><code>c2d.api_password</code></td><td><code>C2D_API_PASSWORD</code></td><td></td></tr><tr><td>Maximal timespan to preserve the package's <a href="https://rpkg.dev/pkgpins/" class="external-link">pkgpins</a> cache. Cache entries older than this will be deleted upon package loading.</td><td><code>c2d.max_cache_lifespan</code></td><td><code>C2D_MAX_CACHE_LIFESPAN</code></td><td><code>"30 days"</code></td></tr><tr><td>Whether or not to use the testing servers instead of the production servers for C2D Services API calls etc.</td><td><code>c2d.use_testing_server</code></td><td><code>C2D_USE_TESTING_SERVER</code></td><td><code>FALSE</code></td></tr><tr><td>Whether or not to run the tests that use the testing servers for C2D Services API calls etc. during <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>.</td><td><code>c2d.test_testing_server</code></td><td><code>C2D_TEST_TESTING_SERVER</code></td><td><code>FALSE</code></td></tr></table></div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Useful links:</p><ul><li><p><a href="https://c2d.rpkg.dev">https://c2d.rpkg.dev</a></p></li>
 <li><p><a href="https://gitlab.com/zdaarau/rpkgs/c2d" class="external-link">https://gitlab.com/zdaarau/rpkgs/c2d</a></p></li>
