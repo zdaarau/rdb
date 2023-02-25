@@ -46,10 +46,10 @@ X-XSS-Protection = "1; mode=block"
 # Redirect rules are processed [from top to bottom](https://docs.netlify.com/routing/redirects/#rule-processing-order), i.e. first matching one has priority
 
 # redirect site from old pkg name to new one (without this rule, CNAME masking persists which makes it unclear for users that the domain has changed)
+[[redirects]]
 from = "https://c2d.rpkg.dev/*"
-to = "https://rdb.rpkg.dev/:splat"
+to = "/:splat"
 status = 301
-force = true
 
 # fall back to dev site (non-shadowing), so that links not (yet) available in stable site are automatically redirected to dev version if present
 [[redirects]]
