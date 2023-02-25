@@ -44,7 +44,15 @@ X-XSS-Protection = "1; mode=block"
 
 # ------- REDIRECTS -------
 # Redirect rules are processed [from top to bottom](https://docs.netlify.com/routing/redirects/#rule-processing-order), i.e. first matching one has priority
+
+# old name to new one
 [[redirects]]
-from = "/"
-to = "/dev"
+from = "https://c2d.rpkg.dev/*"
+to = "/:splat"
+status = 301
+
+# redirect to dev site; remove once stable version is released!
+[[redirects]]
+from = "/*"
+to = "/dev/:splat"
 status = 302
