@@ -50,6 +50,7 @@ X-XSS-Protection = "1; mode=block"
 from = "https://c2d.rpkg.dev/*"
 to = "https://rdb.rpkg.dev/:splat"
 status = 301
+force = true
 
 # fall back to dev site (non-shadowing), so that links not (yet) available in stable site are automatically redirected to dev version if present
 [[redirects]]
