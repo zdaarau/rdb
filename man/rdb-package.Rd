@@ -15,7 +15,7 @@ Some of rdb's functionality is controlled via package-specific global configurat
    \strong{Description} \tab \strong{R option} \tab \strong{Environment variable} \tab \strong{Default value} \cr
    RDB Services API username \tab \code{rdb.api_username} \tab \code{RDB_API_USERNAME} \tab  \cr
    RDB Services API password \tab \code{rdb.api_password} \tab \code{RDB_API_PASSWORD} \tab  \cr
-   Maximal timespan to preserve the package's \href{https://pkgpins.rpkg.dev/}{pkgpins} cache. Cache entries older than this will be deleted upon package loading. \tab \code{rdb.max_cache_lifespan} \tab \code{RDB_MAX_CACHE_LIFESPAN} \tab \code{"30 days"} \cr
+   Maximal timespan to preserve the package's \href{https://pkgpins.rpkg.dev/}{pkgpins} cache. Cache entries older than this will be deleted upon package loading. \tab \code{rdb.global_max_cache_age} \tab \code{RDB_GLOBAL_MAX_CACHE_AGE} \tab \code{"30 days"} \cr
    Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc. \tab \code{rdb.use_testing_server} \tab \code{RDB_USE_TESTING_SERVER} \tab \code{FALSE} \cr
    Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during \code{devtools::test()}. \tab \code{rdb.test_testing_server} \tab \code{RDB_TEST_TESTING_SERVER} \tab \code{FALSE} \cr
 }

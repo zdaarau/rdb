@@ -21,7 +21,7 @@ rfrnds(
   incl_archive = FALSE,
   tidy = TRUE,
   use_cache = TRUE,
-  cache_lifespan = "1 week",
+  max_cache_age = "1 week",
   use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg),
   quiet = FALSE
 )
@@ -66,9 +66,9 @@ parameters \code{country_code}, \code{subnational_entity_name}, \code{municipali
 referendum data will only be modified just enough to be able to return it as a \link[tibble:tbl_df-class]{tibble}. Note that untidy data doesn't conform to the
 \link[=data_codebook]{codebook} (i.a. different variable names).}
 
-\item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{cache_lifespan}.}
+\item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{max_cache_age}.}
 
-\item{cache_lifespan}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Use \code{Inf} to disable cache expiry. Only relevant if \code{use_cache = TRUE}.}
+\item{max_cache_age}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Use \code{Inf} to disable cache expiry. Only relevant if \code{use_cache = TRUE}.}
 
 \item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.}
 

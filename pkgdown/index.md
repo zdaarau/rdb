@@ -19,7 +19,7 @@ remotes::install_gitlab(repo = "zdaarau/rpkgs/rdb")
 
 ## Usage
 
-The (function) reference is found [here](reference).
+An introduction to this package is given [here](articles/rdb.html). The (function) reference is found [here](reference).
 
 ## Development
 

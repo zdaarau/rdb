@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rdb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9042</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9043</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/rdb.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item">
@@ -63,13 +66,13 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="va">pkg_config</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   key                 default_value description                                                                                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                                                                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> api_username        <span style="color: #949494;">&lt;NULL&gt;</span>        RDB Services API username                                                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> api_password        <span style="color: #949494;">&lt;NULL&gt;</span>        RDB Services API password                                                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> max_cache_lifespan  <span style="color: #949494;">&lt;chr [1]&gt;</span>     Maximal timespan to preserve the package's [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will b…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> use_testing_server  <span style="color: #949494;">&lt;lgl [1]&gt;</span>     Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> test_testing_server <span style="color: #949494;">&lt;lgl [1]&gt;</span>     Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   key                  default_value description                                                                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                                                                                                                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> api_username         <span style="color: #949494;">&lt;NULL&gt;</span>        RDB Services API username                                                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> api_password         <span style="color: #949494;">&lt;NULL&gt;</span>        RDB Services API password                                                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> global_max_cache_age <span style="color: #949494;">&lt;chr [1]&gt;</span>     Maximal timespan to preserve the package's [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> use_testing_server   <span style="color: #949494;">&lt;lgl [1]&gt;</span>     Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> test_testing_server  <span style="color: #949494;">&lt;lgl [1]&gt;</span>     Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.    </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

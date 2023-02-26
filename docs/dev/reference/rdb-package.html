@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rdb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9042</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9043</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/rdb.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item">
@@ -55,7 +58,7 @@
     
 
 
-<p>Some of rdb's functionality is controlled via package-specific global configuration which can either be set via <span style="R">R</span> <a href="https://rdrr.io/r/base/options.html" class="external-link">options</a> or <a href="https://en.wikipedia.org/wiki/Environment_variable" class="external-link">environment variables</a> (the former take precedence). This configuration includes:</p><table class="table table"><tr><td><strong>Description</strong></td><td><strong>R option</strong></td><td><strong>Environment variable</strong></td><td><strong>Default value</strong></td></tr><tr><td>RDB Services API username</td><td><code>rdb.api_username</code></td><td><code>RDB_API_USERNAME</code></td><td></td></tr><tr><td>RDB Services API password</td><td><code>rdb.api_password</code></td><td><code>RDB_API_PASSWORD</code></td><td></td></tr><tr><td>Maximal timespan to preserve the package's <a href="https://pkgpins.rpkg.dev/" class="external-link">pkgpins</a> cache. Cache entries older than this will be deleted upon package loading.</td><td><code>rdb.max_cache_lifespan</code></td><td><code>RDB_MAX_CACHE_LIFESPAN</code></td><td><code>"30 days"</code></td></tr><tr><td>Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.</td><td><code>rdb.use_testing_server</code></td><td><code>RDB_USE_TESTING_SERVER</code></td><td><code>FALSE</code></td></tr><tr><td>Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>.</td><td><code>rdb.test_testing_server</code></td><td><code>RDB_TEST_TESTING_SERVER</code></td><td><code>FALSE</code></td></tr></table></div>
+<p>Some of rdb's functionality is controlled via package-specific global configuration which can either be set via <span style="R">R</span> <a href="https://rdrr.io/r/base/options.html" class="external-link">options</a> or <a href="https://en.wikipedia.org/wiki/Environment_variable" class="external-link">environment variables</a> (the former take precedence). This configuration includes:</p><table class="table table"><tr><td><strong>Description</strong></td><td><strong>R option</strong></td><td><strong>Environment variable</strong></td><td><strong>Default value</strong></td></tr><tr><td>RDB Services API username</td><td><code>rdb.api_username</code></td><td><code>RDB_API_USERNAME</code></td><td></td></tr><tr><td>RDB Services API password</td><td><code>rdb.api_password</code></td><td><code>RDB_API_PASSWORD</code></td><td></td></tr><tr><td>Maximal timespan to preserve the package's <a href="https://pkgpins.rpkg.dev/" class="external-link">pkgpins</a> cache. Cache entries older than this will be deleted upon package loading.</td><td><code>rdb.global_max_cache_age</code></td><td><code>RDB_GLOBAL_MAX_CACHE_AGE</code></td><td><code>"30 days"</code></td></tr><tr><td>Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.</td><td><code>rdb.use_testing_server</code></td><td><code>RDB_USE_TESTING_SERVER</code></td><td><code>FALSE</code></td></tr><tr><td>Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>.</td><td><code>rdb.test_testing_server</code></td><td><code>RDB_TEST_TESTING_SERVER</code></td><td><code>FALSE</code></td></tr></table></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Useful links:</p><ul><li><p><a href="https://rdb.rpkg.dev">https://rdb.rpkg.dev</a></p></li>

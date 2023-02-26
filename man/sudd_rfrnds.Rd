@@ -4,15 +4,15 @@
 \alias{sudd_rfrnds}
 \title{Get referendum data from \href{https://sudd.ch/}{sudd.ch}}
 \usage{
-sudd_rfrnds(ids_sudd, use_cache = TRUE, cache_lifespan = "1 week")
+sudd_rfrnds(ids_sudd, use_cache = TRUE, max_cache_age = "1 week")
 }
 \arguments{
 \item{ids_sudd}{The referendum identifiers assigned by \href{https://sudd.ch/}{sudd.ch}. Either as a character vector or a data frame containing a column
 \code{id_sudd}. \code{NA}s are ignored.}
 
-\item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{cache_lifespan}.}
+\item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{max_cache_age}.}
 
-\item{cache_lifespan}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Use \code{Inf} to disable cache expiry. Only relevant if \code{use_cache = TRUE}.}
+\item{max_cache_age}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Use \code{Inf} to disable cache expiry. Only relevant if \code{use_cache = TRUE}.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}. The column names are aligned with those of \code{\link[=rfrnds]{rfrnds()}} as closely as possible.

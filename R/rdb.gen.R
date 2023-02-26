@@ -153,7 +153,7 @@ utils::globalVariables(names = c(".",
   
   # clear pkgpins cache
   tryCatch(expr = pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
-                                       max_age = pal::pkg_config_val(key = "max_cache_lifespan",
+                                       max_age = pal::pkg_config_val(key = "global_max_cache_age",
                                                                      pkg = pkgname)),
            error = function(e) cli::cli_alert_warning(text = "Failed to clear pkgpins cache on load of {.pkg pkgname}. Error message: {e$message}"))
 }
@@ -2524,7 +2524,7 @@ rm(sudd_years)
 #' @inheritParams url_api
 #' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the Referendum Database (RDB).
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
-#' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
+#' @param max_cache_age `r pkgsnip::param_label("max_cache_age")`
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `r pkgsnip::return_label("data")`
@@ -2567,7 +2567,7 @@ rfrnds <- function(country_code = NULL,
                    incl_archive = FALSE,
                    tidy = TRUE,
                    use_cache = TRUE,
-                   cache_lifespan = "1 week",
+                   max_cache_age = "1 week",
                    use_testing_server = pal::pkg_config_val(key = "use_testing_server",
                                                             pkg = this_pkg),
                    quiet = FALSE) {
@@ -2658,7 +2658,7 @@ rfrnds <- function(country_code = NULL,
   tidy,
   use_testing_server,
   use_cache = use_cache,
-  cache_lifespan = cache_lifespan)
+  max_cache_age = max_cache_age)
   
   # exclude `archive` if requested
   if (!incl_archive) result %<>% dplyr::select(-any_of("archive"))
@@ -4882,7 +4882,7 @@ list_sudd_titles <- function() {
 #' - `year_min`: The lower year limit of the referendums' `date`. A positive integer.
 #' - `year_max`: The upper year limit of the referendums' `date`. A positive integer.
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
-#' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
+#' @param max_cache_age `r pkgsnip::param_label("max_cache_age")`
 #'
 #' @return A [tibble][tibble::tbl_df] containing at least an `id_sudd` column.
 #' @family sudd
@@ -4916,7 +4916,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
                                            year_min = NULL,
                                            year_max = NULL),
                              use_cache = TRUE,
-                             cache_lifespan = "1 week") {
+                             max_cache_age = "1 week") {
   # check args
   mode <- rlang::arg_match(mode)
   order <-
@@ -5076,7 +5076,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
   order,
   filter,
   use_cache = use_cache,
-  cache_lifespan = cache_lifespan)
+  max_cache_age = max_cache_age)
 }
 
 #' Get referendum data from [sudd.ch](https://sudd.ch/)
@@ -5092,7 +5092,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
 #' @param ids_sudd The referendum identifiers assigned by [sudd.ch](https://sudd.ch/). Either as a character vector or a data frame containing a column
 #'   `id_sudd`. `NA`s are ignored.
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
-#' @param cache_lifespan `r pkgsnip::param_label("cache_lifespan")`
+#' @param max_cache_age `r pkgsnip::param_label("max_cache_age")`
 #'
 #' @return `r pkgsnip::return_label("data")` The column names are aligned with those of [rfrnds()] as closely as possible.
 #' @family sudd
@@ -5105,7 +5105,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
 #' rdb::rfrnds(country_code = "AT") |> rdb::sudd_rfrnds()
 sudd_rfrnds <- function(ids_sudd,
                         use_cache = TRUE,
-                        cache_lifespan = "1 week") {
+                        max_cache_age = "1 week") {
   
   if (purrr::pluck_depth(ids_sudd) > 1L) {
     
@@ -5183,7 +5183,7 @@ sudd_rfrnds <- function(ids_sudd,
   from_fn = "sudd_rfrnds",
   ids_sudd,
   use_cache = use_cache,
-  cache_lifespan = cache_lifespan)
+  max_cache_age = max_cache_age)
 }
 
 #' Test RDB API availability
@@ -5250,10 +5250,9 @@ pkg_config <-
                   description = "RDB Services API username") %>%
   tibble::add_row(key = "api_password",
                   description = "RDB Services API password") %>%
-  tibble::add_row(key = "max_cache_lifespan",
+  tibble::add_row(key = "global_max_cache_age",
                   default_value = list("30 days"),
-                  description = paste0("Maximal timespan to preserve the package's [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this ",
-                                       "will be deleted upon package loading.")) %>%
+                  description = pkgsnip::md_snip("opt_global_max_cache_age")) %>%
   tibble::add_row(key = "use_testing_server",
                   default_value = list(FALSE),
                   description = "Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.") %>%
