@@ -1,7 +1,7 @@
-Package: c2d
-Title: Download Data from the C2D Database, Which Covers Direct Democratic
+Package: rdb
+Title: Download Data from the Referendum Database (RDB), Which Covers Direct Democratic
     Votes Worldwide
-Version: 0.0.9041
+Version: 0.0.9042
 Authors@R: c(
     person("Salim", "Brüggemann", , "salim-b@pm.me", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5329-5987")),
@@ -9,13 +9,13 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-2383-3158")),
     person(, "Centre for Democracy Studies Aarau (ZDA)", , "info@zdaarau.ch", role = "cph")
   )
-Description: c2d provides access to the C2D Database (https://c2d.ch) from
+Description: rdb provides access to the Referendum Database (RDB) from
     R. This database aims to record all direct democratic votes worldwide
     and is operated by the Centre for Democracy Studies Aarau (ZDA) at the
     University of Zurich, Switzerland.
 License: AGPL (>= 3)
-URL: https://c2d.rpkg.dev, https://gitlab.com/zdaarau/rpkgs/c2d
-BugReports: https://gitlab.com/zdaarau/rpkgs/c2d/issues
+URL: https://rdb.rpkg.dev, https://gitlab.com/zdaarau/rpkgs/rdb
+BugReports: https://gitlab.com/zdaarau/rpkgs/rdb/issues
 Depends: 
     R (>= 4.1)
 Imports: 
@@ -33,7 +33,7 @@ Imports:
     labelled (>= 2.8.0),
     lubridate (>= 1.7.10),
     magrittr (>= 2.0.1),
-    pal (>= 0.0.9092),
+    pal (>= 0.0.9093),
     pkgpins (>= 0.7.0.9004),
     purrr (>= 1.0.0),
     rlang (>= 1.0.1),
@@ -51,7 +51,7 @@ Suggests:
     gt (>= 0.6.0),
     ISOcodes (>= 2022.01.10),
     knitr (>= 1.40),
-    pkgsnip (>= 0.0.9032),
+    pkgsnip (>= 0.0.9033),
     plotly (>= 4.10.0),
     rmarkdown (>= 2.16),
     salim (>= 0.0.9015),

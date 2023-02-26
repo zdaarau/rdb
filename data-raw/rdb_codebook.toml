@@ -1,11 +1,11 @@
-title = "C2D Codebook"
+title = "RDB codebook"
 
 
 [01_main]
 [[01_main.item]]
 variable_name = "id"
-variable_name_print = "C2D ID"
-variable_label = "a 24-character value that uniquely identifies the referendum and corresponds to the [MongoDB `ObjectId`](https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid) in the C2D database"
+variable_name_print = "RDB ID"
+variable_label = "a 24-character value that uniquely identifies the referendum and corresponds to the [MongoDB `ObjectId`](https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid) in the RDB"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "id_official"
@@ -22,13 +22,13 @@ variable_name = "country_code"
 variable_name_print = "ISO 3166-1 alpha-2 / ISO 3166-3 alpha-4"
 variable_label = "the two- or four-letter code identifying the country in which the referendum took place; an [ISO 3166-3 alpha-4 code](https://en.wikipedia.org/wiki/ISO_3166-3) for historical countries which ceased to exist, otherwise an [ISO 3166-1 alpha-2 code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)"
 value_scale = "nominal"
-ptype = "vctrs::new_factor(levels = c2d:::val_set$country_code)"
+ptype = "vctrs::new_factor(levels = rdb:::val_set$country_code)"
 [[01_main.item]]
 variable_name = "country_code_long"
 variable_name_print = "ISO 3166-1 alpha-3"
 variable_label = "the three-letter ISO 3166-1 alpha-3 code identifying the country in which the referendum took place"
 value_scale = "nominal"
-ptype = "vctrs::new_factor(levels = c2d:::val_set$country_code_long)"
+ptype = "vctrs::new_factor(levels = rdb:::val_set$country_code_long)"
 derived_from = [ "country_code" ]
 gen_fn = "add_country_code_long"
 is_opt = true
@@ -37,7 +37,7 @@ variable_name = "country_code_continual"
 variable_name_print = "ISO 3166-1 alpha-2 (continual)"
 variable_label = "the current or future [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code of the country where the referendum took place; identical to `country_code` if the country still exists, otherwise the `country_code` of the successor country (the largest one in terms of population if it was succeeded by multiple countries)"
 value_scale = "nominal"
-ptype = "vctrs::new_factor(levels = c2d:::val_set$country_code_continual)"
+ptype = "vctrs::new_factor(levels = rdb:::val_set$country_code_continual)"
 derived_from = [ "country_code" ]
 gen_fn = "add_country_code_continual"
 is_opt = true
@@ -46,7 +46,7 @@ variable_name = "country_name"
 variable_name_print = "Country"
 variable_label = "the English name of the country in which the referendum took place"
 value_scale = "nominal"
-ptype = "vctrs::new_factor(levels = c2d:::val_set$country_name)"
+ptype = "vctrs::new_factor(levels = rdb:::val_set$country_name)"
 derived_from = [ "country_code" ]
 gen_fn = "add_country_name"
 [[01_main.item]]
@@ -54,7 +54,7 @@ variable_name = "country_name_long"
 variable_name_print = "Country (full name)"
 variable_label = "the official full English name(s) of the country in which the referendum took place"
 value_scale = "nominal"
-ptype = "vctrs::new_factor(levels = c2d:::val_set$country_name_long)"
+ptype = "vctrs::new_factor(levels = rdb:::val_set$country_name_long)"
 derived_from = [ "country_code" ]
 gen_fn = "add_country_name_long"
 is_opt = true
@@ -378,7 +378,7 @@ variable_name = "topics_tier_2"
 variable_name_print = "Second-tier political topics"
 variable_label = "a maximum of 3 predefined second-tier political topics that best classify the referendum proposal; the presence of a second-tier topic always implies presence of its parent [top-tier topic](#topics_tier_1)"
 is_multi_valued = true
-applicability_constraint = "purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_2, .f = ~ all(c2d::infer_topics(topics = .y, tier = 1L) %in% .x))"
+applicability_constraint = "purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_2, .f = ~ all(rdb::infer_topics(topics = .y, tier = 1L) %in% .x))"
 variable_values = [
   "national identity",
   "political system",
@@ -445,7 +445,7 @@ variable_name = "topics_tier_3"
 variable_name_print = "Third-tier political topics"
 variable_label = "a maximum of 3 predefined third-tier political topics that best classify the referendum proposal; the presence of a third-tier topic always implies presence of its parent [second-tier topic](#topics_tier_2) and grandparent [top-tier topic](#topics_tier_1)"
 is_multi_valued = true
-applicability_constraint = "purrr::map2_lgl(.x = topics_tier_2, .y = topics_tier_3, .f = ~ all(c2d::infer_topics(topics = .y, tier = 2L) %in% .x)) & purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_3, .f = ~ all(c2d::infer_topics(topics = .y, tier = 1L) %in% .x))"
+applicability_constraint = "purrr::map2_lgl(.x = topics_tier_2, .y = topics_tier_3, .f = ~ all(rdb::infer_topics(topics = .y, tier = 2L) %in% .x)) & purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_3, .f = ~ all(rdb::infer_topics(topics = .y, tier = 1L) %in% .x))"
 variable_values = [
   "constitution",
   "procedure for constitutional reform",
@@ -569,7 +569,7 @@ metadata about files attached to the referendum, including
 - `is_deleted`: whether or not the file has been deleted since it was attached
 - `file_name`: the filename as it appears when the file is downloaded
 - `file_size`: the file's size in bytes
-- `s3_object_key`: the key uniquely identifying the file in the C2D [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design); the file can be downloaded by feeding this key to [`c2d::download_file_attachment()`](https://rpkg.dev/c2d/reference/download_file_attachment.html)"""
+- `s3_object_key`: the key uniquely identifying the file in the RDB [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design); the file can be downloaded by feeding this key to [`rdb::download_file_attachment()`](https://rdb.rpkg.dev/reference/download_file_attachment.html)"""
 is_nested = true
 value_scale = "undefined"
 [[01_main.item]]
@@ -610,7 +610,7 @@ ptype = "vctrs::new_datetime()"
 [[01_main.item]]
 variable_name = "archive"
 variable_name_print = "Archived data"
-variable_label = "the referendum's data from an earlier, obsolete state of the C2D database"
+variable_label = "the referendum's data from an earlier, obsolete RDB state"
 is_nested = true
 value_scale = "undefined"
 [[01_main.item]]

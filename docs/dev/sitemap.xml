@@ -1,174 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://c2d.rpkg.dev/dev/LICENSE.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/TODO.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/TODO.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/articles/codebook.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/articles/codebook.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/articles/index.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/authors.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/authors.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/index.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/index.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/add_country_code_continual.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/add_country_code_continual.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/add_country_code_long.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/add_country_code_long.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/add_country_name.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/add_country_name.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/add_country_name_long.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/add_country_name_long.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/add_former_country_flag.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/add_former_country_flag.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/add_period.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/add_period.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/add_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/add_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/add_turnout.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/add_turnout.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/add_world_regions.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/add_world_regions.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/as_ballot_dates.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/as_ballot_dates.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/assemble_query_filter.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/assemble_query_filter.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/assert_vars.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/assert_vars.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/auth_session.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/auth_session.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/c2d-package.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/count_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/count_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/data_codebook.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/data_codebook.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/data_topics.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/data_topics.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/delete_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/delete_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/download_file_attachment.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/download_file_attachment.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/edit_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/edit_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/hierarchize_topics.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/hierarchize_topics.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/hierarchize_topics_fast.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/hierarchize_topics_fast.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/index.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/infer_topics.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/infer_topics.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/is_online.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/is_online.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/list_sudd_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/list_sudd_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/list_sudd_territories.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/list_sudd_territories.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/list_sudd_titles.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/list_sudd_titles.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/lower_non_abbrs.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/lower_non_abbrs.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds_per_period.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/n_rfrnds_per_period.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/pkg_config.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/pkg_config.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/plot_rfrnd_share_per_period.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/plot_rfrnd_share_per_period.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/plot_topic_segmentation.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/plot_topic_segmentation.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/plot_topic_share_per_period.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/plot_topic_share_per_period.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/printify_col_names.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/printify_col_names.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/printify_var_names.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/printify_var_names.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/rdb-package.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/rfrnd.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/rfrnd.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/rfrnd_exists.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/rfrnd_exists.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/search_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/search_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/sudd_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/sudd_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/tbl_n_rfrnds_per_period.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/tbl_n_rfrnds_per_period.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/tidy_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/tidy_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/topics.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/topics.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/untidy_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/untidy_rfrnds.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/url_admin_portal.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/url_admin_portal.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/url_api.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/url_api.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/url_website.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/url_codebook.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/val_lbls.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/url_website.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/validate_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/val_lbls.html</loc>
   </url>
   <url>
-    <loc>https://c2d.rpkg.dev/dev/reference/var_vals.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/validate_rfrnds.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/var_vals.html</loc>
   </url>
 </urlset>

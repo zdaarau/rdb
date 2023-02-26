@@ -1,4 +1,4 @@
 library(testthat)
-library(c2d)
+library(rdb)
 
-test_check("c2d")
+test_check("rdb")

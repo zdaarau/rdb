@@ -15,7 +15,7 @@ template:
     twitter:
       card: summary
       creator: '@2BSalim'
-url: https://c2d.rpkg.dev
+url: https://rdb.rpkg.dev
 navbar:
   structure:
     left:
@@ -28,7 +28,7 @@ navbar:
     right: github
   components:
     codebook:
-      text: C2D Codebook
+      text: RDB codebook
       href: articles/codebook.html
 reference:
 - title: Referendum data
@@ -51,7 +51,7 @@ reference:
   - var_vals
   - printify_var_names
 - title: Referendum topics
-  desc: Functions to work with referendum [topics](https://rpkg.dev/c2d/articles/codebook.html#topics).
+  desc: Functions to work with referendum [topics](https://rdb.rpkg.dev/articles/codebook.html#topics).
 - contents:
   - data_topics
   - topics
@@ -59,7 +59,7 @@ reference:
   - hierarchize_topics_fast
   - infer_topics
 - title: Augmentation
-  desc: Functions to augment the C2D referendum data by additional information (columns).
+  desc: Functions to augment the RDB referendum data by additional information (columns).
 - contents:
   - add_country_code_continual
   - add_country_code_long
@@ -69,14 +69,14 @@ reference:
   - add_turnout
   - add_world_regions
 - title: Transformation
-  desc: Functions to transform the C2D referendum data into other shapes, each with
+  desc: Functions to transform the RDB referendum data into other shapes, each with
     a specific purpose.
 - contents:
   - as_ballot_dates
   - n_rfrnds_per_period
   - printify_col_names
 - title: Visualization
-  desc: Functions to visualize the C2D referendum data (using [plotly](https://plotly-r.com/)).
+  desc: Functions to visualize the RDB referendum data (using [plotly](https://plotly-r.com/)).
 - contents:
   - plot_rfrnd_share_per_period
   - plot_topic_segmentation

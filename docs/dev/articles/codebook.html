@@ -5,15 +5,15 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="c2d">
-<title>C2D Codebook • c2d</title>
+<meta name="description" content="rdb">
+<title>RDB codebook • rdb</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link rel="stylesheet" href="../deps/all.min.css">
 <link rel="stylesheet" href="../deps/v4-shims.min.css">
 <script src="../deps/bootstrap-toc.min.js"></script><script src="../deps/headroom.min.js"></script><script src="../deps/jQuery.headroom.min.js"></script><script src="../deps/clipboard.min.js"></script><script src="../deps/fuse.js"></script><script src="../deps/autocomplete.jquery.min.js"></script><script src="../deps/mark.min.js"></script><script src="../deps/MathJax.js"></script><script src="../deps/TeX-AMS-MML_HTMLorMML.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="C2D Codebook">
-<meta property="og:description" content="c2d">
+<meta property="og:title" content="RDB codebook">
+<meta property="og:description" content="rdb">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:creator" content="@2BSalim">
 <meta name="twitter:site" content="@2BSalim">
@@ -29,9 +29,9 @@
 
     <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
     
-    <a class="navbar-brand me-2" href="../index.html">c2d</a>
+    <a class="navbar-brand me-2" href="../index.html">rdb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9041</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9042</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="active nav-item">
-  <a class="nav-link" href="../articles/codebook.html">C2D Codebook</a>
+  <a class="nav-link" href="../articles/codebook.html">RDB codebook</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -53,7 +53,7 @@
 
       <ul class="navbar-nav">
 <li class="nav-item">
-  <a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/c2d/" aria-label="gitlab">
+  <a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="gitlab">
     <span class="fab fa fab fa-gitlab fa-lg"></span>
      
   </a>
@@ -70,10 +70,10 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>C2D Codebook</h1>
+      <img src="" class="logo" alt=""><h1>RDB codebook</h1>
             
       
-      <small class="dont-index">Source: <a href="https://gitlab.com/zdaarau/rpkgs/c2d/blob/HEAD/vignettes/codebook.Rmd" class="external-link"><code>vignettes/codebook.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://gitlab.com/zdaarau/rpkgs/rdb/blob/HEAD/vignettes/codebook.Rmd" class="external-link"><code>vignettes/codebook.Rmd</code></a></small>
       <div class="d-none name"><code>codebook.Rmd</code></div>
     </div>
 
@@ -90,7 +90,7 @@ observation</a> is the individual referendum.</p>
 </h3>
 <p>A 24-character value that uniquely identifies the referendum and
 corresponds to the <a href="https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid" class="external-link">MongoDB
-<code>ObjectId</code></a> in the C2D database.</p>
+<code>ObjectId</code></a> in the RDB.</p>
 <div class="section level4">
 <h4 id="id-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#id-scale"></a>
 </h4>
@@ -148,8 +148,8 @@ which the referendum took place.</p>
 <div class="section level4">
 <h4 id="origin">Origin<a class="anchor" aria-label="anchor" href="#origin"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_country_code_long.html" class="external-link"><code>add_country_code_long()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_country_code_long.html"><code>add_country_code_long()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="country_code_long-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#country_code_long-scale"></a>
@@ -171,8 +171,8 @@ countries).</p>
 <div class="section level4">
 <h4 id="origin-1">Origin<a class="anchor" aria-label="anchor" href="#origin-1"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_country_code_continual.html" class="external-link"><code>add_country_code_continual()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_country_code_continual.html"><code>add_country_code_continual()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="country_code_continual-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#country_code_continual-scale"></a>
@@ -203,8 +203,8 @@ referendum took place.</p>
 <div class="section level4">
 <h4 id="origin-2">Origin<a class="anchor" aria-label="anchor" href="#origin-2"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_country_name_long.html" class="external-link"><code>add_country_name_long()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_country_name_long.html"><code>add_country_name_long()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="country_name_long-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#country_name_long-scale"></a>
@@ -261,8 +261,8 @@ place.</p>
 <div class="section level4">
 <h4 id="origin-3">Origin<a class="anchor" aria-label="anchor" href="#origin-3"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html" class="external-link"><code>add_world_regions()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="un_country_code-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#un_country_code-scale"></a>
@@ -280,8 +280,8 @@ place.</p>
 <div class="section level4">
 <h4 id="origin-4">Origin<a class="anchor" aria-label="anchor" href="#origin-4"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html" class="external-link"><code>add_world_regions()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="un_region_tier_1_code-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#un_region_tier_1_code-scale"></a>
@@ -299,8 +299,8 @@ place.</p>
 <div class="section level4">
 <h4 id="origin-5">Origin<a class="anchor" aria-label="anchor" href="#origin-5"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html" class="external-link"><code>add_world_regions()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="un_region_tier_1_name-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#un_region_tier_1_name-scale"></a>
@@ -318,8 +318,8 @@ place.</p>
 <div class="section level4">
 <h4 id="origin-6">Origin<a class="anchor" aria-label="anchor" href="#origin-6"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html" class="external-link"><code>add_world_regions()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="un_region_tier_2_code-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#un_region_tier_2_code-scale"></a>
@@ -337,8 +337,8 @@ place.</p>
 <div class="section level4">
 <h4 id="origin-7">Origin<a class="anchor" aria-label="anchor" href="#origin-7"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html" class="external-link"><code>add_world_regions()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="un_region_tier_2_name-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#un_region_tier_2_name-scale"></a>
@@ -356,8 +356,8 @@ place.</p>
 <div class="section level4">
 <h4 id="origin-8">Origin<a class="anchor" aria-label="anchor" href="#origin-8"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html" class="external-link"><code>add_world_regions()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="un_region_tier_3_code-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#un_region_tier_3_code-scale"></a>
@@ -375,8 +375,8 @@ place.</p>
 <div class="section level4">
 <h4 id="origin-9">Origin<a class="anchor" aria-label="anchor" href="#origin-9"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html" class="external-link"><code>add_world_regions()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="un_region_tier_3_name-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#un_region_tier_3_name-scale"></a>
@@ -395,8 +395,8 @@ Northern Europe).</p>
 <div class="section level4">
 <h4 id="origin-10">Origin<a class="anchor" aria-label="anchor" href="#origin-10"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#country_code" class="external-link"><code>country_code</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_world_regions.html" class="external-link"><code>add_world_regions()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#country-code"><code>country_code</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_world_regions.html"><code>add_world_regions()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="un_subregion-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#un_subregion-scale"></a>
@@ -468,8 +468,8 @@ measure</a> is the <strong>interval</strong> level.</p>
 <div class="section level4">
 <h4 id="origin-11">Origin<a class="anchor" aria-label="anchor" href="#origin-11"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date" class="external-link"><code>date</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html" class="external-link"><code>add_period()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_period.html"><code>add_period()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="week-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#week-scale"></a>
@@ -486,8 +486,8 @@ measure</a> is the <strong>interval</strong> level.</p>
 <div class="section level4">
 <h4 id="origin-12">Origin<a class="anchor" aria-label="anchor" href="#origin-12"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date" class="external-link"><code>date</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html" class="external-link"><code>add_period()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_period.html"><code>add_period()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="month-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#month-scale"></a>
@@ -504,8 +504,8 @@ measure</a> is the <strong>interval</strong> level.</p>
 <div class="section level4">
 <h4 id="origin-13">Origin<a class="anchor" aria-label="anchor" href="#origin-13"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date" class="external-link"><code>date</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html" class="external-link"><code>add_period()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_period.html"><code>add_period()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="quarter-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#quarter-scale"></a>
@@ -522,8 +522,8 @@ measure</a> is the <strong>interval</strong> level.</p>
 <div class="section level4">
 <h4 id="origin-14">Origin<a class="anchor" aria-label="anchor" href="#origin-14"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date" class="external-link"><code>date</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html" class="external-link"><code>add_period()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_period.html"><code>add_period()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="year-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#year-scale"></a>
@@ -540,8 +540,8 @@ measure</a> is the <strong>interval</strong> level.</p>
 <div class="section level4">
 <h4 id="origin-15">Origin<a class="anchor" aria-label="anchor" href="#origin-15"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date" class="external-link"><code>date</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html" class="external-link"><code>add_period()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_period.html"><code>add_period()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="decade-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#decade-scale"></a>
@@ -558,8 +558,8 @@ measure</a> is the <strong>interval</strong> level.</p>
 <div class="section level4">
 <h4 id="origin-16">Origin<a class="anchor" aria-label="anchor" href="#origin-16"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#date" class="external-link"><code>date</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_period.html" class="external-link"><code>add_period()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#date"><code>date</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_period.html"><code>add_period()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="century-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#century-scale"></a>
@@ -850,12 +850,12 @@ measure</a> is the <strong>ratio</strong> level.</p>
 <div class="section level4">
 <h4 id="origin-17">Origin<a class="anchor" aria-label="anchor" href="#origin-17"></a>
 </h4>
-<p>This variable is derived from <a href="https://rpkg.dev/c2d/articles/codebook.html#votes_yes" class="external-link"><code>votes_yes</code></a>,
-<a href="https://rpkg.dev/c2d/articles/codebook.html#votes_no" class="external-link"><code>votes_no</code></a>,
-<a href="https://rpkg.dev/c2d/articles/codebook.html#votes_empty" class="external-link"><code>votes_empty</code></a>,
-<a href="https://rpkg.dev/c2d/articles/codebook.html#votes_invalid" class="external-link"><code>votes_invalid</code></a>
-and <a href="https://rpkg.dev/c2d/articles/codebook.html#electorate_total" class="external-link"><code>electorate_total</code></a>
-and can be generated on demand via <a href="https://rpkg.dev/c2d/reference/add_turnout.html" class="external-link"><code>add_turnout()</code></a>.</p>
+<p>This variable is derived from <a href="https://rdb.rpkg.dev/articles/codebook.html#votes-yes"><code>votes_yes</code></a>,
+<a href="https://rdb.rpkg.dev/articles/codebook.html#votes-no"><code>votes_no</code></a>,
+<a href="https://rdb.rpkg.dev/articles/codebook.html#votes-empty"><code>votes_empty</code></a>,
+<a href="https://rdb.rpkg.dev/articles/codebook.html#votes-invalid"><code>votes_invalid</code></a>
+and <a href="https://rdb.rpkg.dev/articles/codebook.html#electorate-total"><code>electorate_total</code></a>
+and can be generated on demand via <a href="https://rdb.rpkg.dev/reference/add_turnout.html"><code>add_turnout()</code></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="turnout-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#turnout-scale"></a>
@@ -1355,7 +1355,7 @@ media</span></li>
 <p><sup><a href="#topics_tier_1" class="color-azure"><code>topics_tier_1</code></a> are colored in <span class="color-azure">azure</span>, <a href="#topics_tier_2" class="color-violet"><code>topics_tier_2</code></a> in <span class="color-violet">violet</span> and <a href="#topics_tier_3" class="color-rose"><code>topics_tier_3</code></a> in <span class="color-rose">rose</span>.</sup></p>
 <p>The hierarchical relations between the three topic variables
 <code>topics_tier_1</code>, <code>topics_tier_2</code> and
-<code>topics_tier_3</code> can be reconstructed at any time using <a href="https://rpkg.dev/c2d/reference/hierarchize_topics.html" class="external-link"><code>hierarchize_topics()</code></a>.
+<code>topics_tier_3</code> can be reconstructed at any time using <a href="https://rdb.rpkg.dev/reference/hierarchize_topics.html"><code>hierarchize_topics()</code></a>.
 This function can also be used to simply determine the parent topic(s)
 of any topic.</p>
 <div class="section level4">
@@ -1418,7 +1418,7 @@ to convert data containing such a variable to long format. To unnest
 &lt;code&gt;topics_tier_1&lt;/code&gt; to &lt;code&gt;topic_tier_1&lt;/code&gt; for example,
 use:&lt;/p&gt;
 &lt;div class="sourceCode" id="cb6"&gt;&lt;pre class="downlit sourceCode r"&gt;
-&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;c2d&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>1</sup></a> and thus of type
+&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;rdb&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>1</sup></a> and thus of type
 <code>list</code>.</em></p>
 </div>
 <div class="section level4">
@@ -1627,7 +1627,7 @@ to convert data containing such a variable to long format. To unnest
 &lt;code&gt;topics_tier_1&lt;/code&gt; to &lt;code&gt;topic_tier_1&lt;/code&gt; for example,
 use:&lt;/p&gt;
 &lt;div class="sourceCode" id="cb7"&gt;&lt;pre class="downlit sourceCode r"&gt;
-&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;c2d&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>2</sup></a> and thus of type
+&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;rdb&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>2</sup></a> and thus of type
 <code>list</code>.</em></p>
 </div>
 <div class="section level4">
@@ -1635,7 +1635,7 @@ use:&lt;/p&gt;
 </h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">topics_tier_1</span>, .y <span class="op">=</span> <span class="va">topics_tier_2</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_topics.html">infer_topics</a></span><span class="op">(</span>topics <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">topics_tier_1</span>, .y <span class="op">=</span> <span class="va">topics_tier_2</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_topics.html">infer_topics</a></span><span class="op">(</span>topics <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="topics_tier_2-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#topics_tier_2-scale"></a>
@@ -1984,7 +1984,7 @@ to convert data containing such a variable to long format. To unnest
 &lt;code&gt;topics_tier_1&lt;/code&gt; to &lt;code&gt;topic_tier_1&lt;/code&gt; for example,
 use:&lt;/p&gt;
 &lt;div class="sourceCode" id="cb9"&gt;&lt;pre class="downlit sourceCode r"&gt;
-&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;c2d&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>3</sup></a> and thus of type
+&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;rdb&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>3</sup></a> and thus of type
 <code>list</code>.</em></p>
 </div>
 <div class="section level4">
@@ -1992,7 +1992,7 @@ use:&lt;/p&gt;
 </h4>
 <p>This variable is only applicable under the following condition:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">topics_tier_2</span>, .y <span class="op">=</span> <span class="va">topics_tier_3</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_topics.html">infer_topics</a></span><span class="op">(</span>topics <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">topics_tier_1</span>, .y <span class="op">=</span> <span class="va">topics_tier_3</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">c2d</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_topics.html">infer_topics</a></span><span class="op">(</span>topics <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">topics_tier_2</span>, .y <span class="op">=</span> <span class="va">topics_tier_3</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_topics.html">infer_topics</a></span><span class="op">(</span>topics <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_lgl</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">topics_tier_1</span>, .y <span class="op">=</span> <span class="va">topics_tier_3</span>, .f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/infer_topics.html">infer_topics</a></span><span class="op">(</span>topics <span class="op">=</span> <span class="va">.y</span>, tier <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">.x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="topics_tier_3-scale">Level of measurement<a class="anchor" aria-label="anchor" href="#topics_tier_3-scale"></a>
@@ -2033,8 +2033,8 @@ downloaded</li>
 <code>file_size</code>: the file’s size in bytes</li>
 <li>
 <code>s3_object_key</code>: the key uniquely identifying the file in
-the C2D <a href="https://en.wikipedia.org/wiki/Amazon_S3#Design" class="external-link">Amazon
-S3 bucket</a>; the file can be downloaded by feeding this key to <a href="https://rpkg.dev/c2d/reference/download_file_attachment.html" class="external-link"><code>c2d::download_file_attachment()</code></a>.</li>
+the RDB <a href="https://en.wikipedia.org/wiki/Amazon_S3#Design" class="external-link">Amazon
+S3 bucket</a>; the file can be downloaded by feeding this key to <a href="https://rdb.rpkg.dev/reference/download_file_attachment.html"><code>rdb::download_file_attachment()</code></a>.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -2136,8 +2136,7 @@ measure</a> is the <strong>interval</strong> level.</p>
 <h3 id="archive">
 <code>archive</code><a class="anchor" aria-label="anchor" href="#archive"></a>
 </h3>
-<p>The referendum’s data from an earlier, obsolete state of the C2D
-database.</p>
+<p>The referendum’s data from an earlier, obsolete RDB state.</p>
 </div>
 <div class="section level3">
 <h3 id="type">
@@ -2953,7 +2952,7 @@ to convert data containing such a variable to long format. To unnest
 &lt;code&gt;topics_tier_1&lt;/code&gt; to &lt;code&gt;topic_tier_1&lt;/code&gt; for example,
 use:&lt;/p&gt;
 &lt;div class="sourceCode" id="cb17"&gt;&lt;pre class="downlit sourceCode r"&gt;
-&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;c2d&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>4</sup></a> and thus of type
+&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;rdb&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>4</sup></a> and thus of type
 <code>list</code>.</em></p>
 </div>
 <div class="section level4">
@@ -3119,7 +3118,7 @@ to convert data containing such a variable to long format. To unnest
 &lt;code&gt;topics_tier_1&lt;/code&gt; to &lt;code&gt;topic_tier_1&lt;/code&gt; for example,
 use:&lt;/p&gt;
 &lt;div class="sourceCode" id="cb20"&gt;&lt;pre class="downlit sourceCode r"&gt;
-&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;c2d&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>5</sup></a> and thus of type
+&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;rdb&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>5</sup></a> and thus of type
 <code>list</code>.</em></p>
 </div>
 <div class="section level4">
@@ -3191,7 +3190,7 @@ to convert data containing such a variable to long format. To unnest
 &lt;code&gt;topics_tier_1&lt;/code&gt; to &lt;code&gt;topic_tier_1&lt;/code&gt; for example,
 use:&lt;/p&gt;
 &lt;div class="sourceCode" id="cb22"&gt;&lt;pre class="downlit sourceCode r"&gt;
-&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;c2d&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>6</sup></a> and thus of type
+&lt;code class="sourceCode R"&gt;&lt;span&gt;&lt;span class="fu"&gt;rdb&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="../reference/rfrnds.html"&gt;rfrnds&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt; &lt;span class="op"&gt;&lt;a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link"&gt;%&amp;gt;%&lt;/a&gt;&lt;/span&gt; &lt;span class="fu"&gt;tidyr&lt;/span&gt;&lt;span class="fu"&gt;::&lt;/span&gt;&lt;span class="fu"&gt;&lt;a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link"&gt;unnest_longer&lt;/a&gt;&lt;/span&gt;&lt;span class="op"&gt;(&lt;/span&gt;col &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="va"&gt;topics_tier_1&lt;/span&gt;, values_to &lt;span class="op"&gt;=&lt;/span&gt; &lt;span class="st"&gt;"topic_tier_1"&lt;/span&gt;&lt;span class="op"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;'><sup>6</sup></a> and thus of type
 <code>list</code>.</em></p>
 </div>
 <div class="section level4">

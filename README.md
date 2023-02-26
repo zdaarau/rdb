@@ -1,18 +1,18 @@
-# c2d: Download Data from the C2D Database, Which Covers Direct Democratic Votes Worldwide
+# rdb: Download Data from the Referendum Database (RDB), Which Covers Direct Democratic Votes Worldwide
 
-<a href="https://cran.r-project.org/package=c2d" class="pkgdown-release"><img src="https://r-pkg.org/badges/version/c2d" alt="CRAN Status" /></a>
+<a href="https://cran.r-project.org/package=rdb" class="pkgdown-release"><img src="https://r-pkg.org/badges/version/rdb" alt="CRAN Status" /></a>
 
-c2d provides access to the C2D Database (https://c2d.ch) from R. This database aims to record all direct democratic votes worldwide and is operated by the Centre for Democracy Studies Aarau (ZDA) at the University of Zurich, Switzerland.
+rdb provides access to the Referendum Database (RDB) from R. This database aims to record all direct democratic votes worldwide and is operated by the Centre for Democracy Studies Aarau (ZDA) at the University of Zurich, Switzerland.
 
 ## Documentation
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/a8c23b19-d831-4621-81a8-0a5a346c3df9/deploy-status)](https://app.netlify.com/sites/c2d-rpkg-dev/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a8c23b19-d831-4621-81a8-0a5a346c3df9/deploy-status)](https://app.netlify.com/sites/rdb-rpkg-dev/deploys)
 
-The documentation of this package is found [here](https://c2d.rpkg.dev).
+The documentation of this package is found [here](https://rdb.rpkg.dev).
 
 ## Installation
 
-To install the latest development version of c2d, run the following in R:
+To install the latest development version of rdb, run the following in R:
 
 ``` r
 if (!("remotes" %in% rownames(installed.packages()))) {
@@ -20,7 +20,7 @@ if (!("remotes" %in% rownames(installed.packages()))) {
                    repos = "https://cloud.r-project.org/")
 }
 
-remotes::install_gitlab(repo = "zdaarau/rpkgs/c2d")
+remotes::install_gitlab(repo = "zdaarau/rpkgs/rdb")
 ```
 
 ## Development
@@ -59,7 +59,7 @@ This package borrows a lot of the [Tidyverse](https://www.tidyverse.org/) design
 
 -   Usage of [R’s right-hand assignment operator `->`](https://rdrr.io/r/base/assignOps.html) is not allowed[^3].
 
--   R source code is *not* split over several files as [suggested by the TSG](https://style.tidyverse.org/package-files.html) but instead is (as far as possible) kept in the single file [`Rmd/c2d.Rmd`](Rmd/c2d.Rmd) which is well-structured thanks to its [Markdown support](#r-markdown-format).
+-   R source code is *not* split over several files as [suggested by the TSG](https://style.tidyverse.org/package-files.html) but instead is (as far as possible) kept in the single file [`Rmd/rdb.Rmd`](Rmd/rdb.Rmd) which is well-structured thanks to its [Markdown support](#r-markdown-format).
 
 As far as possible, these deviations from the TSG plus some additional restrictions are formally specified in the [lintr configuration file](https://github.com/jimhester/lintr#project-configuration) [`.lintr`](.lintr), so lintr can be used right away to check for formatting issues:
 

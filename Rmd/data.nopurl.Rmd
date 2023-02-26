@@ -6,7 +6,7 @@ editor_options:
 NOTES:
 
 -   This file is *not* included in the [source package](https://r-pkgs.org/package-structure-state.html#source-package) because of the [`.nopurl` suffix in the
-    filename](https://rpkg.dev/pkgpurl/reference/purl_rmd.html#-rmd-files-excluded-from-purling).
+    filename](https://pkgpurl.rpkg.dev/reference/purl_rmd.html#-rmd-files-excluded-from-purling).
 
 -   The chunks below have to be manually executed in order to regenerate the package data.
 
@@ -14,7 +14,7 @@ NOTES:
 
 NOTES:
 
--   When used internally, other than internal data, exported data must always be referred to by its explicit namespace, i.e. e.g. `c2d::data_codebook`.
+-   When used internally, other than internal data, exported data must always be referred to by its explicit namespace, i.e. e.g. `rdb::data_codebook`.
 
 ## Write data
 
@@ -33,10 +33,11 @@ already automatically exported and thus available to package users.
 
 NOTES:
 
--   Although the datasets below are saved as ["internal data" in `R/sysdata.rda`](https://r-pkgs.org/data.html#data-sysdata), some of them are still exported
-    and documented (in the main `.Rmd` document), something [not explicitly
-    mentioned](https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/) in the book [R
-    Packages](https://r-pkgs.org/data.html#data-data).
+-   Although the datasets below are saved as ["internal data" in `R/sysdata.rda`](https://r-pkgs.org/data.html#data-sysdata), they can still be exported and
+    documented (by documenting the dataset's quoted name in the main `.Rmd` source file -- which only works when the dataset is also `@export`ed), something
+    [not explicitly mentioned](https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/) in the book [R
+    Packages](https://r-pkgs.org/data.html#data-data). To do so, you first need to manually add the `export()` directive in the NAMESPACE file since roxygen2
+    won't add it automatically.
 
 ## `data_codebook`
 
@@ -55,7 +56,7 @@ NOTES:
 ```{r}
 data_codebook <- {
   
-  codebook <- pal::toml_read("data-raw/c2d_codebook.toml")
+  codebook <- pal::toml_read("data-raw/rdb_codebook.toml")
   
   c(codebook$`01_main`$item,
     codebook$`02_institutional`$`01_status`$item,
@@ -330,7 +331,7 @@ months_de <-
   magrittr::set_names(clock::clock_labels_lookup("de")$month) %>%
   as.list()
 
-months_de_fms <- c2d:::as_fm_list(months_de)
+months_de_fms <- rdb:::as_fm_list(months_de)
 ```
 
 ## `topics_tier_#_`
@@ -338,9 +339,9 @@ months_de_fms <- c2d:::as_fm_list(months_de)
 Only for performance-reasons.
 
 ```{r}
-topics_tier_1_ <- c2d::topics(tiers = 1L)
-topics_tier_2_ <- c2d::topics(tiers = 2L)
-topics_tier_3_ <- c2d::topics(tiers = 3L)
+topics_tier_1_ <- rdb::topics(tiers = 1L)
+topics_tier_2_ <- rdb::topics(tiers = 2L)
+topics_tier_3_ <- rdb::topics(tiers = 3L)
 ```
 
 ## `un_regions`

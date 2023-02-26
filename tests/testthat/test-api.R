@@ -8,7 +8,7 @@ test_testing <-
 test_api <- function(use_testing_server = FALSE) {
 
   # is_online ----
-  test_that(paste0("C2D API `is_online()`", " (on testing server)"[use_testing_server]), {
+  test_that(paste0("RDB API `is_online()`", " (on testing server)"[use_testing_server]), {
 
     skip_if(use_testing_server && !test_testing)
 

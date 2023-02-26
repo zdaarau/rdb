@@ -1,9 +1,9 @@
 #' @section Package configuration:
 #'
-#' `r pkgsnip::md_snip("pkg_config", pkg = "c2d")`
+#' `r pkgsnip::md_snip("pkg_config", pkg = "rdb")`
 #'
 #' ```{r, echo = FALSE}
-#' pal::print_pkg_config("c2d")
+#' pal::print_pkg_config("rdb")
 #' ```
 #'
 #' @keywords internal
