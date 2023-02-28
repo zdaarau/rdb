@@ -2,7 +2,7 @@
 
 <a href="https://cran.r-project.org/package=rdb" class="pkgdown-release"><img src="https://r-pkg.org/badges/version/rdb" alt="CRAN Status" /></a>
 
-rdb provides access to the Referendum Database (RDB) from R. This database aims to record all direct democratic votes worldwide and is operated by the Centre for Democracy Studies Aarau (ZDA) at the University of Zurich, Switzerland.
+rdb provides access to the Referendum Database (RDB) from R. This database aims to record all direct democratic votes worldwide and is operated by the [Centre for Democracy Studies Aarau (ZDA)](https://www.zdaarau.ch/en/) at the University of Zurich, Switzerland.
 
 ## Documentation
 
@@ -22,6 +22,16 @@ if (!("remotes" %in% rownames(installed.packages()))) {
 
 remotes::install_gitlab(repo = "zdaarau/rpkgs/rdb")
 ```
+
+## Package configuration
+
+Some of fokus’s functionality is controlled via package-specific global configuration which can either be set via [R options](https://rdrr.io/r/base/options.html) or [environment variables](https://en.wikipedia.org/wiki/Environment_variable) (the former take precedence). This configuration includes:
+
+| **Description**                                                                                                                                                                     | **R option**                    | **Environment variable**        | **Default value** |
+|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------|:--------------------------------|:------------------|
+| Maximal timespan to preserve the package’s [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading.                          | `fokus.global_max_cache_age`    | `FOKUS_GLOBAL_MAX_CACHE_AGE`    | `"1 day"`         |
+| path to the working directory (the local instance of the [`fokus_private` repository](https://gitlab.com/zdaarau/private/fokus_private)); defaults to the current working directory | `fokus.path_repo_private`       | `FOKUS_PATH_REPO_PRIVATE`       |                   |
+| local filesystem path to copy the built fokus qstnr to (e.g. a Git repository that in turn deploys to a static website)                                                             | `fokus.qstnr.local_deploy_path` | `FOKUS_QSTNR_LOCAL_DEPLOY_PATH` |                   |
 
 ## Development
 

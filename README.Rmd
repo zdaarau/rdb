@@ -4,9 +4,20 @@ output: pal::gitlab_document
 
 # `r pal::desc_value("Package")`
 
-`r paste0('[![CRAN Status](https://r-pkg.org/badges/version/', pal::desc_value(key = "Package"), ')](https://cran.r-project.org/package=', pal::desc_value(key = "Package"), '){.pkgdown-release}')`
+```{r}
+#| label: description
+#| results: asis
+#| echo: false
 
-`r pal::desc_value("Description")`
+paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::desc_value(key = "Package"), ")](https://cran.r-project.org/package=",
+       pal::desc_value(key = "Package"), "){.pkgdown-release}\n\n") |>
+  cat()
+
+pal::desc_value("Description") |>
+  stringr::str_replace("(Centre for Democracy Studies Aarau \\(ZDA\\))",
+                       "[\\1](https://www.zdaarau.ch/en/)") |>
+  cat()
+```
 
 ```{r}
 #| label: pkgdown
