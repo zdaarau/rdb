@@ -20,7 +20,7 @@ multiple countries, the code of the largest one in terms of population is taken.
 \examples{
 rdb::rfrnds(country_code = c("CD", "ZRCD")) |>
   rdb::add_country_code_continual() |>
-  dplyr::select(any_of("id"),
+  dplyr::select(id,
                 starts_with("country_"))
 }
 \seealso{

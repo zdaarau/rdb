@@ -40,7 +40,7 @@ this issue by providing a uniform combination of \code{un_region_tier_2_name} an
 \examples{
 rdb::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
   rdb::add_world_regions() |>
-  dplyr::select(any_of("id"),
+  dplyr::select(id,
                 starts_with("country_"),
                 starts_with("un_"))
 }

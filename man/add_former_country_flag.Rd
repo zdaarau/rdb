@@ -19,7 +19,7 @@ Augments \code{data} with an additional column \code{is_former_country} indicati
 \examples{
 rdb::rfrnds(country_code = c("CD", "ZRCD")) |>
   rdb:::add_former_country_flag() |>
-  dplyr::select(any_of("id"),
+  dplyr::select(id,
                 starts_with("country_"),
                 is_former_country)
 }

@@ -32,7 +32,7 @@ displayMode = TRUE)
 # rough turnout numbers
 rdb::rfrnds(country_code = "IT") |>
   rdb::add_turnout() |>
-  dplyr::select(any_of("id"),
+  dplyr::select(id,
                 electorate_total,
                 starts_with("votes_"),
                 turnout)
@@ -40,7 +40,7 @@ rdb::rfrnds(country_code = "IT") |>
 # strict turnout numbers
 rdb::rfrnds(country_code = "IT") |>
   rdb::add_turnout(rough = FALSE) |>
-  dplyr::select(any_of("id"),
+  dplyr::select(id,
                 electorate_total,
                 starts_with("votes_"),
                 turnout)

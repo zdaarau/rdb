@@ -72,7 +72,7 @@
 <div class="page-header"><h1 id="rdb">rdb<a class="anchor" aria-label="anchor" href="#rdb"></a>
 </h1></div>
 <p></p>
-<p>rdb provides access to the Referendum Database (RDB) from R. This database aims to record all direct democratic votes worldwide and is operated by the Centre for Democracy Studies Aarau (ZDA) at the University of Zurich, Switzerland.</p>
+<p>rdb provides access to the Referendum Database (RDB) from R. This database aims to record all direct democratic votes worldwide and is operated by the <a href="https://www.zdaarau.ch/en/" class="external-link">Centre for Democracy Studies Aarau (ZDA)</a> at the University of Zurich, Switzerland.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -89,6 +89,39 @@
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
 <p>An introduction to this package is given <a href="articles/rdb.html">here</a>. The (function) reference is found <a href="reference">here</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="package-configuration">Package configuration<a class="anchor" aria-label="anchor" href="#package-configuration"></a>
+</h2>
+<p>Some of fokus’s functionality is controlled via package-specific global configuration which can either be set via <a href="https://rdrr.io/r/base/options.html" class="external-link">R options</a> or <a href="https://en.wikipedia.org/wiki/Environment_variable" class="external-link">environment variables</a> (the former take precedence). This configuration includes:</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left"><strong>Description</strong></th>
+<th align="left"><strong>R option</strong></th>
+<th align="left"><strong>Environment variable</strong></th>
+<th align="left"><strong>Default value</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Maximal timespan to preserve the package’s <a href="https://pkgpins.rpkg.dev/" class="external-link">pkgpins</a> cache. Cache entries older than this will be deleted upon package loading.</td>
+<td align="left"><code>fokus.global_max_cache_age</code></td>
+<td align="left"><code>FOKUS_GLOBAL_MAX_CACHE_AGE</code></td>
+<td align="left"><code>"1 day"</code></td>
+</tr>
+<tr class="even">
+<td align="left">path to the working directory (the local instance of the <a href="https://gitlab.com/zdaarau/private/fokus_private" class="external-link"><code>fokus_private</code> repository</a>); defaults to the current working directory</td>
+<td align="left"><code>fokus.path_repo_private</code></td>
+<td align="left"><code>FOKUS_PATH_REPO_PRIVATE</code></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">local filesystem path to copy the built fokus qstnr to (e.g. a Git repository that in turn deploys to a static website)</td>
+<td align="left"><code>fokus.qstnr.local_deploy_path</code></td>
+<td align="left"><code>FOKUS_QSTNR_LOCAL_DEPLOY_PATH</code></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>

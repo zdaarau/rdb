@@ -3766,7 +3766,7 @@ infer_topics <- function(topics,
 #' @examples
 #' rdb::rfrnds(country_code = c("CD", "ZRCD")) |>
 #'   rdb:::add_former_country_flag() |>
-#'   dplyr::select(any_of("id"),
+#'   dplyr::select(id,
 #'                 starts_with("country_"),
 #'                 is_former_country)
 add_former_country_flag <- function(data) {
@@ -3798,7 +3798,7 @@ add_former_country_flag <- function(data) {
 #' @examples
 #' rdb::rfrnds(country_code = c("CD", "ZRCD")) |>
 #'   rdb::add_country_code_continual() |>
-#'   dplyr::select(any_of("id"),
+#'   dplyr::select(id,
 #'                 starts_with("country_"))
 add_country_code_continual <- function(data) {
   
@@ -3839,7 +3839,7 @@ add_country_code_continual <- function(data) {
 #' rdb::rfrnds(date_max = clock::date_today(zone = "UTC"),
 #'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
 #'   rdb:::add_country_code_long() |>
-#'   dplyr::select(any_of("id"),
+#'   dplyr::select(id,
 #'                 starts_with("country_"))
 add_country_code_long <- function(data) {
   
@@ -3883,7 +3883,7 @@ add_country_code_long <- function(data) {
 #' rdb::rfrnds(date_max = clock::date_today(zone = "UTC"),
 #'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
 #'   rdb:::add_country_name() |>
-#'   dplyr::select(any_of("id"),
+#'   dplyr::select(id,
 #'                 starts_with("country_"))
 add_country_name <- function(data) {
   
@@ -3926,7 +3926,7 @@ add_country_name <- function(data) {
 #' rdb::rfrnds(date_max = clock::date_today(zone = "UTC"),
 #'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
 #'   rdb:::add_country_name_long() |>
-#'   dplyr::select(any_of("id"),
+#'   dplyr::select(id,
 #'                 starts_with("country_name"))
 add_country_name_long <- function(data) {
   
@@ -3973,11 +3973,11 @@ add_country_name_long <- function(data) {
 #' @examples
 #' rdb::rfrnds(country_code = "AT") |>
 #'   rdb::add_period() |>
-#'   dplyr::select(any_of("id"), date, week)
+#'   dplyr::select(id, date, week)
 #'
 #' rdb::rfrnds(country_code = "AT") |>
 #'   rdb::add_period("year") |>
-#'   dplyr::select(any_of("id"), date, year)
+#'   dplyr::select(id, date, year)
 add_period <- function(data,
                        period = c("week", "month", "quarter", "year", "decade", "century")) {
   
@@ -4036,7 +4036,7 @@ add_period <- function(data,
 #' # rough turnout numbers
 #' rdb::rfrnds(country_code = "IT") |>
 #'   rdb::add_turnout() |>
-#'   dplyr::select(any_of("id"),
+#'   dplyr::select(id,
 #'                 electorate_total,
 #'                 starts_with("votes_"),
 #'                 turnout)
@@ -4044,7 +4044,7 @@ add_period <- function(data,
 #' # strict turnout numbers
 #' rdb::rfrnds(country_code = "IT") |>
 #'   rdb::add_turnout(rough = FALSE) |>
-#'   dplyr::select(any_of("id"),
+#'   dplyr::select(id,
 #'                 electorate_total,
 #'                 starts_with("votes_"),
 #'                 turnout)
@@ -4113,7 +4113,7 @@ add_turnout <- function(data,
 #' @examples
 #' rdb::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
 #'   rdb::add_world_regions() |>
-#'   dplyr::select(any_of("id"),
+#'   dplyr::select(id,
 #'                 starts_with("country_"),
 #'                 starts_with("un_"))
 add_world_regions <- function(data,

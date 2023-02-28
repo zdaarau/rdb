@@ -11,7 +11,7 @@ rdb provides access to the Referendum Database (RDB) from R. This database aims 
 \section{Package configuration}{
 
 
-Some of rdb's functionality is controlled via package-specific global configuration which can either be set via \R \link{options} or \href{https://en.wikipedia.org/wiki/Environment_variable}{environment variables} (the former take precedence). This configuration includes:\tabular{llll}{
+Some of rdb's functionality is controlled via package-specific global configuration which can either be set via \href{https://rdrr.io/r/base/options.html}{R options} or \href{https://en.wikipedia.org/wiki/Environment_variable}{environment variables} (the former take precedence). This configuration includes:\tabular{llll}{
    \strong{Description} \tab \strong{R option} \tab \strong{Environment variable} \tab \strong{Default value} \cr
    RDB Services API username \tab \code{rdb.api_username} \tab \code{RDB_API_USERNAME} \tab  \cr
    RDB Services API password \tab \code{rdb.api_password} \tab \code{RDB_API_PASSWORD} \tab  \cr

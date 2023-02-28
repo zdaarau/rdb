@@ -33,11 +33,13 @@ branch](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/master), which we try to kee
 
 # Usage
 
-You can fetch RDB referendum data via the two functions `rdb::rfrnd()` and `rdb::rfrnds()`. The former one fetches the data of a single referendum only, of
-which you must already know its uniqe RDB `id`. The latter function allows to fetch data for an arbitrary number of referendums, depending on the conditions you
-specify via the [function's various arguments](https://rdb.rpkg.dev/reference/rfrnds.html#arguments).
+## Get data
 
-To simply retrieve all referendums in the database, run
+You can download RDB referendum data via the two functions `rdb::rfrnd()` and `rdb::rfrnds()`. The former one fetches the data of a single referendum only, of
+which you must already know its uniqe RDB [`id`](https://rdb.rpkg.dev/articles/codebook.html#id). The latter function allows to retrieve data for an arbitrary
+number of referendums, depending on the conditions you specify via the [function's various arguments](https://rdb.rpkg.dev/reference/rfrnds.html#arguments).
+
+To simply retrieve *all* referendums in the database (excluding draft entries), run
 
 ``` r
 rdb::rfrnds()
@@ -48,10 +50,119 @@ which should output a [tibble](https://tibble.tidyverse.org/) like this one:
 ```{r}
 #| echo: false
 
-rdb::rfrnds()
+rdb::rfrnds(quiet = TRUE)
 ```
 
-Results of `rdb::rfrnds()` and some other functions in this package are by default cached using [pkgpins](https://pkgpins.rpkg.dev/). You can define the maximum
-age of cached results you're willing to accept via the function argument `max_cache_age`.
+The RDB referendum data's individual variables (columns) are documented in the [codebook](https://rdb.rpkg.dev/articles/codebook.html). It is also available as
+a dataset via `rdb::data_codebook`.
 
-You can also completely opt out of caching by setting `use_cache = FALSE`. But please don't ...
+Results of `rdb::rfrnds()` and some other functions in this package are by default cached on disk using [pkgpins](https://pkgpins.rpkg.dev/). You can define the
+maximum age of cached results you're willing to tolerate via the argument `max_cache_age` (defaults to a week). It accepts anything that can be successfully
+converted to a [lubridate duration](https://lubridate.tidyverse.org/reference/as.duration.html) -- e.g. a string like `"3 hours"`, `"2 days"` or `"1 week"`, or
+a number which will simply be interpreted as *number of seconds*.
+
+To only re-download RDB data once every 4 hours and 48 minutes for example, use
+
+``` r
+rdb::rfrnds(max_cache_age = "4 hours 48 minutes")
+```
+
+Although we usually advise against it, you can also completely opt out of caching by specifying `use_cache = FALSE`. However, please make sure to not run such
+code in excess, as it creates additional (and most likely unnecessary) load on our servers.
+
+## Augment data
+
+rdb includes various functions to augment the referendum data by additional information which wouldn't make sense to be stored in the RDB itself.
+
+For example, you can add the period (week, month, quarter, year, decade or century) in which a referendum took place using `rdb::add_period()`. By default, the
+recurring numeric week number of the year is added (i.e. `period = "week"`):
+
+```{r}
+#| echo: true
+
+rdb::rfrnds() |>
+  rdb::add_period() |>
+  dplyr::select(id, date, week)
+```
+
+Another frequently required augmentation is `rdb::add_country_code_long()` which adds an additional column `country_code_long` containing the [ISO 3166-1
+alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) code. These three-letter codes are often required to join RDB referendum data with data from other
+sources.
+
+See the package reference for [all available data augmentation functions](https://rdb.rpkg.dev/reference/index.html#augmentation).
+
+## Transform data
+
+For certain analyses, it might come in handy to transform the referendum data to a different shape beforehand. For a few such transformations, rdb provides
+[ready-made functions](https://rdb.rpkg.dev/reference/index.html#transformation).
+
+`rdb::as_ballot_dates()` for example transforms the default referendum-level observations to ones on the level of ballot date and jurisdiction:
+
+```{r}
+#| echo: true
+
+rdb::rfrnds() |> nrow()
+
+rdb::rfrnds() |> rdb::as_ballot_dates() |> nrow()
+```
+
+## Tabulate and visualize data
+
+rdb also includes some ready-made convenience functions to create tables and (interactive) plots.
+
+If you'd like to tabulate the number of referendums in the [UN subregion](https://rdb.rpkg.dev/reference/add_world_regions.html) *Polynesia* since 2010 per a
+certain period, say years, you could simply run
+
+``` r
+rdb::rfrnds(date_min = "2010-01-01") |>
+  rdb::add_world_regions() |>
+  dplyr::filter(un_subregion == "Polynesia") |>
+  rdb::tbl_n_rfrnds_per_period(period = "year")
+```
+
+and you'd get the following nicely formatted [gt](https://gt.rstudio.com/) table:
+
+```{r}
+#| echo: false
+
+rdb::rfrnds(date_min = "2010-01-01",
+            quiet = TRUE) |>
+  rdb::add_world_regions() |>
+  dplyr::filter(un_subregion == "Polynesia") |>
+  rdb::tbl_n_rfrnds_per_period(period = "year")
+```
+
+Or a stacked area chart visualizing the worldwide share of referendums per year since 1950, grouped by [political
+level](https://rdb.rpkg.dev/dev/articles/codebook.html#level):
+
+``` r
+rdb::rfrnds(date_min = "1950-01-01") |>
+  rdb::tbl_n_rfrnds_per_period(period = "year",
+                               by = "level")
+```
+
+```{r}
+#| echo: false
+
+rdb::rfrnds(date_min = "1950-01-01",
+            quiet = TRUE) |>
+  rdb::plot_rfrnd_share_per_period(period = "year",
+                                   by = "level")
+```
+
+Or, as a final example, the overall (hierarchical) segmentation of the [political topics](https://rdb.rpkg.dev/articles/codebook.html#topics) all the
+referendums in the RDB were about:
+
+``` r
+rdb::rfrnds() |> rdb::plot_topic_segmentation(method = "per_topic_lineage")
+```
+
+```{r}
+#| echo: false
+
+rdb::rfrnds(quiet = TRUE) |> rdb::plot_topic_segmentation(method = "per_topic_lineage")
+```
+
+Again, see the package reference for [all available data tabulation and visualization functions](https://rdb.rpkg.dev/reference/index.html#augmentation). More
+will likely be added in the future.
+

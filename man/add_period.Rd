@@ -27,11 +27,11 @@ Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"cent
 \examples{
 rdb::rfrnds(country_code = "AT") |>
   rdb::add_period() |>
-  dplyr::select(any_of("id"), date, week)
+  dplyr::select(id, date, week)
 
 rdb::rfrnds(country_code = "AT") |>
   rdb::add_period("year") |>
-  dplyr::select(any_of("id"), date, year)
+  dplyr::select(id, date, year)
 }
 \seealso{
 Other referendum data augmentation functions:
