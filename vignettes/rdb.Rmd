@@ -1,6 +1,8 @@
 ---
 title: "Introduction to rdb"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    css: custom.css
 vignette: >
   %\VignetteIndexEntry{Introduction to rdb}
   %\VignetteEngine{knitr::rmarkdown}
@@ -165,4 +167,3 @@ rdb::rfrnds(quiet = TRUE) |> rdb::plot_topic_segmentation(method = "per_topic_li
 
 Again, see the package reference for [all available data tabulation and visualization functions](https://rdb.rpkg.dev/reference/index.html#augmentation). More
 will likely be added in the future.
-

@@ -12,9 +12,9 @@ A \link[tibble:tbl_df-class]{tibble}.
 data_codebook
 }
 \description{
-A tibble containing the complete metadata of all \code{\link[=rfrnds]{rfrnds()}} variables. The Codebook below is also available \href{https://rdb.rpkg.dev/articles/codebook.html}{online}.
+A tibble containing the complete metadata of all \code{\link[=rfrnds]{rfrnds()}} variables. The codebook below is also available \href{https://rdb.rpkg.dev/articles/codebook.html}{online}.
 }
-\details{
+\section{Codebook}{
 \subsection{Referendum-level variables}{
 
 For the following variables, the \href{https://en.wikipedia.org/wiki/Unit_of_observation}{unit of observation} is the individual referendum.
@@ -1882,6 +1882,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 }
+
 \examples{
 rdb::data_codebook
 }

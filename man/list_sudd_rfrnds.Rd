@@ -10,7 +10,8 @@ list_sudd_rfrnds(
   filter = list(territory_name_de = NULL, title_de = NULL, year_min = NULL, year_max =
     NULL),
   use_cache = TRUE,
-  max_cache_age = "1 week"
+  max_cache_age = "1 week",
+  quiet = FALSE
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ results via the \code{order} parameter is supported.
 \item{use_cache}{Return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{max_cache_age}.}
 
 \item{max_cache_age}{The duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Use \code{Inf} to disable cache expiry. Only relevant if \code{use_cache = TRUE}.}
+
+\item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} containing at least an \code{id_sudd} column.
@@ -66,7 +69,8 @@ rdb::list_sudd_rfrnds(mode = "filter",
   rdb::sudd_rfrnds()
 
 # get sudd.ch referendum data from five randomly picked referendums
-rdb::list_sudd_rfrnds(mode = "random") |>
+rdb::list_sudd_rfrnds(mode = "random",
+                      quiet = TRUE) |>
   rdb::sudd_rfrnds()
 }
 \seealso{

@@ -201,6 +201,11 @@ code > span.fu { color: #900; font-weight: bold; } /* Function calls */
 code > span.er { color: #a61717; background-color: #e3d2d2; } /* ErrorTok */
 
 /* BEGIN custom CSS */
+/* add spacing above h2 */
+h2 {
+  margin-top: 40px;
+}
+
 /* custom colors (used in topics hierarchy) */
 .color-azure {
   color: #007fff;
@@ -222,7 +227,31 @@ a.color-violet > code {
   color: #7f00ff;
 }
 
-a.color-rose > code{
+a.color-rose > code {
   color: #ff007f;
+}
+
+/* tweak h4 and lower headers for codebook items */
+.codebook-item h4 {
+  font-size: 1.2rem;
+  font-variant: small-caps;
+}
+
+.codebook-item h5 {
+  font-size: 1.1rem;
+}
+
+/* make `topics_tier_*` h4 headers same size as other items' h3 header */
+.codebook-item h4#topics_tier_1,
+.codebook-item h4#topics_tier_2,
+.codebook-item h4#topics_tier_3 {
+  font-size: 1.75rem;
+  font-variant: normal;
+}
+
+/* increase spacing between codebook items */
+.codebook-item {
+  margin-top: 40px;
+  margin-bottom: 60px;
 }
 /* END custom CSS */

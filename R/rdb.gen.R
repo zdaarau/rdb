@@ -1885,7 +1885,6 @@ sudd_rfrnd <- function(id_sudd) {
       # drop obsolete fields
       html %<>% .[-ix_option_names]
       field_names %<>% .[-ix_option_names]
-      
     }
   }
   
@@ -1928,21 +1927,25 @@ sudd_rfrnd <- function(id_sudd) {
                                          "$")) %>%
     which()
   
-  if (length(ix_fields_to_remarks)) {
+  if (length(ix_fields_to_remarks) > 0L) {
     
-    addendum <-
-      field_names[ix_fields_to_remarks] %>%
-      stringr::str_extract("\\w.*") %>%
-      paste0(": ",
-             html[ix_fields_to_remarks] %>%
-               rvest::html_elements(css = "td") %>%
-               magrittr::extract2(2L) %>%
-               rvest::html_elements(css = "data") %>%
-               rvest::html_attr("value"),
-             collapse = "\n\n")
+    addendum <- field_names[ix_fields_to_remarks]
     
-    remarks_list_col[[1]]$text %<>% paste0(addendum, "\n\n", .)
-    remarks_list_col[[1]]$html %<>% paste0("<p>\n", addendum, "\n</p>", .)
+    if (length(addendum) > 0L) {
+      
+      addendum %<>%
+        stringr::str_extract("\\w.*") %>%
+        paste0(": ",
+               html[ix_fields_to_remarks] %>%
+                 rvest::html_elements(css = "td") %>%
+                 magrittr::extract2(2L) %>%
+                 rvest::html_elements(css = "data") %>%
+                 rvest::html_attr("value"),
+               collapse = "\n\n")
+    }
+    
+    remarks_list_col[[1L]]$text %<>% paste0(addendum, "\n\n"[length(addendum) > 0L], .)
+    remarks_list_col[[1L]]$html %<>% paste0("<p>\n", addendum, "\n</p>", .)
     html %<>% .[-ix_fields_to_remarks]
     field_names %<>% .[-ix_fields_to_remarks]
   }
@@ -2174,9 +2177,16 @@ sudd_rfrnd <- function(id_sudd) {
 url_sudd <- function(x = "") {
 
   purrr::map_chr(x,
-                 ~ httr::modify_url(url = .x %|% "",
-                                    scheme = "https",
-                                    hostname = "sudd.ch"))
+                 \(x) {
+                   
+                   if (!is.na(x) && stringr::str_detect(x, "https?:")) {
+                     x
+                   } else {
+                     httr::modify_url(url = x %|% "",
+                                      scheme = "https",
+                                      hostname = "sudd.ch")
+                   }
+                 })
 }
 
 restore_topics <- function(topics_tier_1,
@@ -3414,7 +3424,9 @@ assert_vars <- function(data,
 
 #' RDB Codebook
 #'
-#' A tibble containing the complete metadata of all [rfrnds()] variables. The Codebook below is also available [online](`r url_codebook()`).
+#' A tibble containing the complete metadata of all [rfrnds()] variables. The codebook below is also available [online](`r url_codebook()`).
+#'
+#' # Codebook
 #'
 #' ```{r, child = "vignettes/codebook.Rmd"}
 #' ```
@@ -4883,6 +4895,7 @@ list_sudd_titles <- function() {
 #' - `year_max`: The upper year limit of the referendums' `date`. A positive integer.
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param max_cache_age `r pkgsnip::param_label("max_cache_age")`
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return A [tibble][tibble::tbl_df] containing at least an `id_sudd` column.
 #' @family sudd
@@ -4903,7 +4916,8 @@ list_sudd_titles <- function() {
 #'   rdb::sudd_rfrnds()
 #' 
 #' # get sudd.ch referendum data from five randomly picked referendums
-#' rdb::list_sudd_rfrnds(mode = "random") |>
+#' rdb::list_sudd_rfrnds(mode = "random",
+#'                       quiet = TRUE) |>
 #'   rdb::sudd_rfrnds()
 list_sudd_rfrnds <- function(mode = c("by_date",
                                       "by_mod_date",
@@ -4916,7 +4930,8 @@ list_sudd_rfrnds <- function(mode = c("by_date",
                                            year_min = NULL,
                                            year_max = NULL),
                              use_cache = TRUE,
-                             max_cache_age = "1 week") {
+                             max_cache_age = "1 week",
+                             quiet = FALSE) {
   # check args
   mode <- rlang::arg_match(mode)
   order <-
@@ -4925,6 +4940,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
                       "ascending"  ~ "asc",
                       "descending" ~ "desc",
                       .default = .)
+  checkmate::assert_flag(quiet)
   
   # do not cache `mode = "random"`
   if (mode == "random") use_cache <- FALSE
@@ -4991,10 +5007,12 @@ list_sudd_rfrnds <- function(mode = c("by_date",
                filter[mode == "filter"])
     
     # retrieve and parse data
-    status_msg <- "Fetching raw HTML data from {.url sudd.ch}..."
-    cli::cli_progress_step(msg = status_msg,
-                           msg_done = paste(status_msg, "done"),
-                           msg_failed = paste(status_msg, "failed"))
+    if (!quiet) {
+      status_msg <- "Fetching raw HTML data from {.url sudd.ch}..."
+      cli::cli_progress_step(msg = status_msg,
+                             msg_done = paste(status_msg, "done"),
+                             msg_failed = paste(status_msg, "failed"))
+    }
     
     html <-
       httr::RETRY(verb = "GET",
@@ -5003,10 +5021,12 @@ list_sudd_rfrnds <- function(mode = c("by_date",
                   times = 3L) %>%
       xml2::read_html()
     
-    status_msg <- "Parsing and tidying raw HTML data..."
-    cli::cli_progress_step(msg = status_msg,
-                           msg_done = paste(status_msg, "done"),
-                           msg_failed = paste(status_msg, "failed"))
+    if (!quiet) {
+      status_msg <- "Parsing and tidying raw HTML data..."
+      cli::cli_progress_step(msg = status_msg,
+                             msg_done = paste(status_msg, "done"),
+                             msg_failed = paste(status_msg, "failed"))
+    }
     
     if (mode == "random") {
       
@@ -5093,6 +5113,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
 #'   `id_sudd`. `NA`s are ignored.
 #' @param use_cache `r pkgsnip::param_label("use_cache")`
 #' @param max_cache_age `r pkgsnip::param_label("max_cache_age")`
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `r pkgsnip::return_label("data")` The column names are aligned with those of [rfrnds()] as closely as possible.
 #' @family sudd
@@ -5105,7 +5126,10 @@ list_sudd_rfrnds <- function(mode = c("by_date",
 #' rdb::rfrnds(country_code = "AT") |> rdb::sudd_rfrnds()
 sudd_rfrnds <- function(ids_sudd,
                         use_cache = TRUE,
-                        max_cache_age = "1 week") {
+                        max_cache_age = "1 week",
+                        quiet = FALSE) {
+  
+  checkmate::assert_flag(quiet)
   
   if (purrr::pluck_depth(ids_sudd) > 1L) {
     
@@ -5125,8 +5149,8 @@ sudd_rfrnds <- function(ids_sudd,
   pkgpins::with_cache(expr = {
     
     ids_sudd %>%
-      cli::cli_progress_along(name = "Scraping referendum data from sudd.ch") %>%
-      purrr::map(~ sudd_rfrnd(ids_sudd[.x])) %>%
+      purrr::map(.f = \(x) sudd_rfrnd(x),
+                 .progress = if (quiet) FALSE else "Scraping referendum data from sudd.ch") %>%
       purrr::list_rbind() %>%
       # properly parse `date`
       dplyr::bind_cols(.$date %>% purrr::map(parse_sudd_date) %>% purrr::list_rbind()) %>%

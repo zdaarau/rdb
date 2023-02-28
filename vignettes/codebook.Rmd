@@ -108,107 +108,113 @@ var_sections <- function(data,
       value_label_suffix %<>% pal::strip_md_footnotes()
     }
     
-    list(if (variable_name == "topics_tier_1") {
-      c("### Topics",
-        "",
-        "The political topics to classify referendums are organized on a three-tier hierarchy as follows:",
-        "",
-        unique(rdb::data_topics$topic_tier_1) %>% purrr::map_chr(function(topic_tier_1) {
-          
-          result <- ifelse(strip_extended_pandoc,
-                           paste0("\n- ", topic_tier_1),
-                           paste0("\n- [", topic_tier_1, "]{.color-azure}"))
-          
-          result %<>% paste0(rdb::data_topics %>%
-                               dplyr::filter(topic_tier_1 == !!topic_tier_1) %$%
-                               topic_tier_2 %>%
-                               unique() %>%
-                               purrr::map_chr(function(topic_tier_2) {
-                                 
-                                 result <- ifelse(strip_extended_pandoc,
-                                                  paste0("\n  - ", topic_tier_2),
-                                                  paste0("\n  - [", topic_tier_2, "]{.color-violet}"))
-                                 
-                                 result %<>% paste0(rdb::data_topics %>%
-                                                      dplyr::filter(topic_tier_2 == !!topic_tier_2) %$%
-                                                      topic_tier_3 %>%
-                                                      setdiff(NA_character_) %>%
-                                                      purrr::map_chr(~ ifelse(strip_extended_pandoc,
-                                                                              paste0("\n    - ", .x),
-                                                                              paste0("\n    - [", .x, "]{.color-rose}"))) %>%
-                                                      paste0(collapse = ""))
-                                 result
-                               }) %>%
-                               paste0(collapse = ""))
-          result
-        }),
-        "",
-        paste0("<sup>[`topics_tier_1`](#topics_tier_1){.color-azure} are colored in [azure]{.color-azure}, [`topics_tier_2`](#topics_tier_2){.color-violet} ",
-               "in [violet]{.color-violet} and [`topics_tier_3`](#topics_tier_3){.color-rose} in [rose]{.color-rose}.</sup>")[!strip_extended_pandoc],
-        "",
-        paste0("The hierarchical relations between the three topic variables `topics_tier_1`, `topics_tier_2` and `topics_tier_3` can be reconstructed at any ",
-               "time using ",
-               ifelse(strip_extended_pandoc,
-                      "[hierarchize_topics()]",
-                      "[`hierarchize_topics()`](https://rdb.rpkg.dev/reference/hierarchize_topics.html)"),
-               ". This function can also be used to simply determine the ",
-               "parent topic(s) of any topic."),
-        "")
-    },
-    glue::glue(ifelse(stringr::str_detect(string = variable_name,
-                                          pattern = "^topics_tier_\\d+$"),
-                      "#",
-                      ""),
-               "### `{variable_name}`"),
-    "",
-    variable_label %>% pal::sentenceify(),
-    "",
-    if (is_opt) {
-      c("#### Origin",
-        "",
-        glue::glue("This variable is derived from ", pal::prose_ls(rdb:::md_link_codebook(unlist(derived_from))), " and can be generated on demand via ",
-                   ifelse(strip_extended_pandoc,
-                          "[{gen_fn}()]",
-                          "[`{gen_fn}()`](https://rdb.rpkg.dev/reference/{gen_fn}.html)"),
-                   "."),
-        "")
-    },
-    if (length(variable_values)) {
-      c(paste0("#### Possible values", glue::glue(" {{#{variable_name}-values}}")[!strip_extended_pandoc]),
-        "",
-        if (length(value_labels)) {
-          c("| Value | Meaning |",
-            "| :---- | :------ |",
-            variable_values %>% purrr::map2_chr(.y = value_labels,
-                                                .f = ~ glue::glue("| `{.x}` | {.y} |")))
-        } else {
-          c("| Value |",
-            "| :---- |",
-            variable_values %>% purrr::map_chr(~ glue::glue("| `{.x}` |")))
-        },
-        # if (!is.null(value_default)) c("", glue::glue("The default value is: `{value_default}`")),
-        "")
-    },
-    if (is_multi_valued) {
-      c(paste0("_This is a multi-value variable", "[^multi-val-var]"[!strip_extended_pandoc], " and thus of type `list`._"),
-        "")
-    },
-    if (!is.na(applicability_constraint)) {
-      c(paste0("#### Applicability constraint", glue::glue(" {{#{variable_name}-constraint}}")[!strip_extended_pandoc]),
-        "",
-        "This variable is only applicable under the following condition:",
-        "",
-        "```r",
-        applicability_constraint,
-        "```",
-        "")
-    },
-    if (value_scale != "undefined") {
-      c(paste0("#### Level of measurement", glue::glue(" {{#{variable_name}-scale}}")[!strip_extended_pandoc]),
-        "",
-        glue::glue("This variable's [scale of measure](https://en.wikipedia.org/wiki/Level_of_measurement) is the **{value_scale}** level."),
-        "")
-    }) %>%
+    list(
+      if (variable_name == "topics_tier_1") {
+        c("### Topics",
+          "",
+          "The political topics to classify referendums are organized on a three-tier hierarchy as follows:",
+          "",
+          unique(rdb::data_topics$topic_tier_1) %>% purrr::map_chr(function(topic_tier_1) {
+            
+            result <- ifelse(strip_extended_pandoc,
+                             paste0("\n- ", topic_tier_1),
+                             paste0("\n- [", topic_tier_1, "]{.color-azure}"))
+            
+            result %<>% paste0(rdb::data_topics %>%
+                                 dplyr::filter(topic_tier_1 == !!topic_tier_1) %$%
+                                 topic_tier_2 %>%
+                                 unique() %>%
+                                 purrr::map_chr(function(topic_tier_2) {
+                                   
+                                   result <- ifelse(strip_extended_pandoc,
+                                                    paste0("\n  - ", topic_tier_2),
+                                                    paste0("\n  - [", topic_tier_2, "]{.color-violet}"))
+                                   
+                                   result %<>% paste0(rdb::data_topics %>%
+                                                        dplyr::filter(topic_tier_2 == !!topic_tier_2) %$%
+                                                        topic_tier_3 %>%
+                                                        setdiff(NA_character_) %>%
+                                                        purrr::map_chr(~ ifelse(strip_extended_pandoc,
+                                                                                paste0("\n    - ", .x),
+                                                                                paste0("\n    - [", .x, "]{.color-rose}"))) %>%
+                                                        paste0(collapse = ""))
+                                   result
+                                 }) %>%
+                                 paste0(collapse = ""))
+            result
+          }),
+          "",
+          paste0("<sup>[`topics_tier_1`](#topics_tier_1){.color-azure} are colored in [azure]{.color-azure}, [`topics_tier_2`](#topics_tier_2){.color-violet} ",
+                 "in [violet]{.color-violet} and [`topics_tier_3`](#topics_tier_3){.color-rose} in [rose]{.color-rose}.</sup>")[!strip_extended_pandoc],
+          "",
+          paste0("The hierarchical relations between the three topic variables `topics_tier_1`, `topics_tier_2` and `topics_tier_3` can be reconstructed at any ",
+                 "time using ",
+                 ifelse(strip_extended_pandoc,
+                        "[hierarchize_topics()]",
+                        "[`hierarchize_topics()`](https://rdb.rpkg.dev/reference/hierarchize_topics.html)"),
+                 ". This function can also be used to simply determine the ",
+                 "parent topic(s) of any topic."),
+          "")
+      },
+      c("::: {.codebook-item}",
+        "")[to_pandoc],
+      glue::glue(ifelse(stringr::str_detect(string = variable_name,
+                                            pattern = "^topics_tier_\\d+$"),
+                        "#",
+                        ""),
+                 "### `{variable_name}`"),
+      "",
+      variable_label %>% pal::sentenceify(),
+      "",
+      if (is_opt) {
+        c("#### Origin",
+          "",
+          glue::glue("This variable is derived from ", pal::prose_ls(rdb:::md_link_codebook(unlist(derived_from))), " and can be generated on demand via ",
+                     ifelse(strip_extended_pandoc,
+                            "[{gen_fn}()]",
+                            "[`{gen_fn}()`](https://rdb.rpkg.dev/reference/{gen_fn}.html)"),
+                     "."),
+          "")
+      },
+      if (length(variable_values)) {
+        c(paste0("#### Possible values", glue::glue(" {{#{variable_name}-values}}")[!strip_extended_pandoc]),
+          "",
+          if (length(value_labels)) {
+            c("| Value | Meaning |",
+              "| :---- | :------ |",
+              variable_values %>% purrr::map2_chr(.y = value_labels,
+                                                  .f = ~ glue::glue("| `{.x}` | {.y} |")))
+          } else {
+            c("| Value |",
+              "| :---- |",
+              variable_values %>% purrr::map_chr(~ glue::glue("| `{.x}` |")))
+          },
+          # if (!is.null(value_default)) c("", glue::glue("The default value is: `{value_default}`")),
+          "")
+      },
+      if (is_multi_valued) {
+        c(paste0("_This is a multi-value variable", "[^multi-val-var]"[!strip_extended_pandoc], " and thus of type `list`._"),
+          "")
+      },
+      if (!is.na(applicability_constraint)) {
+        c(paste0("#### Applicability constraint", glue::glue(" {{#{variable_name}-constraint}}")[!strip_extended_pandoc]),
+          "",
+          "This variable is only applicable under the following condition:",
+          "",
+          "```r",
+          applicability_constraint,
+          "```",
+          "")
+      },
+      if (value_scale != "undefined") {
+        c(paste0("#### Level of measurement", glue::glue(" {{#{variable_name}-scale}}")[!strip_extended_pandoc]),
+          "",
+          glue::glue("This variable's [scale of measure](https://en.wikipedia.org/wiki/Level_of_measurement) is the **{value_scale}** level."),
+          "")
+      },
+      c(":::",
+        "")[to_pandoc]
+    ) %>%
       pal::when(strip_anchors ~ strip_anchors(.),
                 ~ .)
   })
