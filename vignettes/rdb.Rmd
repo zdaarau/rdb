@@ -165,5 +165,5 @@ rdb::rfrnds() |> rdb::plot_topic_segmentation(method = "per_topic_lineage")
 rdb::rfrnds(quiet = TRUE) |> rdb::plot_topic_segmentation(method = "per_topic_lineage")
 ```
 
-Again, see the package reference for [all available data tabulation and visualization functions](https://rdb.rpkg.dev/reference/index.html#augmentation). More
+Again, see the package reference for [all available data visualization and tabulation functions](https://rdb.rpkg.dev/reference/index.html#visualization). More
 will likely be added in the future.
