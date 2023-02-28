@@ -73,14 +73,7 @@
 
 ## rdb R package
 
--   Once referendum deletions are possible on production servers, extend tests to modify every single data field individually.
-
--   Once [issue #82](https://github.com/ccmdesign/c2d-app/issues/82) is fixed, remove/adapt all remaining code handling `country_code_historical` and
-    `is_past_jurisdiction` (especially the sudd.ch-related fns have to be overhauled)
-
--   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook).
-
--   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
+-   Customize Codebook CSS: `<h4>` and below should be smaller!
 
 -   Automated vote entry creation by feeding scraped sudd.ch data to `rdb::add_rfrnds()`.
 
@@ -479,3 +472,12 @@
 -   C2D website: The about text should be overhauled.
 
 -   C2D website: The listing of referendums should be overhauled. It currently lacks important information, e.g. `level`.
+
+-   Once referendum deletions are possible on production servers, extend tests to modify every single data field individually.
+
+-   Once [issue #82](https://github.com/ccmdesign/c2d-app/issues/82) is fixed, remove/adapt all remaining code handling `country_code_historical` and
+    `is_past_jurisdiction` (especially the sudd.ch-related fns have to be overhauled)
+
+-   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook).
+
+-   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
