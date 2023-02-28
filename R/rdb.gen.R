@@ -155,7 +155,7 @@ utils::globalVariables(names = c(".",
   tryCatch(expr = pkgpins::clear_cache(board = pkgpins::board(pkg = pkgname),
                                        max_age = pal::pkg_config_val(key = "global_max_cache_age",
                                                                      pkg = pkgname)),
-           error = function(e) cli::cli_alert_warning(text = "Failed to clear pkgpins cache on load of {.pkg pkgname}. Error message: {e$message}"))
+           error = function(e) cli::cli_alert_warning(text = "Failed to clear pkgpins cache on load of {.pkg {pkgname}}. Error message: {e$message}"))
 }
 
 
@@ -5242,20 +5242,4 @@ is_online <- function(use_testing_server = pal::pkg_config_val(key = "use_testin
 #'
 #' @examples
 #' rdb::pkg_config
-pkg_config <-
-  tibble::tibble(key = character(),
-                 default_value = list(),
-                 description = character()) %>%
-  tibble::add_row(key = "api_username",
-                  description = "RDB Services API username") %>%
-  tibble::add_row(key = "api_password",
-                  description = "RDB Services API password") %>%
-  tibble::add_row(key = "global_max_cache_age",
-                  default_value = list("30 days"),
-                  description = pkgsnip::md_snip("opt_global_max_cache_age")) %>%
-  tibble::add_row(key = "use_testing_server",
-                  default_value = list(FALSE),
-                  description = "Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.") %>%
-  tibble::add_row(key = "test_testing_server",
-                  default_value = list(FALSE),
-                  description = "Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.")
+"pkg_config"

@@ -1,4 +1,4 @@
-# rdb: Download Data from the Referendum Database (RDB), Which Covers Direct Democratic Votes Worldwide
+# rdb
 
 <a href="https://cran.r-project.org/package=rdb" class="pkgdown-release"><img src="https://r-pkg.org/badges/version/rdb" alt="CRAN Status" /></a>
 

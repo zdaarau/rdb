@@ -3,41 +3,20 @@ editor_options:
   chunk_output_type: console
 ---
 
-NOTES:
+# NOTES
 
 -   This file is *not* included in the [source package](https://r-pkgs.org/package-structure-state.html#source-package) because of the [`.nopurl` suffix in the
     filename](https://pkgpurl.rpkg.dev/reference/purl_rmd.html#-rmd-files-excluded-from-purling).
 
 -   The chunks below have to be manually executed in order to regenerate the package data.
 
-# Exported data
-
-NOTES:
-
--   When used internally, other than internal data, exported data must always be referred to by its explicit namespace, i.e. e.g. `rdb::data_codebook`.
-
-## Write data
-
-Save all the bigger data objects to separate files under `data/*.rda`. Note that when documenting them, they mustn't be explicitly `@export`ed since they're
-already automatically exported and thus available to package users.
-
-```{r}
-# usethis::use_data(,
-#                   internal = FALSE,
-#                   overwrite = TRUE,
-#                   compress = "xz",
-#                   version = 3L)
-```
-
-# Internal data
-
-NOTES:
-
 -   Although the datasets below are saved as ["internal data" in `R/sysdata.rda`](https://r-pkgs.org/data.html#data-sysdata), they can still be exported and
     documented (by documenting the dataset's quoted name in the main `.Rmd` source file -- which only works when the dataset is also `@export`ed), something
     [not explicitly mentioned](https://coolbutuseless.github.io/2018/12/10/r-packages-internal-and-external-data/) in the book [R
     Packages](https://r-pkgs.org/data.html#data-data). To do so, you first need to manually add the `export()` directive in the NAMESPACE file since roxygen2
     won't add it automatically.
+
+# Define data
 
 ## `data_codebook`
 
@@ -334,6 +313,28 @@ months_de <-
 months_de_fms <- rdb:::as_fm_list(months_de)
 ```
 
+## `pkg_config`
+
+```{r}
+pkg_config <-
+  tibble::tibble(key = character(),
+                 default_value = list(),
+                 description = character()) %>%
+  tibble::add_row(key = "api_username",
+                  description = "RDB Services API username") %>%
+  tibble::add_row(key = "api_password",
+                  description = "RDB Services API password") %>%
+  tibble::add_row(key = "global_max_cache_age",
+                  default_value = list("30 days"),
+                  description = pkgsnip::md_snip("opt_global_max_cache_age")) %>%
+  tibble::add_row(key = "use_testing_server",
+                  default_value = list(FALSE),
+                  description = "Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.") %>%
+  tibble::add_row(key = "test_testing_server",
+                  default_value = list(FALSE),
+                  description = "Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.")
+```
+
 ## `topics_tier_#_`
 
 Only for performance-reasons.
@@ -559,7 +560,7 @@ val_set$country_name_long      <- sort(unique(c(data_iso_3166_1$name_long,
                                                 data_iso_3166_3$name_long)))
 ```
 
-## Write data
+# Write data
 
 Save all the small data objects as a single internal file `R/sysdata.rda`. Note that when documenting them, they must be explicitly `@export`ed to be available
 to package users.
@@ -572,6 +573,7 @@ usethis::use_data(country_codes_sudd_invalid,
                   data_topics,
                   months_de,
                   months_de_fms,
+                  pkg_config,
                   topics_tier_1_,
                   topics_tier_2_,
                   topics_tier_3_,

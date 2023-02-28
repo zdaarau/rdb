@@ -1,0 +1,57 @@
+---
+title: "Introduction to rdb"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to rdb}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+#| include: false
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+pkg_metadata <- pal::desc_list()
+```
+
+# Installation
+
+rdb is not on CRAN yet[^1], but you can install the package directly from the development source code repository's [`master`
+branch](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/master), which we try to keep in a working state at all times.
+
+```{r}
+#| label: install-snippet-dev
+#| child: !expr pkgsnip::snip_path("installation-notice_dev-version_gitlab.Rmd")
+```
+
+[^1]: We will probably release the package on CRAN once the current database and backend overhaul is complete and the rdb R package is properly adapted to use
+    the new infrastructure, as well as sufficiently tested. This will most likely not happen before the end of 2023.
+
+# Usage
+
+You can fetch RDB referendum data via the two functions `rdb::rfrnd()` and `rdb::rfrnds()`. The former one fetches the data of a single referendum only, of
+which you must already know its uniqe RDB `id`. The latter function allows to fetch data for an arbitrary number of referendums, depending on the conditions you
+specify via the [function's various arguments](https://rdb.rpkg.dev/reference/rfrnds.html#arguments).
+
+To simply retrieve all referendums in the database, run
+
+``` r
+rdb::rfrnds()
+```
+
+which should output a [tibble](https://tibble.tidyverse.org/) like this one:
+
+```{r}
+#| echo: false
+
+rdb::rfrnds()
+```
+
+Results of `rdb::rfrnds()` and some other functions in this package are by default cached using [pkgpins](https://pkgpins.rpkg.dev/). You can define the maximum
+age of cached results you're willing to accept via the function argument `max_cache_age`.
+
+You can also completely opt out of caching by setting `use_cache = FALSE`. But please don't ...

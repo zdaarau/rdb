@@ -293,8 +293,10 @@
 
 -   Der C2D-Link auf der [ZDA-Webseite](https://www.zdaarau.ch/en/applications) sollte auf HTTP**S** geändert werden!
 
--   Mögliche IT-Firmen, die als Nachfolge für CCM Design möglicherweise in Frage kommen:
+-   IT-Firmen, die als Nachfolge für CCM Design möglicherweise in Frage kommen:
 
+    -   [PM TechHub](https://techhub.p-m.si/), Slowenien: Für den Neubau der `rdb.vote`-Hauptseite. Sie sind JAMStack-Profis und [Maintainer des Git-basierten
+        CMS *Decap*](https://techhub.p-m.si/insights/introducing-decap-cms/).
     -   [Brudi](https://www.brudi.com/), Zürich
     -   [Cloud68](https://cloud68.co/), Estland
     -   [Liip](https://www.liip.ch/), Zürich (und weitere CH-Städte)
