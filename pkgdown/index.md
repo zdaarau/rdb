@@ -23,6 +23,7 @@ An introduction to this package is given [here](articles/rdb.html). The (functio
 
 ## Package configuration
 
+::: table-wide
 Some of rdb's functionality is controlled via package-specific global configuration which can either be set via [R options](https://rdrr.io/r/base/options.html) or [environment variables](https://en.wikipedia.org/wiki/Environment_variable) (the former take precedence). This configuration includes:
 
   **Description**                                                                                                                                              **R option**                 **Environment variable**     **Default value**
@@ -32,6 +33,7 @@ Some of rdb's functionality is controlled via package-specific global configurat
   Maximal timespan to preserve the package's [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading.   `rdb.global_max_cache_age`   `RDB_GLOBAL_MAX_CACHE_AGE`   `"30 days"`
   Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.                                                  `rdb.use_testing_server`     `RDB_USE_TESTING_SERVER`     `FALSE`
   Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.                                      `rdb.test_testing_server`    `RDB_TEST_TESTING_SERVER`    `FALSE`
+:::
 
 ## Development
 
