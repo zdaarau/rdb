@@ -1,6 +1,13 @@
-/* add spacing above h2 */
+/* add more spacing above h2 */
 h2 {
   margin-top: 40px;
+}
+
+/* make tables adapt to viewport width */
+.table {
+  min-width: 100%;
+  max-width: 1320px;
+  width: 85vw;
 }
 
 /* custom colors (used in topics hierarchy) */
