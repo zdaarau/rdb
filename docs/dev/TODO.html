@@ -102,7 +102,13 @@
 </ul></div>
 <div class="section level2">
 <h2 id="rdb-r-package">rdb R package<a class="anchor" aria-label="anchor" href="#rdb-r-package"></a></h2>
-<ul><li><p>Automated vote entry creation by feeding scraped sudd.ch data to <code><a href="reference/add_rfrnds.html">rdb::add_rfrnds()</a></code>.</p></li>
+<ul><li>
+<p>Adapt code to use NocoDB’s API instead of <code>services.c2d.ch</code> after we finished basic transition to NocoDB.</p>
+<p>We should probably either use</p>
+<ul><li>the R package <a href="https://github.com/bergant/rapiclient" class="external-link">rapiclient</a> which can automatically extract the relevant specs from the OpenAPI definition, or</li>
+<li>the <a href="https://openapi-generator.tech/" class="external-link">OpenAPI Generator</a> which apparently can <a href="https://community.rstudio.com/t/generate-rest-api-clients-in-r-using-openapi-generator/141374" class="external-link">generate a ready-made R package from an OpenAPI definition</a> (see also <a href="https://community.rstudio.com/t/anyone-using-openapi-generator-to-generate-r-packages/94486" class="external-link">this post</a>).</li>
+</ul></li>
+<li><p>Automated vote entry creation by feeding scraped sudd.ch data to <code><a href="reference/add_rfrnds.html">rdb::add_rfrnds()</a></code>.</p></li>
 <li>
 <p>For meaningful cross-time analyses, we need additional information about countries (“jurisdictions”):</p>
 <ul><li>

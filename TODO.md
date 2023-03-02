@@ -73,6 +73,15 @@
 
 ## rdb R package
 
+-   Adapt code to use NocoDB's API instead of `services.c2d.ch` after we finished basic transition to NocoDB.
+
+    We should probably either use
+
+    -   the R package [rapiclient](https://github.com/bergant/rapiclient) which can automatically extract the relevant specs from the OpenAPI definition, or
+    -   the [OpenAPI Generator](https://openapi-generator.tech/) which apparently can [generate a ready-made R package from an OpenAPI
+        definition](https://community.rstudio.com/t/generate-rest-api-clients-in-r-using-openapi-generator/141374) (see also [this
+        post](https://community.rstudio.com/t/anyone-using-openapi-generator-to-generate-r-packages/94486)).
+
 -   Automated vote entry creation by feeding scraped sudd.ch data to `rdb::add_rfrnds()`.
 
 -   For meaningful cross-time analyses, we need additional information about countries ("jurisdictions"):
@@ -479,3 +488,4 @@
 -   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook).
 
 -   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
+
