@@ -73,8 +73,6 @@
 
 ## rdb R package
 
--   Customize Codebook CSS: `<h4>` and below should be smaller!
-
 -   Automated vote entry creation by feeding scraped sudd.ch data to `rdb::add_rfrnds()`.
 
 -   For meaningful cross-time analyses, we need additional information about countries ("jurisdictions"):
