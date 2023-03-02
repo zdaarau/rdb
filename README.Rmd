@@ -2,6 +2,16 @@
 output: pal::gitlab_document
 ---
 
+```{r}
+#| label: setup
+#| include: false
+
+library(rlang,
+        include.only = c("%|%", "%||%"))
+library(magrittr,
+        include.only = c("%>%", "%<>%", "%T>%", "%!>%", "%$%"))
+```
+
 # `r pal::desc_value("Package")`
 
 ```{r}
@@ -9,14 +19,11 @@ output: pal::gitlab_document
 #| results: asis
 #| echo: false
 
-paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::desc_value(key = "Package"), ")](https://cran.r-project.org/package=",
-       pal::desc_value(key = "Package"), "){.pkgdown-release}\n\n") |>
-  cat()
-
-pal::desc_value("Description") |>
-  stringr::str_replace("(Centre for Democracy Studies Aarau \\(ZDA\\))",
-                       "[\\1](https://www.zdaarau.ch/en/)") |>
-  cat()
+pal::cat_lines(paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::desc_value(key = "Package"), ")](https://cran.r-project.org/package=",
+                      pal::desc_value(key = "Package"), "){.pkgdown-release}"),
+               "",
+               pal::desc_value("Description") |> stringr::str_replace("(Centre for Democracy Studies Aarau \\(ZDA\\))",
+                                                                      "[\\1](https://www.zdaarau.ch/en/)"))
 ```
 
 ```{r}
@@ -28,7 +35,7 @@ pkgsnip::md_snip(name = "pkgdown_notice") %>%
   paste0("## Documentation\n\n",
          "[![Netlify Status](https://api.netlify.com/api/v1/badges/a8c23b19-d831-4621-81a8-0a5a346c3df9/deploy-status)]",
          "(https://app.netlify.com/sites/rdb-rpkg-dev/deploys)\n\n",
-         .) %>%
+         .) |>
   pal::cat_lines()
 ```
 
@@ -45,7 +52,7 @@ pkgsnip::md_snip(name = "pkgdown_notice") %>%
 #| results: asis
 #| echo: false
 pkgsnip::md_snip(name = "usage_notice") %>%
-  paste0("## Usage\n\n", .) %>%
+  paste0("## Usage\n\n", .) |>
   pal::cat_lines()
 ```
 
@@ -57,9 +64,9 @@ pkgsnip::md_snip(name = "usage_notice") %>%
 #| results: "asis"
 
 pkgsnip::md_snip(name = "pkg_config",
-                 pkg = "fokus")
+                 pkg = "rdb")
 cat("\n\n")
-pal::print_pkg_config("fokus")
+pal::print_pkg_config("rdb")
 ```
 
 ## Development

@@ -25,13 +25,15 @@ remotes::install_gitlab(repo = "zdaarau/rpkgs/rdb")
 
 ## Package configuration
 
-Some of fokus’s functionality is controlled via package-specific global configuration which can either be set via [R options](https://rdrr.io/r/base/options.html) or [environment variables](https://en.wikipedia.org/wiki/Environment_variable) (the former take precedence). This configuration includes:
+Some of rdb’s functionality is controlled via package-specific global configuration which can either be set via [R options](https://rdrr.io/r/base/options.html) or [environment variables](https://en.wikipedia.org/wiki/Environment_variable) (the former take precedence). This configuration includes:
 
-| **Description**                                                                                                                                                                     | **R option**                    | **Environment variable**        | **Default value** |
-|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------|:--------------------------------|:------------------|
-| Maximal timespan to preserve the package’s [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading.                          | `fokus.global_max_cache_age`    | `FOKUS_GLOBAL_MAX_CACHE_AGE`    | `"1 day"`         |
-| path to the working directory (the local instance of the [`fokus_private` repository](https://gitlab.com/zdaarau/private/fokus_private)); defaults to the current working directory | `fokus.path_repo_private`       | `FOKUS_PATH_REPO_PRIVATE`       |                   |
-| local filesystem path to copy the built fokus qstnr to (e.g. a Git repository that in turn deploys to a static website)                                                             | `fokus.qstnr.local_deploy_path` | `FOKUS_QSTNR_LOCAL_DEPLOY_PATH` |                   |
+| **Description**                                                                                                                                            | **R option**               | **Environment variable**   | **Default value** |
+|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------|:---------------------------|:------------------|
+| RDB Services API username                                                                                                                                  | `rdb.api_username`         | `RDB_API_USERNAME`         |                   |
+| RDB Services API password                                                                                                                                  | `rdb.api_password`         | `RDB_API_PASSWORD`         |                   |
+| Maximal timespan to preserve the package’s [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading. | `rdb.global_max_cache_age` | `RDB_GLOBAL_MAX_CACHE_AGE` | `"30 days"`       |
+| Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.                                                | `rdb.use_testing_server`   | `RDB_USE_TESTING_SERVER`   | `FALSE`           |
+| Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.                                    | `rdb.test_testing_server`  | `RDB_TEST_TESTING_SERVER`  | `FALSE`           |
 
 ## Development
 
