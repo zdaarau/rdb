@@ -4374,7 +4374,10 @@ printify_col_names <- function(data) {
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(country_code = "AT") |> rdb::plot_rfrnd_share_per_period(by = "level")
+#' rdb::rfrnds(country_code = "CH",
+#'             quiet = TRUE,
+#'             max_cache_age = "1 year") |>
+#'   rdb::plot_rfrnd_share_per_period(by = "level")
 plot_rfrnd_share_per_period <- function(data,
                                         by,
                                         period = c("week", "month", "quarter", "year", "decade", "century")) {
@@ -4595,7 +4598,11 @@ plot_topic_segmentation <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(country_code = "AT") |> rdb::plot_topic_share_per_period()
+#' rdb::rfrnds(country_code = "CH",
+#'             level = "national",
+#'             quiet = TRUE,
+#'             max_cache_age = "1 year") |>
+#'   rdb::plot_topic_share_per_period(period = "decade")
 plot_topic_share_per_period <- function(data,
                                         tier = 1L,
                                         period = c("week", "month", "quarter", "year", "decade", "century"),
