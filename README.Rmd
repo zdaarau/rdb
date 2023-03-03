@@ -58,7 +58,6 @@ pkgsnip::md_snip(name = "usage_notice") %>%
 
 ## Package configuration
 
-::: table-wide
 ```{r}
 #| label: pkg-config
 #| echo: false
@@ -66,10 +65,10 @@ pkgsnip::md_snip(name = "usage_notice") %>%
 
 pkgsnip::md_snip(name = "pkg_config",
                  pkg = "rdb")
-cat("\n\n")
+cat("\n\n::: {.table-wide}\n ")
 pal::print_pkg_config("rdb")
+cat("\n :::")
 ```
-:::
 
 ## Development
 
