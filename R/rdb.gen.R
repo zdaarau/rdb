@@ -2270,6 +2270,7 @@ plot_share_per_period <- function(data_freq,
                   y = ~n,
                   name = ~eval(as.symbol(x))) %>%
     plotly::layout(hovermode = "x",
+                   legend = list(orientation = "h"),
                    xaxis = list(dtick = switch(EXPR = period,
                                                week = 1L,
                                                month = 1L,
