@@ -58,8 +58,8 @@ rdb::rfrnds(quiet = TRUE)
 The RDB referendum data's individual variables (columns) are documented in the [codebook](https://rdb.rpkg.dev/articles/codebook.html). It is also available as
 a dataset via `rdb::data_codebook`.
 
-Results of `rdb::rfrnds()` and some other functions in this package are by default cached on disk using [pkgpins](https://pkgpins.rpkg.dev/). You can define the
-maximum age of cached results you're willing to tolerate via the argument `max_cache_age` (defaults to a week). It accepts anything that can be successfully
+Results of `rdb::rfrnds()` and some other functions in this package are by default cached on disk using [pkgpins](https://pkgpins.rpkg.dev/)[^2]. You can define
+the maximum age of cached results you're willing to tolerate via the argument `max_cache_age` (defaults to a week). It accepts anything that can be successfully
 converted to a [lubridate duration](https://lubridate.tidyverse.org/reference/as.duration.html) -- e.g. a string like `"3 hours"`, `"2 days"` or `"1 week"`, or
 a number which will simply be interpreted as *number of seconds*.
 
@@ -71,6 +71,15 @@ rdb::rfrnds(max_cache_age = "4 hours 48 minutes")
 
 Although we usually advise against it, you can also completely opt out of caching by specifying `use_cache = FALSE`. However, please make sure to not run such
 code in excess, as it creates additional (and most likely unnecessary) load on our servers.
+
+[^2]: Caching happens per unique combination of *evaluated* function arguments (excluding any of the arguments `incl_archive`, `use_cache`, `max_cache_age` and
+    `quiet`). This means that when `rdb::rfrnds()` is invoked two times in a row with the exact same set of arguments, say `country_code = "CH"` and
+    `level = c("national", "subnational")`, the second invocation will read the result from disk and thus is considerably faster (as long as `use_cache` is set
+    to `TRUE` and `max_cache_age` is set to a timespan greater than the delay between invocations).
+
+    Since every argument combination is cached separately, altering the arguments will inevitably result in a new cache entry, regardless whether the actual
+    data would technically already be present in an existing cache entry. E.g. `rdb::rfrnds(country_code = "CH", level = "national")` returns a perfect subset
+    of the just mentioned invocation, nevertheless the data is freshly fetched the first time it is run.
 
 ## Augment data
 
