@@ -16,6 +16,15 @@ editor_options:
     Packages](https://r-pkgs.org/data.html#data-data). To do so, you first need to manually add the `export()` directive in the NAMESPACE file since roxygen2
     won't add it automatically.
 
+# Setup
+
+```{r}
+library(rlang,
+        include.only = c("%|%", "%||%"))
+library(magrittr,
+        include.only = c("%>%", "%<>%", "%T>%", "%!>%", "%$%"))
+```
+
 # Define data
 
 ## `data_codebook`
@@ -417,10 +426,10 @@ un_regions <-
   un_regions_tier_1 %>%
   dplyr::full_join(y = un_regions_tier_2,
                    by = dplyr::join_by(children_tier_1 == un_region_tier_2_code),
-                   multiple = "all") %>%
+                   relationship = "one-to-many") %>%
   dplyr::full_join(y = un_regions_tier_3,
                    by = dplyr::join_by(children_tier_2 == un_region_tier_3_code),
-                   multiple = "all") %>%
+                   relationship = "one-to-many") %>%
   dplyr::mutate(un_region_tier_2_code = dplyr::if_else(is.na(un_region_tier_2_name),
                                                        NA_character_,
                                                        children_tier_1),
@@ -442,7 +451,7 @@ un_regions <-
   dplyr::left_join(y = codes,
                    by = "un_country_code",
                    # NOTE: we must allow multiple matches because of the manual "corrections" in `codes` above
-                   multiple = "all") %>%
+                   relationship = "one-to-many") %>%
   dplyr::relocate(country_code) %>%
   # remove rows without `country_code` (Sark)
   dplyr::filter(!is.na(country_code)) %>%

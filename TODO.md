@@ -2,6 +2,8 @@
 
 ## To be discussed (-\> convert to GitLab issues (adding an additional `to be discussed` label)!)
 
+-   Experiment with `plotly::plot_ly(colors = viridis::turbo(n = ?))` in `plot_topic_segmentation()`
+
 -   [Variable `type` should be multivalued](https://gitlab.com/zdaarau/rpkgs/rdb/-/issues/3)
 
 -   [Rethink how to capture referendums with other or more than yes-or-no answer options](https://gitlab.com/zdaarau/rpkgs/rdb/-/issues/5)
@@ -488,4 +490,3 @@
 -   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook).
 
 -   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
-
