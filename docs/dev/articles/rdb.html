@@ -21,7 +21,7 @@
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><script src="https://rpkg.dev/counter-dev.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script>
+<![endif]--><script src="https://rpkg.dev/counter-dev.min.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -70,7 +70,7 @@
 
 
 
-<script src="rdb_files/htmlwidgets-1.6.1/htmlwidgets.js"></script><script src="rdb_files/plotly-binding-4.10.1/plotly.js"></script><script src="rdb_files/typedarray-0.1/typedarray.min.js"></script><link href="rdb_files/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+<script src="rdb_files/htmlwidgets-1.6.2/htmlwidgets.js"></script><script src="rdb_files/plotly-binding-4.10.1/plotly.js"></script><script src="rdb_files/typedarray-0.1/typedarray.min.js"></script><link href="rdb_files/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
 <script src="rdb_files/crosstalk-1.2.0/js/crosstalk.min.js"></script><link href="rdb_files/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
 <script src="rdb_files/plotly-main-2.11.1/plotly-latest.min.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
@@ -121,26 +121,26 @@ various arguments</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>which should output a <a href="https://tibble.tidyverse.org/" class="external-link">tibble</a> like this one:</p>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 17,690 × 69</span></span></span>
-<span><span class="co">#&gt;    id    id_of…¹ id_sudd count…² count…³ subna…⁴ munic…⁵ level date       is_fo…⁶ title…⁷ title…⁸ title…⁹ quest…˟ quest…˟ commi…˟ result subte…˟ subte…˟ elect…˟</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 63ca… <span style="color: #BB0000;">NA</span>      li0120… LI      Liecht… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2023-01-29 FALSE   <span style="color: #949494;">"</span>\"Cas… «Casin… <span style="color: #BB0000;">NA</span>      Wollt … Do you… <span style="color: #BB0000;">NA</span>      no          <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  2.07<span style="color: #949494;">e</span>4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 63bd… <span style="color: #BB0000;">NA</span>      sk0120… SK      Slovak… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2023-01-21 FALSE   <span style="color: #949494;">"</span>Proce… Verfah… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      no          <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  4.38<span style="color: #949494;">e</span>6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 63bd… <span style="color: #BB0000;">NA</span>      si0320… SI      Sloven… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2022-11-27 FALSE   <span style="color: #949494;">"</span>Radio… Radio-… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      yes         <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  1.69<span style="color: #949494;">e</span>6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 63bd… <span style="color: #BB0000;">NA</span>      si0220… SI      Sloven… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2022-11-27 FALSE   <span style="color: #949494;">"</span>Care … Pflege… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      yes         <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  1.69<span style="color: #949494;">e</span>6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 63bd… <span style="color: #BB0000;">NA</span>      si0120… SI      Sloven… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2022-11-27 FALSE   <span style="color: #949494;">"</span>Gover… Regier… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      yes         <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  1.69<span style="color: #949494;">e</span>6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 63bd… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      TW      Taiwan  <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2022-11-26 FALSE   <span style="color: #949494;">"</span>Votin… Stimm-… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      no          <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  1.92<span style="color: #949494;">e</span>7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 63bd… <span style="color: #BB0000;">NA</span>      as1120… AS      Americ… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2022-11-08 FALSE   <span style="color: #949494;">"</span>Renam… Umbene… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      yes         <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  1.43<span style="color: #949494;">e</span>4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 63bd… <span style="color: #BB0000;">NA</span>      as1020… AS      Americ… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2022-11-08 FALSE   <span style="color: #949494;">"</span>Renam… Umbene… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      yes         <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  1.43<span style="color: #949494;">e</span>4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 63bd… <span style="color: #BB0000;">NA</span>      as0920… AS      Americ… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2022-11-08 FALSE   <span style="color: #949494;">"</span>Renam… Umbene… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      yes         <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  1.43<span style="color: #949494;">e</span>4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 63bd… <span style="color: #BB0000;">NA</span>      as0820… AS      Americ… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      nati… 2022-11-08 FALSE   <span style="color: #949494;">"</span>Remov… Absetz… <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      yes         <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>  1.43<span style="color: #949494;">e</span>4</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 17,680 more rows, 49 more variables: electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   votes_per_subterritory &lt;list&gt;, lower_house_yes &lt;int&gt;, lower_house_no &lt;int&gt;, lower_house_abstentions &lt;int&gt;, upper_house_yes &lt;int&gt;, upper_house_no &lt;int&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   upper_house_abstentions &lt;int&gt;, position_government &lt;fct&gt;, topics_tier_1 &lt;list&gt;, topics_tier_2 &lt;list&gt;, topics_tier_3 &lt;list&gt;, remarks &lt;chr&gt;, files &lt;list&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   url_sudd &lt;chr&gt;, url_swissvotes &lt;chr&gt;, sources &lt;chr&gt;, is_draft &lt;lgl&gt;, date_time_created &lt;dttm&gt;, date_time_last_edited &lt;dttm&gt;, type &lt;fct&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   inst_legal_basis_type &lt;ord&gt;, inst_has_urgent_legal_basis &lt;lgl&gt;, inst_is_binding &lt;lgl&gt;, inst_is_counter_proposal &lt;lgl&gt;, inst_is_assembly &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   inst_trigger_type &lt;fct&gt;, inst_trigger_actor &lt;fct&gt;, inst_trigger_actor_level &lt;ord&gt;, inst_trigger_threshold &lt;chr&gt;, inst_trigger_time_limit &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   inst_object_type &lt;fct&gt;, inst_object_author &lt;fct&gt;, inst_object_legal_level &lt;fct&gt;, inst_object_revision_extent &lt;fct&gt;, inst_object_revision_modes &lt;list&gt;, …</span></span></span></code></pre>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 17,710 × 69</span></span></span>
+<span><span class="co">#&gt;    id            id_official id_sudd country_code country_name subnational_entity_n…¹ municipality level date       is_former_country title_en title_de title_fr</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 6409f4370b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Obwalden               <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Citize… Volksbe… <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 6409f10e0b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Nidwalden              <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Counte… Gegenvo… <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 6409ef600b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Nidwalden              <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Nidwal… Nidwald… <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 6409ebbf0b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Solothurn              <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Compen… Abgeltu… <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 6409e9210b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Schwyz                 <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Counte… Gegenvo… <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 6409e8770b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Solothurn              <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Remova… Abbau v… <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 6409e47f0b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Schaffhausen           <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Schaff… Gesetz … <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 6409e15e0b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Uri                    <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Law on… Gesetz … <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 6409e0320b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Uri                    <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Loan d… Kreditb… <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 6409df1d0b8b… <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      CH           Switzerland  Schaffhausen           <span style="color: #BB0000;">NA</span>           subn… 2023-03-12 FALSE             <span style="color: #949494;">"</span>Partia… Teilrev… <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 17,700 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ abbreviated name: ¹​subnational_entity_name</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 56 more variables: question &lt;chr&gt;, question_en &lt;chr&gt;, committee_name &lt;chr&gt;, result &lt;fct&gt;, subterritories_yes &lt;dbl&gt;, subterritories_no &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   electorate_total &lt;int&gt;, electorate_abroad &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, votes_empty &lt;int&gt;, votes_invalid &lt;int&gt;, votes_per_subterritory &lt;list&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   lower_house_yes &lt;int&gt;, lower_house_no &lt;int&gt;, lower_house_abstentions &lt;int&gt;, upper_house_yes &lt;int&gt;, upper_house_no &lt;int&gt;, upper_house_abstentions &lt;int&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   position_government &lt;fct&gt;, topics_tier_1 &lt;list&gt;, topics_tier_2 &lt;list&gt;, topics_tier_3 &lt;list&gt;, remarks &lt;chr&gt;, files &lt;list&gt;, url_sudd &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   url_swissvotes &lt;chr&gt;, sources &lt;chr&gt;, is_draft &lt;lgl&gt;, date_time_created &lt;dttm&gt;, date_time_last_edited &lt;dttm&gt;, type &lt;fct&gt;, inst_legal_basis_type &lt;ord&gt;, …</span></span></span></code></pre>
 <p>The RDB referendum data’s individual variables (columns) are
 documented in the <a href="https://rdb.rpkg.dev/articles/codebook.html">codebook</a>. It is
 also available as a dataset via <code><a href="../reference/data_codebook.html">rdb::data_codebook</a></code>.</p>
@@ -192,20 +192,20 @@ number of the year is added (i.e. <code>period = "week"</code>):</p>
 <code class="sourceCode R"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/add_period.html">add_period</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">date</span>, <span class="va">week</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 17,690 × 3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 17,710 × 3</span></span></span>
 <span><span class="co">#&gt;    id                       date        week</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 63ca5489a52c3995043a9406 2023-01-29     4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 63bd6a52a52c3995043a9403 2023-01-21     3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 63bd5f7ca52c3995043a93f7 2022-11-27    47</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 63bd5ec0a52c3995043a93f3 2022-11-27    47</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 63bd5d92a52c3995043a93ee 2022-11-27    47</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 63bd47b4a52c3995043a93ea 2022-11-26    47</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 63bd3905a52c3995043a93e3 2022-11-08    45</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 63bd2a63a52c3995043a93dd 2022-11-08    45</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 63bd293ba52c3995043a93d7 2022-11-08    45</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 63bd268ba52c3995043a93d2 2022-11-08    45</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 17,680 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 6409f4370b8bae0c78c7e7d1 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 6409f10e0b8bae0c78c7e7cd 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 6409ef600b8bae0c78c7e7c7 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 6409ebbf0b8bae0c78c7e7c3 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 6409e9210b8bae0c78c7e7bf 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 6409e8770b8bae0c78c7e7b9 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 6409e47f0b8bae0c78c7e7b5 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 6409e15e0b8bae0c78c7e7b1 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 6409e0320b8bae0c78c7e7aa 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 6409df1d0b8bae0c78c7e7a0 2023-03-12    10</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 17,700 more rows</span></span></span></code></pre></div>
 <p>Another frequently required augmentation is
 <code><a href="../reference/add_country_code_long.html">rdb::add_country_code_long()</a></code> which adds an additional
 column <code>country_code_long</code> containing the <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3" class="external-link">ISO 3166-1
@@ -226,10 +226,10 @@ default referendum-level observations to ones on the level of ballot
 date and jurisdiction:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 17690</span></span>
+<span><span class="co">#&gt; [1] 17710</span></span>
 <span></span>
 <span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/as_ballot_dates.html">as_ballot_dates</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 5853</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5863</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="tabulate-and-visualize-data">Tabulate and visualize data<a class="anchor" aria-label="anchor" href="#tabulate-and-visualize-data"></a>
@@ -245,12 +245,12 @@ years, you could simply run</p>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">un_subregion</span> <span class="op">==</span> <span class="st">"Polynesia"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/tbl_n_rfrnds_per_period.html">tbl_n_rfrnds_per_period</a></span><span class="op">(</span>period <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span></code></pre></div>
 <p>and you’d get the following nicely formatted <a href="https://gt.rstudio.com/" class="external-link">gt</a> table:</p>
-<div id="guwsfjaxjc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="qeayjdrzqo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#guwsfjaxjc .gt_table {
+#qeayjdrzqo .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -275,7 +275,7 @@ years, you could simply run</p>
   border-left-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_heading {
+#qeayjdrzqo .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -287,12 +287,12 @@ years, you could simply run</p>
   border-right-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_caption {
+#qeayjdrzqo .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#guwsfjaxjc .gt_title {
+#qeayjdrzqo .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -304,7 +304,7 @@ years, you could simply run</p>
   border-bottom-width: 0;
 }
 
-#guwsfjaxjc .gt_subtitle {
+#qeayjdrzqo .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -316,13 +316,13 @@ years, you could simply run</p>
   border-top-width: 0;
 }
 
-#guwsfjaxjc .gt_bottom_border {
+#qeayjdrzqo .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_col_headings {
+#qeayjdrzqo .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -337,7 +337,7 @@ years, you could simply run</p>
   border-right-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_col_heading {
+#qeayjdrzqo .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -357,7 +357,7 @@ years, you could simply run</p>
   overflow-x: hidden;
 }
 
-#guwsfjaxjc .gt_column_spanner_outer {
+#qeayjdrzqo .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -369,15 +369,15 @@ years, you could simply run</p>
   padding-right: 4px;
 }
 
-#guwsfjaxjc .gt_column_spanner_outer:first-child {
+#qeayjdrzqo .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#guwsfjaxjc .gt_column_spanner_outer:last-child {
+#qeayjdrzqo .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#guwsfjaxjc .gt_column_spanner {
+#qeayjdrzqo .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -389,7 +389,7 @@ years, you could simply run</p>
   width: 100%;
 }
 
-#guwsfjaxjc .gt_group_heading {
+#qeayjdrzqo .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -415,7 +415,7 @@ years, you could simply run</p>
   text-align: left;
 }
 
-#guwsfjaxjc .gt_empty_group_heading {
+#qeayjdrzqo .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -430,15 +430,15 @@ years, you could simply run</p>
   vertical-align: middle;
 }
 
-#guwsfjaxjc .gt_from_md > :first-child {
+#qeayjdrzqo .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#guwsfjaxjc .gt_from_md > :last-child {
+#qeayjdrzqo .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#guwsfjaxjc .gt_row {
+#qeayjdrzqo .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -457,7 +457,7 @@ years, you could simply run</p>
   overflow-x: hidden;
 }
 
-#guwsfjaxjc .gt_stub {
+#qeayjdrzqo .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -470,7 +470,7 @@ years, you could simply run</p>
   padding-right: 5px;
 }
 
-#guwsfjaxjc .gt_stub_row_group {
+#qeayjdrzqo .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -484,11 +484,11 @@ years, you could simply run</p>
   vertical-align: top;
 }
 
-#guwsfjaxjc .gt_row_group_first td {
+#qeayjdrzqo .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#guwsfjaxjc .gt_summary_row {
+#qeayjdrzqo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -498,16 +498,16 @@ years, you could simply run</p>
   padding-right: 5px;
 }
 
-#guwsfjaxjc .gt_first_summary_row {
+#qeayjdrzqo .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_first_summary_row.thick {
+#qeayjdrzqo .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#guwsfjaxjc .gt_last_summary_row {
+#qeayjdrzqo .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -517,7 +517,7 @@ years, you could simply run</p>
   border-bottom-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_grand_summary_row {
+#qeayjdrzqo .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -527,7 +527,7 @@ years, you could simply run</p>
   padding-right: 5px;
 }
 
-#guwsfjaxjc .gt_first_grand_summary_row {
+#qeayjdrzqo .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -537,11 +537,11 @@ years, you could simply run</p>
   border-top-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_striped {
+#qeayjdrzqo .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#guwsfjaxjc .gt_table_body {
+#qeayjdrzqo .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -550,7 +550,7 @@ years, you could simply run</p>
   border-bottom-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_footnotes {
+#qeayjdrzqo .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -564,7 +564,7 @@ years, you could simply run</p>
   border-right-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_footnote {
+#qeayjdrzqo .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -573,7 +573,7 @@ years, you could simply run</p>
   padding-right: 5px;
 }
 
-#guwsfjaxjc .gt_sourcenotes {
+#qeayjdrzqo .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -587,7 +587,7 @@ years, you could simply run</p>
   border-right-color: #D3D3D3;
 }
 
-#guwsfjaxjc .gt_sourcenote {
+#qeayjdrzqo .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -595,64 +595,64 @@ years, you could simply run</p>
   padding-right: 5px;
 }
 
-#guwsfjaxjc .gt_left {
+#qeayjdrzqo .gt_left {
   text-align: left;
 }
 
-#guwsfjaxjc .gt_center {
+#qeayjdrzqo .gt_center {
   text-align: center;
 }
 
-#guwsfjaxjc .gt_right {
+#qeayjdrzqo .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#guwsfjaxjc .gt_font_normal {
+#qeayjdrzqo .gt_font_normal {
   font-weight: normal;
 }
 
-#guwsfjaxjc .gt_font_bold {
+#qeayjdrzqo .gt_font_bold {
   font-weight: bold;
 }
 
-#guwsfjaxjc .gt_font_italic {
+#qeayjdrzqo .gt_font_italic {
   font-style: italic;
 }
 
-#guwsfjaxjc .gt_super {
+#qeayjdrzqo .gt_super {
   font-size: 65%;
 }
 
-#guwsfjaxjc .gt_footnote_marks {
+#qeayjdrzqo .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#guwsfjaxjc .gt_asterisk {
+#qeayjdrzqo .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#guwsfjaxjc .gt_indent_1 {
+#qeayjdrzqo .gt_indent_1 {
   text-indent: 5px;
 }
 
-#guwsfjaxjc .gt_indent_2 {
+#qeayjdrzqo .gt_indent_2 {
   text-indent: 10px;
 }
 
-#guwsfjaxjc .gt_indent_3 {
+#qeayjdrzqo .gt_indent_3 {
   text-indent: 15px;
 }
 
-#guwsfjaxjc .gt_indent_4 {
+#qeayjdrzqo .gt_indent_4 {
   text-indent: 20px;
 }
 
-#guwsfjaxjc .gt_indent_5 {
+#qeayjdrzqo .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -712,14 +712,14 @@ level</a>:</p>
 <code class="sourceCode R"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span>date_min <span class="op">=</span> <span class="st">"1950-01-01"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/tbl_n_rfrnds_per_period.html">tbl_n_rfrnds_per_period</a></span><span class="op">(</span>period <span class="op">=</span> <span class="st">"year"</span>,</span>
 <span>                               by <span class="op">=</span> <span class="st">"level"</span><span class="op">)</span></span></code></pre></div>
-<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-9aa5be485f71ed3d9c9c" style="width:700px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-9aa5be485f71ed3d9c9c">{"x":{"visdat":{"58aa11763de3f":["function () ","plotlyVisDat"]},"cur_data":"58aa11763de3f","attrs":{"58aa11763de3f":{"mode":"none","stackgroup":"one","groupnorm":"percent","x":{},"y":{},"name":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"x","legend":{"orientation":"h"},"xaxis":{"domain":[0,1],"automargin":true,"dtick":10,"showgrid":false,"ticklabelstep":5,"range":[],"ticks":"outside","title":{"text":[]}},"yaxis":{"domain":[0,1],"automargin":true,"fixedrange":true,"hoverformat":".1f","showgrid":false,"ticksuffix":" % ","title":{"text":[]}},"shapes":[{"type":"line","y0":0,"y1":1,"yref":"paper","x0":1950,"x1":1950,"line":{"color":"#fff","width":0.2}},{"type":"line","y0":0,"y1":1,"yref":"paper","x0":2000,"x1":2000,"line":{"color":"#fff","width":0.2}}],"showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"mode":"none","stackgroup":"one","groupnorm":"percent","x":[1950,1951,1952,1953,1954,1955,1956,1957,1958,1959,1960,1961,1962,1963,1964,1965,1966,1967,1968,1969,1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023],"y":[9,10,15,15,12,9,11,13,34,9,13,31,18,22,12,7,12,17,17,22,23,15,30,26,18,37,34,48,46,22,25,24,22,26,31,69,28,50,18,24,51,64,66,62,74,92,68,48,35,50,52,34,54,59,49,46,24,30,62,66,31,56,43,30,42,36,82,21,69,19,35,24,47,2],"name":"national","type":"scatter","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"none","stackgroup":"one","groupnorm":"percent","x":[1950,1951,1952,1953,1954,1955,1956,1957,1958,1959,1960,1961,1962,1963,1964,1965,1966,1967,1968,1969,1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022],"y":[81,14,80,10,67,12,68,4,66,5,80,7,90,11,97,18,83,22,123,15,309,199,329,169,292,185,265,154,322,162,352,154,331,139,311,174,325,160,342,153,344,178,312,234,354,198,431,171,427,192,375,161,344,175,297,178,328,190,294,148,160,138,115,93,115,68,112,95,84,88,68,66,64],"name":"subnational","type":"scatter","marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"none","stackgroup":"one","groupnorm":"percent","x":[1964,1990,1991,2000,2001,2002,2003,2004,2005,2007],"y":[6,1,1,2,7,2,1,2,1,1],"name":"local","type":"scatter","marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"line":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script><p>Or, as a final example, the overall (hierarchical) segmentation of
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-30e4409849e39179307f" style="width:700px;height:432.632880098888px;"></div>
+<script type="application/json" data-for="htmlwidget-30e4409849e39179307f">{"x":{"visdat":{"trace_0":["function () ","plotlyVisDat"]},"cur_data":"trace_0","attrs":{"trace_0":{"mode":"none","stackgroup":"one","groupnorm":"percent","x":{},"y":{},"name":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"x","legend":{"orientation":"h"},"xaxis":{"domain":[0,1],"automargin":true,"dtick":10,"showgrid":false,"ticklabelstep":5,"range":[],"ticks":"outside","title":{"text":[]}},"yaxis":{"domain":[0,1],"automargin":true,"fixedrange":true,"hoverformat":".1f","showgrid":false,"ticksuffix":" % ","title":{"text":[]}},"shapes":[{"type":"line","y0":0,"y1":1,"yref":"paper","x0":1950,"x1":1950,"line":{"color":"#fff","width":0.2}},{"type":"line","y0":0,"y1":1,"yref":"paper","x0":2000,"x1":2000,"line":{"color":"#fff","width":0.2}}],"showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"mode":"none","stackgroup":"one","groupnorm":"percent","x":[1950,1951,1952,1953,1954,1955,1956,1957,1958,1959,1960,1961,1962,1963,1964,1965,1966,1967,1968,1969,1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023],"y":[9,10,15,15,12,9,11,13,34,9,13,31,18,22,12,7,12,17,17,22,23,15,30,26,18,37,34,48,46,22,25,24,22,26,31,69,28,50,18,24,51,64,66,62,74,92,68,48,35,50,52,34,54,59,49,46,24,30,62,66,31,56,43,30,42,36,82,21,69,19,35,24,47,2],"name":"national","type":"scatter","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"none","stackgroup":"one","groupnorm":"percent","x":[1950,1951,1952,1953,1954,1955,1956,1957,1958,1959,1960,1961,1962,1963,1964,1965,1966,1967,1968,1969,1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023],"y":[81,14,80,10,67,12,68,4,66,5,80,7,90,11,97,18,83,22,123,15,309,199,329,169,292,185,265,154,322,162,352,154,331,139,311,174,325,160,342,153,344,178,312,234,354,198,431,171,427,192,375,161,344,175,297,178,328,190,294,148,160,139,115,93,115,68,112,95,84,88,68,66,66,17],"name":"subnational","type":"scatter","marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"none","stackgroup":"one","groupnorm":"percent","x":[1964,1990,1991,2000,2001,2002,2003,2004,2005,2007],"y":[6,1,1,2,7,2,1,2,1,1],"name":"local","type":"scatter","marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"line":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script><p>Or, as a final example, the overall (hierarchical) segmentation of
 the <a href="https://rdb.rpkg.dev/articles/codebook.html#topics">political
 topics</a> all the referendums in the RDB were about:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_topic_segmentation.html">plot_topic_segmentation</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"per_topic_lineage"</span><span class="op">)</span></span></code></pre></div>
-<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-5c3b2d33d990c5ddf772" style="width:700px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-5c3b2d33d990c5ddf772">{"x":{"visdat":{"58aa13aa2b545":["function () ","plotlyVisDat"]},"cur_data":"58aa13aa2b545","attrs":{"58aa13aa2b545":{"labels":{},"parents":{},"ids":{},"values":{},"branchvalues":"total","insidetextorientation":"radial","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"sunburst"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["agriculture","culture, religion and media","economy","education and research","energy","environment and living space","foreign policy","public finance","security policy","social policy","state organisation","transport and infrastructure","European policy","Swiss abroad","agricultural policy","air transport","alternative energy","army","bilateral treaties","budget cuts and remediation measures","citizens' rights","crop production","cultural policy","development cooperation","diplomacy","economic policy","education policy","employment","energy policy","environment","federalism","finance","financial system","fishing, hunting and pets","foreign trade policy","forestry","health","housing","hydro-electric power","institutions","international organisations","language policy","legal system","livestock","media and communication","national economic supply","national identity","nuclear energy","oil and gas","political system","position on foreign policy","post","professional and vocational education","public expenditure","public security","rail transport","religion, churches","research","road transport","schools","shipping","social groups","social security","soil","sport","taxation","telecommunications","tourism and leisure","transport policy","universities","EEA","EFTA","EU","UN","abolition of the armed forces","addictive substances","air quality control","animal protection","animal testing","armed forces in general","arms","banks, stock exchange, insurance","building of residential housing, property ownership","children and young people","citizens' initiatives","citizenship","civil protection","compensation for loss of earnings for persons on military service or civil protection duty","competition policy","conscientious objection, civilian service","constitution","consumer protection","courts","criminal law","customs","data protection","direct taxation","disability insurance","division of tasks","electoral system","employment conditions","employment policy","environmental policy","family policy","freedom of the media","fundamental rights","genetic engineering","goods traffic","government, administration","health and accident insurance","health policy","heavy traffic","homosexuals","hospitality","immigration policy","independence","indirect taxation","industrial relations","intergovernmental relations","international deployment","international law","land law","legislative procedure","lottery and gambling","maternity insurance","media policy","medical research and technology","medicines","military facilities","military organisation","military training","monetary policy","national bank","neutrality","noise protection","occupational benefits provision","other European organisations","other international organisations","parliament","passenger traffic","pension insurance","persons with disabilities","police","press","pricing policy","private law","procedure for constitutional reform","protection of nature and cultural heritage","radio, television and electronic media","referendum","refugees","reproductive medicine","road construction","senior citizens","short-term economic policy","soil protection","spatial planning","state security","status of women","structural policy","tax policy","tax system","tenancy issues","territorial questions","tourism","transit traffic","unemployment insurance","urban transport","voting rights","waste","water pollution control","welfare","working hours","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>"],"parents":["","","","","","","","","","","","","foreign policy","foreign policy","agriculture","transport and infrastructure","energy","security policy","foreign policy","public finance","state organisation","agriculture","culture, religion and media","foreign policy","foreign policy","economy","education and research","economy","energy","environment and living space","state organisation","economy","public finance","agriculture","foreign policy","agriculture","social policy","environment and living space","energy","state organisation","foreign policy","culture, religion and media","state organisation","agriculture","culture, religion and media","security policy","state organisation","energy","energy","state organisation","foreign policy","transport and infrastructure","education and research","public finance","security policy","transport and infrastructure","culture, religion and media","education and research","transport and infrastructure","education and research","transport and infrastructure","social policy","social policy","environment and living space","culture, religion and media","public finance","transport and infrastructure","economy","transport and infrastructure","education and research","European policy","European policy","European policy","international organisations","army","health","environment","environment","research","army","army","finance","housing","social groups","citizens' rights","legal system","public security","social security","economic policy","army","political system","economic policy","institutions","legal system","foreign trade policy","legal system","taxation","social security","federalism","political system","employment","employment","environment","social groups","media and communication","legal system","research","rail transport","institutions","social security","health","road transport","social groups","tourism and leisure","social groups","position on foreign policy","taxation","employment","federalism","army","legal system","soil","political system","tourism and leisure","social security","media and communication","health","health","army","army","army","finance","institutions","position on foreign policy","environment","social security","European policy","international organisations","institutions","rail transport","social security","social groups","public security","media and communication","economic policy","legal system","political system","environment","media and communication","citizens' rights","social groups","health","road transport","social groups","economic policy","environment","soil","public security","social groups","economic policy","taxation","taxation","housing","federalism","tourism and leisure","transport policy","social security","transport policy","citizens' rights","environment","environment","social security","employment","European policy","agriculture","army","citizens' rights","culture, religion and media","economic policy","economy","education and research","employment","energy","environment","environment and living space","federalism","finance","foreign policy","foreign trade policy","health","housing","institutions","international organisations","legal system","media and communication","political system","position on foreign policy","public finance","public security","rail transport","research","road transport","security policy","social groups","social policy","social security","soil","state organisation","taxation","tourism and leisure","transport and infrastructure","transport policy"],"ids":["agriculture","culture, religion and media","economy","education and research","energy","environment and living space","foreign policy","public finance","security policy","social policy","state organisation","transport and infrastructure","European policy","Swiss abroad","agricultural policy","air transport","alternative energy","army","bilateral treaties","budget cuts and remediation measures","citizens' rights","crop production","cultural policy","development cooperation","diplomacy","economic policy","education policy","employment","energy policy","environment","federalism","finance","financial system","fishing, hunting and pets","foreign trade policy","forestry","health","housing","hydro-electric power","institutions","international organisations","language policy","legal system","livestock","media and communication","national economic supply","national identity","nuclear energy","oil and gas","political system","position on foreign policy","post","professional and vocational education","public expenditure","public security","rail transport","religion, churches","research","road transport","schools","shipping","social groups","social security","soil","sport","taxation","telecommunications","tourism and leisure","transport policy","universities","EEA","EFTA","EU","UN","abolition of the armed forces","addictive substances","air quality control","animal protection","animal testing","armed forces in general","arms","banks, stock exchange, insurance","building of residential housing, property ownership","children and young people","citizens' initiatives","citizenship","civil protection","compensation for loss of earnings for persons on military service or civil protection duty","competition policy","conscientious objection, civilian service","constitution","consumer protection","courts","criminal law","customs","data protection","direct taxation","disability insurance","division of tasks","electoral system","employment conditions","employment policy","environmental policy","family policy","freedom of the media","fundamental rights","genetic engineering","goods traffic","government, administration","health and accident insurance","health policy","heavy traffic","homosexuals","hospitality","immigration policy","independence","indirect taxation","industrial relations","intergovernmental relations","international deployment","international law","land law","legislative procedure","lottery and gambling","maternity insurance","media policy","medical research and technology","medicines","military facilities","military organisation","military training","monetary policy","national bank","neutrality","noise protection","occupational benefits provision","other European organisations","other international organisations","parliament","passenger traffic","pension insurance","persons with disabilities","police","press","pricing policy","private law","procedure for constitutional reform","protection of nature and cultural heritage","radio, television and electronic media","referendum","refugees","reproductive medicine","road construction","senior citizens","short-term economic policy","soil protection","spatial planning","state security","status of women","structural policy","tax policy","tax system","tenancy issues","territorial questions","tourism","transit traffic","unemployment insurance","urban transport","voting rights","waste","water pollution control","welfare","working hours","NA_European policy","NA_agriculture","NA_army","NA_citizens' rights","NA_culture, religion and media","NA_economic policy","NA_economy","NA_education and research","NA_employment","NA_energy","NA_environment","NA_environment and living space","NA_federalism","NA_finance","NA_foreign policy","NA_foreign trade policy","NA_health","NA_housing","NA_institutions","NA_international organisations","NA_legal system","NA_media and communication","NA_political system","NA_position on foreign policy","NA_public finance","NA_public security","NA_rail transport","NA_research","NA_road transport","NA_security policy","NA_social groups","NA_social policy","NA_social security","NA_soil","NA_state organisation","NA_taxation","NA_tourism and leisure","NA_transport and infrastructure","NA_transport policy"],"values":[305,332,1145,1543,290,1490,234,1940,424,2681,5251,1231,74,5,73,40,29,106,35,128,706,24,104,7,5,286,541,494,139,687,585,138,58,93,19,50,917,516,27,1486,24,32,744,27,60,16,454,70,11,1246,49,4,145,723,286,119,67,36,396,648,30,1217,507,232,53,933,13,170,294,140,4,1,55,6,5,212,17,88,6,16,28,85,181,554,106,66,86,1,26,7,610,38,273,194,7,28,263,49,100,342,245,63,189,200,5,134,7,5,696,121,373,7,23,56,132,36,82,7,218,5,1,79,74,60,8,10,15,174,18,6,6,24,13,1,28,11,3,8,329,31,121,54,104,3,20,182,86,140,23,94,22,13,164,114,18,41,133,21,99,82,430,46,70,190,32,15,49,42,345,33,68,99,90,11,38,15,161,16,102,57,33,89,14,83,55,77,29,16,12,130,265,175,10,139,19,134,12,98,75,83,23,225,16,19,40,48,20,30,112,22,335,237],"branchvalues":"total","insidetextorientation":"radial","type":"sunburst","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(255,255,255,1)"}},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script><p>Again, see the package reference for <a href="https://rdb.rpkg.dev/reference/index.html#visualization">all
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-2e17466358a46d139971" style="width:700px;height:432.632880098888px;"></div>
+<script type="application/json" data-for="htmlwidget-2e17466358a46d139971">{"x":{"visdat":{"trace_0":["function () ","plotlyVisDat"]},"cur_data":"trace_0","attrs":{"trace_0":{"labels":{},"parents":{},"ids":{},"values":{},"branchvalues":"total","insidetextorientation":"radial","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"sunburst"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["agriculture","culture, religion and media","economy","education and research","energy","environment and living space","foreign policy","public finance","security policy","social policy","state organisation","transport and infrastructure","European policy","Swiss abroad","agricultural policy","air transport","alternative energy","army","bilateral treaties","budget cuts and remediation measures","citizens' rights","crop production","cultural policy","development cooperation","diplomacy","economic policy","education policy","employment","energy policy","environment","federalism","finance","financial system","fishing, hunting and pets","foreign trade policy","forestry","health","housing","hydro-electric power","institutions","international organisations","language policy","legal system","livestock","media and communication","national economic supply","national identity","nuclear energy","oil and gas","political system","position on foreign policy","post","professional and vocational education","public expenditure","public security","rail transport","religion, churches","research","road transport","schools","shipping","social groups","social security","soil","sport","taxation","telecommunications","tourism and leisure","transport policy","universities","EEA","EFTA","EU","UN","abolition of the armed forces","addictive substances","air quality control","animal protection","animal testing","armed forces in general","arms","banks, stock exchange, insurance","building of residential housing, property ownership","children and young people","citizens' initiatives","citizenship","civil protection","compensation for loss of earnings for persons on military service or civil protection duty","competition policy","conscientious objection, civilian service","constitution","consumer protection","courts","criminal law","customs","data protection","direct taxation","disability insurance","division of tasks","electoral system","employment conditions","employment policy","environmental policy","family policy","freedom of the media","fundamental rights","genetic engineering","goods traffic","government, administration","health and accident insurance","health policy","heavy traffic","homosexuals","hospitality","immigration policy","independence","indirect taxation","industrial relations","intergovernmental relations","international deployment","international law","land law","legislative procedure","lottery and gambling","maternity insurance","media policy","medical research and technology","medicines","military facilities","military organisation","military training","monetary policy","national bank","neutrality","noise protection","occupational benefits provision","other European organisations","other international organisations","parliament","passenger traffic","pension insurance","persons with disabilities","police","press","pricing policy","private law","procedure for constitutional reform","protection of nature and cultural heritage","radio, television and electronic media","referendum","refugees","reproductive medicine","road construction","senior citizens","short-term economic policy","soil protection","spatial planning","state security","status of women","structural policy","tax policy","tax system","tenancy issues","territorial questions","tourism","transit traffic","unemployment insurance","urban transport","voting rights","waste","water pollution control","welfare","working hours","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>","<i>not defined<\/i>"],"parents":["","","","","","","","","","","","","foreign policy","foreign policy","agriculture","transport and infrastructure","energy","security policy","foreign policy","public finance","state organisation","agriculture","culture, religion and media","foreign policy","foreign policy","economy","education and research","economy","energy","environment and living space","state organisation","economy","public finance","agriculture","foreign policy","agriculture","social policy","environment and living space","energy","state organisation","foreign policy","culture, religion and media","state organisation","agriculture","culture, religion and media","security policy","state organisation","energy","energy","state organisation","foreign policy","transport and infrastructure","education and research","public finance","security policy","transport and infrastructure","culture, religion and media","education and research","transport and infrastructure","education and research","transport and infrastructure","social policy","social policy","environment and living space","culture, religion and media","public finance","transport and infrastructure","economy","transport and infrastructure","education and research","European policy","European policy","European policy","international organisations","army","health","environment","environment","research","army","army","finance","housing","social groups","citizens' rights","legal system","public security","social security","economic policy","army","political system","economic policy","institutions","legal system","foreign trade policy","legal system","taxation","social security","federalism","political system","employment","employment","environment","social groups","media and communication","legal system","research","rail transport","institutions","social security","health","road transport","social groups","tourism and leisure","social groups","position on foreign policy","taxation","employment","federalism","army","legal system","soil","political system","tourism and leisure","social security","media and communication","health","health","army","army","army","finance","institutions","position on foreign policy","environment","social security","European policy","international organisations","institutions","rail transport","social security","social groups","public security","media and communication","economic policy","legal system","political system","environment","media and communication","citizens' rights","social groups","health","road transport","social groups","economic policy","environment","soil","public security","social groups","economic policy","taxation","taxation","housing","federalism","tourism and leisure","transport policy","social security","transport policy","citizens' rights","environment","environment","social security","employment","European policy","agriculture","army","citizens' rights","culture, religion and media","economic policy","economy","education and research","employment","energy","environment","environment and living space","federalism","finance","foreign policy","foreign trade policy","health","housing","institutions","international organisations","legal system","media and communication","political system","position on foreign policy","public finance","public security","rail transport","research","road transport","security policy","social groups","social policy","social security","soil","state organisation","taxation","tourism and leisure","transport and infrastructure","transport policy"],"ids":["agriculture","culture, religion and media","economy","education and research","energy","environment and living space","foreign policy","public finance","security policy","social policy","state organisation","transport and infrastructure","European policy","Swiss abroad","agricultural policy","air transport","alternative energy","army","bilateral treaties","budget cuts and remediation measures","citizens' rights","crop production","cultural policy","development cooperation","diplomacy","economic policy","education policy","employment","energy policy","environment","federalism","finance","financial system","fishing, hunting and pets","foreign trade policy","forestry","health","housing","hydro-electric power","institutions","international organisations","language policy","legal system","livestock","media and communication","national economic supply","national identity","nuclear energy","oil and gas","political system","position on foreign policy","post","professional and vocational education","public expenditure","public security","rail transport","religion, churches","research","road transport","schools","shipping","social groups","social security","soil","sport","taxation","telecommunications","tourism and leisure","transport policy","universities","EEA","EFTA","EU","UN","abolition of the armed forces","addictive substances","air quality control","animal protection","animal testing","armed forces in general","arms","banks, stock exchange, insurance","building of residential housing, property ownership","children and young people","citizens' initiatives","citizenship","civil protection","compensation for loss of earnings for persons on military service or civil protection duty","competition policy","conscientious objection, civilian service","constitution","consumer protection","courts","criminal law","customs","data protection","direct taxation","disability insurance","division of tasks","electoral system","employment conditions","employment policy","environmental policy","family policy","freedom of the media","fundamental rights","genetic engineering","goods traffic","government, administration","health and accident insurance","health policy","heavy traffic","homosexuals","hospitality","immigration policy","independence","indirect taxation","industrial relations","intergovernmental relations","international deployment","international law","land law","legislative procedure","lottery and gambling","maternity insurance","media policy","medical research and technology","medicines","military facilities","military organisation","military training","monetary policy","national bank","neutrality","noise protection","occupational benefits provision","other European organisations","other international organisations","parliament","passenger traffic","pension insurance","persons with disabilities","police","press","pricing policy","private law","procedure for constitutional reform","protection of nature and cultural heritage","radio, television and electronic media","referendum","refugees","reproductive medicine","road construction","senior citizens","short-term economic policy","soil protection","spatial planning","state security","status of women","structural policy","tax policy","tax system","tenancy issues","territorial questions","tourism","transit traffic","unemployment insurance","urban transport","voting rights","waste","water pollution control","welfare","working hours","NA_European policy","NA_agriculture","NA_army","NA_citizens' rights","NA_culture, religion and media","NA_economic policy","NA_economy","NA_education and research","NA_employment","NA_energy","NA_environment","NA_environment and living space","NA_federalism","NA_finance","NA_foreign policy","NA_foreign trade policy","NA_health","NA_housing","NA_institutions","NA_international organisations","NA_legal system","NA_media and communication","NA_political system","NA_position on foreign policy","NA_public finance","NA_public security","NA_rail transport","NA_research","NA_road transport","NA_security policy","NA_social groups","NA_social policy","NA_social security","NA_soil","NA_state organisation","NA_taxation","NA_tourism and leisure","NA_transport and infrastructure","NA_transport policy"],"values":[305,333,1147,1545,290,1494,235,1949,424,2684,5258,1235,74,6,73,40,29,106,35,128,708,24,104,7,5,286,542,494,139,690,586,140,58,93,19,50,918,516,27,1488,24,32,744,27,60,16,454,70,11,1248,49,4,145,731,286,119,67,36,396,649,30,1218,507,232,53,934,14,170,295,140,4,1,55,6,5,212,17,88,6,16,28,85,181,555,106,66,86,1,26,7,610,38,274,194,7,28,264,49,100,343,245,63,192,200,5,134,7,5,697,121,373,7,23,56,132,36,82,7,218,5,1,79,74,60,8,10,15,174,18,6,6,25,13,1,28,11,3,8,329,31,121,54,104,3,20,182,86,140,23,94,22,13,164,114,18,41,133,21,99,82,430,46,70,191,32,15,49,42,347,33,68,99,90,11,38,15,161,17,102,57,33,89,14,83,56,77,30,16,12,131,265,175,10,139,19,135,12,98,75,83,23,225,16,19,41,48,20,30,112,22,337,238],"branchvalues":"total","insidetextorientation":"radial","type":"sunburst","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(255,255,255,1)"}},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script><p>Again, see the package reference for <a href="https://rdb.rpkg.dev/reference/index.html#visualization">all
 available data visualization and tabulation functions</a>. More will
 likely be added in the future.</p>
 </div>

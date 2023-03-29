@@ -17,7 +17,9 @@ Transforms referendum-level observations to ones on the level of ballot date and
 individual values of all the referendums on a specific ballot date in a specific jurisdiction are preserved in a list column named \code{rfrnd_data}.
 }
 \examples{
-rdb::rfrnds(country_code = "AT") |> rdb::as_ballot_dates()
+rdb::rfrnds(country_code = "AT",
+            quiet = TRUE) |>
+  rdb::as_ballot_dates()
 }
 \seealso{
 Other referendum data transformation functions:

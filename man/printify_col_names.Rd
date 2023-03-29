@@ -19,7 +19,9 @@ Renames referendum data column names to be ready to print. Useful e.g. to create
 Column names unknown to this function are not changed.
 }
 \examples{
-rdb::rfrnds(country_code = "IT") |> rdb::printify_col_names()
+rdb::rfrnds(country_code = "IT",
+            quiet = TRUE) |>
+  rdb::printify_col_names()
 }
 \seealso{
 Other referendum data transformation functions:

@@ -2249,6 +2249,7 @@ restore_topics <- function(topics_tier_1,
 plot_share_per_period <- function(data_freq,
                                   x,
                                   period) {
+  pal::assert_pkg("plotly")
   
   grid_step <- switch(EXPR = period,
                       week = 4L,
@@ -2549,19 +2550,23 @@ rm(sudd_years)
 #' 
 #' # get only referendums in Austria and Australia on subnational level
 #' rdb::rfrnds(country_code = c("AT", "AU"),
-#'             level = "subnational")
+#'             level = "subnational",
+#'             quiet = TRUE)
 #'
 #' # get referendums in 2020
 #' rdb::rfrnds(date_min = "2020-01-01",
-#'             date_max = "2020-12-31")
+#'             date_max = "2020-12-31",
+#'             quiet = TRUE)
 #'
 #' # get referendums added to the database during the last 30 days
 #' rdb::rfrnds(date_time_created_min = clock::date_today(zone = "UTC") |> clock::add_days(-30L),
-#'             date_time_created_max = clock::date_today(zone = "UTC"))
+#'             date_time_created_max = clock::date_today(zone = "UTC"),
+#'             quiet = TRUE)
 #' 
 #' # provide custom `query_filter` for more complex queries like regex matches
 #' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-#' rdb::rfrnds(query_filter = '{"country_code":{"$regex":"A."}}')
+#' rdb::rfrnds(query_filter = '{"country_code":{"$regex":"A."}}',
+#'             quiet = TRUE)
 rfrnds <- function(country_code = NULL,
                    subnational_entity_name = NULL,
                    municipality = NULL,
@@ -3595,7 +3600,8 @@ topics <- function(tiers = 1:3) {
 #' rdb::hierarchize_topics("territorial questions")
 #'
 #' # hierarchize the topics of all Austrian referendums
-#' rdb::rfrnds(country_code = "AT") |>
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
 #'   dplyr::group_split(id) |>
 #'   purrr::map(rdb::hierarchize_topics)
 hierarchize_topics <- function(x) {
@@ -3691,7 +3697,8 @@ hierarchize_topics <- function(x) {
 #'                                unlist(topics_tier_3))
 #'
 #' # hierarchize the topics of all Austrian referendums
-#' rdb::rfrnds(country_code = "AT") |>
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
 #'   dplyr::group_split(id) |>
 #'   purrr::map(~ rdb::hierarchize_topics_fast(unlist(.x$topics_tier_1),
 #'                                             unlist(.x$topics_tier_2),
@@ -3809,7 +3816,8 @@ add_former_country_flag <- function(data) {
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(country_code = c("CD", "ZRCD")) |>
+#' rdb::rfrnds(country_code = c("CD", "ZRCD"),
+#'             quiet = TRUE) |>
 #'   rdb::add_country_code_continual() |>
 #'   dplyr::select(id,
 #'                 starts_with("country_"))
@@ -3850,7 +3858,8 @@ add_country_code_continual <- function(data) {
 #'
 #' @examples
 #' rdb::rfrnds(date_max = clock::date_today(zone = "UTC"),
-#'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
+#'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L),
+#'             quiet = TRUE) |>
 #'   rdb:::add_country_code_long() |>
 #'   dplyr::select(id,
 #'                 starts_with("country_"))
@@ -3894,7 +3903,8 @@ add_country_code_long <- function(data) {
 #'
 #' @examples
 #' rdb::rfrnds(date_max = clock::date_today(zone = "UTC"),
-#'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
+#'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L),
+#'             quiet = TRUE) |>
 #'   rdb:::add_country_name() |>
 #'   dplyr::select(id,
 #'                 starts_with("country_"))
@@ -3937,7 +3947,8 @@ add_country_name <- function(data) {
 #'
 #' @examples
 #' rdb::rfrnds(date_max = clock::date_today(zone = "UTC"),
-#'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
+#'             date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L),
+#'             quiet = TRUE) |>
 #'   rdb:::add_country_name_long() |>
 #'   dplyr::select(id,
 #'                 starts_with("country_name"))
@@ -3984,11 +3995,13 @@ add_country_name_long <- function(data) {
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(country_code = "AT") |>
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
 #'   rdb::add_period() |>
 #'   dplyr::select(id, date, week)
 #'
-#' rdb::rfrnds(country_code = "AT") |>
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
 #'   rdb::add_period("year") |>
 #'   dplyr::select(id, date, year)
 add_period <- function(data,
@@ -4047,7 +4060,8 @@ add_period <- function(data,
 #'
 #' @examples
 #' # rough turnout numbers
-#' rdb::rfrnds(country_code = "IT") |>
+#' rdb::rfrnds(country_code = "IT",
+#'             quiet = TRUE) |>
 #'   rdb::add_turnout() |>
 #'   dplyr::select(id,
 #'                 electorate_total,
@@ -4055,7 +4069,8 @@ add_period <- function(data,
 #'                 turnout)
 #'
 #' # strict turnout numbers
-#' rdb::rfrnds(country_code = "IT") |>
+#' rdb::rfrnds(country_code = "IT",
+#'             quiet = TRUE) |>
 #'   rdb::add_turnout(rough = FALSE) |>
 #'   dplyr::select(id,
 #'                 electorate_total,
@@ -4188,7 +4203,9 @@ add_world_regions <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(country_code = "AT") |> rdb::as_ballot_dates()
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::as_ballot_dates()
 as_ballot_dates <- function(data) {
   
   # ensure date col is present
@@ -4253,16 +4270,23 @@ as_ballot_dates <- function(data) {
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(country_code = "AT") |> rdb::n_rfrnds_per_period()
-#' rdb::rfrnds(country_code = "AT") |> rdb::n_rfrnds_per_period(by = level)
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::n_rfrnds_per_period()
+#'
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::n_rfrnds_per_period(by = level)
 #' 
 #' # without filling gaps
-#' rdb::rfrnds(country_code = "AT") |>
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
 #'   rdb::n_rfrnds_per_period(by = level,
 #'                            fill_gaps = FALSE)
 #'
 #' # per decade and by multiple columns
-#' rdb::rfrnds(country_code = "AT") |>
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
 #'   rdb::n_rfrnds_per_period(by = c(level, type),
 #'                            period = "decade")
 n_rfrnds_per_period <- function(data,
@@ -4349,7 +4373,9 @@ n_rfrnds_per_period <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(country_code = "IT") |> rdb::printify_col_names()
+#' rdb::rfrnds(country_code = "IT",
+#'             quiet = TRUE) |>
+#'   rdb::printify_col_names()
 printify_col_names <- function(data) {
   
   data %>%
@@ -4382,7 +4408,6 @@ plot_rfrnd_share_per_period <- function(data,
                                         by,
                                         period = c("week", "month", "quarter", "year", "decade", "century")) {
   period <- rlang::arg_match(period)
-  pal::assert_pkg("plotly")
   
   # add period col if necessary
   if (!(period %in% colnames(data))) {
@@ -4439,13 +4464,19 @@ plot_rfrnd_share_per_period <- function(data,
 #'
 #' @examples
 #' # count each referendum equally
-#' rdb::rfrnds(country_code = "AT") |> rdb::plot_topic_segmentation(method = "per_rfrnd")
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::plot_topic_segmentation(method = "per_rfrnd")
 #'
 #' # count each topic lineage equally
-#' rdb::rfrnds(country_code = "AT") |> rdb::plot_topic_segmentation(method = "per_topic_lineage")
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::plot_topic_segmentation(method = "per_topic_lineage")
 #'
 #' # naive count (way faster, but with misleading proportions on tier 2 and 3)
-#' rdb::rfrnds(country_code = "AT") |> rdb::plot_topic_segmentation(method = "naive")
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::plot_topic_segmentation(method = "naive")
 plot_topic_segmentation <- function(data,
                                     method = c("per_rfrnd", "per_topic_lineage", "naive")) {
   
@@ -4612,7 +4643,6 @@ plot_topic_share_per_period <- function(data,
                         upper = 3L)
   period <- rlang::arg_match(period)
   checkmate::assert_flag(weight_by_n_rfrnds)
-  pal::assert_pkg("plotly")
   
   # add period col if necessary
   if (!(period %in% colnames(data))) {
@@ -4664,15 +4694,21 @@ plot_topic_share_per_period <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(country_code = "AT") |> rdb::tbl_n_rfrnds_per_period(period = "decade")
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::tbl_n_rfrnds_per_period(period = "decade")
 #'
 #' # grouped by a single additional column
-#' rdb::rfrnds(country_code = "AT") |> rdb::tbl_n_rfrnds_per_period(by = level,
-#'                                                                  period = "decade")
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::tbl_n_rfrnds_per_period(by = level,
+#'                                period = "decade")
 #'
 #' # grouped by two addtional columns
-#' rdb::rfrnds(country_code = "AT") |> rdb::tbl_n_rfrnds_per_period(by = c(level, type),
-#'                                                                  period = "decade")
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::tbl_n_rfrnds_per_period(by = c(level, type),
+#'                                period = "decade")
 tbl_n_rfrnds_per_period <- function(data,
                                     by = NULL,
                                     period = c("week", "month", "quarter", "year", "decade", "century"),
@@ -4916,11 +4952,13 @@ list_sudd_titles <- function() {
 #' 
 #' # list all referendums whose title matches "AHV"
 #' rdb::list_sudd_rfrnds(mode = "filter",
-#'                       filter = list(title_de = "AHV"))
+#'                       filter = list(title_de = "AHV"),
+#'                       quiet = TRUE)
 #' 
 #' # get sudd.ch referendum data from all referendums from 2020 onwards
 #' rdb::list_sudd_rfrnds(mode = "filter",
-#'                       filter = list(year_min = 2020)) |>
+#'                       filter = list(year_min = 2020),
+#'                       quiet = TRUE) |>
 #'   rdb::sudd_rfrnds()
 #' 
 #' # get sudd.ch referendum data from five randomly picked referendums
@@ -5131,7 +5169,9 @@ list_sudd_rfrnds <- function(mode = c("by_date",
 #' @examples
 #' rdb::rfrnd(id = "5bbc045192a21351232e596f")$id_sudd |> rdb::sudd_rfrnds()
 #' 
-#' rdb::rfrnds(country_code = "AT") |> rdb::sudd_rfrnds()
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::sudd_rfrnds()
 sudd_rfrnds <- function(ids_sudd,
                         use_cache = TRUE,
                         max_cache_age = "1 week",

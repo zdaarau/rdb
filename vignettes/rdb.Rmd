@@ -10,7 +10,12 @@ vignette: >
 ---
 
 ```{r}
+#| label: setup
 #| include: false
+
+# set RNG seeds
+set.seed(42L)
+htmlwidgets::setWidgetIdSeed(seed = 42L)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -158,7 +163,8 @@ rdb::rfrnds(date_min = "1950-01-01") |>
 rdb::rfrnds(date_min = "1950-01-01",
             quiet = TRUE) |>
   rdb::plot_rfrnd_share_per_period(period = "year",
-                                   by = "level")
+                                   by = "level") |>
+  plotlee::simplify_trace_ids()
 ```
 
 Or, as a final example, the overall (hierarchical) segmentation of the [political topics](https://rdb.rpkg.dev/articles/codebook.html#topics) all the
@@ -171,7 +177,9 @@ rdb::rfrnds() |> rdb::plot_topic_segmentation(method = "per_topic_lineage")
 ```{r}
 #| echo: false
 
-rdb::rfrnds(quiet = TRUE) |> rdb::plot_topic_segmentation(method = "per_topic_lineage")
+rdb::rfrnds(quiet = TRUE) |>
+  rdb::plot_topic_segmentation(method = "per_topic_lineage") |>
+  plotlee::simplify_trace_ids()
 ```
 
 Again, see the package reference for [all available data visualization and tabulation functions](https://rdb.rpkg.dev/reference/index.html#visualization). More

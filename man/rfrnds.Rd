@@ -87,19 +87,23 @@ rdb::rfrnds()}
 
 # get only referendums in Austria and Australia on subnational level
 rdb::rfrnds(country_code = c("AT", "AU"),
-            level = "subnational")
+            level = "subnational",
+            quiet = TRUE)
 
 # get referendums in 2020
 rdb::rfrnds(date_min = "2020-01-01",
-            date_max = "2020-12-31")
+            date_max = "2020-12-31",
+            quiet = TRUE)
 
 # get referendums added to the database during the last 30 days
 rdb::rfrnds(date_time_created_min = clock::date_today(zone = "UTC") |> clock::add_days(-30L),
-            date_time_created_max = clock::date_today(zone = "UTC"))
+            date_time_created_max = clock::date_today(zone = "UTC"),
+            quiet = TRUE)
 
 # provide custom `query_filter` for more complex queries like regex matches
 # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-rdb::rfrnds(query_filter = '{"country_code":{"$regex":"A."}}')
+rdb::rfrnds(query_filter = '{"country_code":{"$regex":"A."}}',
+            quiet = TRUE)
 }
 \seealso{
 Other referendum data functions:

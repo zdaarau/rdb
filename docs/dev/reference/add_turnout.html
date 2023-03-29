@@ -4,7 +4,7 @@
  votes_yes+votes_no+votes_empty+votes_invalidelectorate_total\frac{votes\_yes+votes\_no+votes\_empty+votes\_invalid}{electorate\_total}electorate_totalvotes_yes+votes_no+votes_empty+votes_invalid​"><meta name="twitter:card" content="summary"><meta name="twitter:creator" content="@2BSalim"><meta name="twitter:site" content="@2BSalim"><meta name="robots" content="noindex"><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><script src="https://rpkg.dev/counter-dev.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script></head><body>
+<![endif]--><script src="https://rpkg.dev/counter-dev.min.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
@@ -88,7 +88,8 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># rough turnout numbers</span></span></span>
-<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>country_code <span class="op">=</span> <span class="st">"IT"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>country_code <span class="op">=</span> <span class="st">"IT"</span>,</span></span>
+<span class="r-in"><span>            quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">add_turnout</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>,</span></span>
 <span class="r-in"><span>                <span class="va">electorate_total</span>,</span></span>
@@ -107,10 +108,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 5d1cba4edc0aeb467bfcbfad          4<span style="text-decoration: underline;">068</span>560   2<span style="text-decoration: underline;">273</span>985    <span style="text-decoration: underline;">43</span>938        <span style="text-decoration: underline;">5</span>165          <span style="text-decoration: underline;">5</span>865 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.572</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 5d19ffd1fe65c2bfeba00bb9         50<span style="text-decoration: underline;">773</span>284  13<span style="text-decoration: underline;">431</span>087 19<span style="text-decoration: underline;">421</span>025       <span style="text-decoration: underline;">83</span>418        <span style="text-decoration: underline;">308</span>728 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.655</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 5cb86b29cb48652399618eda         50<span style="text-decoration: underline;">681</span>765  13<span style="text-decoration: underline;">334</span>607  2<span style="text-decoration: underline;">198</span>715      <span style="text-decoration: underline;">104</span>413        <span style="text-decoration: underline;">168</span>753 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 118 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 118 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># strict turnout numbers</span></span></span>
-<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>country_code <span class="op">=</span> <span class="st">"IT"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>country_code <span class="op">=</span> <span class="st">"IT"</span>,</span></span>
+<span class="r-in"><span>            quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">add_turnout</span><span class="op">(</span>rough <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>,</span></span>
 <span class="r-in"><span>                <span class="va">electorate_total</span>,</span></span>
@@ -129,7 +131,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 5d1cba4edc0aeb467bfcbfad          4<span style="text-decoration: underline;">068</span>560   2<span style="text-decoration: underline;">273</span>985    <span style="text-decoration: underline;">43</span>938        <span style="text-decoration: underline;">5</span>165          <span style="text-decoration: underline;">5</span>865 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.572</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 5d19ffd1fe65c2bfeba00bb9         50<span style="text-decoration: underline;">773</span>284  13<span style="text-decoration: underline;">431</span>087 19<span style="text-decoration: underline;">421</span>025       <span style="text-decoration: underline;">83</span>418        <span style="text-decoration: underline;">308</span>728 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.655</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 5cb86b29cb48652399618eda         50<span style="text-decoration: underline;">681</span>765  13<span style="text-decoration: underline;">334</span>607  2<span style="text-decoration: underline;">198</span>715      <span style="text-decoration: underline;">104</span>413        <span style="text-decoration: underline;">168</span>753 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 118 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 118 more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

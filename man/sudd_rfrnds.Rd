@@ -35,7 +35,9 @@ licensed under \href{https://creativecommons.org/licenses/by-nc-sa/4.0/}{Creativ
 \examples{
 rdb::rfrnd(id = "5bbc045192a21351232e596f")$id_sudd |> rdb::sudd_rfrnds()
 
-rdb::rfrnds(country_code = "AT") |> rdb::sudd_rfrnds()
+rdb::rfrnds(country_code = "AT",
+            quiet = TRUE) |>
+  rdb::sudd_rfrnds()
 }
 \seealso{
 Other sudd.ch scraping functions:

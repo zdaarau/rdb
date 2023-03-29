@@ -17,7 +17,8 @@ Augments \code{data} with an additional column holding the official full English
 }
 \examples{
 rdb::rfrnds(date_max = clock::date_today(zone = "UTC"),
-            date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L)) |>
+            date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L),
+            quiet = TRUE) |>
   rdb:::add_country_name_long() |>
   dplyr::select(id,
                 starts_with("country_name"))

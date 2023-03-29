@@ -40,13 +40,19 @@ for details.
 }
 \examples{
 # count each referendum equally
-rdb::rfrnds(country_code = "AT") |> rdb::plot_topic_segmentation(method = "per_rfrnd")
+rdb::rfrnds(country_code = "AT",
+            quiet = TRUE) |>
+  rdb::plot_topic_segmentation(method = "per_rfrnd")
 
 # count each topic lineage equally
-rdb::rfrnds(country_code = "AT") |> rdb::plot_topic_segmentation(method = "per_topic_lineage")
+rdb::rfrnds(country_code = "AT",
+            quiet = TRUE) |>
+  rdb::plot_topic_segmentation(method = "per_topic_lineage")
 
 # naive count (way faster, but with misleading proportions on tier 2 and 3)
-rdb::rfrnds(country_code = "AT") |> rdb::plot_topic_segmentation(method = "naive")
+rdb::rfrnds(country_code = "AT",
+            quiet = TRUE) |>
+  rdb::plot_topic_segmentation(method = "naive")
 }
 \seealso{
 Other visualization functions:

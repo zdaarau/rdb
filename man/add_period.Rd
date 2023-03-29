@@ -25,11 +25,13 @@ values are always of type integer.
 Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
 }
 \examples{
-rdb::rfrnds(country_code = "AT") |>
+rdb::rfrnds(country_code = "AT",
+            quiet = TRUE) |>
   rdb::add_period() |>
   dplyr::select(id, date, week)
 
-rdb::rfrnds(country_code = "AT") |>
+rdb::rfrnds(country_code = "AT",
+            quiet = TRUE) |>
   rdb::add_period("year") |>
   dplyr::select(id, date, year)
 }

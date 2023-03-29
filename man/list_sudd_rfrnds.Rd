@@ -61,11 +61,13 @@ rdb::list_sudd_rfrnds(mode = "by_mod_date")}
 
 # list all referendums whose title matches "AHV"
 rdb::list_sudd_rfrnds(mode = "filter",
-                      filter = list(title_de = "AHV"))
+                      filter = list(title_de = "AHV"),
+                      quiet = TRUE)
 
 # get sudd.ch referendum data from all referendums from 2020 onwards
 rdb::list_sudd_rfrnds(mode = "filter",
-                      filter = list(year_min = 2020)) |>
+                      filter = list(year_min = 2020),
+                      quiet = TRUE) |>
   rdb::sudd_rfrnds()
 
 # get sudd.ch referendum data from five randomly picked referendums
