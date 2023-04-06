@@ -5603,7 +5603,8 @@ tbl_n_rfrnds_per_period <- function(data,
   pal::assert_pkg("gt",
                   min_version = "0.9.0")
   
-  ix_by <- rlang::enquo(by) %>% tidyselect::eval_select(data = data)
+  ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
+                                   data = data)
   n_ix <- length(ix_by)
   has_by <- n_ix > 0L
   
@@ -5659,7 +5660,7 @@ tbl_n_rfrnds_per_period <- function(data,
           dplyr::select(-any_of(c(period, "Total"))) %>%
           magrittr::extract(i, ) %>%
           sum() %>%
-          magrittr::equals(0)) {
+          magrittr::equals(0L)) {
         
         ix %<>% c(i)
         
