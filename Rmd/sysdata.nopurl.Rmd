@@ -31,7 +31,7 @@ library(magrittr,
 
 TODO:
 
--   Once the toml\* package is finished, use it instead to do the stuff below more generically.
+-   Consider migrating the codebook to the qstnr questionnaire schema and using qstnr to process it.
 
 NOTES:
 

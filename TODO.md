@@ -1,5 +1,10 @@
 # TODOs
 
+## Rebranding
+
+-   Once we finished rebranding, we should add a Wikipedia article (DE and EN) and point the acronym "fork" articles [RDB
+    (de)](https://de.wikipedia.org/wiki/RDB) and [RDB (en)](https://en.wikipedia.org/wiki/RDB) to it.
+
 ## To be discussed (-\> convert to GitLab issues (adding an additional `to be discussed` label)!)
 
 -   Experiment with `plotly::plot_ly(colors = viridis::turbo(n = ?))` in `plot_topic_segmentation()`
