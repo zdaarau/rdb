@@ -1,0 +1,30 @@
+---
+editor_options:
+  chunk_output_type: console
+---
+
+# NOTES
+
+-   This file is *not* included in the [source package](https://r-pkgs.org/package-structure-state.html#source-package) because of the [`.nopurl` suffix in the
+    filename](https://pkgpurl.rpkg.dev/reference/purl_rmd.html#-rmd-files-excluded-from-purling).
+
+-   The chunks below have to be manually executed in order to update the backed up data.
+
+# Setup
+
+```{r}
+library(rlang,
+        include.only = c("%|%", "%||%"))
+library(magrittr,
+        include.only = c("%>%", "%<>%", "%T>%", "%!>%", "%$%"))
+```
+
+# Back up data from `sudd.ch`
+
+```{r}
+rdb::list_sudd_rfrnds(use_cache = FALSE) |>
+  rdb::sudd_rfrnds(use_cache = FALSE) |>
+  readr::write_rds(file = "data-raw/sudd_data_backup.rds",
+                   compress = "xz",
+                   version = 3L)
+```
