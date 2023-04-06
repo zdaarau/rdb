@@ -68,12 +68,12 @@ rdb::list_sudd_rfrnds(mode = "filter",
 rdb::list_sudd_rfrnds(mode = "filter",
                       filter = list(year_min = 2020),
                       quiet = TRUE) |>
-  rdb::sudd_rfrnds()
+  rdb::sudd_rfrnds(quiet = TRUE)
 
 # get sudd.ch referendum data from five randomly picked referendums
 rdb::list_sudd_rfrnds(mode = "random",
                       quiet = TRUE) |>
-  rdb::sudd_rfrnds()
+  rdb::sudd_rfrnds(quiet = TRUE)
 }
 \seealso{
 Other sudd.ch scraping functions:

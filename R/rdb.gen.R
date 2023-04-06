@@ -4960,12 +4960,12 @@ list_sudd_titles <- function() {
 #' rdb::list_sudd_rfrnds(mode = "filter",
 #'                       filter = list(year_min = 2020),
 #'                       quiet = TRUE) |>
-#'   rdb::sudd_rfrnds()
+#'   rdb::sudd_rfrnds(quiet = TRUE)
 #' 
 #' # get sudd.ch referendum data from five randomly picked referendums
 #' rdb::list_sudd_rfrnds(mode = "random",
 #'                       quiet = TRUE) |>
-#'   rdb::sudd_rfrnds()
+#'   rdb::sudd_rfrnds(quiet = TRUE)
 list_sudd_rfrnds <- function(mode = c("by_date",
                                       "by_mod_date",
                                       "filter",
