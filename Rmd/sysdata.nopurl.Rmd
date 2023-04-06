@@ -358,7 +358,7 @@ topics_tier_3_ <- rdb::topics(tiers = 3L)
 
 NOTES:
 
--   Antarctica (AQ) is not part of any UN subregions (i.e. it's [directly below
+-   Antarctica (AQ) is not part of any UN subregion (i.e. it's [directly below
     *World*](https://en.wikipedia.org/wiki/List_of_countries_by_United_Nations_geoscheme)).
 
 ```{r}
