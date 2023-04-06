@@ -4725,7 +4725,8 @@ tbl_n_rfrnds_per_period <- function(data,
   checkmate::assert_flag(add_total_row)
   checkmate::assert_flag(add_total_col,
                          null.ok = TRUE)
-  pal::assert_pkg("gt")
+  pal::assert_pkg("gt",
+                  min_version = "0.9.0")
   
   ix_by <- rlang::enquo(by) %>% tidyselect::eval_select(data = data)
   n_ix <- length(ix_by)
@@ -4812,10 +4813,9 @@ tbl_n_rfrnds_per_period <- function(data,
   data_to_plot %>%
     dplyr::filter(!(dplyr::row_number() %in% ix_rm)) %>%
     gt::gt(rowname_col = period) %>%
-    pal::when(add_total_row ~ gt::summary_rows(data = .,
-                                               fns = list(Total = ~ sum(., na.rm = TRUE)),
-                                               formatter = gt::fmt_integer,
-                                               sep_mark = ""),
+    pal::when(add_total_row ~ gt::grand_summary_rows(data = .,
+                                                     fns = list(label = gt::md("**Total**"), id = "total") ~ sum(., na.rm = TRUE),
+                                                     fmt = ~ gt::fmt_integer(., sep_mark = "")),
               ~ .) %>%
     gt::tab_spanner_delim(delim = "_",
                           split = "last") %>%
