@@ -5569,6 +5569,10 @@ Functions to create analyses in tabular form (using [gt](https://gt.rstudio.com/
 #' @param add_total_row Whether or not to add a summary row at the very end of the table containing column totals.
 #' @param add_total_col Whether or not to add a summary column at the very end of the table containing row totals. If `NULL`, a total column is added only if
 #'   `by` is non-empty.
+#' @param lbl_total_row Label of the summary row containing column totals. Only relevant if `add_total_row = TRUE`. A character scalar. [gt::md() or
+#'   [gt::html()] can be used to format the label text.
+#' @param lbl_total_col Label of the summary column containing row totals. Only relevant if `add_total_col = TRUE`. A character scalar. [gt::md() or
+#'   [gt::html()] can be used to format the label text.
 #'
 #' @return `r pkgsnip::return_lbl("gt_obj")`
 #' @family tabulate
@@ -5605,13 +5609,17 @@ tbl_n_rfrnds_per_period <- function(data,
                                     squeeze_zero_rows = TRUE,
                                     descending = TRUE,
                                     add_total_row = TRUE,
-                                    add_total_col = NULL) {
+                                    add_total_col = NULL,
+                                    lbl_total_row = gt::md("**Total**"),
+                                    lbl_total_col = lbl_total_row) {
   
   period <- rlang::arg_match(period)
   checkmate::assert_flag(squeeze_zero_rows)
   checkmate::assert_flag(add_total_row)
   checkmate::assert_flag(add_total_col,
                          null.ok = TRUE)
+  checkmate::assert_string(lbl_total_row)
+  checkmate::assert_string(lbl_total_col)
   pal::assert_pkg("gt",
                   min_version = "0.9.0")
   
@@ -5702,11 +5710,19 @@ tbl_n_rfrnds_per_period <- function(data,
     dplyr::filter(!(dplyr::row_number() %in% ix_rm)) %>%
     gt::gt(rowname_col = period) %>%
     pal::when(add_total_col ~ gt::cols_label(.data = .,
-                                             `:total` = gt::md("**Total**")),
+                                             `:total` = lbl_total_col),
               ~ .) %>%
-    pal::when(add_total_row ~ gt::grand_summary_rows(data = .,
-                                                     fns = list(label = gt::md("**Total**"), id = "total") ~ sum(., na.rm = TRUE),
-                                                     fmt = ~ gt::fmt_integer(., sep_mark = "")),
+    pal::when(add_total_row ~ {
+      
+      result <- gt::grand_summary_rows(data = .,
+                                       fns = list(label = "DUMMY", id = "total") ~ sum(., na.rm = TRUE),
+                                       fmt = ~ gt::fmt_integer(., sep_mark = ""))
+      
+      # TODO: remove workaround and replace `"DUMMY"` with `lbl_total_row` above as soon as [#1295](https://github.com/rstudio/gt/issues/1295) is fixed.
+      result$`_summary`[[1L]]$fns$total$label <- lbl_total_row
+      
+      result
+    },
               ~ .) %>%
     gt::tab_spanner_delim(delim = "_",
                           split = "last") %>%

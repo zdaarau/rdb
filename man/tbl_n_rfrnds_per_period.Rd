@@ -14,7 +14,9 @@ tbl_n_rfrnds_per_period(
   squeeze_zero_rows = TRUE,
   descending = TRUE,
   add_total_row = TRUE,
-  add_total_col = NULL
+  add_total_col = NULL,
+  lbl_total_row = gt::md("**Total**"),
+  lbl_total_col = lbl_total_row
 )
 }
 \arguments{
@@ -41,6 +43,12 @@ relevant if \code{fill_gaps = TRUE} and \code{period} is set to a unique timespa
 
 \item{add_total_col}{Whether or not to add a summary column at the very end of the table containing row totals. If \code{NULL}, a total column is added only if
 \code{by} is non-empty.}
+
+\item{lbl_total_row}{Label of the summary row containing column totals. Only relevant if \code{add_total_row = TRUE}. A character scalar. [gt::md() or
+\code{\link[gt:html]{gt::html()}} can be used to format the label text.}
+
+\item{lbl_total_col}{Label of the summary column containing row totals. Only relevant if \code{add_total_col = TRUE}. A character scalar. [gt::md() or
+\code{\link[gt:html]{gt::html()}} can be used to format the label text.}
 }
 \value{
 A \code{\link[gt:gt]{gt_tbl}} object.
