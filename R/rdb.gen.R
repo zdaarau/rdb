@@ -4289,6 +4289,12 @@ as_ballot_dates <- function(data) {
 #'             quiet = TRUE) |>
 #'   rdb::n_rfrnds_per_period(by = c(level, type),
 #'                            period = "decade")
+#'
+#' # count ballot dates instead of referendums
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::as_ballot_dates() |>
+#'   rdb::n_rfrnds_per_period()
 n_rfrnds_per_period <- function(data,
                                 by = NULL,
                                 period = c("week", "month", "quarter", "year", "decade", "century"),
@@ -4709,6 +4715,12 @@ plot_topic_share_per_period <- function(data,
 #'             quiet = TRUE) |>
 #'   rdb::tbl_n_rfrnds_per_period(by = c(level, type),
 #'                                period = "decade")
+#'
+#' # count ballot dates instead of referendums
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::as_ballot_dates() |>
+#'   rdb::tbl_n_rfrnds_per_period(period = "decade")
 tbl_n_rfrnds_per_period <- function(data,
                                     by = NULL,
                                     period = c("week", "month", "quarter", "year", "decade", "century"),
@@ -4764,8 +4776,8 @@ tbl_n_rfrnds_per_period <- function(data,
                                           values_from = n),
               ~ .) %>%
     pal::when(add_total_col ~ dplyr::mutate(.data = .,
-                                            Total = rowSums(x = dplyr::pick(-!!as.symbol(period)),
-                                                            na.rm = TRUE)),
+                                            `:total` = rowSums(x = dplyr::pick(-!!as.symbol(period)),
+                                                               na.rm = TRUE)),
               ~ .) %>%
     dplyr::mutate(dplyr::across(everything(),
                                 ~ tidyr::replace_na(data = .x,
@@ -4782,7 +4794,7 @@ tbl_n_rfrnds_per_period <- function(data,
     for (i in pal::safe_seq_len(nrow(data_to_plot))) {
       
       if (data_to_plot %>%
-          dplyr::select(-any_of(c(period, "Total"))) %>%
+          dplyr::select(-any_of(c(period, ":total"))) %>%
           magrittr::extract(i, ) %>%
           sum() %>%
           magrittr::equals(0L)) {
@@ -4814,6 +4826,9 @@ tbl_n_rfrnds_per_period <- function(data,
   data_to_plot %>%
     dplyr::filter(!(dplyr::row_number() %in% ix_rm)) %>%
     gt::gt(rowname_col = period) %>%
+    pal::when(add_total_col ~ gt::cols_label(.data = .,
+                                             `:total` = gt::md("**Total**")),
+              ~ .) %>%
     pal::when(add_total_row ~ gt::grand_summary_rows(data = .,
                                                      fns = list(label = gt::md("**Total**"), id = "total") ~ sum(., na.rm = TRUE),
                                                      fmt = ~ gt::fmt_integer(., sep_mark = "")),

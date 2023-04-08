@@ -67,5 +67,11 @@ rdb::rfrnds(country_code = "AT",
             quiet = TRUE) |>
   rdb::tbl_n_rfrnds_per_period(by = c(level, type),
                                period = "decade")
+
+# count ballot dates instead of referendums
+rdb::rfrnds(country_code = "AT",
+            quiet = TRUE) |>
+  rdb::as_ballot_dates() |>
+  rdb::tbl_n_rfrnds_per_period(period = "decade")
 }
 \concept{tabulate}
