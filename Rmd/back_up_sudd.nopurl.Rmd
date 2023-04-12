@@ -24,7 +24,7 @@ library(magrittr,
 ```{r}
 rdb::list_sudd_rfrnds(use_cache = FALSE) |>
   rdb::sudd_rfrnds(use_cache = FALSE) |>
-  readr::write_rds(file = "data-raw/sudd_data_backup.rds",
+  readr::write_rds(file = "data-raw/backups/sudd.rds",
                    compress = "xz",
                    version = 3L)
 ```
