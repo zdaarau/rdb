@@ -114,6 +114,14 @@
 
         -   Wikidata
 
+    -   Information about *(in)dependency* status of geographical entities on the *national* level (i.e. "countries"). Currently, we treat *external* [dependent
+        territories](https://en.wikipedia.org/wiki/Dependent_territory) like [Norfolk Island](https://en.wikipedia.org/wiki/Norfolk_Island) (an external
+        territory of Australia) the same as fully independent countries like Switzerland.
+
+        Ideally, we'd augment our data with an additional variable from a suitable external source that holds information about a country's (in)dependency
+        status. See [this Wikipedia article](https://en.wikipedia.org/wiki/Dependent_territory) for an overview. Maybe we could source the information from
+        Wikidata?
+
 ## Other
 
 -   Add terminology reference complementing other structure information like the RDB codebook. E.g. we often use the term "voting" to refer to a referendum
