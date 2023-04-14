@@ -23,7 +23,7 @@ tbl_n_rfrnds_per_period(
 \item{data}{RDB referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column specified in \code{period} or the column \code{date} (to
 compute the \link[=add_period]{period column}), plus the one(s) specified via \code{by} (if any).}
 
-\item{by}{Up to two additional \code{data} column(s) to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
+\item{by}{Up to two additional \code{data} columns to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
 
 \item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
 
@@ -39,15 +39,16 @@ relevant if \code{fill_gaps = TRUE} and \code{period} is set to a unique timespa
 
 \item{descending}{Whether to sort the resulting table by \code{period} in descending or in ascending order.}
 
-\item{add_total_row}{Whether or not to add a summary row at the very end of the table containing column totals.}
+\item{add_total_row}{Whether or not to add a summary row at the very end of the table containing column totals. If \code{NULL}, a total row is added only if
+at least one column is provided in \code{by}.}
 
 \item{add_total_col}{Whether or not to add a summary column at the very end of the table containing row totals. If \code{NULL}, a total column is added only if
 \code{by} is non-empty.}
 
-\item{lbl_total_row}{Label of the summary row containing column totals. Only relevant if \code{add_total_row = TRUE}. A character scalar. [gt::md() or
+\item{lbl_total_row}{Label of the summary row containing column totals. Only relevant if \code{add_total_row = TRUE}. A character scalar. \code{\link[gt:md]{gt::md()}} or
 \code{\link[gt:html]{gt::html()}} can be used to format the label text.}
 
-\item{lbl_total_col}{Label of the summary column containing row totals. Only relevant if \code{add_total_col = TRUE}. A character scalar. [gt::md() or
+\item{lbl_total_col}{Label of the summary column containing row totals. Only relevant if \code{add_total_col = TRUE}. A character scalar. \code{\link[gt:md]{gt::md()}} or
 \code{\link[gt:html]{gt::html()}} can be used to format the label text.}
 }
 \value{
@@ -81,5 +82,9 @@ rdb::rfrnds(country_code = "AT",
             quiet = TRUE) |>
   rdb::as_ballot_dates() |>
   rdb::tbl_n_rfrnds_per_period(period = "decade")
+}
+\seealso{
+Other tabulation functions:
+\code{\link{tbl_n_rfrnds}()}
 }
 \concept{tabulate}

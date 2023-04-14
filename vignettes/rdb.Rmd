@@ -22,6 +22,10 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
+# disable cache expiry
+options(rdb.global_max_cache_age = Inf)
+
+# set pkg metadata
 pkg_metadata <- pal::desc_list()
 ```
 
@@ -126,8 +130,30 @@ rdb::rfrnds() |> rdb::as_ballot_dates() |> nrow()
 
 rdb also includes some ready-made convenience functions to create tables and (interactive) plots.
 
-If you'd like to tabulate the number of referendums in the [UN subregion](https://rdb.rpkg.dev/reference/add_world_regions.html) *Polynesia* since 2010 per a
-certain period, say years, you could simply run
+If you'd like a tabular overview of the top-ten countries by number of ballot dates per political level for example, you could simply run
+
+``` r
+rdb::rfrnds() |>
+  rdb::as_ballot_dates() |>
+  rdb::tbl_n_rfrnds(by = c(country_name, level),
+                    n_rows = 10L,
+                    order = "descending")
+```
+
+and you'd get the following nicely formatted [gt](https://gt.rstudio.com/) table:
+
+```{r}
+#| echo: false
+
+rdb::rfrnds(quiet = TRUE) |>
+  rdb::as_ballot_dates() |>
+  rdb::tbl_n_rfrnds(by = c(country_name, level),
+                    n_rows = 10L,
+                    order = "descending")
+```
+
+A table of the number of referendums in the [UN subregion](https://rdb.rpkg.dev/reference/add_world_regions.html) *Polynesia* since 2010 per a certain period,
+say years, can be generated via
 
 ``` r
 rdb::rfrnds(date_min = "2010-01-01") |>
@@ -135,8 +161,6 @@ rdb::rfrnds(date_min = "2010-01-01") |>
   dplyr::filter(un_subregion == "Polynesia") |>
   rdb::tbl_n_rfrnds_per_period(period = "year")
 ```
-
-and you'd get the following nicely formatted [gt](https://gt.rstudio.com/) table:
 
 ```{r}
 #| echo: false

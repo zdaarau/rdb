@@ -106,6 +106,9 @@
     <loc>https://rdb.rpkg.dev/dev/reference/lower_non_abbrs.html</loc>
   </url>
   <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds.html</loc>
+  </url>
+  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds_per_period.html</loc>
   </url>
   <url>
@@ -143,6 +146,9 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/sudd_rfrnds.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/tbl_n_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/tbl_n_rfrnds_per_period.html</loc>

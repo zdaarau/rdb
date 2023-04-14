@@ -4246,6 +4246,55 @@ as_ballot_dates <- function(data) {
   data %>% tidyr::nest(rfrnd_data = any_of(cols_to_nest))
 }
 
+#' Count number of referendums
+#'
+#' Counts the number of RDB referendums, optionally by additional columns specified via `by`.
+#'
+#' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns specified in `by` (if any).
+#' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param complete_fcts Whether or not to complete the result with implicitly missing combinations of the columns specified in `by` which are of type factor.
+#'
+#' @return `r pkgsnip::return_label("data")`
+#' @family transform
+#' @export
+#'
+#' @examples
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::n_rfrnds(by = level)
+#'
+#' # count ballot dates instead of referendums
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::as_ballot_dates() |>
+#'   rdb::n_rfrnds(by = level)
+n_rfrnds <- function(data,
+                     by = NULL,
+                     complete_fcts = TRUE) {
+  # arg checks
+  checkmate::assert_data_frame(data)
+  checkmate::assert_flag(complete_fcts)
+  
+  # tidy selection
+  defused_by <- rlang::enquo(by)
+  ix_by <- tidyselect::eval_select(expr = defused_by,
+                                   data = data)
+  names_by <- names(ix_by)
+  
+  result <-
+    data |>
+    dplyr::group_by(!!!rlang::syms(names_by)) |>
+    dplyr::summarise(n = dplyr::n(),
+                     .groups = "drop")
+  
+  if (complete_fcts) {
+    result %<>% tidyr::complete(!!!rlang::syms(names_by),
+                                fill = list(n = 0L))
+  }
+  
+  result
+}
+
 #' Count number of referendums per period
 #'
 #' Counts the number of RDB referendums per desired period, optionally by additional columns specified via `by`.
@@ -4253,9 +4302,9 @@ as_ballot_dates <- function(data) {
 #' ```{r, child = "snippets/period_note.Rmd"}
 #' ```
 #'
+#' @inheritParams n_rfrnds
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
 #'   compute the [period column][add_period]), plus the one(s) specified via `by` (if any).
-#' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
 #' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
 #' @param fill_gaps Whether or not to add zero-value rows to the result for `period` gaps in `data`.
 #' @param period_floor Lower `period` limit up to which gaps are filled. If `NULL`, the lower limit is set to the minimum of `period` present in `data`. Only
@@ -4681,6 +4730,216 @@ plot_topic_share_per_period <- function(data,
                           period = period)
 }
 
+#' Tabulate number of referendums
+#'
+#' Creates a ready-to-print [gt][gt::gt] table with the number of referendums, optionally counted `by` up to three additional columns.
+#'
+#' @inheritParams n_rfrnds
+#' @param by Up to three additional `data` columns to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param n_rows Maximum number of rows to be included in the resulting table. All the rows exceeding that limit are replaced by a single row of ellipses. An
+#'   integer scalar or `Inf` for an unlimited number of rows.
+#' @param order How to order the rows of the resulting table. One of
+#'   - `"ascending"` to sort in ascending order by the number of referendums,
+#'   - `"descending"` to sort in descending order by the number of referendums, or
+#'   - `NULL` to leave the sorting unchanged.
+#' @param add_total_row Whether or not to add a summary row at the very end of the table containing column totals. If `NULL`, a total row is added only if
+#'   at least one column is provided in `by`.
+#' @param add_total_col Whether or not to add a summary column at the very end of the table containing row totals. If `NULL`, a total column is added only if
+#'   multiple columns are provided in `by`.
+#' @param lbl_total_row Label of the summary row containing column totals. Only relevant if `add_total_row = TRUE`. A character scalar. [gt::md()] or
+#'   [gt::html()] can be used to format the label text.
+#' @param lbl_total_col Label of the summary column containing row totals. Only relevant if `add_total_col = TRUE`. A character scalar. [gt::md()] or
+#'   [gt::html()] can be used to format the label text.
+#'
+#' @return `r pkgsnip::return_lbl("gt_obj")`
+#' @family tabulate
+#' @export
+#'
+#' @examples
+#' rdb::rfrnds(max_cache_age = Inf,
+#'             quiet = TRUE) |>
+#'   rdb::tbl_n_rfrnds()
+#'
+#' # grouped by a single column
+#' rdb::rfrnds(max_cache_age = Inf,
+#'             quiet = TRUE) |>
+#'   rdb::tbl_n_rfrnds(by = level)
+#'
+#' # grouped by two columns
+#' rdb::rfrnds(max_cache_age = Inf,
+#'             quiet = TRUE) |>
+#'   rdb::tbl_n_rfrnds(by = c(type, level))
+#'
+#' # grouped by three columns
+#' rdb::rfrnds(max_cache_age = Inf,
+#'             quiet = TRUE) |>
+#'   rdb::tbl_n_rfrnds(by = c(country_name, level, type),
+#'                     n_rows = 10L,
+#'                     order = "descending")
+#'
+#' # count ballot dates instead of referendums
+#' rdb::rfrnds(max_cache_age = Inf,
+#'             quiet = TRUE) |>
+#'   rdb::as_ballot_dates() |>
+#'   rdb::tbl_n_rfrnds(by = c(country_name, level),
+#'                     n_rows = 10L,
+#'                     order = "descending")
+tbl_n_rfrnds <- function(data,
+                         by = NULL,
+                         n_rows = Inf,
+                         order = NULL,
+                         add_total_row = NULL,
+                         add_total_col = NULL,
+                         lbl_total_row = gt::md("**Total**"),
+                         lbl_total_col = lbl_total_row) {
+  
+  if (!isTRUE(is.infinite(n_rows))) {
+    checkmate::assert_int(n_rows,
+                          lower = 1L)
+  }
+  if (!is.null(order)) {
+    rlang::arg_match0(arg = order,
+                      values = c("ascending", "descending"))
+  }
+  checkmate::assert_flag(add_total_row,
+                         null.ok = TRUE)
+  checkmate::assert_flag(add_total_col,
+                         null.ok = TRUE)
+  checkmate::assert_string(lbl_total_row)
+  checkmate::assert_string(lbl_total_col)
+  pal::assert_pkg("gt",
+                  min_version = "0.9.0")
+  
+  ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
+                                   data = data)
+  n_by <- length(ix_by)
+  has_by <- n_by > 0L
+  has_by_rest <- n_by > 1L
+  
+  if (n_by > 3L) {
+    cli::cli_abort("At most {.emph three} data columns can be specified in {.arg by}, but {.val {n_by}} were provided.")
+  }
+  
+  if (is.null(add_total_row)) {
+    add_total_row <- has_by
+  }
+  
+  if (is.null(add_total_col)) {
+    add_total_col <- has_by_rest
+  }
+  
+  by_colname_1st <- names(ix_by[1L]) %|% ":no_by"
+  by_colnames_rest <- names(ix_by[-1L])
+  by_printnames_rest <- ifelse(has_by_rest,
+                                by_colnames_rest |>
+                                  printify_var_names() |>
+                                  pal::wrap_chr(wrap = "*") |>
+                                  paste0(collapse = "<br><br>"),
+                                "")
+  result <-
+    data |>
+    n_rfrnds(by = {{ by }}) |>
+    dplyr::mutate(dplyr::across(where(is.factor),
+                                ~ forcats::fct_na_value_to_level(f = .x,
+                                                                 level = "N/A"))) |>
+    pal::when(has_by_rest ~ tidyr::pivot_wider(data = .,
+                                               names_from = by_colnames_rest,
+                                               names_sort = TRUE,
+                                               values_from = n),
+              ~ .) |>
+    dplyr::mutate(`:total` = rowSums(x = dplyr::pick(-any_of(by_colname_1st)),
+                                     na.rm = TRUE),
+                  dplyr::across(everything(),
+                                ~ tidyr::replace_na(data = .x,
+                                                    replace = 0L)),
+                  # TODO: remove type conversion below once [issue #1305](https://github.com/rstudio/gt/issues/1305) is fixed
+                  dplyr::across(any_of(by_colname_1st),
+                                as.character)) |>
+    pal::when(isTRUE(order == "descending") ~ dplyr::arrange(.data = .,
+                                                             -`:total`),
+              isTRUE(order == "ascending") ~ dplyr::arrange(.data = .,
+                                                            `:total`),
+              ~ .) |>
+    pal::when(!add_total_col ~ dplyr::select(.data = .,
+                                             -`:total`),
+              ~ .)
+  total_n <-
+    result |>
+    dplyr::select(-any_of(by_colname_1st)) |>
+    purrr::map_int(\(x) sum(x, na.rm = TRUE))
+    
+  chop_rows <- n_rows < nrow(result)
+  
+  if (chop_rows) {
+    
+    result %<>%
+      utils::head(n = n_rows) %>%
+      # add placeholder/ellipsis row
+      dplyr::mutate(dplyr::across(everything(),
+                                  as.character)) %>%
+      rbind("\u2026")
+  }
+  
+  # NOTE: if we chop rows (and have multiple n cols), it's impossible to create our total row using `gt::grand_summary_rows()` since its `fns` arg only
+  #       receives column content, no metadata; thus we create the total row manually
+  if (add_total_row && chop_rows) {
+    result %<>% rbind(c(lbl_total_row, total_n))
+  }
+  
+  result %<>% gt::gt(rowname_col = ifelse(has_by,
+                                          by_colname_1st,
+                                          "rowname"),
+                     process_md = TRUE)
+  
+  if (has_by) {
+    result %<>% gt::tab_row_group(label =
+                                    by_colname_1st |>
+                                    printify_var_names() |>
+                                    pal::wrap_chr(wrap = "*") |>
+                                    gt::md(),
+                                  rows = tidyselect::everything(),
+                                  id = by_colname_1st)
+  }
+  
+  if (add_total_col) {
+    result %<>% gt::cols_label(`:total` = lbl_total_col)
+  }
+    
+  if (add_total_row) {
+    if (chop_rows) {
+      result %<>% gt::tab_style(style = gt::cell_borders(sides = "top",
+                                                         color = "#D3D3D3",
+                                                         style = "double",
+                                                         weight = gt::px(6L)),
+                                locations = list(gt::cells_body(rows = n_rows + 2L),
+                                                 gt::cells_stub(rows = n_rows + 2L)))
+      
+    } else {
+      result %<>% gt::grand_summary_rows(fns = list(id = "total", label = "DUMMY") ~ sum(., na.rm = TRUE),
+                                         fmt = ~ gt::fmt_integer(., sep_mark = ""))
+      
+      # TODO: remove this workaround and replace `"DUMMY"` with `lbl_total_row` above as soon as [#1295](https://github.com/rstudio/gt/issues/1295)
+      #       is fixed.
+      result$`_summary`[[1L]]$fns$total$label <- lbl_total_row
+    }
+  }
+  
+  result |>
+    gt::tab_spanner_delim(delim = "_",
+                          split = "last") |>
+    gt::tab_stubhead(label = gt::md(by_printnames_rest)) |>
+    gt::tab_style(style = gt::cell_text(align = "right",
+                                        v_align = "middle"),
+                  locations = gt::cells_stubhead()) |>
+    # right-align cols; required since they're of type chr if we chopped rows
+    gt::cols_align(align = "right",
+                   columns = -tidyselect::any_of(by_colname_1st)) |>
+    # hide table header if there are less than two `by` cols
+    pal::when(!has_by_rest ~ gt::tab_options(data = .,
+                                             column_labels.hidden = TRUE),
+              ~ .)
+}
+
 #' Tabulate number of referendums per period
 #'
 #' Creates a ready-to-print [gt][gt::gt] table with the number of referendums per period, optionally counted `by` up to two additional columns.
@@ -4689,15 +4948,11 @@ plot_topic_share_per_period <- function(data,
 #' ```
 #'
 #' @inheritParams n_rfrnds_per_period
-#' @param by Up to two additional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @inheritParams tbl_n_rfrnds
+#' @param by Up to two additional `data` columns to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
 #' @param squeeze_zero_rows Whether or not to compress consecutive zero-sum rows into single period span rows.
-#' @param add_total_row Whether or not to add a summary row at the very end of the table containing column totals.
 #' @param add_total_col Whether or not to add a summary column at the very end of the table containing row totals. If `NULL`, a total column is added only if
 #'   `by` is non-empty.
-#' @param lbl_total_row Label of the summary row containing column totals. Only relevant if `add_total_row = TRUE`. A character scalar. [gt::md() or
-#'   [gt::html()] can be used to format the label text.
-#' @param lbl_total_col Label of the summary column containing row totals. Only relevant if `add_total_col = TRUE`. A character scalar. [gt::md() or
-#'   [gt::html()] can be used to format the label text.
 #'
 #' @return `r pkgsnip::return_lbl("gt_obj")`
 #' @family tabulate
@@ -4750,11 +5005,11 @@ tbl_n_rfrnds_per_period <- function(data,
   
   ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
                                    data = data)
-  n_ix <- length(ix_by)
-  has_by <- n_ix > 0L
+  n_by <- length(ix_by)
+  has_by <- n_by > 0L
   
-  if (n_ix > 2L) {
-    cli::cli_abort("At most {.emph two} additional data columns can be specified in {.arg by}, but {.val {n_ix}} were provided.")
+  if (n_by > 2L) {
+    cli::cli_abort("At most {.emph two} additional data columns can be specified in {.arg by}, but {.val {n_by}} were provided.")
   }
   
   if (is.null(add_total_col)) {
@@ -4790,6 +5045,7 @@ tbl_n_rfrnds_per_period <- function(data,
     dplyr::mutate(dplyr::across(everything(),
                                 ~ tidyr::replace_na(data = .x,
                                                     replace = 0L)),
+                  # TODO: remove type conversion below once [issue #1305](https://github.com/rstudio/gt/issues/1305) is fixed
                   dplyr::across(all_of(period),
                                 as.character))
   
@@ -4843,7 +5099,7 @@ tbl_n_rfrnds_per_period <- function(data,
                                        fns = list(label = "DUMMY", id = "total") ~ sum(., na.rm = TRUE),
                                        fmt = ~ gt::fmt_integer(., sep_mark = ""))
       
-      # TODO: remove workaround and replace `"DUMMY"` with `lbl_total_row` above as soon as [#1295](https://github.com/rstudio/gt/issues/1295) is fixed.
+      # TODO: remove this workaround and replace `"DUMMY"` with `lbl_total_row` above as soon as [#1295](https://github.com/rstudio/gt/issues/1295) is fixed.
       result$`_summary`[[1L]]$fns$total$label <- lbl_total_row
       
       result
@@ -4852,7 +5108,7 @@ tbl_n_rfrnds_per_period <- function(data,
     gt::tab_spanner_delim(delim = "_",
                           split = "last") %>%
     gt::tab_stubhead(label = gt::md(by_names_print)) %>%
-    gt::tab_style(style = gt::cell_text(align = "left",
+    gt::tab_style(style = gt::cell_text(align = "right",
                                         v_align = "middle"),
                   locations = gt::cells_stubhead())
 }

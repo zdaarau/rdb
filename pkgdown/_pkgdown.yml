@@ -73,6 +73,7 @@ reference:
     a specific purpose.
 - contents:
   - as_ballot_dates
+  - n_rfrnds
   - n_rfrnds_per_period
   - printify_col_names
 - title: Visualization
@@ -84,7 +85,9 @@ reference:
 - title: Tabulation
   desc: Functions to create analyses in tabular form (using [gt](https://gt.rstudio.com/)
     tables).
-- contents: tbl_n_rfrnds_per_period
+- contents:
+  - tbl_n_rfrnds
+  - tbl_n_rfrnds_per_period
 - title: sudd.ch scraping
   desc: Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database.
 - contents:
