@@ -4252,7 +4252,7 @@ as_ballot_dates <- function(data) {
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns specified in `by` (if any).
 #' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
-#' @param complete_fcts Whether or not to complete the result with implicitly missing combinations of the columns specified in `by` which are of type factor.
+#' @param complete_fcts Whether or not to complete the result with implicitly missing combinations of those columns specified in `by` which are of type factor.
 #'
 #' @return `r pkgsnip::return_label("data")`
 #' @family transform
@@ -4786,6 +4786,7 @@ plot_topic_share_per_period <- function(data,
 #'                     order = "descending")
 tbl_n_rfrnds <- function(data,
                          by = NULL,
+                         complete_fcts = TRUE,
                          n_rows = Inf,
                          order = NULL,
                          add_total_row = NULL,
@@ -4838,7 +4839,8 @@ tbl_n_rfrnds <- function(data,
                                 "")
   result <-
     data |>
-    n_rfrnds(by = {{ by }}) |>
+    n_rfrnds(by = {{ by }},
+             complete_fcts = complete_fcts) |>
     dplyr::mutate(dplyr::across(where(is.factor),
                                 ~ forcats::fct_na_value_to_level(f = .x,
                                                                  level = "N/A"))) |>

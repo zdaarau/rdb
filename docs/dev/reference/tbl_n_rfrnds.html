@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rdb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9043</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9044</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +57,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tbl_n_rfrnds</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  complete_fcts <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_rows <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  order <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  add_total_row <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -74,6 +75,10 @@
 
 <dt>by</dt>
 <dd><p>Up to three additional <code>data</code> columns to group by before counting number of referendums. <a href="https://dplyr.tidyverse.org/reference/dplyr_tidy_select.html" class="external-link">Tidy selections</a> are supported.</p></dd>
+
+
+<dt>complete_fcts</dt>
+<dd><p>Whether or not to complete the result with implicitly missing combinations of those columns specified in <code>by</code> which are of type factor.</p></dd>
 
 
 <dt>n_rows</dt>
@@ -119,23 +124,23 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>max_cache_age <span class="op">=</span> <span class="cn">Inf</span>,</span></span>
 <span class="r-in"><span>            quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">tbl_n_rfrnds</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="ciphdminme" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#ciphdminme table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="yntpiwzlte" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#yntpiwzlte table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -webkit-font-smoothing: antialiased;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -moz-osx-font-smoothing: grayscale;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme thead, #ciphdminme tbody, #ciphdminme tfoot, #ciphdminme tr, #ciphdminme td, #ciphdminme th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte thead, #yntpiwzlte tbody, #yntpiwzlte tfoot, #yntpiwzlte tr, #yntpiwzlte td, #yntpiwzlte th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-style: none;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme p {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte p {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   display: table;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-collapse: collapse;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   line-height: normal;</span>
@@ -161,12 +166,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_caption {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_caption {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_title {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_title {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 125%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -178,7 +183,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_subtitle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_subtitle {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 85%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -190,7 +195,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #FFFFFF;</span>
@@ -202,13 +207,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_bottom_border {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_bottom_border {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_col_headings {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_col_headings {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -223,7 +228,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_col_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_col_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -243,7 +248,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_column_spanner_outer {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_column_spanner_outer {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -255,15 +260,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_column_spanner_outer:first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_column_spanner_outer:first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_column_spanner_outer:last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_column_spanner_outer:last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_column_spanner {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_column_spanner {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
@@ -275,11 +280,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   width: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_spanner_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_spanner_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -305,7 +310,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_empty_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_empty_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0.5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
@@ -320,15 +325,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: middle;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_from_md &gt; :first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_from_md &gt; :first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-top: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_from_md &gt; :last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_from_md &gt; :last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-bottom: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -347,7 +352,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_stub {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_stub {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -360,7 +365,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_stub_row_group {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_stub_row_group {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -374,15 +379,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: top;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_row_group_first td {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_row_group_first td {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_row_group_first th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_row_group_first th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -392,16 +397,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_first_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_first_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_first_summary_row.thick {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_first_summary_row.thick {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_last_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_last_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -411,7 +416,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -421,7 +426,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_first_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_first_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -431,7 +436,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_last_grand_summary_row_top {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_last_grand_summary_row_top {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -441,11 +446,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_striped {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_striped {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: rgba(128, 128, 128, 0.05);</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_table_body {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_table_body {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -454,7 +459,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_footnotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_footnotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -468,7 +473,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_footnote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_footnote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
@@ -477,7 +482,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_sourcenotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_sourcenotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -491,7 +496,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_sourcenote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_sourcenote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
@@ -499,63 +504,63 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_left {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_left {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_center {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_center {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_right {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_right {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: right;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-variant-numeric: tabular-nums;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_font_normal {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_font_normal {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: normal;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_font_bold {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_font_bold {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: bold;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_font_italic {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_font_italic {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-style: italic;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_super {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_super {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 65%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_footnote_marks {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_footnote_marks {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 75%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0.4em;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   position: initial;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_asterisk {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_asterisk {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_indent_1 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_indent_1 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_indent_2 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_indent_2 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 10px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_indent_3 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_indent_3 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 15px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_indent_4 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_indent_4 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 20px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #ciphdminme .gt_indent_5 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #yntpiwzlte .gt_indent_5 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 25px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/style&gt;</span>
@@ -573,23 +578,23 @@
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>max_cache_age <span class="op">=</span> <span class="cn">Inf</span>,</span></span>
 <span class="r-in"><span>            quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">tbl_n_rfrnds</span><span class="op">(</span>by <span class="op">=</span> <span class="va">level</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="meugadvmqo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#meugadvmqo table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="bymuvxcavh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#bymuvxcavh table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -webkit-font-smoothing: antialiased;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -moz-osx-font-smoothing: grayscale;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo thead, #meugadvmqo tbody, #meugadvmqo tfoot, #meugadvmqo tr, #meugadvmqo td, #meugadvmqo th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh thead, #bymuvxcavh tbody, #bymuvxcavh tfoot, #bymuvxcavh tr, #bymuvxcavh td, #bymuvxcavh th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-style: none;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo p {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh p {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   display: table;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-collapse: collapse;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   line-height: normal;</span>
@@ -615,12 +620,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_caption {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_caption {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_title {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_title {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 125%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -632,7 +637,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_subtitle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_subtitle {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 85%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -644,7 +649,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #FFFFFF;</span>
@@ -656,13 +661,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_bottom_border {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_bottom_border {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_col_headings {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_col_headings {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -677,7 +682,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_col_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_col_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -697,7 +702,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_column_spanner_outer {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_column_spanner_outer {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -709,15 +714,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_column_spanner_outer:first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_column_spanner_outer:first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_column_spanner_outer:last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_column_spanner_outer:last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_column_spanner {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_column_spanner {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
@@ -729,11 +734,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   width: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_spanner_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_spanner_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -759,7 +764,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_empty_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_empty_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0.5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
@@ -774,15 +779,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: middle;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_from_md &gt; :first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_from_md &gt; :first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-top: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_from_md &gt; :last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_from_md &gt; :last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-bottom: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -801,7 +806,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_stub {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_stub {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -814,7 +819,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_stub_row_group {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_stub_row_group {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -828,15 +833,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: top;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_row_group_first td {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_row_group_first td {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_row_group_first th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_row_group_first th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -846,16 +851,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_first_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_first_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_first_summary_row.thick {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_first_summary_row.thick {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_last_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_last_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -865,7 +870,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -875,7 +880,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_first_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_first_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -885,7 +890,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_last_grand_summary_row_top {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_last_grand_summary_row_top {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -895,11 +900,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_striped {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_striped {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: rgba(128, 128, 128, 0.05);</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_table_body {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_table_body {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -908,7 +913,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_footnotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_footnotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -922,7 +927,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_footnote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_footnote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
@@ -931,7 +936,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_sourcenotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_sourcenotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -945,7 +950,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_sourcenote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_sourcenote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
@@ -953,63 +958,63 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_left {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_left {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_center {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_center {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_right {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_right {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: right;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-variant-numeric: tabular-nums;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_font_normal {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_font_normal {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: normal;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_font_bold {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_font_bold {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: bold;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_font_italic {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_font_italic {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-style: italic;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_super {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_super {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 65%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_footnote_marks {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_footnote_marks {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 75%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0.4em;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   position: initial;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_asterisk {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_asterisk {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_indent_1 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_indent_1 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_indent_2 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_indent_2 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 10px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_indent_3 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_indent_3 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 15px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_indent_4 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_indent_4 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 20px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #meugadvmqo .gt_indent_5 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #bymuvxcavh .gt_indent_5 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 25px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/style&gt;</span>
@@ -1040,23 +1045,23 @@
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>max_cache_age <span class="op">=</span> <span class="cn">Inf</span>,</span></span>
 <span class="r-in"><span>            quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">tbl_n_rfrnds</span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">type</span>, <span class="va">level</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="wbfhehkgkl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#wbfhehkgkl table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="ibsahonchv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#ibsahonchv table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -webkit-font-smoothing: antialiased;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -moz-osx-font-smoothing: grayscale;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl thead, #wbfhehkgkl tbody, #wbfhehkgkl tfoot, #wbfhehkgkl tr, #wbfhehkgkl td, #wbfhehkgkl th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv thead, #ibsahonchv tbody, #ibsahonchv tfoot, #ibsahonchv tr, #ibsahonchv td, #ibsahonchv th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-style: none;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl p {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv p {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   display: table;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-collapse: collapse;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   line-height: normal;</span>
@@ -1082,12 +1087,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_caption {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_caption {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_title {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_title {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 125%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -1099,7 +1104,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_subtitle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_subtitle {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 85%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -1111,7 +1116,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #FFFFFF;</span>
@@ -1123,13 +1128,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_bottom_border {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_bottom_border {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_col_headings {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_col_headings {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -1144,7 +1149,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_col_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_col_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -1164,7 +1169,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_column_spanner_outer {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_column_spanner_outer {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -1176,15 +1181,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_column_spanner_outer:first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_column_spanner_outer:first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_column_spanner_outer:last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_column_spanner_outer:last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_column_spanner {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_column_spanner {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
@@ -1196,11 +1201,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   width: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_spanner_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_spanner_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1226,7 +1231,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_empty_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_empty_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0.5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
@@ -1241,15 +1246,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: middle;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_from_md &gt; :first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_from_md &gt; :first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-top: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_from_md &gt; :last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_from_md &gt; :last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-bottom: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1268,7 +1273,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_stub {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_stub {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -1281,7 +1286,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_stub_row_group {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_stub_row_group {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -1295,15 +1300,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: top;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_row_group_first td {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_row_group_first td {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_row_group_first th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_row_group_first th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -1313,16 +1318,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_first_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_first_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_first_summary_row.thick {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_first_summary_row.thick {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_last_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_last_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1332,7 +1337,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -1342,7 +1347,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_first_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_first_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1352,7 +1357,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_last_grand_summary_row_top {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_last_grand_summary_row_top {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1362,11 +1367,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_striped {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_striped {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: rgba(128, 128, 128, 0.05);</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_table_body {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_table_body {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -1375,7 +1380,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_footnotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_footnotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -1389,7 +1394,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_footnote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_footnote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
@@ -1398,7 +1403,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_sourcenotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_sourcenotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -1412,7 +1417,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_sourcenote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_sourcenote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
@@ -1420,63 +1425,63 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_left {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_left {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_center {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_center {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_right {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_right {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: right;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-variant-numeric: tabular-nums;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_font_normal {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_font_normal {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: normal;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_font_bold {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_font_bold {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: bold;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_font_italic {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_font_italic {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-style: italic;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_super {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_super {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 65%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_footnote_marks {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_footnote_marks {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 75%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0.4em;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   position: initial;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_asterisk {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_asterisk {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_indent_1 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_indent_1 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_indent_2 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_indent_2 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 10px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_indent_3 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_indent_3 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 15px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_indent_4 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_indent_4 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 20px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #wbfhehkgkl .gt_indent_5 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ibsahonchv .gt_indent_5 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 25px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/style&gt;</span>
@@ -1560,23 +1565,23 @@
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">tbl_n_rfrnds</span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">country_name</span>, <span class="va">level</span>, <span class="va">type</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                    n_rows <span class="op">=</span> <span class="fl">10L</span>,</span></span>
 <span class="r-in"><span>                    order <span class="op">=</span> <span class="st">"descending"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="tmcdytbgtv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#tmcdytbgtv table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="zxbhmapjrd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#zxbhmapjrd table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -webkit-font-smoothing: antialiased;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -moz-osx-font-smoothing: grayscale;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv thead, #tmcdytbgtv tbody, #tmcdytbgtv tfoot, #tmcdytbgtv tr, #tmcdytbgtv td, #tmcdytbgtv th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd thead, #zxbhmapjrd tbody, #zxbhmapjrd tfoot, #zxbhmapjrd tr, #zxbhmapjrd td, #zxbhmapjrd th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-style: none;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv p {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd p {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   display: table;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-collapse: collapse;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   line-height: normal;</span>
@@ -1602,12 +1607,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_caption {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_caption {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_title {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_title {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 125%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -1619,7 +1624,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_subtitle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_subtitle {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 85%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -1631,7 +1636,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #FFFFFF;</span>
@@ -1643,13 +1648,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_bottom_border {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_bottom_border {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_col_headings {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_col_headings {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -1664,7 +1669,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_col_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_col_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -1684,7 +1689,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_column_spanner_outer {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_column_spanner_outer {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -1696,15 +1701,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_column_spanner_outer:first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_column_spanner_outer:first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_column_spanner_outer:last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_column_spanner_outer:last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_column_spanner {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_column_spanner {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
@@ -1716,11 +1721,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   width: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_spanner_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_spanner_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1746,7 +1751,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_empty_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_empty_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0.5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
@@ -1761,15 +1766,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: middle;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_from_md &gt; :first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_from_md &gt; :first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-top: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_from_md &gt; :last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_from_md &gt; :last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-bottom: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1788,7 +1793,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_stub {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_stub {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -1801,7 +1806,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_stub_row_group {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_stub_row_group {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -1815,15 +1820,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: top;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_row_group_first td {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_row_group_first td {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_row_group_first th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_row_group_first th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -1833,16 +1838,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_first_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_first_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_first_summary_row.thick {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_first_summary_row.thick {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_last_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_last_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1852,7 +1857,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -1862,7 +1867,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_first_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_first_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1872,7 +1877,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_last_grand_summary_row_top {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_last_grand_summary_row_top {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -1882,11 +1887,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_striped {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_striped {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: rgba(128, 128, 128, 0.05);</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_table_body {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_table_body {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -1895,7 +1900,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_footnotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_footnotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -1909,7 +1914,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_footnote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_footnote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
@@ -1918,7 +1923,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_sourcenotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_sourcenotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -1932,7 +1937,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_sourcenote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_sourcenote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
@@ -1940,63 +1945,63 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_left {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_left {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_center {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_center {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_right {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_right {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: right;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-variant-numeric: tabular-nums;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_font_normal {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_font_normal {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: normal;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_font_bold {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_font_bold {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: bold;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_font_italic {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_font_italic {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-style: italic;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_super {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_super {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 65%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_footnote_marks {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_footnote_marks {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 75%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0.4em;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   position: initial;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_asterisk {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_asterisk {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_indent_1 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_indent_1 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_indent_2 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_indent_2 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 10px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_indent_3 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_indent_3 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 15px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_indent_4 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_indent_4 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 20px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #tmcdytbgtv .gt_indent_5 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #zxbhmapjrd .gt_indent_5 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 25px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/style&gt;</span>
@@ -2384,23 +2389,23 @@
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">tbl_n_rfrnds</span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">country_name</span>, <span class="va">level</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                    n_rows <span class="op">=</span> <span class="fl">10L</span>,</span></span>
 <span class="r-in"><span>                    order <span class="op">=</span> <span class="st">"descending"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="zjdrtnomva" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#zjdrtnomva table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="ljqkeizeaw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#ljqkeizeaw table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -webkit-font-smoothing: antialiased;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -moz-osx-font-smoothing: grayscale;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva thead, #zjdrtnomva tbody, #zjdrtnomva tfoot, #zjdrtnomva tr, #zjdrtnomva td, #zjdrtnomva th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw thead, #ljqkeizeaw tbody, #ljqkeizeaw tfoot, #ljqkeizeaw tr, #ljqkeizeaw td, #ljqkeizeaw th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-style: none;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva p {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw p {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_table {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   display: table;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-collapse: collapse;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   line-height: normal;</span>
@@ -2426,12 +2431,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_caption {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_caption {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_title {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_title {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 125%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -2443,7 +2448,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_subtitle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_subtitle {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 85%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
@@ -2455,7 +2460,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #FFFFFF;</span>
@@ -2467,13 +2472,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_bottom_border {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_bottom_border {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_col_headings {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_col_headings {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -2488,7 +2493,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_col_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_col_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -2508,7 +2513,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_column_spanner_outer {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_column_spanner_outer {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -2520,15 +2525,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_column_spanner_outer:first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_column_spanner_outer:first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_column_spanner_outer:last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_column_spanner_outer:last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_column_spanner {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_column_spanner {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
@@ -2540,11 +2545,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   width: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_spanner_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_spanner_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -2570,7 +2575,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_empty_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_empty_group_heading {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0.5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
@@ -2585,15 +2590,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: middle;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_from_md &gt; :first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_from_md &gt; :first-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-top: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_from_md &gt; :last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_from_md &gt; :last-child {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin-bottom: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -2612,7 +2617,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_stub {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_stub {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -2625,7 +2630,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_stub_row_group {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_stub_row_group {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
@@ -2639,15 +2644,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: top;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_row_group_first td {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_row_group_first td {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_row_group_first th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_row_group_first th {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -2657,16 +2662,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_first_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_first_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_first_summary_row.thick {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_first_summary_row.thick {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_last_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_last_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -2676,7 +2681,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
@@ -2686,7 +2691,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_first_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_first_grand_summary_row {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -2696,7 +2701,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_last_grand_summary_row_top {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_last_grand_summary_row_top {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
@@ -2706,11 +2711,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_striped {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_striped {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: rgba(128, 128, 128, 0.05);</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_table_body {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_table_body {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
@@ -2719,7 +2724,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_footnotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_footnotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -2733,7 +2738,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_footnote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_footnote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
@@ -2742,7 +2747,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_sourcenotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_sourcenotes {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
@@ -2756,7 +2761,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_sourcenote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_sourcenote {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
@@ -2764,63 +2769,63 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_left {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_left {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_center {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_center {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_right {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_right {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: right;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-variant-numeric: tabular-nums;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_font_normal {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_font_normal {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: normal;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_font_bold {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_font_bold {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: bold;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_font_italic {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_font_italic {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-style: italic;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_super {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_super {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 65%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_footnote_marks {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_footnote_marks {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 75%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0.4em;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   position: initial;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_asterisk {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_asterisk {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_indent_1 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_indent_1 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 5px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_indent_2 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_indent_2 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 10px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_indent_3 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_indent_3 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 15px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_indent_4 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_indent_4 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 20px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #zjdrtnomva .gt_indent_5 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #ljqkeizeaw .gt_indent_5 {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 25px;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/style&gt;</span>

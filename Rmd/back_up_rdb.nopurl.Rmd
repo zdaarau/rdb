@@ -5,7 +5,7 @@ editor_options:
 
 # NOTES
 
--   This file is *not* included in the [source package](https://r-pkgs.org/package-structure-state.html#source-package) because of the [`.nopurl` suffix in the
+-   This file is *not* included in the [source package](https://r-pkgs.org/structure.html#sec-source-package) because of the [`.nopurl` suffix in its
     filename](https://pkgpurl.rpkg.dev/reference/purl_rmd.html#-rmd-files-excluded-from-purling).
 
 -   The chunks below have to be manually executed in order to update the backed up data.

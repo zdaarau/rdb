@@ -11,7 +11,7 @@ n_rfrnds(data, by = NULL, complete_fcts = TRUE)
 
 \item{by}{Optional \code{data} column(s) to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
 
-\item{complete_fcts}{Whether or not to complete the result with implicitly missing combinations of the columns specified in \code{by} which are of type factor.}
+\item{complete_fcts}{Whether or not to complete the result with implicitly missing combinations of those columns specified in \code{by} which are of type factor.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.

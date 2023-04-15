@@ -7,6 +7,7 @@
 tbl_n_rfrnds(
   data,
   by = NULL,
+  complete_fcts = TRUE,
   n_rows = Inf,
   order = NULL,
   add_total_row = NULL,
@@ -19,6 +20,8 @@ tbl_n_rfrnds(
 \item{data}{RDB referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the columns specified in \code{by} (if any).}
 
 \item{by}{Up to three additional \code{data} columns to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
+
+\item{complete_fcts}{Whether or not to complete the result with implicitly missing combinations of those columns specified in \code{by} which are of type factor.}
 
 \item{n_rows}{Maximum number of rows to be included in the resulting table. All the rows exceeding that limit are replaced by a single row of ellipses. An
 integer scalar or \code{Inf} for an unlimited number of rows.}
