@@ -4841,12 +4841,7 @@ tbl_n_rfrnds <- function(data,
   
   by_colname_1st <- names(ix_by[1L]) %|% ":no_by"
   by_colnames_rest <- names(ix_by[-1L])
-  by_printnames_rest <- ifelse(has_by_rest,
-                                by_colnames_rest |>
-                                  printify_var_names() |>
-                                  pal::wrap_chr(wrap = "*") |>
-                                  paste0(collapse = "<br><br>"),
-                                "")
+  
   result <-
     data |>
     n_rfrnds(by = {{ by }},
@@ -4938,7 +4933,12 @@ tbl_n_rfrnds <- function(data,
   
   if (incl_col_head && has_by_rest) {
     result %<>%
-      gt::tab_stubhead(label = gt::md(by_printnames_rest)) %>%
+      gt::tab_stubhead(label =
+                         by_colnames_rest |>
+                         printify_var_names() |>
+                         pal::wrap_chr(wrap = "*") |>
+                         paste0(collapse = "<br><br>") |>
+                         gt::md()) %>%
       gt::tab_style(style = gt::cell_text(align = "right",
                                           v_align = "middle"),
                     locations = gt::cells_stubhead())
