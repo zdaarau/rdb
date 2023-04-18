@@ -4732,7 +4732,10 @@ plot_topic_share_per_period <- function(data,
 
 #' Tabulate number of referendums
 #'
-#' Creates a ready-to-print [gt][gt::gt] table with the number of referendums, optionally counted `by` up to three additional columns.
+#' Creates a ready-to-print [gt][gt::gt] table with the number of referendums, optionally counted `by` up to three additional variables.
+#'
+#' The first variable specified in `by` will be reflected in additional rows in the resulting table, i.e. expand it vertically. The second and third variables
+#' will be reflected in additional columns, i.e. expand it horizontally.
 #'
 #' @inheritParams n_rfrnds
 #' @param by Up to three additional `data` columns to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
@@ -4742,6 +4745,9 @@ plot_topic_share_per_period <- function(data,
 #'   - `"ascending"` to sort in ascending order by the number of referendums,
 #'   - `"descending"` to sort in descending order by the number of referendums, or
 #'   - `NULL` to leave the sorting unchanged.
+#' @param incl_row_head Whether or not to include a row heading with the [printified][printify_var_names] name of the first `by` variable.
+#' @param incl_col_head Whether or not to include column headings (in the table's [stub][gt::tab_stubhead]) with the [printified][printify_var_names] names of
+#'   the second and third `by` variables.
 #' @param add_total_row Whether or not to add a summary row at the very end of the table containing column totals. If `NULL`, a total row is added only if
 #'   at least one column is provided in `by`.
 #' @param add_total_col Whether or not to add a summary column at the very end of the table containing row totals. If `NULL`, a total column is added only if
@@ -4789,10 +4795,12 @@ tbl_n_rfrnds <- function(data,
                          complete_fcts = TRUE,
                          n_rows = Inf,
                          order = NULL,
+                         incl_row_head = TRUE,
+                         incl_col_head = TRUE,
                          add_total_row = NULL,
                          add_total_col = NULL,
                          lbl_total_row = gt::md("**Total**"),
-                         lbl_total_col = lbl_total_row) {
+                         lbl_total_col = gt::md("**Total**")) {
   
   if (!isTRUE(is.infinite(n_rows))) {
     checkmate::assert_int(n_rows,
@@ -4802,6 +4810,8 @@ tbl_n_rfrnds <- function(data,
     rlang::arg_match0(arg = order,
                       values = c("ascending", "descending"))
   }
+  checkmate::assert_flag(incl_row_head)
+  checkmate::assert_flag(incl_col_head)
   checkmate::assert_flag(add_total_row,
                          null.ok = TRUE)
   checkmate::assert_flag(add_total_col,
@@ -4893,7 +4903,7 @@ tbl_n_rfrnds <- function(data,
                                           "rowname"),
                      process_md = TRUE)
   
-  if (has_by) {
+  if (incl_row_head && has_by) {
     result %<>% gt::tab_row_group(label =
                                     by_colname_1st |>
                                     printify_var_names() |>
@@ -4926,13 +4936,17 @@ tbl_n_rfrnds <- function(data,
     }
   }
   
+  if (incl_col_head && has_by_rest) {
+    result %<>%
+      gt::tab_stubhead(label = gt::md(by_printnames_rest)) %>%
+      gt::tab_style(style = gt::cell_text(align = "right",
+                                          v_align = "middle"),
+                    locations = gt::cells_stubhead())
+  }
+  
   result |>
     gt::tab_spanner_delim(delim = "_",
                           split = "last") |>
-    gt::tab_stubhead(label = gt::md(by_printnames_rest)) |>
-    gt::tab_style(style = gt::cell_text(align = "right",
-                                        v_align = "middle"),
-                  locations = gt::cells_stubhead()) |>
     # right-align cols; required since they're of type chr if we chopped rows
     gt::cols_align(align = "right",
                    columns = -tidyselect::any_of(by_colname_1st)) |>

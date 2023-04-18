@@ -10,10 +10,12 @@ tbl_n_rfrnds(
   complete_fcts = TRUE,
   n_rows = Inf,
   order = NULL,
+  incl_row_head = TRUE,
+  incl_col_head = TRUE,
   add_total_row = NULL,
   add_total_col = NULL,
   lbl_total_row = gt::md("**Total**"),
-  lbl_total_col = lbl_total_row
+  lbl_total_col = gt::md("**Total**")
 )
 }
 \arguments{
@@ -33,6 +35,11 @@ integer scalar or \code{Inf} for an unlimited number of rows.}
 \item \code{NULL} to leave the sorting unchanged.
 }}
 
+\item{incl_row_head}{Whether or not to include a row heading with the \link[=printify_var_names]{printified} name of the first \code{by} variable.}
+
+\item{incl_col_head}{Whether or not to include column headings (in the table's \link[gt:tab_stubhead]{stub}) with the \link[=printify_var_names]{printified} names of
+the second and third \code{by} variables.}
+
 \item{add_total_row}{Whether or not to add a summary row at the very end of the table containing column totals. If \code{NULL}, a total row is added only if
 at least one column is provided in \code{by}.}
 
@@ -49,7 +56,11 @@ multiple columns are provided in \code{by}.}
 A \code{\link[gt:gt]{gt_tbl}} object.
 }
 \description{
-Creates a ready-to-print \link[gt:gt]{gt} table with the number of referendums, optionally counted \code{by} up to three additional columns.
+Creates a ready-to-print \link[gt:gt]{gt} table with the number of referendums, optionally counted \code{by} up to three additional variables.
+}
+\details{
+The first variable specified in \code{by} will be reflected in additional rows in the resulting table, i.e. expand it vertically. The second and third variables
+will be reflected in additional columns, i.e. expand it horizontally.
 }
 \examples{
 rdb::rfrnds(max_cache_age = Inf,
