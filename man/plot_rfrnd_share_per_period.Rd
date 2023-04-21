@@ -36,6 +36,7 @@ rdb::rfrnds(country_code = "CH",
 }
 \seealso{
 Other visualization functions:
+\code{\link{ggplot_streamgraph}()},
 \code{\link{plot_topic_segmentation}()},
 \code{\link{plot_topic_share_per_period}()}
 }

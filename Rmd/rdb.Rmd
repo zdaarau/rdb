@@ -5205,7 +5205,6 @@ n_rfrnds_per_period <- function(data,
                                        . == "week" ~ 53L,
                                        . == "month" ~ 12L,
                                        . == "quarter" ~ 4L)
-    
     period_seq <- seq(from = (period_min %/% period_step) * period_step,
                       to = period_max,
                       by = period_step)
@@ -5597,6 +5596,78 @@ plot_topic_share_per_period <- function(data,
     # plot
     plot_share_per_period(x = var_name_topic,
                           period = period)
+}
+```
+
+### `ggplot_streamgraph`
+
+TODO:
+
+-   Figure out optimal kernel density estimation bandwidth.
+
+-   Experiment with `plotly::ggplotly()` to create an interactive streamgraph.
+
+```{r}
+#' Period streamgraph
+#'
+#' Creates a ggplot2 [streamgraph](https://en.wikipedia.org/wiki/Streamgraph) based on [ggstream::geom_stream()] using the specified `period` as time
+#' resolution.
+#'
+#' @inheritParams n_rfrnds_per_period
+#' @param by `data` column to group by before counting number of referendums.
+#' @param bandwidth Kernel density estimation bandwidth. A numeric scalar.
+#'
+#' @return A [ggplot2][ggplot2::ggplot] object.
+#' @family visualize
+#' @export
+#'
+#' @examples
+#' rdb::rfrnds(country_code = "CH",
+#'             level = "national",
+#'             quiet = TRUE,
+#'             max_cache_age = "1 year") |>
+#'   rdb::ggplot_streamgraph(period = "year",
+#'                           by = topics_tier_1)
+ggplot_streamgraph <- function(data,
+                               period = c("week", "month", "quarter", "year", "decade", "century"),
+                               by,
+                               bandwidth = 0.75) {
+  
+  checkmate::assert_number(bandwidth)
+  ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
+                                   data = data)
+  n_by <- length(ix_by)
+  
+  if (n_by > 1L) {
+    cli::cli_abort("Only {.emph one} data column can be specified in {.arg by}, but {.val {n_by}} were provided.")
+  }
+  
+  # unnest list col if necessary
+  if (is.list(data[[ix_by]])) {
+    data %<>% tidyr::unnest_longer(col = {{ by }})
+  }
+  
+  data |>
+    n_rfrnds_per_period(period = period,
+                        by = {{ by }}) |>
+    # TODO: remove this workaround once [issue #23](https://github.com/davidsjoberg/ggstream/issues/23) is fixed
+    dplyr::group_by({{ by }}) |>
+    dplyr::group_modify(\(data, key) if (sum(data$n) > 0) data else data[0,]) |>
+    dplyr::ungroup() |>
+    ggplot2::ggplot(mapping = ggplot2::aes(x = !!as.symbol(period),
+                                           y = n,
+                                           fill = {{ by }})) +
+    ggstream::geom_stream(type = "mirror",
+                          n_grid = 10000,
+                          show.legend = TRUE,
+                          # TODO: 
+                          bw = bandwidth) +
+    # make y scale absolute in both directions
+    ggplot2::scale_y_continuous(labels = \(x) abs(x)) +
+    viridis::scale_fill_viridis(discrete = TRUE,
+                                option = "turbo") +
+    ggplot2::xlab(ggplot2::element_blank()) +
+    ggplot2::ylab(ggplot2::element_blank())
 }
 ```
 

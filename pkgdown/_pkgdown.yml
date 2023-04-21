@@ -82,6 +82,7 @@ reference:
   - plot_rfrnd_share_per_period
   - plot_topic_segmentation
   - plot_topic_share_per_period
+  - ggplot_streamgraph
 - title: Tabulation
   desc: Functions to create analyses in tabular form (using [gt](https://gt.rstudio.com/)
     tables).
