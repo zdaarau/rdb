@@ -5603,7 +5603,7 @@ plot_topic_share_per_period <- function(data,
 
 TODO:
 
--   Figure out optimal kernel density estimation bandwidth.
+-   Figure out optimal kernel density estimation bandwidth default.
 
 -   Experiment with `plotly::ggplotly()` to create an interactive streamgraph.
 
@@ -5615,6 +5615,10 @@ TODO:
 #'
 #' @inheritParams n_rfrnds_per_period
 #' @param by `data` column to group by before counting number of referendums.
+#' @param stacking Stacking type. One of
+#'   - `"mirror"` to stack absolute values symmetrically around the zero line on the x-axis.
+#'   - `"ridge"` to stack absolute values from the zero line on the x-axis upwards.
+#'   - `"proportional"` to stack relative values that add up to 100 %.
 #' @param bandwidth Kernel density estimation bandwidth. A numeric scalar.
 #'
 #' @return A [ggplot2][ggplot2::ggplot] object.
@@ -5631,8 +5635,10 @@ TODO:
 ggplot_streamgraph <- function(data,
                                period = c("week", "month", "quarter", "year", "decade", "century"),
                                by,
+                               stacking = c("mirror", "ridge", "proportional"),
                                bandwidth = 0.75) {
   
+  stacking <- rlang::arg_match(stacking)
   checkmate::assert_number(bandwidth)
   ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
                                    data = data)
@@ -5647,27 +5653,34 @@ ggplot_streamgraph <- function(data,
     data %<>% tidyr::unnest_longer(col = {{ by }})
   }
   
-  data |>
+  result <-
+    data |>
     n_rfrnds_per_period(period = period,
                         by = {{ by }}) |>
     # TODO: remove this workaround once [issue #23](https://github.com/davidsjoberg/ggstream/issues/23) is fixed
     dplyr::group_by({{ by }}) |>
-    dplyr::group_modify(\(data, key) if (sum(data$n) > 0) data else data[0,]) |>
+    dplyr::group_modify(\(d, k) if (sum(d$n) > 0) d else d[0,]) |>
     dplyr::ungroup() |>
     ggplot2::ggplot(mapping = ggplot2::aes(x = !!as.symbol(period),
                                            y = n,
                                            fill = {{ by }})) +
-    ggstream::geom_stream(type = "mirror",
+    ggstream::geom_stream(type = stacking,
                           n_grid = 10000,
                           show.legend = TRUE,
-                          # TODO: 
                           bw = bandwidth) +
-    # make y scale absolute in both directions
-    ggplot2::scale_y_continuous(labels = \(x) abs(x)) +
     viridis::scale_fill_viridis(discrete = TRUE,
                                 option = "turbo") +
     ggplot2::xlab(ggplot2::element_blank()) +
     ggplot2::ylab(ggplot2::element_blank())
+  
+  if (stacking == "mirror") {
+    # make y scale absolute in both directions
+    result <- result + ggplot2::scale_y_continuous(labels = \(x) abs(x))
+  } else if (stacking == "proportional") {
+    result <- result + ggplot2::scale_y_continuous(labels = scales::label_percent(suffix = "\u202f%"))
+  }
+  
+  result
 }
 ```
 

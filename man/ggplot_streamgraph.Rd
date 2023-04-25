@@ -8,6 +8,7 @@ ggplot_streamgraph(
   data,
   period = c("week", "month", "quarter", "year", "decade", "century"),
   by,
+  stacking = c("mirror", "ridge", "proportional"),
   bandwidth = 0.75
 )
 }
@@ -18,6 +19,13 @@ compute the \link[=add_period]{period column}), plus the one(s) specified via \c
 \item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
 
 \item{by}{\code{data} column to group by before counting number of referendums.}
+
+\item{stacking}{Stacking type. One of
+\itemize{
+\item \code{"mirror"} to stack absolute values symmetrically around the zero line on the x-axis.
+\item \code{"ridge"} to stack absolute values from the zero line on the x-axis upwards.
+\item \code{"proportional"} to stack relative values that add up to 100 \%.
+}}
 
 \item{bandwidth}{Kernel density estimation bandwidth. A numeric scalar.}
 }
