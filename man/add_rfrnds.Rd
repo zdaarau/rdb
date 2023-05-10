@@ -48,7 +48,7 @@ plus any additional \link[=codebook]{valid} columns containing the values for th
 A character vector of newly created referendum IDs.
 }
 \description{
-Adds new referendum entries to the Referendum Database (RDB) via \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
+Adds new referendum entries to the Referendum Database (RDB) via \href{https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
 }
 \details{
 Note that adding/editing the column \code{files} is not supported, i.e. it is simply dropped from \code{data}.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{auth_session}
 \alias{auth_session}
-\title{Authenticate a user session for the \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes}{RDB API}}
+\title{Authenticate a user session for the \href{https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#1-reflexive-routes}{RDB API}}
 \usage{
 auth_session(
   email = pal::pkg_config_val(key = "api_username", pkg = this_pkg),

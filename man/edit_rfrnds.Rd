@@ -14,7 +14,7 @@ edit_rfrnds(
 \arguments{
 \item{data}{Updated referendum data. A \link[tibble:tbl_df-class]{tibble} that must contain an \href{https://rdb.rpkg.dev/articles/codebook.html#id}{\code{id}} column
 identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
-due to \href{https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683}{current API requirements}, the following columns must always be supplied:
+due to \href{https://github.com/zdaarau/c2d-app/issues/50#issuecomment-1222660683}{current API requirements}, the following columns must always be supplied:
 \itemize{
 \item \href{https://rdb.rpkg.dev/articles/codebook.html#is-draft}{\code{is_draft}}
 \item \href{https://rdb.rpkg.dev/articles/codebook.html#electorate-total}{\code{electorate_total}}
@@ -35,7 +35,7 @@ due to \href{https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660
 \code{data}, invisibly.
 }
 \description{
-Edits existing referendum entries in the  API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes) via \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
+Edits existing referendum entries in the  API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes) via \href{https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
 }
 \details{
 Note that adding/editing the column \code{files} is not supported, i.e. it is simply dropped from \code{data}.

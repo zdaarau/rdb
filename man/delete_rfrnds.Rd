@@ -24,7 +24,7 @@ delete_rfrnds(
 \code{ids}, invisibly.
 }
 \description{
-Deletes existing referendum entries in the Referendum Database (RDB) via \href{https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
+Deletes existing referendum entries in the Referendum Database (RDB) via \href{https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
 }
 \seealso{
 Other referendum data functions:

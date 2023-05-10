@@ -522,7 +522,7 @@ assert_cols_valid <- function(data,
   }
   
   ## check variables that are only meant to be set for Swiss national referendums
-  ## TODO: Remove this as soon as [issue #52](https://github.com/ccmdesign/c2d-app/issues/52) is resolved.
+  ## TODO: Remove this as soon as [issue #52](https://github.com/zdaarau/c2d-app/issues/52) is resolved.
   ### `votes_per_subterritory`
   if (all(c("votes_per_subterritory", "level", "country_code") %in% colnames(data))) {
     
@@ -583,7 +583,7 @@ assert_content <- function(x) {
   invisible(x)
 }
 
-#' Authenticate a user session for the [RDB API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
+#' Authenticate a user session for the [RDB API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
 #'
 #' Creates a new user session token if necessary. The token is stored in the R option `rdb.user_session_tokens`, a [tibble][tibble::tbl_df] with the columns
 #' `email`, `token` and `date_time_last_active`.
@@ -813,7 +813,7 @@ drop_non_applicable_vars <- function(data) {
     if (data$level == "national") {
       data %<>% dplyr::select(-any_of("subnational_entity_name"))
     }
-    # TODO: remove this as soon as [issue #52](https://github.com/ccmdesign/c2d-app/issues/52) is resolved
+    # TODO: remove this as soon as [issue #52](https://github.com/zdaarau/c2d-app/issues/52) is resolved
     if (data$level != "national" || data$country_code != "CH") {
       data %<>% dplyr::select(-any_of(c("votes_per_subterritory",
                                         "lower_house_yes",
@@ -829,7 +829,7 @@ drop_non_applicable_vars <- function(data) {
   data %<>% dplyr::select(-any_of(c(
     "files",
     "is_former_country",
-    # TODO: remove this as soon as [issue #81](https://github.com/ccmdesign/c2d-app/issues/81) is fixed
+    # TODO: remove this as soon as [issue #81](https://github.com/zdaarau/c2d-app/issues/81) is fixed
     "sources"
   )))
   
@@ -1033,7 +1033,7 @@ tidy_rfrnds <- function(data,
           # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
           dplyr::across(any_of(c("subterritories_no",
                                  "subterritories_yes",
-                                 # TODO: remove/adapt next two lines once [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
+                                 # TODO: remove/adapt next two lines once [issue #78](https://github.com/zdaarau/c2d-app/issues/78) is resolved
                                  "date_time_created"["date_time_created" %in% colnames(.)
                                                      && any(purrr::map_lgl(.$date_time_created, is.numeric))],
                                  "date_time_last_edited"["date_time_last_edited" %in% colnames(.)
@@ -1160,7 +1160,7 @@ tidy_rfrnds <- function(data,
                                                                "(\\s+)?%(\\s+)?$" = "\u202f%"))),
           ## ordinal
           ## interval
-          # TODO: Remove else-clauses once [this](https://github.com/ccmdesign/c2d-app/commit/6b72d1928e0182f01b188f3973ba15482fc8c04a) is deployed to
+          # TODO: Remove else-clauses once [this](https://github.com/zdaarau/c2d-app/commit/6b72d1928e0182f01b188f3973ba15482fc8c04a) is deployed to
           #       production
           date = if (is.list(date)) {
             clock::as_date(parse_datetime(date))
@@ -1179,7 +1179,7 @@ tidy_rfrnds <- function(data,
                                                              rename_from_list(names_fms = sub_var_names_fms$files))))
       
       # complement `id_official` and `id_sudd` (a two-letter country code plus a 6-digit number) by old `number`
-      # TODO: once [issue #?](https://github.com/ccmdesign/c2d-app/issues/?) is resolved:
+      # TODO: once [issue #?](https://github.com/zdaarau/c2d-app/issues/?) is resolved:
       #       - correct this upstream using `edit_rfrnds()`
       #       - remove corresponding code below
       #       - file issue to completely get rid of field `number`
@@ -2591,7 +2591,7 @@ rfrnds <- function(country_code = NULL,
   checkmate::assert_flag(incl_archive)
   checkmate::assert_flag(quiet)
   
-  # TODO: remove this check as soon as [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
+  # TODO: remove this check as soon as [issue #78](https://github.com/zdaarau/c2d-app/issues/78) is resolved
   if (isTRUE(use_testing_server)) cli::cli_abort("{.code mode=stream} is not yet supported on the testing servers.")
   
   result <- pkgpins::with_cache(expr = {
@@ -2769,7 +2769,7 @@ download_file_attachment <- function(s3_object_key,
   checkmate::assert_string(s3_object_key)
   checkmate::assert_atomic(path)
   
-  # TODO: remove this check as soon as [issue #78](https://github.com/ccmdesign/c2d-app/issues/78) is resolved
+  # TODO: remove this check as soon as [issue #78](https://github.com/zdaarau/c2d-app/issues/78) is resolved
   if (isTRUE(use_testing_server)) cli::cli_abort("Accessing file attachments is not yet supported on the testing servers.")
   
   if (fs::dir_exists(path)) {
@@ -2812,7 +2812,7 @@ download_file_attachment <- function(s3_object_key,
 #' Add new referendums to the RDB
 #'
 #' Adds new referendum entries to the Referendum Database (RDB) via [its
-#' API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
+#' API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes).
 #'
 #' @details
 #' Note that adding/editing the column `files` is not supported, i.e. it is simply dropped from `data`.
@@ -2924,15 +2924,15 @@ add_rfrnds <- function(data,
 
 #' Edit existing referendums in the RDB
 #'
-#' Edits existing referendum entries in the  API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes) via [its
-#' API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
+#' Edits existing referendum entries in the  API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes) via [its
+#' API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes).
 #'
 #' @inherit add_rfrnds details
 #' 
 #' @inheritParams add_rfrnds
 #' @param data Updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](`r url_codebook("id")`) column
 #'   identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
-#'   due to [current API requirements](https://github.com/ccmdesign/c2d-app/issues/50#issuecomment-1222660683), the following columns must always be supplied:
+#'   due to [current API requirements](https://github.com/zdaarau/c2d-app/issues/50#issuecomment-1222660683), the following columns must always be supplied:
 #'   
 #'   `r rfrnd_fields$required_for_edits %>% dplyr::case_match(.x = ., !!!var_names_fms, .default = .) %>% setdiff("id") %>% md_link_codebook() %>% pal::as_md_list()`.
 #'
@@ -3025,7 +3025,7 @@ edit_rfrnds <- function(data,
 #' Delete referendums in the RDB
 #'
 #' Deletes existing referendum entries in the Referendum Database (RDB) via [its
-#' API](https://github.com/ccmdesign/c2d-app/blob/master/docs/services.md#3-referendum-routes).
+#' API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes).
 #'
 #' @inheritParams add_rfrnds
 #' @param ids IDs of the referendums to be deleted. A character vector.
@@ -3045,7 +3045,7 @@ delete_rfrnds <- function(ids,
                               any.missing = FALSE,
                               unique = TRUE)
   
-  # TODO: remove this as soon as https://github.com/ccmdesign/c2d-app/issues/45 is deployed to master
+  # TODO: remove this as soon as https://github.com/zdaarau/c2d-app/issues/45 is deployed to master
   if (!use_testing_server) {
     cli::cli_abort("Referendum deletions are not yet supported on the production servers.")
   }
