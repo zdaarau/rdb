@@ -5231,7 +5231,10 @@ n_rfrnds_per_period <- function(data,
 #'
 #' Renames referendum data column names to be ready to print. Useful e.g. to create publication tables.
 #'
-#' Column names unknown to this function are not changed.
+#' Note that
+#' - column names unknown to this function are not changed.
+#' - column *labels* are [removed][labelled::remove_var_label] so they aren't inadvertently used instead of the column *names* (i.a. relevant for [gt][gt::gt]
+#'   [>= 0.9.0](https://gt.rstudio.com/news/index.html#minor-improvements-and-bug-fixes-0-9-0)).
 #'
 #' @param data RDB referendum data as returned by [rfrnds()].
 #'
@@ -5245,8 +5248,11 @@ n_rfrnds_per_period <- function(data,
 #'   rdb::printify_col_names()
 printify_col_names <- function(data) {
   
-  data %>%
-    dplyr::rename_with(~ data_codebook$variable_name_print[match(.x, data_codebook$variable_name)] %|% .x)
+  data |>
+    dplyr::rename_with(\(x) data_codebook$variable_name_print[match(x, data_codebook$variable_name)] %|% x) |>
+    # we remove the var lbls so gt doesn't automatically pick them up instead of the column names
+    # cf. https://gt.rstudio.com/news/index.html#minor-improvements-and-bug-fixes-0-9-0
+    labelled::remove_var_label()
 }
 ```
 

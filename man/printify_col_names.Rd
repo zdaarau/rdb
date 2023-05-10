@@ -16,7 +16,12 @@ A \link[tibble:tbl_df-class]{tibble}.
 Renames referendum data column names to be ready to print. Useful e.g. to create publication tables.
 }
 \details{
-Column names unknown to this function are not changed.
+Note that
+\itemize{
+\item column names unknown to this function are not changed.
+\item column \emph{labels} are \link[labelled:remove_labels]{removed} so they aren't inadvertently used instead of the column \emph{names} (i.a. relevant for \link[gt:gt]{gt}
+\href{https://gt.rstudio.com/news/index.html#minor-improvements-and-bug-fixes-0-9-0}{>= 0.9.0}).
+}
 }
 \examples{
 rdb::rfrnds(country_code = "IT",
