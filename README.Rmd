@@ -3,8 +3,10 @@ output: pal::gitlab_document
 ---
 
 ```{r}
-#| label: setup
+#| label: init
 #| include: false
+
+knitr::opts_knit$set(root.dir = getwd())
 
 library(rlang,
         include.only = c("%|%", "%||%"))
