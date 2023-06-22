@@ -47,6 +47,8 @@ Imports:
     xml2 (>= 1.3.2)
 Suggests: 
     brio (>= 1.1.2),
+    ggplot2 (>= 3.4.2),
+    ggstream (>= 0.1.0),
     gh (>= 1.3.0),
     gt (>= 0.6.0),
     htmlwidgets (>= 1.6.2),
@@ -57,7 +59,9 @@ Suggests:
     plotly (>= 4.10.0),
     rmarkdown (>= 2.16),
     salim (>= 0.0.9015),
+    scales (>= 1.2.1),
     testthat (>= 3.0.0),
+    viridis (>= 0.6.3),
     withr (>= 2.5.0),
     xfun (>= 0.23)
 VignetteBuilder: 

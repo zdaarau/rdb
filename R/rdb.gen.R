@@ -149,6 +149,12 @@ utils::globalVariables(names = c(".",
                                  "votes_yes",
                                  "year"))
 
+# katex is used in documentation dynamically via `\Sexpr`, so it has to be imported to avoid an error when rendering the corresponding help page
+# TODO: since the `R CMD check` warning can be considered a bug in this case, investigate the situation and possibly submit bug report
+has_katex <- function() {
+  nchar(katex::example_math()) > 0L
+}
+
 .onLoad <- function(libname, pkgname) {
   
   # clear pkgpins cache
@@ -2249,7 +2255,8 @@ restore_topics <- function(topics_tier_1,
 plot_share_per_period <- function(data_freq,
                                   x,
                                   period) {
-  pal::assert_pkg("plotly")
+  rlang::check_installed("plotly",
+                         reason = pal::reason_pkg_required())
   
   grid_step <- switch(EXPR = period,
                       week = 4L,
@@ -3869,7 +3876,6 @@ add_country_code_long <- function(data) {
   checkmate::assert_data_frame(data)
   assert_vars(data = data,
               vars = "country_code")
-  
   data %>%
     # remove possibly existing long country code
     dplyr::select(-any_of("country_code_long")) %>%
@@ -4541,7 +4547,8 @@ plot_topic_segmentation <- function(data,
                                     method = c("per_rfrnd", "per_topic_lineage", "naive")) {
   
   method <- rlang::arg_match(method)
-  pal::assert_pkg("plotly")
+  rlang::check_installed("plotly",
+                         reason = pal::reason_pkg_required())
   is_naive <- method == "naive"
   
   # assemble necessary data structure
@@ -4767,6 +4774,14 @@ ggplot_streamgraph <- function(data,
   
   stacking <- rlang::arg_match(stacking)
   checkmate::assert_number(bandwidth)
+  rlang::check_installed("ggplot2",
+                         reason = pal::reason_pkg_required())
+  rlang::check_installed("ggstream",
+                         reason = pal::reason_pkg_required())
+  rlang::check_installed("scales",
+                         reason = pal::reason_pkg_required())
+  rlang::check_installed("viridis",
+                         reason = pal::reason_pkg_required())
   ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
                                    data = data)
   n_by <- length(ix_by)
@@ -4898,8 +4913,9 @@ tbl_n_rfrnds <- function(data,
                          null.ok = TRUE)
   checkmate::assert_string(lbl_total_row)
   checkmate::assert_string(lbl_total_col)
-  pal::assert_pkg("gt",
-                  min_version = "0.9.0")
+  rlang::check_installed("gt",
+                         version = "0.9.0",
+                         reason = pal::reason_pkg_required())
   
   ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
                                    data = data)
@@ -5096,8 +5112,9 @@ tbl_n_rfrnds_per_period <- function(data,
                          null.ok = TRUE)
   checkmate::assert_string(lbl_total_row)
   checkmate::assert_string(lbl_total_col)
-  pal::assert_pkg("gt",
-                  min_version = "0.9.0")
+  rlang::check_installed("gt",
+                         version = "0.9.0",
+                         reason = pal::reason_pkg_required())
   
   ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
                                    data = data)

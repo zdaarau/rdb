@@ -312,7 +312,7 @@ data_topics <-
 ## `months_de*`
 
 ```{r}
-pal::assert_pkg("clock")
+rlang::check_installed("clock")
 
 months_de <-
   1:12 %>%

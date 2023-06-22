@@ -27,7 +27,7 @@ For the following variables, the [unit of observation](https://en.wikipedia.org/
 library(rlang)
 library(magrittr)
 
-pal::assert_pkg("salim")
+rlang::check_installed("salim")
 
 # determine whether Pandoc rendering is involved which supports extended Pandoc MD syntax (like footnotes)
 to_pandoc <- checkmate::test_string(knitr::pandoc_to(),
