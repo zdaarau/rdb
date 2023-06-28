@@ -4785,6 +4785,7 @@ ggplot_streamgraph <- function(data,
   ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
                                    data = data)
   n_by <- length(ix_by)
+  names_by <- names(ix_by)
   
   if (n_by > 1L) {
     cli::cli_abort("Only {.emph one} data column can be specified in {.arg by}, but {.val {n_by}} were provided.")
@@ -4792,7 +4793,7 @@ ggplot_streamgraph <- function(data,
   
   # unnest list col if necessary
   if (is.list(data[[ix_by]])) {
-    data %<>% tidyr::unnest_longer(col = {{ by }})
+    data %<>% tidyr::unnest_longer(col = !!as.symbol(names_by))
   }
   
   result <-
@@ -4800,12 +4801,12 @@ ggplot_streamgraph <- function(data,
     n_rfrnds_per_period(period = period,
                         by = {{ by }}) |>
     # TODO: remove this workaround once [issue #23](https://github.com/davidsjoberg/ggstream/issues/23) is fixed
-    dplyr::group_by({{ by }}) |>
+    dplyr::group_by(!!as.symbol(names_by)) |>
     dplyr::group_modify(\(d, k) if (sum(d$n) > 0) d else d[0,]) |>
     dplyr::ungroup() |>
     ggplot2::ggplot(mapping = ggplot2::aes(x = !!as.symbol(period),
                                            y = n,
-                                           fill = {{ by }})) +
+                                           fill = !!as.symbol(names_by))) +
     ggstream::geom_stream(type = stacking,
                           n_grid = 10000,
                           show.legend = TRUE,
