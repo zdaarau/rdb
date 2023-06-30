@@ -32,6 +32,7 @@ rdb::rfrnds(country_code = "IT",
 Other referendum data transformation functions:
 \code{\link{as_ballot_dates}()},
 \code{\link{n_rfrnds_per_period}()},
-\code{\link{n_rfrnds}()}
+\code{\link{n_rfrnds}()},
+\code{\link{unnest_var}()}
 }
 \concept{transform}

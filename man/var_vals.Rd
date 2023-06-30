@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{var_vals}
 \alias{var_vals}
-\title{Get the set of possible \emph{values} of a referendum data variable}
+\title{Get set of possible \emph{values} of referendum data variable}
 \usage{
 var_vals(var_name)
 }
@@ -23,13 +23,15 @@ Returns a vector of the possible predefined values a specific column in \code{\l
 set, \code{NULL} is returned.
 }
 \examples{
-var_vals("result")
-var_vals("id")
+rdb::var_vals("result")
+rdb::var_vals("id")
 }
 \seealso{
 Other referendum metadata functions:
 \code{\link{data_codebook}},
 \code{\link{printify_var_names}()},
-\code{\link{val_lbls}()}
+\code{\link{val_lbls}()},
+\code{\link{val_scale}()},
+\code{\link{var_name_unnested}()}
 }
 \concept{metadata}

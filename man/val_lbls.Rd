@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{val_lbls}
 \alias{val_lbls}
-\title{Get the set of possible \emph{value labels} of a referendum data variable}
+\title{Get set of possible \emph{value labels} of referendum data variable}
 \usage{
 val_lbls(var_name, incl_affixes = TRUE)
 }
@@ -31,6 +31,8 @@ rdb::val_lbls("result") |> pal::sentenceify()
 Other referendum metadata functions:
 \code{\link{data_codebook}},
 \code{\link{printify_var_names}()},
+\code{\link{val_scale}()},
+\code{\link{var_name_unnested}()},
 \code{\link{var_vals}()}
 }
 \concept{metadata}

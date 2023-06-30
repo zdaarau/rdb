@@ -79,6 +79,7 @@ utils::globalVariables(names = c(".",
                                  "inst_trigger_type",
                                  "is_draft",
                                  "is_former_country",
+                                 "is_multi_valued",
                                  "is_opt",
                                  "is_testing_server",
                                  "ISO_Alpha_3",
@@ -136,6 +137,7 @@ utils::globalVariables(names = c(".",
                                  "url_sudd",
                                  "url_swissvotes",
                                  "value_labels",
+                                 "value_scale",
                                  "variable_name",
                                  "variable_name_print",
                                  "variable_values",
@@ -601,7 +603,7 @@ assert_content <- function(x) {
 #' @inheritParams url_api
 #' @param email The e-mail address of the user for which a session should be created. A character scalar.
 #' @param password The password of the user for which a session should be created. A character scalar.
-#' @param quiet `r pkgsnip::param_label("quiet")`
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return The user session token as a character scalar, invisibly.
 #' @keywords internal
@@ -934,6 +936,73 @@ parse_datetime <- function(x) {
   result
 }
 
+plot_share_per_period <- function(data_freq,
+                                  x,
+                                  period) {
+  rlang::check_installed("plotly",
+                         reason = pal::reason_pkg_required())
+  
+  grid_step <- switch(EXPR = period,
+                      week = 4L,
+                      year = 50L,
+                      decade = 50L,
+                      century = 100L,
+                      1L)
+  
+  grid_x <- seq(from = ceiling(pal::safe_min(data_freq[[period]])[1L] / grid_step) * grid_step,
+                to = floor(pal::safe_max(data_freq[[period]])[1L] / grid_step) * grid_step,
+                by = grid_step)
+  
+  plotly::plot_ly(data = data_freq,
+                  type = "scatter",
+                  mode = "none",
+                  stackgroup = "one",
+                  groupnorm = "percent",
+                  x = ~eval(as.symbol(period)),
+                  y = ~n,
+                  name = ~eval(as.symbol(x))) %>%
+    plotly::layout(hovermode = "x",
+                   legend = list(orientation = "h"),
+                   xaxis = list(dtick = switch(EXPR = period,
+                                               week = 1L,
+                                               month = 1L,
+                                               quarter = 1L,
+                                               year = 10L,
+                                               decade = 10L,
+                                               century = 100L),
+                                showgrid = FALSE,
+                                ticklabelstep = switch(EXPR = period,
+                                                       week = 4L,
+                                                       month = 1L,
+                                                       quarter = 1L,
+                                                       year = 5L,
+                                                       decade = 5L,
+                                                       century = 1L),
+                                range = switch(EXPR = period,
+                                               week = c(1L, 53L),
+                                               month = c(1L, 12L),
+                                               quarter = c(1, 4L),
+                                               NULL),
+                                ticks = "outside",
+                                title = list(text = NULL)),
+                   yaxis = list(fixedrange = TRUE,
+                                hoverformat = ".1f",
+                                showgrid = FALSE,
+                                ticksuffix = "\u202f% ",
+                                title = list(text = NULL)),
+                   # draw custom grid
+                   shapes =
+                     grid_x %>%
+                     purrr::map(~ list(type = "line",
+                                       y0 = 0,
+                                       y1 = 1,
+                                       yref = "paper",
+                                       x0 = .x,
+                                       x1 = .x,
+                                       line = list(color = "#fff",
+                                                   width = 0.2))))
+}
+
 rename_from_list <- function(x,
                              names_fms) {
   if (length(x)) {
@@ -948,6 +1017,63 @@ rename_from_list <- function(x,
   } else {
     return(x)
   }
+}
+
+restore_topics <- function(topics_tier_1,
+                           topics_tier_2,
+                           topics_tier_3) {
+  list(topics_tier_1,
+       topics_tier_2,
+       topics_tier_3) %>%
+    purrr::pmap(~ {
+      
+      ..1 %>%
+        unlist() %>%
+        as.character() %>%
+        checkmate::assert_character(any.missing = FALSE,
+                                    max.len = 3L,
+                                    .var.name = "topics_tier_1")
+      ..2 %>%
+        unlist() %>%
+        as.character() %>%
+        checkmate::assert_character(any.missing = FALSE,
+                                    max.len = 3L,
+                                    .var.name = "topics_tier_2")
+      ..3 %>%
+        unlist() %>%
+        as.character() %>%
+        checkmate::assert_character(any.missing = FALSE,
+                                    max.len = 3L,
+                                    .var.name = "topics_tier_3")
+      
+      topics_hierarchy <- hierarchize_topics(tibble::tibble(topics_tier_1 = list(..1),
+                                                            topics_tier_2 = list(..2),
+                                                            topics_tier_3 = list(..3)))
+      
+      topics <- topics_hierarchy$topic_tier_3 %>% setdiff(NA_character_)
+      
+      if (length(topics) < 3L) {
+        
+        topics <-
+          topics_hierarchy %>%
+          dplyr::filter(is.na(topic_tier_3)) %$%
+          topic_tier_2 %>%
+          setdiff(NA_character_) %>%
+          c(topics)
+      }
+      
+      if (length(topics) < 3L) {
+        
+        topics <-
+          topics_hierarchy %>%
+          dplyr::filter(is.na(topic_tier_3) & is.na(topic_tier_2)) %$%
+          topic_tier_1 %>%
+          setdiff(NA_character_) %>%
+          c(topics)
+      }
+      
+      topics
+    })
 }
 
 topic_frequency <- function(topics,
@@ -971,7 +1097,7 @@ topic_frequency <- function(topics,
 #'   referendum data will only be modified just enough to be able to return it as a [tibble][tibble::tbl_df]. Note that untidy data doesn't conform to the 
 #'   [codebook][data_codebook] (i.a. different variable names).
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @keywords internal
 tidy_rfrnds <- function(data,
                         tidy = TRUE) {
@@ -2195,130 +2321,6 @@ url_sudd <- function(x = "") {
                  })
 }
 
-restore_topics <- function(topics_tier_1,
-                           topics_tier_2,
-                           topics_tier_3) {
-  list(topics_tier_1,
-       topics_tier_2,
-       topics_tier_3) %>%
-    purrr::pmap(~ {
-      
-      ..1 %>%
-        unlist() %>%
-        as.character() %>%
-        checkmate::assert_character(any.missing = FALSE,
-                                    max.len = 3L,
-                                    .var.name = "topics_tier_1")
-      ..2 %>%
-        unlist() %>%
-        as.character() %>%
-        checkmate::assert_character(any.missing = FALSE,
-                                    max.len = 3L,
-                                    .var.name = "topics_tier_2")
-      ..3 %>%
-        unlist() %>%
-        as.character() %>%
-        checkmate::assert_character(any.missing = FALSE,
-                                    max.len = 3L,
-                                    .var.name = "topics_tier_3")
-      
-      topics_hierarchy <- hierarchize_topics(tibble::tibble(topics_tier_1 = list(..1),
-                                                        topics_tier_2 = list(..2),
-                                                        topics_tier_3 = list(..3)))
-      
-      topics <- topics_hierarchy$topic_tier_3 %>% setdiff(NA_character_)
-      
-      if (length(topics) < 3L) {
-        
-        topics <-
-          topics_hierarchy %>%
-          dplyr::filter(is.na(topic_tier_3)) %$%
-          topic_tier_2 %>%
-          setdiff(NA_character_) %>%
-          c(topics)
-      }
-      
-      if (length(topics) < 3L) {
-        
-        topics <-
-          topics_hierarchy %>%
-          dplyr::filter(is.na(topic_tier_3) & is.na(topic_tier_2)) %$%
-          topic_tier_1 %>%
-          setdiff(NA_character_) %>%
-          c(topics)
-      }
-      
-      topics
-    })
-}
-
-plot_share_per_period <- function(data_freq,
-                                  x,
-                                  period) {
-  rlang::check_installed("plotly",
-                         reason = pal::reason_pkg_required())
-  
-  grid_step <- switch(EXPR = period,
-                      week = 4L,
-                      year = 50L,
-                      decade = 50L,
-                      century = 100L,
-                      1L)
-  
-  grid_x <- seq(from = ceiling(pal::safe_min(data_freq[[period]])[1L] / grid_step) * grid_step,
-                to = floor(pal::safe_max(data_freq[[period]])[1L] / grid_step) * grid_step,
-                by = grid_step)
-  
-  plotly::plot_ly(data = data_freq,
-                  type = "scatter",
-                  mode = "none",
-                  stackgroup = "one",
-                  groupnorm = "percent",
-                  x = ~eval(as.symbol(period)),
-                  y = ~n,
-                  name = ~eval(as.symbol(x))) %>%
-    plotly::layout(hovermode = "x",
-                   legend = list(orientation = "h"),
-                   xaxis = list(dtick = switch(EXPR = period,
-                                               week = 1L,
-                                               month = 1L,
-                                               quarter = 1L,
-                                               year = 10L,
-                                               decade = 10L,
-                                               century = 100L),
-                                showgrid = FALSE,
-                                ticklabelstep = switch(EXPR = period,
-                                                       week = 4L,
-                                                       month = 1L,
-                                                       quarter = 1L,
-                                                       year = 5L,
-                                                       decade = 5L,
-                                                       century = 1L),
-                                range = switch(EXPR = period,
-                                               week = c(1L, 53L),
-                                               month = c(1L, 12L),
-                                               quarter = c(1, 4L),
-                                               NULL),
-                                ticks = "outside",
-                                title = list(text = NULL)),
-                   yaxis = list(fixedrange = TRUE,
-                                hoverformat = ".1f",
-                                showgrid = FALSE,
-                                ticksuffix = "\u202f% ",
-                                title = list(text = NULL)),
-                   # draw custom grid
-                   shapes =
-                     grid_x %>%
-                     purrr::map(~ list(type = "line",
-                                       y0 = 0,
-                                       y1 = 1,
-                                       yref = "paper",
-                                       x0 = .x,
-                                       x1 = .x,
-                                       line = list(color = "#fff",
-                                                   width = 0.2))))
-}
-
 this_pkg <- utils::packageName()
 
 cli_theme <-
@@ -2542,11 +2544,11 @@ rm(sudd_years)
 #' @inheritParams tidy_rfrnds
 #' @inheritParams url_api
 #' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the Referendum Database (RDB).
-#' @param use_cache `r pkgsnip::param_label("use_cache")`
-#' @param max_cache_age `r pkgsnip::param_label("max_cache_age")`
+#' @param use_cache `r pkgsnip::param_lbl("use_cache")`
+#' @param max_cache_age `r pkgsnip::param_lbl("max_cache_age")`
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family rfrnd
 #' @export
 #'
@@ -3407,7 +3409,8 @@ assert_vars <- function(data,
     
     # run additional content check
     assert_content <- switch(EXPR         = .x,
-                             country_code = function(x) {
+                             country_code = \(x) {
+                               
                                checkmate::assert_vector(x = x,
                                                         .var.name = "data$country_code")
                                check <- checkmate::check_subset(x = as.character(x),
@@ -3427,7 +3430,7 @@ assert_vars <- function(data,
                                                                                        replacement = "\\1\\1"))))
                                }
                              },
-                             function(x) TRUE)
+                             \(x) TRUE)
     
     assert_content(data[[.x]])
   })
@@ -3444,7 +3447,7 @@ assert_vars <- function(data,
 #' ```{r, child = "vignettes/codebook.Rmd"}
 #' ```
 #'
-#' @format `r pkgsnip::return_label("data")`
+#' @format `r pkgsnip::return_lbl("data")`
 #' @aliases codebook
 #' @family metadata
 #' @export
@@ -3453,7 +3456,7 @@ assert_vars <- function(data,
 #' rdb::data_codebook
 "data_codebook"
 
-#' Get the set of possible *value labels* of a referendum data variable
+#' Get set of possible *value labels* of referendum data variable
 #'
 #' Returns a character vector of value labels of a specific [rfrnds()] column, in the same order as [var_vals()], or of length `0` if `var_name`'s values are
 #' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
@@ -3478,8 +3481,8 @@ val_lbls <- function(var_name,
   
   var_name <- rlang::arg_match0(arg = var_name,
                                 values = data_codebook$variable_name)
-  metadata <- data_codebook %>% dplyr::filter(variable_name == !!var_name)
-  result <- metadata$value_labels %>% purrr::list_c(ptype = character())
+  metadata <- data_codebook |> dplyr::filter(variable_name == !!var_name)
+  result <- metadata$value_labels |> purrr::list_c(ptype = character())
   
   if (incl_affixes) {
     if (!is.na(metadata$value_label_prefix)) result <- paste(metadata$value_label_prefix, result)
@@ -3489,7 +3492,29 @@ val_lbls <- function(var_name,
   result
 }
 
-#' Get the set of possible *values* of a referendum data variable
+#' Get *value scale* of referendum data variable
+#'
+#' Returns the value scale of a specific [rfrnds()] column.
+#'
+#' @param var_name Variable name for which the value scale is to be returned. Must be one of the column names of [`data_codebook`].
+#'
+#' @return A character scalar.
+#' @family metadata
+#' @export
+#'
+#' @examples
+#' rdb::val_scale("level")
+#' rdb::val_scale("topics_tier_1")
+val_scale <- function(var_name) {
+  
+  var_name <- rlang::arg_match0(arg = var_name,
+                                values = data_codebook$variable_name)
+  data_codebook |>
+    dplyr::filter(variable_name == !!var_name) %$%
+    value_scale
+}
+
+#' Get set of possible *values* of referendum data variable
 #'
 #' Returns a vector of the possible predefined values a specific column in [rfrnds()] can hold. If the variable values aren't restricted to a predefined
 #' set, `NULL` is returned.
@@ -3506,16 +3531,41 @@ val_lbls <- function(var_name,
 #' @export
 #'
 #' @examples
-#' var_vals("result")
-#' var_vals("id")
+#' rdb::var_vals("result")
+#' rdb::var_vals("id")
 var_vals <- function(var_name) {
   
   var_name <- rlang::arg_match0(arg = var_name,
                                 values = data_codebook$variable_name)
-  data_codebook %>%
+  data_codebook |>
     dplyr::filter(variable_name == !!var_name) %$%
-    variable_values %>%
+    variable_values |>
     unlist()
+}
+
+#' Get unnested variable names
+#'
+#' Returns the unnested analogue(s) of the specified variable name(s), which result from [unnesting][unnest_var]. For variable names that do *not* refer to
+#' nested list columns, `var_names` is simply returned as-is.
+#'
+#' @inheritParams printify_var_names
+#'
+#' @return A character vector of the same length as `var_names`.
+#' @seealso [unnest_var()]
+#' @family metadata
+#' @export
+#'
+#' @examples
+#' rdb::var_name_unnested("inst_object_revision_modes")
+#' rdb::var_name_unnested(paste0("topics_tier_", 1:3))
+var_name_unnested <- function(var_names) {
+  
+  var_names <- rlang::arg_match(arg = var_names,
+                                values = data_codebook$variable_name,
+                                multiple = TRUE)
+  data_codebook |>
+    dplyr::filter(variable_name %in% !!var_names) %$%
+    variable_name_unnested
 }
 
 #' Convert referendum data variables to their printable version
@@ -3531,21 +3581,28 @@ var_vals <- function(var_name) {
 #' @export
 #'
 #' @examples
-#' rdb::printify_var_names("type")
+#' rdb::printify_var_names("topics_tier_1")
+#' 
+#' # also supports unnested var names
+#' rdb::printify_var_names("topic_tier_1")
 printify_var_names <- function(var_names) {
   
-  checkmate::assert_subset(var_names,
-                           choices = data_codebook$variable_name)
+  var_names <- rlang::arg_match(arg = var_names,
+                                values = c(data_codebook$variable_name,
+                                           data_codebook$variable_name_unnested),
+                                multiple = TRUE)
   
-  data_codebook$variable_name_print[match(x = var_names,
-                                          table = data_codebook$variable_name)]
+  c(data_codebook$variable_name_print,
+    data_codebook$variable_name_unnested_print)[match(x = var_names,
+                                                      table = c(data_codebook$variable_name,
+                                                                data_codebook$variable_name_unnested))]
 }
 
 #' Topic hierarchy
 #'
 #' A tibble reflecting the complete [referendum topics hierarchy](`r url_codebook("topics")`).
 #'
-#' @format `r pkgsnip::return_label("data")`
+#' @format `r pkgsnip::return_lbl("data")`
 #' @family topics
 #' @export
 #'
@@ -3786,7 +3843,7 @@ infer_topics <- function(topics,
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family augment
 #' @keywords internal
 #'
@@ -3818,7 +3875,7 @@ add_former_country_flag <- function(data) {
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family augment
 #' @export
 #'
@@ -3859,7 +3916,7 @@ add_country_code_continual <- function(data) {
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family augment
 #' @export
 #'
@@ -3903,7 +3960,7 @@ add_country_code_long <- function(data) {
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family augment
 #' @export
 #'
@@ -3947,7 +4004,7 @@ add_country_name <- function(data) {
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family augment
 #' @export
 #'
@@ -3996,7 +4053,7 @@ add_country_name_long <- function(data) {
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
 #' @param period Type of period to add. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family augment
 #' @export
 #'
@@ -4060,7 +4117,7 @@ add_period <- function(data,
 #' @param excl_dubious Whether or not to exclude obviously dubious turnout numbers (those > 1.0) by setting them to `NA`. Such numbers stem either from
 #'   data errors or (officially) tampered numbers.
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family augment
 #' @export
 #'
@@ -4140,7 +4197,7 @@ add_turnout <- function(data,
 #'   alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) or [ISO 3166-3 alpha-4](https://en.wikipedia.org/wiki/ISO_3166-3) codes).
 #' @param add_un_country_code Whether or not to also add a column `un_country_code` holding the UN M49 code of the country in which the referendum took place.
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family augment
 #' @export
 #'
@@ -4204,7 +4261,7 @@ add_world_regions <- function(data,
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family transform
 #' @export
 #'
@@ -4252,15 +4309,69 @@ as_ballot_dates <- function(data) {
   data %>% tidyr::nest(rfrnd_data = any_of(cols_to_nest))
 }
 
+#' Unnest multi-value variable
+#'
+#' Unnests a multi-value variable of type list to long format. Multi-value variables can contain more than one value per observation and thus break with the
+#' [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). This function allows to conveniently expand `data` to contain a single `var`
+#' value per observation only, thereby increasing the number of observations (i.e. rows).
+#'
+#' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `var`.
+#' @param var `data` column to unnest. One of the multi-value variables:
+#'   `r data_codebook |> dplyr::filter(is_multi_valued) %$% variable_name |> pal::wrap_chr(wrap = "\x60") |> pal::as_md_list()`
+#'   
+#'   `r pkgsnip::param_lbl("tidy_select_support")`
+#'
+#' @return `r pkgsnip::return_lbl("data")`
+#' @seealso [var_name_unnested()]
+#' @family transform
+#' @export
+#'
+#' @examples
+#' rdb::rfrnds(country_code = "AT",
+#'             quiet = TRUE) |>
+#'   rdb::unnest_var(topics_tier_2)
+unnest_var <- function(data,
+                       var) {
+  
+  # tidy selection and arg check
+  defused_var <- rlang::enquo(var)
+  i_var <- tidyselect::eval_select(expr = defused_var,
+                                   data = data)
+  name_var <- names(i_var)
+  n_var <- length(i_var)
+  
+  if (n_var > 1L) {
+    cli::cli_abort("Only {.emph one} {.arg var} can be unnested at a time, but {.val {n_var}} were provided.")
+  }
+  
+  name_var <- rlang::arg_match0(arg = name_var,
+                                arg_nm = "var",
+                                values =
+                                  data_codebook |>
+                                  dplyr::filter(is_multi_valued) %$%
+                                  variable_name)
+  
+  name_var_unnested <- var_name_unnested(name_var)
+  
+  data |>
+    tidyr::unnest_longer(col = all_of(name_var),
+                         values_to = name_var_unnested,
+                         keep_empty = TRUE,
+                         ptype = character()) |>
+    dplyr::mutate(!!as.symbol(name_var_unnested) := factor(x = !!as.symbol(name_var_unnested),
+                                                           levels = var_vals(name_var),
+                                                           ordered = val_scale(name_var) %in% c("ordinal_ascending", "ordinal_descending")))
+}
+
 #' Count number of referendums
 #'
 #' Counts the number of RDB referendums, optionally by additional columns specified via `by`.
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns specified in `by` (if any).
-#' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_lbl("tidy_select_support")`
 #' @param complete_fcts Whether or not to complete the result with implicitly missing combinations of those columns specified in `by` which are of type factor.
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family transform
 #' @export
 #'
@@ -4320,7 +4431,7 @@ n_rfrnds <- function(data,
 #' @param descending Whether to sort the resulting table by `period` in descending or in ascending order.
 #'
 #' @inherit add_period details
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family transform
 #' @export
 #'
@@ -4431,7 +4542,7 @@ n_rfrnds_per_period <- function(data,
 #'
 #' @param data RDB referendum data as returned by [rfrnds()].
 #'
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family transform
 #' @export
 #'
@@ -4442,7 +4553,13 @@ n_rfrnds_per_period <- function(data,
 printify_col_names <- function(data) {
   
   data |>
-    dplyr::rename_with(\(x) data_codebook$variable_name_print[match(x, data_codebook$variable_name)] %|% x) |>
+    dplyr::rename_with(\(x) {
+      
+      c(data_codebook$variable_name_print,
+        data_codebook$variable_name_unnested_print)[match(x = x,
+                                                          table = c(data_codebook$variable_name,
+                                                                    data_codebook$variable_name_unnested))] %|% x
+    }) |>
     # we remove the var lbls so gt doesn't automatically pick them up instead of the column names
     # cf. https://gt.rstudio.com/news/index.html#minor-improvements-and-bug-fixes-0-9-0
     labelled::remove_var_label()
@@ -4458,10 +4575,10 @@ printify_col_names <- function(data) {
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
 #'   compute the [period column][add_period]), plus the column specified in `by`.
-#' @param by `data` column to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param by `data` column to group by before counting number of referendums. `r pkgsnip::param_lbl("tidy_select_support")`
 #' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
 #'
-#' @return `r pkgsnip::param_label("plotly_obj")`
+#' @return `r pkgsnip::param_lbl("plotly_obj")`
 #' @family visualize
 #' @export
 #'
@@ -4524,7 +4641,7 @@ plot_rfrnd_share_per_period <- function(data,
 #'   - **`"naive"`**: Naive procedure which doesn't properly reflect topic proportions on tier 2 and 3. Based on the (wrong) assumptions that a) all referendums
 #'     have the same number of topic lineages assigned and b) topics are not deduplicated per tier. By far the fastest method, though.
 #'
-#' @return `r pkgsnip::param_label("plotly_obj")`
+#' @return `r pkgsnip::param_lbl("plotly_obj")`
 #' @family visualize
 #' @export
 #'
@@ -4691,7 +4808,7 @@ plot_topic_segmentation <- function(data,
 #' @param weight_by_n_rfrnds Whether or not to weight topic occurences by number of referendums. If `TRUE`, for a referendum with n different topics of the same
 #'   `tier`, every topic is counted 1/n.
 #'
-#' @return `r pkgsnip::param_label("plotly_obj")`
+#' @return `r pkgsnip::param_lbl("plotly_obj")`
 #' @family visualize
 #' @export
 #'
@@ -4718,25 +4835,21 @@ plot_topic_share_per_period <- function(data,
   
   # ensure topics var is present
   var_name_topics <- glue::glue("topics_tier_{tier}")
-  var_name_topic <- glue::glue("topic_tier_{tier}")
+  var_name_topic <- var_name_unnested(var_name_topics)
   
   if (!(var_name_topics %in% colnames(data))) {
     cli::cli_abort("Required column {.var {var_name_topics}} is missing from {.arg data}.")
   }
   
-  data %>%
+  data |>
     # add proper count var
-    dplyr::mutate(count = if (weight_by_n_rfrnds) 1 / purrr::map_int(!!as.symbol(var_name_topics), length) else 1) %>%
-    # transform data
-    tidyr::unnest_longer(col = all_of(var_name_topics),
-                         values_to = var_name_topic,
-                         ptype = character()) %>%
+    dplyr::mutate(count = if (weight_by_n_rfrnds) 1 / purrr::map_int(!!as.symbol(var_name_topics), length) else 1) |>
+    # unnest topics var
+    unnest_var(var = var_name_topics) |>
     # calculate freqs
-    dplyr::group_by(!!as.symbol(period), !!as.symbol(var_name_topic)) %>%
+    dplyr::group_by(!!as.symbol(period), !!as.symbol(var_name_topic)) |>
     dplyr::summarise(n = sum(count),
-                     .groups = "drop") %>%
-    dplyr::mutate(!!as.symbol(var_name_topic) := factor(x = !!as.symbol(var_name_topic),
-                                                        levels = var_vals(var_name_topics))) %>%
+                     .groups = "drop") |>
     # plot
     plot_share_per_period(x = var_name_topic,
                           period = period)
@@ -4784,8 +4897,9 @@ ggplot_streamgraph <- function(data,
                          reason = pal::reason_pkg_required())
   ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
                                    data = data)
-  n_by <- length(ix_by)
   names_by <- names(ix_by)
+  name_by <- names_by
+  n_by <- length(ix_by)
   
   if (n_by > 1L) {
     cli::cli_abort("Only {.emph one} data column can be specified in {.arg by}, but {.val {n_by}} were provided.")
@@ -4793,26 +4907,29 @@ ggplot_streamgraph <- function(data,
   
   # unnest list col if necessary
   if (is.list(data[[ix_by]])) {
-    data %<>% tidyr::unnest_longer(col = !!as.symbol(names_by))
+    data %<>% unnest_var(var = names_by)
+    name_by <- var_name_unnested(names_by)
+  }
   }
   
   result <-
     data |>
     n_rfrnds_per_period(period = period,
-                        by = {{ by }}) |>
+                        by = !!as.symbol(name_by)) |>
     # TODO: remove this workaround once [issue #23](https://github.com/davidsjoberg/ggstream/issues/23) is fixed
-    dplyr::group_by(!!as.symbol(names_by)) |>
+    dplyr::group_by(!!as.symbol(name_by)) |>
     dplyr::group_modify(\(d, k) if (sum(d$n) > 0) d else d[0,]) |>
     dplyr::ungroup() |>
     ggplot2::ggplot(mapping = ggplot2::aes(x = !!as.symbol(period),
                                            y = n,
-                                           fill = !!as.symbol(names_by))) +
+                                           fill = !!as.symbol(name_by))) +
     ggstream::geom_stream(type = stacking,
                           n_grid = 10000,
                           show.legend = TRUE,
                           bw = bandwidth) +
     viridis::scale_fill_viridis(discrete = TRUE,
-                                option = "turbo") +
+                                option = "turbo",
+                                name = printify_var_names(name_by)) +
     ggplot2::xlab(ggplot2::element_blank()) +
     ggplot2::ylab(ggplot2::element_blank())
   
@@ -4834,7 +4951,7 @@ ggplot_streamgraph <- function(data,
 #' will be reflected in additional columns, i.e. expand it horizontally.
 #'
 #' @inheritParams n_rfrnds
-#' @param by Up to three additional `data` columns to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param by Up to three additional `data` columns to group by before counting number of referendums. `r pkgsnip::param_lbl("tidy_select_support")`
 #' @param n_rows Maximum number of rows to be included in the resulting table. All the rows exceeding that limit are replaced by a single row of ellipses. An
 #'   integer scalar or `Inf` for an unlimited number of rows.
 #' @param order How to order the rows of the resulting table. One of
@@ -5062,7 +5179,7 @@ tbl_n_rfrnds <- function(data,
 #'
 #' @inheritParams n_rfrnds_per_period
 #' @inheritParams tbl_n_rfrnds
-#' @param by Up to two additional `data` columns to group by before counting number of referendums. `r pkgsnip::param_label("tidy_select_support")`
+#' @param by Up to two additional `data` columns to group by before counting number of referendums. `r pkgsnip::param_lbl("tidy_select_support")`
 #' @param squeeze_zero_rows Whether or not to compress consecutive zero-sum rows into single period span rows.
 #' @param add_total_col Whether or not to add a summary column at the very end of the table containing row totals. If `NULL`, a total column is added only if
 #'   `by` is non-empty.
@@ -5237,7 +5354,7 @@ tbl_n_rfrnds_per_period <- function(data,
 #' subnational referendums.
 #'
 #' @inheritSection sudd_rfrnds About [sudd.ch](https://sudd.ch/)
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family sudd
 #' @export
 #'
@@ -5287,7 +5404,7 @@ list_sudd_territories <- function() {
 #' Lists [all referendum titles from sudd.ch](https://sudd.ch/list.php?mode=alltopics), together with their search URLs and number of occurrences.
 #'
 #' @inheritSection sudd_rfrnds About [sudd.ch](https://sudd.ch/)
-#' @return `r pkgsnip::return_label("data")`
+#' @return `r pkgsnip::return_lbl("data")`
 #' @family sudd
 #' @export
 #'
@@ -5339,8 +5456,8 @@ list_sudd_titles <- function() {
 #'   matching](https://en.wikipedia.org/wiki/Approximate_string_matching) is supported.
 #' - `year_min`: The lower year limit of the referendums' `date`. A positive integer.
 #' - `year_max`: The upper year limit of the referendums' `date`. A positive integer.
-#' @param use_cache `r pkgsnip::param_label("use_cache")`
-#' @param max_cache_age `r pkgsnip::param_label("max_cache_age")`
+#' @param use_cache `r pkgsnip::param_lbl("use_cache")`
+#' @param max_cache_age `r pkgsnip::param_lbl("max_cache_age")`
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return A [tibble][tibble::tbl_df] containing at least an `id_sudd` column.
@@ -5559,11 +5676,11 @@ list_sudd_rfrnds <- function(mode = c("by_date",
 #'
 #' @param ids_sudd The referendum identifiers assigned by [sudd.ch](https://sudd.ch/). Either as a character vector or a data frame containing a column
 #'   `id_sudd`. `NA`s are ignored.
-#' @param use_cache `r pkgsnip::param_label("use_cache")`
-#' @param max_cache_age `r pkgsnip::param_label("max_cache_age")`
+#' @param use_cache `r pkgsnip::param_lbl("use_cache")`
+#' @param max_cache_age `r pkgsnip::param_lbl("max_cache_age")`
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
-#' @return `r pkgsnip::return_label("data")` The column names are aligned with those of [rfrnds()] as closely as possible.
+#' @return `r pkgsnip::return_lbl("data")` The column names are aligned with those of [rfrnds()] as closely as possible.
 #' @family sudd
 #' @importFrom rlang :=
 #' @export
@@ -5711,7 +5828,7 @@ is_online <- function(use_testing_server = pal::pkg_config_val(key = "use_testin
 #'
 #' A [tibble][tibble::tbl_df] with metadata of all possible `r this_pkg` package configuration options. See [pal::pkg_config_val()] for more information.
 #'
-#' @format `r pkgsnip::return_label("data_cols", cols = colnames(pkg_config))`
+#' @format `r pkgsnip::return_lbl("data_cols", cols = colnames(pkg_config))`
 #' @export
 #'
 #' @examples

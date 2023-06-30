@@ -53,6 +53,8 @@ data_codebook <- {
     codebook$`02_institutional`$`04_other`$item) %>%
     purrr::map(~ tibble::tibble(variable_name = .x$variable_name %||% NA_character_,
                                 variable_name_print = .x$variable_name_print %||% NA_character_,
+                                variable_name_unnested = .x$variable_name_unnested %||% variable_name,
+                                variable_name_unnested_print = .x$variable_name_unnested_print %||% variable_name_print,
                                 variable_label = .x$variable_label %||% NA_character_,
                                 is_multi_valued = .x$is_multi_valued %||% FALSE,
                                 is_nested = .x$is_nested %||% FALSE,
@@ -77,15 +79,13 @@ data_codebook <- {
                                 is_opt = .x$is_opt %||% FALSE)) %>%
     purrr::list_rbind() %>%
     # infer missing prototypes
-    dplyr::mutate(ptype = purrr::pmap(.l = list(variable_name,
-                                                is_multi_valued,
+    dplyr::mutate(ptype = purrr::pmap(.l = list(is_multi_valued,
                                                 is_nested,
                                                 variable_values,
                                                 value_labels,
                                                 value_scale,
                                                 ptype),
-                                      .f = function(variable_name,
-                                                    is_multi_valued,
+                                      .f = function(is_multi_valued,
                                                     is_nested,
                                                     variable_values,
                                                     value_labels,
@@ -112,6 +112,8 @@ data_codebook <- {
     assertr::assert(predicate = assertr::not_na,
                     variable_name,
                     variable_name_print,
+                    variable_name_unnested,
+                    variable_name_unnested_print,
                     variable_label,
                     value_scale,
                     is_multi_valued,
@@ -122,6 +124,8 @@ data_codebook <- {
     assertr::assert(predicate = function(x) if (x == "") FALSE else TRUE,
                     variable_name,
                     variable_name_print,
+                    variable_name_unnested,
+                    variable_name_unnested_print,
                     variable_label,
                     value_scale)
 }
@@ -290,7 +294,7 @@ if (any(country_codes_sudd_invalid %in% c(data_iso_3166_1$Alpha_2,
 ```{r}
 data_topics <-
   # download file from private CCM Design repo
-  pal::gh_text_file(owner = "ccmdesign",
+  yay::gh_text_file(owner = "zdaarau",
                     name = "c2d-app",
                     rev = "master",
                     path = "ch.c2d/web/themes.json") %>%

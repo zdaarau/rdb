@@ -973,7 +973,7 @@ A maximum of 3 predefined top-tier political topics that best classify the refer
 }
 
 
-\emph{This is a multi-value variable and thus of type \code{list}.}
+\emph{This is a multi-value variable and thus of type \code{list}. When unnested via \href{https://rdb.rpkg.dev/reference/unnest_var.html}{\code{unnest_var()}}, its name becomes \code{{variable_name_unnested}}.}
 }
 
 \subsection{Level of measurement}{
@@ -1049,14 +1049,14 @@ A maximum of 3 predefined second-tier political topics that best classify the re
 }
 
 
-\emph{This is a multi-value variable and thus of type \code{list}.}
+\emph{This is a multi-value variable and thus of type \code{list}. When unnested via \href{https://rdb.rpkg.dev/reference/unnest_var.html}{\code{unnest_var()}}, its name becomes \code{{variable_name_unnested}}.}
 }
 
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_2, .f = ~ all(rdb::infer_topics(topics = .y, tier = 1L) \%in\% .x))
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_2, .f = \\(x, y) all(rdb::infer_topics(topics = y, tier = 1L) \%in\% x))
 }\if{html}{\out{</div>}}
 }
 
@@ -1180,14 +1180,14 @@ A maximum of 3 predefined third-tier political topics that best classify the ref
 }
 
 
-\emph{This is a multi-value variable and thus of type \code{list}.}
+\emph{This is a multi-value variable and thus of type \code{list}. When unnested via \href{https://rdb.rpkg.dev/reference/unnest_var.html}{\code{unnest_var()}}, its name becomes \code{{variable_name_unnested}}.}
 }
 
 \subsection{Applicability constraint}{
 
 This variable is only applicable under the following condition:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = topics_tier_2, .y = topics_tier_3, .f = ~ all(rdb::infer_topics(topics = .y, tier = 2L) \%in\% .x)) & purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_3, .f = ~ all(rdb::infer_topics(topics = .y, tier = 1L) \%in\% .x))
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{purrr::map2_lgl(.x = topics_tier_2, .y = topics_tier_3, .f = \\(x, y) all(rdb::infer_topics(topics = y, tier = 2L) \%in\% x)) & purrr::map2_lgl(.x = topics_tier_1, .y = topics_tier_3, .f = \\(x, y) all(rdb::infer_topics(topics = y, tier = 1L) \%in\% x))
 }\if{html}{\out{</div>}}
 }
 
@@ -1654,7 +1654,7 @@ The mode(s) of revision that \code{inst_object_type} allows.
 }
 
 
-\emph{This is a multi-value variable and thus of type \code{list}.}
+\emph{This is a multi-value variable and thus of type \code{list}. When unnested via \href{https://rdb.rpkg.dev/reference/unnest_var.html}{\code{unnest_var()}}, its name becomes \code{{variable_name_unnested}}.}
 }
 
 \subsection{Level of measurement}{
@@ -1733,7 +1733,7 @@ The legal topic(s) to which the referendum \code{type} is limited.
 }
 
 
-\emph{This is a multi-value variable and thus of type \code{list}.}
+\emph{This is a multi-value variable and thus of type \code{list}. When unnested via \href{https://rdb.rpkg.dev/reference/unnest_var.html}{\code{unnest_var()}}, its name becomes \code{{variable_name_unnested}}.}
 }
 
 \subsection{Applicability constraint}{
@@ -1766,7 +1766,7 @@ The legal topic(s) that are excluded from the referendum \code{type}.
 }
 
 
-\emph{This is a multi-value variable and thus of type \code{list}.}
+\emph{This is a multi-value variable and thus of type \code{list}. When unnested via \href{https://rdb.rpkg.dev/reference/unnest_var.html}{\code{unnest_var()}}, its name becomes \code{{variable_name_unnested}}.}
 }
 
 \subsection{Applicability constraint}{
@@ -1890,6 +1890,8 @@ rdb::data_codebook
 Other referendum metadata functions:
 \code{\link{printify_var_names}()},
 \code{\link{val_lbls}()},
+\code{\link{val_scale}()},
+\code{\link{var_name_unnested}()},
 \code{\link{var_vals}()}
 }
 \concept{metadata}

@@ -48,7 +48,9 @@ reference:
 - contents:
   - data_codebook
   - val_lbls
+  - val_scale
   - var_vals
+  - var_name_unnested
   - printify_var_names
 - title: Referendum topics
   desc: Functions to work with referendum [topics](https://rdb.rpkg.dev/articles/codebook.html#topics).
@@ -73,6 +75,7 @@ reference:
     a specific purpose.
 - contents:
   - as_ballot_dates
+  - unnest_var
   - n_rfrnds
   - n_rfrnds_per_period
   - printify_col_names

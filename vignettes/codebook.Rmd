@@ -74,6 +74,8 @@ var_sections <- function(data,
   
   data %>% purrr::pmap(function(variable_name,
                                 variable_name_print,
+                                variable_name_unnested,
+                                variable_name_unnested_print,
                                 variable_label,
                                 is_multi_valued,
                                 is_nested,
@@ -147,8 +149,8 @@ var_sections <- function(data,
           paste0("<sup>[`topics_tier_1`](#topics_tier_1){.color-azure} are colored in [azure]{.color-azure}, [`topics_tier_2`](#topics_tier_2){.color-violet} ",
                  "in [violet]{.color-violet} and [`topics_tier_3`](#topics_tier_3){.color-rose} in [rose]{.color-rose}.</sup>")[!strip_extended_pandoc],
           "",
-          paste0("The hierarchical relations between the three topic variables `topics_tier_1`, `topics_tier_2` and `topics_tier_3` can be reconstructed at any ",
-                 "time using ",
+          paste0("The hierarchical relations between the three topic variables `topics_tier_1`, `topics_tier_2` and `topics_tier_3` can be reconstructed at ",
+                 "any time using ",
                  ifelse(strip_extended_pandoc,
                         "[hierarchize_topics()]",
                         "[`hierarchize_topics()`](https://rdb.rpkg.dev/reference/hierarchize_topics.html)"),
@@ -193,7 +195,8 @@ var_sections <- function(data,
           "")
       },
       if (is_multi_valued) {
-        c(paste0("_This is a multi-value variable", "[^multi-val-var]"[!strip_extended_pandoc], " and thus of type `list`._"),
+        c(paste0("_This is a multi-value variable", "[^multi-val-var]"[!strip_extended_pandoc], " and thus of type `list`. When unnested via ",
+                 "[`unnest_var()`](https://rdb.rpkg.dev/reference/unnest_var.html), its name becomes `{variable_name_unnested}`._"),
           "")
       },
       if (!is.na(applicability_constraint)) {
@@ -271,10 +274,12 @@ rdb::data_codebook %>%
 #| include: !expr to_pandoc
 
 cat("
-[^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/hoist.html) to convert data containing such a variable to long format. To unnest `topics_tier_1` to `topic_tier_1` for example, use:
+[^multi-val-var]: A multi-value variable allows for more than one value per observation and thus breaks with the [tidy-data
+    convention](https://tidyr.tidyverse.org/articles/tidy-data.html). Use `rdb::unnest_var()` to convert data containing such a variable to long format. To
+    unnest `topics_tier_1` to `topic_tier_1` for example, use:
 
     \`\`\`r
-    rdb::rfrnds() %>% tidyr::unnest_longer(col = topics_tier_1, values_to = \"topic_tier_1\")
+    rdb::rfrnds() |> rdb::unnest_var(var = topics_tier_1)
     \`\`\`
 ")
 ```

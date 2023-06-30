@@ -114,7 +114,7 @@ See the package reference for [all available data augmentation functions](https:
 ## Transform data
 
 For certain analyses, it might come in handy to transform the referendum data to a different shape beforehand. For a few such transformations, rdb provides
-[ready-made functions](https://rdb.rpkg.dev/reference/index.html#transformation).
+ready-made functions.
 
 `rdb::as_ballot_dates()` for example transforms the default referendum-level observations to ones on the level of ballot date and jurisdiction:
 
@@ -125,6 +125,19 @@ rdb::rfrnds() |> nrow()
 
 rdb::rfrnds() |> rdb::as_ballot_dates() |> nrow()
 ```
+
+Noteworthy is also `rdb::unnest_var()` which provides a convenient and standardized way to unnest a multi-value variable of type list like the [`topics_tier_*`
+variables](https://rdb.rpkg.dev/articles/codebook.html#topics) to long format.
+
+```{r}
+#| echo: true
+
+rdb::rfrnds() |> nrow()
+
+rdb::rfrnds() |> rdb::unnest_var(topics_tier_1) |> nrow()
+```
+
+See the package reference for [all available data transformation functions](https://rdb.rpkg.dev/reference/index.html#transformation)
 
 ## Tabulate and visualize data
 
@@ -173,7 +186,7 @@ rdb::rfrnds(date_min = "2010-01-01",
 ```
 
 Or a stacked area chart visualizing the worldwide share of referendums per year since 1950, grouped by [political
-level](https://rdb.rpkg.dev/dev/articles/codebook.html#level):
+level](https://rdb.rpkg.dev/articles/codebook.html#level):
 
 ``` r
 rdb::rfrnds(date_min = "1950-01-01") |>
