@@ -348,6 +348,20 @@ pkg_config <-
                   description = "Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.")
 ```
 
+## `rfrnd_cols_order`
+
+```{r}
+rfrnd_cols_order <- data_codebook$variable_name
+i_loop <- 0
+
+for (i in which(data_codebook$variable_name != data_codebook$variable_name_unnested)) {
+  
+  rfrnd_cols_order %<>% append(values = data_codebook$variable_name_unnested[i],
+                               after = i + i_loop)
+  i_loop <- i_loop + 1L
+}
+```
+
 ## `topics_tier_#_`
 
 Only for performance-reasons.
@@ -587,6 +601,7 @@ usethis::use_data(country_codes_sudd_invalid,
                   months_de,
                   months_de_fms,
                   pkg_config,
+                  rfrnd_cols_order,
                   topics_tier_1_,
                   topics_tier_2_,
                   topics_tier_3_,

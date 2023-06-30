@@ -61,7 +61,7 @@ Suggests:
     salim (>= 0.0.9015),
     scales (>= 1.2.1),
     testthat (>= 3.0.0),
-    viridis (>= 0.6.3),
+    viridisLite (>= 0.4.2),
     withr (>= 2.5.0),
     xfun (>= 0.23),
     yay (>= 0.0.9013)

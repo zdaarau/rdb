@@ -7,7 +7,7 @@
 var_name_unnested(var_names)
 }
 \arguments{
-\item{var_names}{A character vector of RDB referendum data variable name(s). They must be either present in \code{\link{data_codebook}} or added by one of the \href{https://rdb.rpkg.dev/reference/#section-augmentation}{data augmentation functions}.}
+\item{var_names}{Variable name(s) present in \code{\link{data_codebook}}. A character vector.}
 }
 \value{
 A character vector of the same length as \code{var_names}.

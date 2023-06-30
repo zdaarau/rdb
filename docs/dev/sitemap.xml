@@ -163,6 +163,9 @@
     <loc>https://rdb.rpkg.dev/dev/reference/topics.html</loc>
   </url>
   <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/unnest_var.html</loc>
+  </url>
+  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/untidy_rfrnds.html</loc>
   </url>
   <url>
@@ -181,7 +184,13 @@
     <loc>https://rdb.rpkg.dev/dev/reference/val_lbls.html</loc>
   </url>
   <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/val_scale.html</loc>
+  </url>
+  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/validate_rfrnds.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/var_name_unnested.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/var_vals.html</loc>

@@ -9,7 +9,8 @@ ggplot_streamgraph(
   period = c("week", "month", "quarter", "year", "decade", "century"),
   by,
   stacking = c("mirror", "ridge", "proportional"),
-  bandwidth = 0.75
+  bandwidth = 0.75,
+  color_palette = viridisLite::turbo
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ compute the \link[=add_period]{period column}), plus the one(s) specified via \c
 }}
 
 \item{bandwidth}{Kernel density estimation bandwidth. A numeric scalar.}
+
+\item{color_palette}{Color palette function that when called with a single integer argument returns that many color codes.}
 }
 \value{
 A \link[ggplot2:ggplot]{ggplot2} object.

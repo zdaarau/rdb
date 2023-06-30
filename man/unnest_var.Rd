@@ -17,9 +17,9 @@ unnest_var(data, var)
 \item \code{inst_object_revision_modes}
 \item \code{inst_topics_only}
 \item \code{inst_topics_excluded}
+}
 
-\link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.
-}}
+\link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.

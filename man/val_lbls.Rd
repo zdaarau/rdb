@@ -7,7 +7,7 @@
 val_lbls(var_name, incl_affixes = TRUE)
 }
 \arguments{
-\item{var_name}{Variable name for which the labels are to be returned. Must be one of the column names of \code{\link{data_codebook}}.}
+\item{var_name}{Variable name present in \code{\link{data_codebook}} for which the labels are to be returned. A character scalar.}
 
 \item{incl_affixes}{Whether or not to add the corresponding \code{value_label_prefix} and \code{value_label_suffix} to the returned labels.}
 }

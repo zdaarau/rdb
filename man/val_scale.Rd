@@ -2,22 +2,22 @@
 % Please edit documentation in R/rdb.gen.R
 \name{val_scale}
 \alias{val_scale}
-\title{Get \emph{value scale} of referendum data variable}
+\title{Get \emph{value scale} of referendum data variables}
 \usage{
-val_scale(var_name)
+val_scale(var_names)
 }
 \arguments{
-\item{var_name}{Variable name for which the value scale is to be returned. Must be one of the column names of \code{\link{data_codebook}}.}
+\item{var_names}{Variable name(s) present in \code{\link{data_codebook}} for which the value scale is to be returned. A character vector.}
 }
 \value{
 A character scalar.
 }
 \description{
-Returns the value scale of a specific \code{\link[=rfrnds]{rfrnds()}} column.
+Returns the value scale of the specified \code{\link[=rfrnds]{rfrnds()}} columns.
 }
 \examples{
 rdb::val_scale("level")
-rdb::val_scale("topics_tier_1")
+paste0("topics_tier_", 1:3) |> rdb::val_scale()
 }
 \seealso{
 Other referendum metadata functions:

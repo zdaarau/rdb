@@ -222,6 +222,7 @@ utils::globalVariables(names = c(".",
                                  "value_labels",
                                  "value_scale",
                                  "variable_name",
+                                 "variable_name_unnested",
                                  "variable_name_print",
                                  "variable_values",
                                  "value",
@@ -1144,7 +1145,7 @@ lower_non_abbrs <- function(x) {
 ```{r}
 order_rfrnd_cols <- function(data) {
   
-  data %>% dplyr::relocate(any_of(data_codebook$variable_name))
+  data %>% dplyr::relocate(any_of(rfrnd_cols_order))
 }
 ```
 
@@ -3780,7 +3781,7 @@ validate_rfrnds <- function(data,
   checkmate::assert_data_frame(data,
                                min.rows = 1L)
   checkmate::assert_subset(colnames(data),
-                           choices = data_codebook$variable_name)
+                           choices = rfrnd_cols_order)
   checkmate::assert_flag(check_applicability_constraint)
   checkmate::assert_flag(check_id_sudd_prefix)
   
@@ -4159,7 +4160,7 @@ assert_vars <- function(data,
 #' Returns a character vector of value labels of a specific [rfrnds()] column, in the same order as [var_vals()], or of length `0` if `var_name`'s values are
 #' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
 #'
-#' @param var_name Variable name for which the labels are to be returned. Must be one of the column names of [`data_codebook`].
+#' @param var_name Variable name present in [`data_codebook`] for which the labels are to be returned. A character scalar.
 #' @param incl_affixes Whether or not to add the corresponding `value_label_prefix` and `value_label_suffix` to the returned labels.
 #'
 #' @return A character vector. Of length `0` if `var_name`'s values are not restricted to a predefined set or no value labels are defined in the
@@ -4178,8 +4179,9 @@ val_lbls <- function(var_name,
                      incl_affixes = TRUE) {
   
   var_name <- rlang::arg_match0(arg = var_name,
-                                values = data_codebook$variable_name)
-  metadata <- data_codebook |> dplyr::filter(variable_name == !!var_name)
+                                values = rfrnd_cols_order)
+  
+  metadata <- data_codebook |> dplyr::filter(variable_name == !!var_name | variable_name_unnested == !!var_name)
   result <- metadata$value_labels |> purrr::list_c(ptype = character())
   
   if (incl_affixes) {
@@ -4194,11 +4196,11 @@ val_lbls <- function(var_name,
 ### `val_scale`
 
 ```{r}
-#' Get *value scale* of referendum data variable
+#' Get *value scale* of referendum data variables
 #'
-#' Returns the value scale of a specific [rfrnds()] column.
+#' Returns the value scale of the specified [rfrnds()] columns.
 #'
-#' @param var_name Variable name for which the value scale is to be returned. Must be one of the column names of [`data_codebook`].
+#' @param var_names Variable name(s) present in [`data_codebook`] for which the value scale is to be returned. A character vector.
 #'
 #' @return A character scalar.
 #' @family metadata
@@ -4206,14 +4208,17 @@ val_lbls <- function(var_name,
 #'
 #' @examples
 #' rdb::val_scale("level")
-#' rdb::val_scale("topics_tier_1")
-val_scale <- function(var_name) {
+#' paste0("topics_tier_", 1:3) |> rdb::val_scale()
+val_scale <- function(var_names) {
   
-  var_name <- rlang::arg_match0(arg = var_name,
-                                values = data_codebook$variable_name)
-  data_codebook |>
-    dplyr::filter(variable_name == !!var_name) %$%
-    value_scale
+  var_name <- rlang::arg_match(arg = var_names,
+                               values = rfrnd_cols_order,
+                               multiple = TRUE)
+  
+  c(data_codebook$value_scale,
+    data_codebook$value_scale)[match(x = var_names,
+                                     table = c(data_codebook$variable_name,
+                                               data_codebook$variable_name_unnested))]
 }
 ```
 
@@ -4242,9 +4247,9 @@ val_scale <- function(var_name) {
 var_vals <- function(var_name) {
   
   var_name <- rlang::arg_match0(arg = var_name,
-                                values = data_codebook$variable_name)
+                                values = rfrnd_cols_order)
   data_codebook |>
-    dplyr::filter(variable_name == !!var_name) %$%
+    dplyr::filter(variable_name == !!var_name | variable_name_unnested == !!var_name) %$%
     variable_values |>
     unlist()
 }
@@ -4286,8 +4291,7 @@ var_name_unnested <- function(var_names) {
 #'
 #' Converts referendum data variables to their ready-to-print version.
 #'
-#' @param var_names A character vector of RDB referendum data variable name(s). They must be either present in [`data_codebook`] or added by one of the [data
-#'   augmentation functions](https://rdb.rpkg.dev/reference/#section-augmentation).
+#' @param var_names Variable name(s) present in [`data_codebook`]. A character vector.
 #'
 #' @return A character vector of the same length as `var_names`.
 #' @seealso [printify_col_names()]
@@ -4302,8 +4306,7 @@ var_name_unnested <- function(var_names) {
 printify_var_names <- function(var_names) {
   
   var_names <- rlang::arg_match(arg = var_names,
-                                values = c(data_codebook$variable_name,
-                                           data_codebook$variable_name_unnested),
+                                values = rfrnd_cols_order,
                                 multiple = TRUE)
   
   c(data_codebook$variable_name_print,
@@ -5136,9 +5139,9 @@ as_ballot_dates <- function(data) {
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `var`.
 #' @param var `data` column to unnest. One of the multi-value variables:
-#'   `r data_codebook |> dplyr::filter(is_multi_valued) %$% variable_name |> pal::wrap_chr(wrap = "\x60") |> pal::as_md_list()`
+#' `r data_codebook |> dplyr::filter(is_multi_valued) %$% variable_name |> pal::wrap_chr(wrap = "\x60") |> pal::as_md_list()`
 #'   
-#'   `r pkgsnip::param_lbl("tidy_select_support")`
+#' `r pkgsnip::param_lbl("tidy_select_support")`
 #'
 #' @return `r pkgsnip::return_lbl("data")`
 #' @seealso [var_name_unnested()]
@@ -5763,6 +5766,7 @@ TODO:
 #'   - `"ridge"` to stack absolute values from the zero line on the x-axis upwards.
 #'   - `"proportional"` to stack relative values that add up to 100 %.
 #' @param bandwidth Kernel density estimation bandwidth. A numeric scalar.
+#' @param color_palette Color palette function that when called with a single integer argument returns that many color codes.
 #'
 #' @return A [ggplot2][ggplot2::ggplot] object.
 #' @family visualize
@@ -5779,7 +5783,8 @@ ggplot_streamgraph <- function(data,
                                period = c("week", "month", "quarter", "year", "decade", "century"),
                                by,
                                stacking = c("mirror", "ridge", "proportional"),
-                               bandwidth = 0.75) {
+                               bandwidth = 0.75,
+                               color_palette = viridisLite::turbo) {
   
   stacking <- rlang::arg_match(stacking)
   checkmate::assert_number(bandwidth)
@@ -5789,7 +5794,7 @@ ggplot_streamgraph <- function(data,
                          reason = pal::reason_pkg_required())
   rlang::check_installed("scales",
                          reason = pal::reason_pkg_required())
-  rlang::check_installed("viridis",
+  rlang::check_installed("viridisLite",
                          reason = pal::reason_pkg_required())
   ix_by <- tidyselect::eval_select(expr = rlang::enquo(by),
                                    data = data)
@@ -5806,26 +5811,41 @@ ggplot_streamgraph <- function(data,
     data %<>% unnest_var(var = names_by)
     name_by <- var_name_unnested(names_by)
   }
+  
+  result <- n_rfrnds_per_period(data = data,
+                                period = period,
+                                by = !!as.symbol(name_by))
+  
+  # create stable color mapping based on lvls of `by`
+  # TODO: this probably could be removed and we could instead pass on a *discrete fill scale* fn (e.g. `\(...) viridis::scale_fill_viridis(..., discrete = T)`)
+  #       to `ggplot2::scale_fill_discrete(type = )` once the below mentioned issue #23 is resolved
+  if (is.factor(data[[name_by]])) {
+    vals_by <- levels(data[[name_by]])
+  } else {
+    vals_by <- unique(data[[name_by]])
   }
+  colors_by <- color_palette(length(vals_by))
+  names(colors_by) <- vals_by
+  
+  # we need to remove zero-n rows (plus the corresponding colors) since ggstream doesn't handle them properly
+  # TODO: remove this workaround once [issue #23](https://github.com/davidsjoberg/ggstream/issues/23) is fixed
+  colors_by %<>% magrittr::extract(names(.) %in% unique(result[[name_by]][result$n > 0L]))
+  result %<>%
+    dplyr::group_by(!!as.symbol(name_by)) %>%
+    dplyr::group_modify(\(d, k) if (sum(d$n) > 0) d else d[0, ]) %>%
+    dplyr::ungroup()
   
   result <-
-    data |>
-    n_rfrnds_per_period(period = period,
-                        by = !!as.symbol(name_by)) |>
-    # TODO: remove this workaround once [issue #23](https://github.com/davidsjoberg/ggstream/issues/23) is fixed
-    dplyr::group_by(!!as.symbol(name_by)) |>
-    dplyr::group_modify(\(d, k) if (sum(d$n) > 0) d else d[0, ]) |>
-    dplyr::ungroup() |>
-    ggplot2::ggplot(mapping = ggplot2::aes(x = !!as.symbol(period),
+    ggplot2::ggplot(data = result,
+                    mapping = ggplot2::aes(x = !!as.symbol(period),
                                            y = n,
                                            fill = !!as.symbol(name_by))) +
     ggstream::geom_stream(type = stacking,
                           n_grid = 10000,
                           show.legend = TRUE,
                           bw = bandwidth) +
-    viridis::scale_fill_viridis(discrete = TRUE,
-                                option = "turbo",
-                                name = printify_var_names(name_by)) +
+    ggplot2::scale_fill_discrete(type = colors_by,
+                                 name = printify_var_names(name_by)) +
     ggplot2::xlab(ggplot2::element_blank()) +
     ggplot2::ylab(ggplot2::element_blank())
   
