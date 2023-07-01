@@ -4645,6 +4645,11 @@ add_former_country_flag <- function(data) {
 
 ### `add_country_code_continual`
 
+TODO:
+
+-   Add better example which actually shows the difference between `country_code` and `country_code_continual`. To investigate: Why are there currently no
+    rfrnds included in the RDB with ISO 3166-3 alpha-4 `country_code`s?
+
 ```{r}
 #' Add continual country code to referendum data
 #'
