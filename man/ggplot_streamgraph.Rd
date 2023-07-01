@@ -40,12 +40,20 @@ Creates a ggplot2 \href{https://en.wikipedia.org/wiki/Streamgraph}{streamgraph} 
 resolution.
 }
 \examples{
-rdb::rfrnds(country_code = "CH",
-            level = "national",
-            quiet = TRUE,
-            max_cache_age = "1 year") |>
-  rdb::ggplot_streamgraph(period = "year",
-                          by = topics_tier_1)
+data_rdb <- rdb::rfrnds(country_code = "CH",
+                        level = "national",
+                        quiet = TRUE,
+                        max_cache_age = "1 year")
+
+rdb::ggplot_streamgraph(data = data_rdb,
+                        period = "year",
+                        by = topics_tier_1)
+
+# you can specify a different color palette
+rdb::ggplot_streamgraph(data = data_rdb,
+                        period = "year",
+                        by = topics_tier_1,
+                        color_palette = viridisLite::viridis)
 }
 \seealso{
 Other visualization functions:

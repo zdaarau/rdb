@@ -4337,6 +4337,7 @@ unnest_var <- function(data,
                        var) {
   
   # tidy selection and arg check
+  checkmate::assert_data_frame(data)
   defused_var <- rlang::enquo(var)
   i_var <- tidyselect::eval_select(expr = defused_var,
                                    data = data)
@@ -4493,8 +4494,8 @@ n_rfrnds_per_period <- function(data,
   }
   
   result <-
-    data %>%
-    dplyr::group_by(!!!rlang::syms(names_by), !!as.symbol(period)) %>%
+    data |>
+    dplyr::group_by(!!!rlang::syms(names_by), !!as.symbol(period)) |>
     dplyr::summarise(n = dplyr::n(),
                      .groups = "drop")
   # fill gaps
@@ -4507,14 +4508,14 @@ n_rfrnds_per_period <- function(data,
                           century = 100L,
                           decade = 10L,
                           1L)
-    period_min <- period %>% pal::when(is.null(period_floor) && !is_recurring_period ~ pal::safe_min(data[[.]]),
-                                       !is_recurring_period ~ period_floor,
-                                       ~ 1L)
-    period_max <- period %>% pal::when(is.null(period_ceiling) && !is_recurring_period ~ pal::safe_max(data[[.]]),
-                                       !is_recurring_period ~ period_ceiling,
-                                       . == "week" ~ 53L,
-                                       . == "month" ~ 12L,
-                                       . == "quarter" ~ 4L)
+    period_min <- period |> pal::when(is.null(period_floor) && !is_recurring_period ~ pal::safe_min(data[[.]]),
+                                      !is_recurring_period ~ period_floor,
+                                      ~ 1L)
+    period_max <- period |> pal::when(is.null(period_ceiling) && !is_recurring_period ~ pal::safe_max(data[[.]]),
+                                      !is_recurring_period ~ period_ceiling,
+                                      . == "week" ~ 53L,
+                                      . == "month" ~ 12L,
+                                      . == "quarter" ~ 4L)
     period_seq <- seq(from = (period_min %/% period_step) * period_step,
                       to = period_max,
                       by = period_step)
@@ -4531,7 +4532,7 @@ n_rfrnds_per_period <- function(data,
       dplyr::mutate(!!as.symbol(period) := as.integer(as.character(!!as.symbol(period))))
   }
   
-  result %>% dplyr::arrange(if (descending) dplyr::desc(!!as.symbol(period)) else !!as.symbol(period))
+  result |> dplyr::arrange(if (descending) dplyr::desc(!!as.symbol(period)) else !!as.symbol(period))
 }
 
 #' Printify referendum data column names
@@ -4877,12 +4878,20 @@ plot_topic_share_per_period <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(country_code = "CH",
-#'             level = "national",
-#'             quiet = TRUE,
-#'             max_cache_age = "1 year") |>
-#'   rdb::ggplot_streamgraph(period = "year",
-#'                           by = topics_tier_1)
+#' data_rdb <- rdb::rfrnds(country_code = "CH",
+#'                         level = "national",
+#'                         quiet = TRUE,
+#'                         max_cache_age = "1 year")
+#'
+#' rdb::ggplot_streamgraph(data = data_rdb,
+#'                         period = "year",
+#'                         by = topics_tier_1)
+#'
+#' # you can specify a different color palette
+#' rdb::ggplot_streamgraph(data = data_rdb,
+#'                         period = "year",
+#'                         by = topics_tier_1,
+#'                         color_palette = viridisLite::viridis)
 ggplot_streamgraph <- function(data,
                                period = c("week", "month", "quarter", "year", "decade", "century"),
                                by,
@@ -4892,6 +4901,7 @@ ggplot_streamgraph <- function(data,
   
   stacking <- rlang::arg_match(stacking)
   checkmate::assert_number(bandwidth)
+  checkmate::assert_function(color_palette)
   rlang::check_installed("ggplot2",
                          reason = pal::reason_pkg_required())
   rlang::check_installed("ggstream",
@@ -4926,7 +4936,7 @@ ggplot_streamgraph <- function(data,
   if (is.factor(data[[name_by]])) {
     vals_by <- levels(data[[name_by]])
   } else {
-    vals_by <- unique(data[[name_by]])
+    vals_by <- sort(unique(data[[name_by]]))
   }
   colors_by <- color_palette(length(vals_by))
   names(colors_by) <- vals_by

@@ -137,7 +137,7 @@ rdb::rfrnds() |> nrow()
 rdb::rfrnds() |> rdb::unnest_var(topics_tier_1) |> nrow()
 ```
 
-See the package reference for [all available data transformation functions](https://rdb.rpkg.dev/reference/index.html#transformation)
+See the package reference for [all available data transformation functions](https://rdb.rpkg.dev/reference/index.html#transformation).
 
 ## Tabulate and visualize data
 
