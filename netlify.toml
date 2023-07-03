@@ -31,7 +31,7 @@ Content-Security-Policy = '''
   object-src 'self';
   prefetch-src 'self';
   script-src 'self' 'unsafe-eval' https://rpkg.dev;
-  style-src 'self' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
 
   form-action 'self';
   frame-ancestors 'none'
