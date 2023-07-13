@@ -149,11 +149,11 @@ referendum data will only be modified just enough to be able to return it as a <
 
 
 <dt>use_cache</dt>
-<dd><p>Return cached results if possible. If <code>FALSE</code>, results are always newly fetched regardless of <code>max_cache_age</code>.</p></dd>
+<dd><p>Whether or not to return cached results if possible. If <code>FALSE</code>, results are always newly fetched regardless of <code>max_cache_age</code>.</p></dd>
 
 
 <dt>max_cache_age</dt>
-<dd><p>The duration after which cached results are refreshed (i.e. newly fetched). A valid <a href="https://lubridate.tidyverse.org/reference/as.duration.html" class="external-link">lubridate duration</a>. Use <code>Inf</code> to disable cache expiry. Only relevant if <code>use_cache = TRUE</code>.</p></dd>
+<dd><p>Duration after which cached results are refreshed (i.e. newly fetched). A valid <a href="https://lubridate.tidyverse.org/reference/as.duration.html" class="external-link">lubridate duration</a>. Use <code>Inf</code> to disable cache expiry. Only relevant if <code>use_cache = TRUE</code>.</p></dd>
 
 
 <dt>use_testing_server</dt>

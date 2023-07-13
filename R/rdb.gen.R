@@ -1098,7 +1098,7 @@ topic_frequency <- function(topics,
 #'   referendum data will only be modified just enough to be able to return it as a [tibble][tibble::tbl_df]. Note that untidy data doesn't conform to the 
 #'   [codebook][data_codebook] (i.a. different variable names).
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @keywords internal
 tidy_rfrnds <- function(data,
                         tidy = TRUE) {
@@ -2549,7 +2549,7 @@ rm(sudd_years)
 #' @param max_cache_age `r pkgsnip::param_lbl("max_cache_age")`
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family rfrnd
 #' @export
 #'
@@ -3448,7 +3448,7 @@ assert_vars <- function(data,
 #' ```{r, child = "vignettes/codebook.Rmd"}
 #' ```
 #'
-#' @format `r pkgsnip::return_lbl("data")`
+#' @format `r pkgsnip::return_lbl("tibble")`
 #' @aliases codebook
 #' @family metadata
 #' @export
@@ -3605,7 +3605,7 @@ printify_var_names <- function(var_names) {
 #'
 #' A tibble reflecting the complete [referendum topics hierarchy](`r url_codebook("topics")`).
 #'
-#' @format `r pkgsnip::return_lbl("data")`
+#' @format `r pkgsnip::return_lbl("tibble")`
 #' @family topics
 #' @export
 #'
@@ -3846,7 +3846,7 @@ infer_topics <- function(topics,
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
 #' @keywords internal
 #'
@@ -3878,7 +3878,7 @@ add_former_country_flag <- function(data) {
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
 #' @export
 #'
@@ -3919,7 +3919,7 @@ add_country_code_continual <- function(data) {
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
 #' @export
 #'
@@ -3963,7 +3963,7 @@ add_country_code_long <- function(data) {
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
 #' @export
 #'
@@ -4007,7 +4007,7 @@ add_country_name <- function(data) {
 #'
 #' @inheritParams add_world_regions
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
 #' @export
 #'
@@ -4056,7 +4056,7 @@ add_country_name_long <- function(data) {
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
 #' @param period Type of period to add. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
 #' @export
 #'
@@ -4120,7 +4120,7 @@ add_period <- function(data,
 #' @param excl_dubious Whether or not to exclude obviously dubious turnout numbers (those > 1.0) by setting them to `NA`. Such numbers stem either from
 #'   data errors or (officially) tampered numbers.
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
 #' @export
 #'
@@ -4200,7 +4200,7 @@ add_turnout <- function(data,
 #'   alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) or [ISO 3166-3 alpha-4](https://en.wikipedia.org/wiki/ISO_3166-3) codes).
 #' @param add_un_country_code Whether or not to also add a column `un_country_code` holding the UN M49 code of the country in which the referendum took place.
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
 #' @export
 #'
@@ -4264,7 +4264,7 @@ add_world_regions <- function(data,
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family transform
 #' @export
 #'
@@ -4324,7 +4324,7 @@ as_ballot_dates <- function(data) {
 #'   
 #' `r pkgsnip::param_lbl("tidy_select_support")`
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @seealso [var_name_unnested()]
 #' @family transform
 #' @export
@@ -4375,7 +4375,7 @@ unnest_var <- function(data,
 #' @param by Optional `data` column(s) to group by before counting number of referendums. `r pkgsnip::param_lbl("tidy_select_support")`
 #' @param complete_fcts Whether or not to complete the result with implicitly missing combinations of those columns specified in `by` which are of type factor.
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family transform
 #' @export
 #'
@@ -4435,7 +4435,7 @@ n_rfrnds <- function(data,
 #' @param descending Whether to sort the resulting table by `period` in descending or in ascending order.
 #'
 #' @inherit add_period details
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family transform
 #' @export
 #'
@@ -4546,7 +4546,7 @@ n_rfrnds_per_period <- function(data,
 #'
 #' @param data RDB referendum data as returned by [rfrnds()].
 #'
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family transform
 #' @export
 #'
@@ -5384,7 +5384,7 @@ tbl_n_rfrnds_per_period <- function(data,
 #' subnational referendums.
 #'
 #' @inheritSection sudd_rfrnds About [sudd.ch](https://sudd.ch/)
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family sudd
 #' @export
 #'
@@ -5434,7 +5434,7 @@ list_sudd_territories <- function() {
 #' Lists [all referendum titles from sudd.ch](https://sudd.ch/list.php?mode=alltopics), together with their search URLs and number of occurrences.
 #'
 #' @inheritSection sudd_rfrnds About [sudd.ch](https://sudd.ch/)
-#' @return `r pkgsnip::return_lbl("data")`
+#' @return `r pkgsnip::return_lbl("tibble")`
 #' @family sudd
 #' @export
 #'
@@ -5710,7 +5710,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
 #' @param max_cache_age `r pkgsnip::param_lbl("max_cache_age")`
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
-#' @return `r pkgsnip::return_lbl("data")` The column names are aligned with those of [rfrnds()] as closely as possible.
+#' @return `r pkgsnip::return_lbl("tibble")` The column names are aligned with those of [rfrnds()] as closely as possible.
 #' @family sudd
 #' @importFrom rlang :=
 #' @export
@@ -5858,7 +5858,7 @@ is_online <- function(use_testing_server = pal::pkg_config_val(key = "use_testin
 #'
 #' A [tibble][tibble::tbl_df] with metadata of all possible `r this_pkg` package configuration options. See [pal::pkg_config_val()] for more information.
 #'
-#' @format `r pkgsnip::return_lbl("data_cols", cols = colnames(pkg_config))`
+#' @format `r pkgsnip::return_lbl("tibble_cols", cols = colnames(pkg_config))`
 #' @export
 #'
 #' @examples
