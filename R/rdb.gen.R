@@ -4872,6 +4872,7 @@ plot_topic_share_per_period <- function(data,
 #'   - `"proportional"` to stack relative values that add up to 100 %.
 #' @param bandwidth Kernel density estimation bandwidth. A numeric scalar.
 #' @param color_palette Color palette function that when called with a single integer argument returns that many color codes.
+#' @param prune_legend Whether or not to drop `by` factor levels which don't occur in `data`. Only has an effect if `by` is of type factor.
 #'
 #' @return A [ggplot2][ggplot2::ggplot] object.
 #' @family visualize
@@ -4892,16 +4893,34 @@ plot_topic_share_per_period <- function(data,
 #'                         period = "year",
 #'                         by = topics_tier_1,
 #'                         color_palette = viridisLite::viridis)
+#'
+#' # by default, only factor levels which occur in data are included in the legend
+#' data_rdb <- rdb::rfrnds(country_code = "AT",
+#'                         level = "national",
+#'                         quiet = TRUE,
+#'                         max_cache_age = "1 year")
+#'
+#' rdb::ggplot_streamgraph(data = data_rdb,
+#'                         period = "decade",
+#'                         by = topics_tier_1)
+#'
+#' # but you can include *all* factor levels in the legend if you want
+#' rdb::ggplot_streamgraph(data = data_rdb,
+#'                         period = "decade",
+#'                         by = topics_tier_1,
+#'                         prune_legend = FALSE)
 ggplot_streamgraph <- function(data,
                                period = c("week", "month", "quarter", "year", "decade", "century"),
                                by,
                                stacking = c("mirror", "ridge", "proportional"),
                                bandwidth = 0.75,
-                               color_palette = viridisLite::turbo) {
+                               color_palette = viridisLite::turbo,
+                               prune_legend = TRUE) {
   
   stacking <- rlang::arg_match(stacking)
   checkmate::assert_number(bandwidth)
   checkmate::assert_function(color_palette)
+  checkmate::assert_flag(prune_legend)
   rlang::check_installed("ggplot2",
                          reason = pal::reason_pkg_required())
   rlang::check_installed("ggstream",
@@ -4943,7 +4962,10 @@ ggplot_streamgraph <- function(data,
   
   # we need to remove zero-n rows (plus the corresponding colors) since ggstream doesn't handle them properly
   # TODO: remove this workaround once [issue #23](https://github.com/davidsjoberg/ggstream/issues/23) is fixed
-  colors_by %<>% magrittr::extract(names(.) %in% unique(result[[name_by]][result$n > 0L]))
+  ## if we prune the legend, we need to prune the fill colors, too (otherwise, colors aren't matched properly)
+  if (prune_legend) {
+    colors_by %<>% magrittr::extract(names(.) %in% unique(result[[name_by]][result$n > 0L]))
+  }
   result %<>%
     dplyr::group_by(!!as.symbol(name_by)) %>%
     dplyr::group_modify(\(d, k) if (sum(d$n) > 0) d else d[0, ]) %>%
@@ -4959,7 +4981,8 @@ ggplot_streamgraph <- function(data,
                           show.legend = TRUE,
                           bw = bandwidth) +
     ggplot2::scale_fill_discrete(type = colors_by,
-                                 name = printify_var_names(name_by)) +
+                                 name = printify_var_names(name_by),
+                                 drop = prune_legend) +
     ggplot2::xlab(ggplot2::element_blank()) +
     ggplot2::ylab(ggplot2::element_blank())
   

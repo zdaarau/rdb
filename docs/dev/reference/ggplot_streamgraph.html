@@ -63,7 +63,8 @@ resolution.</p>
 <span>  <span class="va">by</span>,</span>
 <span>  stacking <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mirror"</span>, <span class="st">"ridge"</span>, <span class="st">"proportional"</span><span class="op">)</span>,</span>
 <span>  bandwidth <span class="op">=</span> <span class="fl">0.75</span>,</span>
-<span>  color_palette <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="va"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span></span>
+<span>  color_palette <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="va"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span>,</span>
+<span>  prune_legend <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,6 +96,10 @@ compute the <a href="add_period.html">period column</a>), plus the one(s) specif
 
 <dt>color_palette</dt>
 <dd><p>Color palette function that when called with a single integer argument returns that many color codes.</p></dd>
+
+
+<dt>prune_legend</dt>
+<dd><p>Whether or not to drop <code>by</code> factor levels which don't occur in <code>data</code>. Only has an effect if <code>by</code> is of type factor.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -129,6 +134,24 @@ compute the <a href="add_period.html">period column</a>), plus the one(s) specif
 <span class="r-in"><span>                        by <span class="op">=</span> <span class="va">topics_tier_1</span>,</span></span>
 <span class="r-in"><span>                        color_palette <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="va"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ggplot_streamgraph-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># by default, only factor levels which occur in data are included in the legend</span></span></span>
+<span class="r-in"><span><span class="va">data_rdb</span> <span class="op">&lt;-</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>country_code <span class="op">=</span> <span class="st">"AT"</span>,</span></span>
+<span class="r-in"><span>                        level <span class="op">=</span> <span class="st">"national"</span>,</span></span>
+<span class="r-in"><span>                        quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                        max_cache_age <span class="op">=</span> <span class="st">"1 year"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">ggplot_streamgraph</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rdb</span>,</span></span>
+<span class="r-in"><span>                        period <span class="op">=</span> <span class="st">"decade"</span>,</span></span>
+<span class="r-in"><span>                        by <span class="op">=</span> <span class="va">topics_tier_1</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="ggplot_streamgraph-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># but you can include *all* factor levels in the legend if you want</span></span></span>
+<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">ggplot_streamgraph</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rdb</span>,</span></span>
+<span class="r-in"><span>                        period <span class="op">=</span> <span class="st">"decade"</span>,</span></span>
+<span class="r-in"><span>                        by <span class="op">=</span> <span class="va">topics_tier_1</span>,</span></span>
+<span class="r-in"><span>                        prune_legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="ggplot_streamgraph-4.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
