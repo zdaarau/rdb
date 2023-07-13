@@ -33,7 +33,7 @@ compute the \link[=add_period]{period column}), plus the one(s) specified via \c
 
 \item{color_palette}{Color palette function that when called with a single integer argument returns that many color codes.}
 
-\item{prune_legend}{Whether or not to drop \code{by} factor levels which don't occur in \code{data}. Only has an effect if \code{by} is of type factor.}
+\item{prune_legend}{Whether or not to drop \code{by} factor levels which don't occur in \code{data} from the legend. Only has an effect if \code{by} is of type factor.}
 }
 \value{
 A \link[ggplot2:ggplot]{ggplot2} object.

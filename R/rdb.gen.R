@@ -4872,7 +4872,7 @@ plot_topic_share_per_period <- function(data,
 #'   - `"proportional"` to stack relative values that add up to 100 %.
 #' @param bandwidth Kernel density estimation bandwidth. A numeric scalar.
 #' @param color_palette Color palette function that when called with a single integer argument returns that many color codes.
-#' @param prune_legend Whether or not to drop `by` factor levels which don't occur in `data`. Only has an effect if `by` is of type factor.
+#' @param prune_legend Whether or not to drop `by` factor levels which don't occur in `data` from the legend. Only has an effect if `by` is of type factor.
 #'
 #' @return A [ggplot2][ggplot2::ggplot] object.
 #' @family visualize
