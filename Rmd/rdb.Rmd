@@ -5779,8 +5779,8 @@ TODO:
 #'   - `"ridge"` to stack absolute values from the zero line on the x-axis upwards.
 #'   - `"proportional"` to stack relative values that add up to 100 %.
 #' @param bandwidth Kernel density estimation bandwidth. A numeric scalar.
-#' @param y_lim Optional Y axis scale limit. Only relevant if `stacking` is one of `"mirror"` or `"ridge"`. The limit applies to the upper side if
-#'   `stacking = "ridge"` and to both sides if `stacking = "mirror"`. A numeric scalar.
+#' @param y_lim Optional Y axis range limit. Only relevant if `stacking` is one of `"mirror"` or `"ridge"`. The limit applies to the upper side if
+#'   `stacking = "ridge"` and to both sides if `stacking = "mirror"`. A numeric scalar equal or greater than zero.
 #' @param color_palette Color palette function that when called with a single integer argument returns that many color codes.
 #' @param prune_legend Whether or not to drop `by` factor levels which don't occur in `data` from the legend. Only has an effect if `by` is of type factor.
 #'

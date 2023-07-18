@@ -32,8 +32,8 @@ compute the \link[=add_period]{period column}), plus the one(s) specified via \c
 
 \item{bandwidth}{Kernel density estimation bandwidth. A numeric scalar.}
 
-\item{y_lim}{Optional Y axis scale limit. Only relevant if \code{stacking} is one of \code{"mirror"} or \code{"ridge"}. The limit applies to the upper side if
-\code{stacking = "ridge"} and to both sides if \code{stacking = "mirror"}. A numeric scalar.}
+\item{y_lim}{Optional Y axis range limit. Only relevant if \code{stacking} is one of \code{"mirror"} or \code{"ridge"}. The limit applies to the upper side if
+\code{stacking = "ridge"} and to both sides if \code{stacking = "mirror"}. A numeric scalar equal or greater than zero.}
 
 \item{color_palette}{Color palette function that when called with a single integer argument returns that many color codes.}
 
