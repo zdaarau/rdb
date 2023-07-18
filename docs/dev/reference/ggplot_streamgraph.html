@@ -63,6 +63,7 @@ resolution.</p>
 <span>  <span class="va">by</span>,</span>
 <span>  stacking <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mirror"</span>, <span class="st">"ridge"</span>, <span class="st">"proportional"</span><span class="op">)</span>,</span>
 <span>  bandwidth <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  y_lim <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color_palette <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="va"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">turbo</a></span>,</span>
 <span>  prune_legend <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -92,6 +93,11 @@ compute the <a href="add_period.html">period column</a>), plus the one(s) specif
 
 <dt>bandwidth</dt>
 <dd><p>Kernel density estimation bandwidth. A numeric scalar.</p></dd>
+
+
+<dt>y_lim</dt>
+<dd><p>Optional Y axis scale limit. Only relevant if <code>stacking</code> is one of <code>"mirror"</code> or <code>"ridge"</code>. The limit applies to the upper side if
+<code>stacking = "ridge"</code> and to both sides if <code>stacking = "mirror"</code>. A numeric scalar.</p></dd>
 
 
 <dt>color_palette</dt>
@@ -146,7 +152,7 @@ compute the <a href="add_period.html">period column</a>), plus the one(s) specif
 <span class="r-in"><span>                        by <span class="op">=</span> <span class="va">topics_tier_1</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ggplot_streamgraph-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># but you can include *all* factor levels in the legend if you want</span></span></span>
+<span class="r-in"><span><span class="co"># but you can include *all* factor levels in the legend if you want to</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">ggplot_streamgraph</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rdb</span>,</span></span>
 <span class="r-in"><span>                        period <span class="op">=</span> <span class="st">"decade"</span>,</span></span>
 <span class="r-in"><span>                        by <span class="op">=</span> <span class="va">topics_tier_1</span>,</span></span>

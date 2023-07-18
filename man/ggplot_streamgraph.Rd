@@ -10,6 +10,7 @@ ggplot_streamgraph(
   by,
   stacking = c("mirror", "ridge", "proportional"),
   bandwidth = 0.75,
+  y_lim = NULL,
   color_palette = viridisLite::turbo,
   prune_legend = TRUE
 )
@@ -30,6 +31,9 @@ compute the \link[=add_period]{period column}), plus the one(s) specified via \c
 }}
 
 \item{bandwidth}{Kernel density estimation bandwidth. A numeric scalar.}
+
+\item{y_lim}{Optional Y axis scale limit. Only relevant if \code{stacking} is one of \code{"mirror"} or \code{"ridge"}. The limit applies to the upper side if
+\code{stacking = "ridge"} and to both sides if \code{stacking = "mirror"}. A numeric scalar.}
 
 \item{color_palette}{Color palette function that when called with a single integer argument returns that many color codes.}
 
@@ -68,7 +72,7 @@ rdb::ggplot_streamgraph(data = data_rdb,
                         period = "decade",
                         by = topics_tier_1)
 
-# but you can include *all* factor levels in the legend if you want
+# but you can include *all* factor levels in the legend if you want to
 rdb::ggplot_streamgraph(data = data_rdb,
                         period = "decade",
                         by = topics_tier_1,

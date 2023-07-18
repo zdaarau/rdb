@@ -4871,10 +4871,12 @@ plot_topic_share_per_period <- function(data,
 #'   - `"ridge"` to stack absolute values from the zero line on the x-axis upwards.
 #'   - `"proportional"` to stack relative values that add up to 100 %.
 #' @param bandwidth Kernel density estimation bandwidth. A numeric scalar.
+#' @param y_lim Optional Y axis scale limit. Only relevant if `stacking` is one of `"mirror"` or `"ridge"`. The limit applies to the upper side if
+#'   `stacking = "ridge"` and to both sides if `stacking = "mirror"`. A numeric scalar.
 #' @param color_palette Color palette function that when called with a single integer argument returns that many color codes.
 #' @param prune_legend Whether or not to drop `by` factor levels which don't occur in `data` from the legend. Only has an effect if `by` is of type factor.
 #'
-#' @return A [ggplot2][ggplot2::ggplot] object.
+#' @return `r pkgsnip::return_lbl("ggplot2_obj")`
 #' @family visualize
 #' @export
 #'
@@ -4904,7 +4906,7 @@ plot_topic_share_per_period <- function(data,
 #'                         period = "decade",
 #'                         by = topics_tier_1)
 #'
-#' # but you can include *all* factor levels in the legend if you want
+#' # but you can include *all* factor levels in the legend if you want to
 #' rdb::ggplot_streamgraph(data = data_rdb,
 #'                         period = "decade",
 #'                         by = topics_tier_1,
@@ -4914,11 +4916,16 @@ ggplot_streamgraph <- function(data,
                                by,
                                stacking = c("mirror", "ridge", "proportional"),
                                bandwidth = 0.75,
+                               y_lim = NULL,
                                color_palette = viridisLite::turbo,
                                prune_legend = TRUE) {
   
   stacking <- rlang::arg_match(stacking)
   checkmate::assert_number(bandwidth)
+  checkmate::assert_number(y_lim,
+                           lower = 0,
+                           finite = TRUE,
+                           null.ok = TRUE)
   checkmate::assert_function(color_palette)
   checkmate::assert_flag(prune_legend)
   rlang::check_installed("ggplot2",
@@ -4941,7 +4948,7 @@ ggplot_streamgraph <- function(data,
   
   # unnest list col if necessary
   if (is.list(data[[ix_by]])) {
-    data %<>% unnest_var(var = names_by)
+    data %<>% unnest_var(var = tidyselect::all_of(names_by))
     name_by <- var_name_unnested(names_by)
   }
   
@@ -4986,9 +4993,20 @@ ggplot_streamgraph <- function(data,
     ggplot2::xlab(ggplot2::element_blank()) +
     ggplot2::ylab(ggplot2::element_blank())
   
-  if (stacking == "mirror") {
+  if (stacking == "ridge" && !is.null(y_lim)) {
+    result <- result + ggplot2::coord_cartesian(ylim = c(0, y_lim),
+                                                default = TRUE)
+    
+  } else if (stacking == "mirror") {
+    
+    if (!is.null(y_lim)) {
+      result <- result + ggplot2::coord_cartesian(ylim = c(-y_lim, y_lim),
+                                                  default = TRUE)
+    }
+    
     # make y scale absolute in both directions
     result <- result + ggplot2::scale_y_continuous(labels = \(x) abs(x))
+    
   } else if (stacking == "proportional") {
     result <- result + ggplot2::scale_y_continuous(labels = scales::label_percent(suffix = "\u2009%"))
   }
