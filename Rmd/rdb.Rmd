@@ -1265,7 +1265,7 @@ plot_share_per_period <- function(data_freq,
                    yaxis = list(fixedrange = TRUE,
                                 hoverformat = ".1f",
                                 showgrid = FALSE,
-                                ticksuffix = "\u202f% ",
+                                ticksuffix = "\u2009% ",
                                 title = list(text = NULL)),
                    # draw custom grid
                    shapes =
@@ -5891,7 +5891,7 @@ ggplot_streamgraph <- function(data,
     # make y scale absolute in both directions
     result <- result + ggplot2::scale_y_continuous(labels = \(x) abs(x))
   } else if (stacking == "proportional") {
-    result <- result + ggplot2::scale_y_continuous(labels = scales::label_percent(suffix = "\u202f%"))
+    result <- result + ggplot2::scale_y_continuous(labels = scales::label_percent(suffix = "\u2009%"))
   }
   
   result
