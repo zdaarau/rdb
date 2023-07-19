@@ -182,9 +182,11 @@ data_iso_3166_1 <-
   ISOcodes::ISO_3166_1 %>%
   tibble::as_tibble() %>%
   # add `Common_name` where it's currently missing
-  # TODO: consider submitting PR once [upstream issue #44](https://salsa.debian.org/iso-codes-team/iso-codes/-/issues/44) is answered
+  # TODO: consider submitting PRs once [upstream issue #44](https://salsa.debian.org/iso-codes-team/iso-codes/-/issues/44) is answered
+  # TODO: remove IR, LA and SY once ISOcodes pkg version > 2022.09.29 is released
   dplyr::mutate(Common_name = dplyr::case_when(Alpha_2 == "BN" ~ "Brunei",
-                                               Alpha_2 == "CD" ~ "Congo",
+                                               Alpha_2 == "CD" ~ "Democratic Republic of Congo",
+                                               Alpha_2 == "CG" ~ "Congo Republic",
                                                Alpha_2 == "FK" ~ "Falkland Islands",
                                                Alpha_2 == "FM" ~ "Micronesia",
                                                Alpha_2 == "IR" ~ "Iran",
