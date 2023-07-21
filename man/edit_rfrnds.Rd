@@ -22,7 +22,7 @@ due to \href{https://github.com/zdaarau/c2d-app/issues/50#issuecomment-122266068
 \item \href{https://rdb.rpkg.dev/articles/codebook.html#votes-yes}{\code{votes_yes}}
 \item \href{https://rdb.rpkg.dev/articles/codebook.html#votes-no}{\code{votes_no}}
 \item \href{https://rdb.rpkg.dev/articles/codebook.html#votes-empty}{\code{votes_empty}}
-\item \href{https://rdb.rpkg.dev/articles/codebook.html#votes-invalid}{\code{votes_invalid}} .
+\item \href{https://rdb.rpkg.dev/articles/codebook.html#votes-invalid}{\code{votes_invalid}}
 }}
 
 \item{email}{The e-mail address of the RDB API user account to be used for authentication. A character scalar.}
