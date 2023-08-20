@@ -6663,7 +6663,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
       result <-
         tibble::tibble(id_sudd = purrr::map_chr(col_4,
                                                 \(x) {
-                                                  .x %>%
+                                                  x %>%
                                                     rvest::html_element(css = "a") %>%
                                                     rvest::html_attr(name = "href") %>%
                                                     stringr::str_extract(pattern = "(?<=[\\?&]id=)[\\w\\d]+")
