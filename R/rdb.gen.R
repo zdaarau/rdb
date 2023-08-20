@@ -1004,22 +1004,6 @@ plot_share_per_period <- function(data_freq,
                                                    width = 0.2))))
 }
 
-rename_from_list <- function(x,
-                             names_fms) {
-  if (length(x) > 0L) {
-    
-    names_old <- names(x)
-    names_new <- dplyr::case_match(names_old,
-                                   !!!names_fms,
-                                   .default = names_old)
-    
-    return(magrittr::set_names(x, names_new))
-    
-  } else {
-    return(x)
-  }
-}
-
 restore_topics <- function(topics_tier_1,
                            topics_tier_2,
                            topics_tier_3) {
@@ -1158,7 +1142,7 @@ tidy_rfrnds <- function(data,
     
     data %<>%
       # rename variables (mind that the MongoDB-based API doesn't demand a fixed schema)
-      rename_from_list(names_fms = var_names_fms) %>%
+      pal::rename_from(dict = var_names) %>%
       # create/recode variables
       dplyr::mutate(
         # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
@@ -1307,7 +1291,7 @@ tidy_rfrnds <- function(data,
                                                            purrr::modify_in(.where = "date",
                                                                             .f = parse_datetime) %>%
                                                            # change subvariable names
-                                                           rename_from_list(names_fms = sub_var_names_fms$files))))
+                                                           pal::rename_from(dict = sub_var_names$files))))
     
     # complement `id_official` and `id_sudd` (a two-letter country code plus a 6-digit number) by old `number`
     # TODO: once [issue #?](https://github.com/zdaarau/c2d-app/issues/?) is resolved:
@@ -1465,15 +1449,13 @@ untidy_rfrnds <- function(data,
   
   checkmate::assert_flag(as_tibble)
   
-  var_names_inverse_fms <-
+  var_names_inverse <-
     names(var_names) %>%
-    magrittr::set_names(purrr::list_c(var_names, ptype = character())) %>%
-    as_fm_list()
+    magrittr::set_names(purrr::list_c(var_names, ptype = character()))
   
-  sub_var_names_files_inverse_fms <-
+  sub_var_names_files_inverse <-
     names(sub_var_names$files) %>%
-    magrittr::set_names(purrr::list_c(sub_var_names$files, ptype = character())) %>%
-    as_fm_list()
+    magrittr::set_names(purrr::list_c(sub_var_names$files, ptype = character()))
   
   # restore `number`
   if (all(c("id_official", "id_sudd") %in% colnames(data))) {
@@ -1513,7 +1495,7 @@ untidy_rfrnds <- function(data,
                                      x$date_time_attached %<>% untidy_date()
                                    }
                                    
-                                   x %<>% rename_from_list(names_fms = sub_var_names_files_inverse_fms)
+                                   x %<>% pal::rename_from(dict = sub_var_names_files_inverse)
                                  })),
       ## `inst_topics_excluded`
       dplyr::across(any_of("inst_topics_excluded"),
@@ -1630,7 +1612,7 @@ untidy_rfrnds <- function(data,
                                         replace = -1.0))
     ) %>%
     # restore variable names
-    rename_from_list(names_fms = var_names_inverse_fms)
+    pal::rename_from(dict = var_names_inverse)
   
   # restore `referendum_text_options`
   if (all(c("inst_is_divisible", "inst_is_variable") %in% colnames(data))) {

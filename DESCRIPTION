@@ -33,7 +33,7 @@ Imports:
     labelled (>= 2.8.0),
     lubridate (>= 1.7.10),
     magrittr (>= 2.0.1),
-    pal (>= 0.0.9099),
+    pal (>= 0.0.9101),
     pkgpins (>= 0.8.0.9000),
     purrr (>= 1.0.0),
     rlang (>= 1.0.1),
