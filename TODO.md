@@ -7,11 +7,9 @@
 
 ## To be discussed (-\> convert to GitLab issues (adding an additional `to be discussed` label)!)
 
+-   [New data schema](https://hackmd.io/fqOb9I04RLiDI5wm9-VR6Q).
+
 -   Experiment with `plotly::plot_ly(colors = viridis::turbo(n = ?))` in `plot_topic_segmentation()`
-
--   [Variable `type` should be multivalued](https://gitlab.com/zdaarau/rpkgs/rdb/-/issues/3)
-
--   [Rethink how to capture referendums with other or more than yes-or-no answer options](https://gitlab.com/zdaarau/rpkgs/rdb/-/issues/5)
 
 -   There is at least one "Landsgemeinde" referendum (`id = 5bbc004292a21351232e52e7`) with no result (`NA`) where the result should actually be `"no"`
     (Landsgemeinde rejected proposal) if I'm not mistaken. Do we handle "Landsgemeinde" votes specially or why is that?
