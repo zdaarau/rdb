@@ -3839,7 +3839,7 @@ infer_topics <- function(topics,
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
-#' @keywords internal
+#' @export
 #'
 #' @examples
 #' rdb::rfrnds(country_code = c("CD", "ZRCD")) |>

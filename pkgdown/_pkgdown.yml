@@ -63,6 +63,7 @@ reference:
 - title: Augmentation
   desc: Functions to augment the RDB referendum data by additional information (columns).
 - contents:
+  - add_former_country_flag
   - add_country_code_continual
   - add_country_code_long
   - add_country_name

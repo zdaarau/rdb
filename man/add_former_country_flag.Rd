@@ -34,4 +34,3 @@ Other referendum data augmentation functions:
 \code{\link{add_world_regions}()}
 }
 \concept{augment}
-\keyword{internal}

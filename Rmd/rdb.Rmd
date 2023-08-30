@@ -4602,7 +4602,7 @@ infer_topics <- function(topics,
 
 Functions to augment the RDB referendum data by additional information (columns).
 
-### `add_former_country_flag` INTERNAL
+### `add_former_country_flag`
 
 ```{r}
 #' Add `is_former_country` flag to referendum data
@@ -4615,7 +4615,7 @@ Functions to augment the RDB referendum data by additional information (columns)
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
-#' @keywords internal
+#' @export
 #'
 #' @examples
 #' rdb::rfrnds(country_code = c("CD", "ZRCD")) |>

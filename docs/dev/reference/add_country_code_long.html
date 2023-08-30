@@ -92,20 +92,20 @@ code of the country in which the referendum took place (see <a href="https://en.
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">:::</span><span class="fu">add_country_code_long</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"country_"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 87 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    id                       country_code country_code_long country_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 643510ae0b8bae0c78c7e98f UZ           UZB               Uzbekistan  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 6409f4370b8bae0c78c7e7d1 CH           CHE               Switzerland </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 6409f10e0b8bae0c78c7e7cd CH           CHE               Switzerland </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 6409ef600b8bae0c78c7e7c7 CH           CHE               Switzerland </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 6409ebbf0b8bae0c78c7e7c3 CH           CHE               Switzerland </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 6409e9210b8bae0c78c7e7bf CH           CHE               Switzerland </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 6409e8770b8bae0c78c7e7b9 CH           CHE               Switzerland </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 6409e47f0b8bae0c78c7e7b5 CH           CHE               Switzerland </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 6409e15e0b8bae0c78c7e7b1 CH           CHE               Switzerland </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 6409e0320b8bae0c78c7e7aa CH           CHE               Switzerland </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 77 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 113 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    id                       country_code country_code_long country_name            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 64c10be80b8bae0c78c7ec6a CF           CAF               Central African Republic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 64a3ca8b0b8bae0c78c7ebb8 ML           MLI               Mali                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 64a2c7ee0b8bae0c78c7eba6 CH           CHE               Switzerland             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 64a2bcde0b8bae0c78c7eb81 CH           CHE               Switzerland             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 64a2ba730b8bae0c78c7eb7d CH           CHE               Switzerland             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 6458c01f0b8bae0c78c7ead2 CH           CHE               Switzerland             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 6458bdb10b8bae0c78c7eace CH           CHE               Switzerland             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 6458bcad0b8bae0c78c7eaca CH           CHE               Switzerland             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 6458ba8b0b8bae0c78c7eac4 CH           CHE               Switzerland             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 6458b95b0b8bae0c78c7eac0 CH           CHE               Switzerland             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 103 more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
