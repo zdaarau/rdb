@@ -538,7 +538,7 @@ assert_cols_valid <- function(data,
     ix_illegal_votes_per_subterritory <-
       data %>%
       tibble::rowid_to_column() %>%
-      dplyr::filter((level != "national" | country_code != "CH") & !(votes_per_subterritory %>% purrr::map_lgl(is.null))) %$%
+      dplyr::filter((level != "national" | country_code != "CH") & !purrr::map_lgl(votes_per_subterritory, is.null)) %$%
       rowid
     
     n_illegal_votes_per_subterritory <- length(ix_illegal_votes_per_subterritory)
@@ -1349,7 +1349,7 @@ tidy_rfrnds <- function(data,
                                               NA_character_,
                                               url_sudd(glue::glue("event.php?id={id_sudd}"))),
                     url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
-                                                    paste0("https://swissvotes.ch/vote/", id_official),
+                                                    paste0("https://swissvotes.ch/vote/", id_official), # nolint: paste_linter
                                                     NA_character_)) %>%
       # remove obsolete vars
       dplyr::select(-any_of(c("categories.referendum_text_options",
@@ -1383,7 +1383,9 @@ tidy_rfrnds <- function(data,
                                                levels = lvls,
                                                ordered = is_ordered)
                                       }
-                                    } else .x
+                                    } else {
+                                      .x
+                                    }
                                   })) %>%
       ## fctrs without explicit variable_values set in codebook
       dplyr::mutate(
@@ -3853,7 +3855,6 @@ add_former_country_flag <- function(data) {
   checkmate::assert_data_frame(data)
   assert_vars(data = data,
               vars = "country_code")
-  
   data %>%
     dplyr::mutate(is_former_country = nchar(as.character(country_code)) > 2L) %>%
     # add var lbl
@@ -4203,7 +4204,6 @@ add_turnout <- function(data,
 #'                 starts_with("un_"))
 add_world_regions <- function(data,
                               add_un_country_code = TRUE) {
-  
   # ensure minimal validity
   checkmate::assert_data_frame(data)
   assert_vars(data = data,
@@ -5714,7 +5714,9 @@ list_sudd_rfrnds <- function(mode = c("by_date",
     
     result %>%
       # derive vars from `id_sudd`
-      dplyr::bind_cols(.$id_sudd %>% purrr::map(parse_sudd_id) %>% purrr::list_rbind()) %>%
+      dplyr::bind_cols(.$id_sudd |>
+                         purrr::map(parse_sudd_id) |>
+                         purrr::list_rbind()) %>%
       dplyr::select(id_sudd,
                     starts_with("country_"),
                     is_former_country,
@@ -5786,7 +5788,9 @@ sudd_rfrnds <- function(ids_sudd,
                  .progress = if (quiet) FALSE else "Scraping referendum data from sudd.ch") %>%
       purrr::list_rbind() %>%
       # properly parse `date`
-      dplyr::bind_cols(.$date %>% purrr::map(parse_sudd_date) %>% purrr::list_rbind()) %>%
+      dplyr::bind_cols(.$date |>
+                         purrr::map(parse_sudd_date) |>
+                         purrr::list_rbind()) %>%
       dplyr::mutate(date = clock::date_build(year = year,
                                              month = month,
                                              day = day,
@@ -5795,7 +5799,9 @@ sudd_rfrnds <- function(ids_sudd,
       tibble::add_column(id_sudd = ids_sudd,
                          .before = 1L) %>%
       # derive vars from `id_sudd`
-      dplyr::bind_cols(ids_sudd %>% purrr::map(parse_sudd_id) %>% purrr::list_rbind()) %>%
+      dplyr::bind_cols(ids_sudd |>
+                         purrr::map(parse_sudd_id) |>
+                         purrr::list_rbind()) %>%
       # reorder columns
       dplyr::relocate(id_sudd,
                       country_code,
