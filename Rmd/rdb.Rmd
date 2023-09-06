@@ -1665,14 +1665,6 @@ tidy_rfrnds <- function(data,
     data %<>% add_country_name()
     
     data %<>%
-      # variable creations
-      dplyr::mutate(is_former_country = nchar(as.character(country_code)) > 2L,
-                    url_sudd = dplyr::if_else(is.na(id_sudd),
-                                              NA_character_,
-                                              url_sudd(glue::glue("event.php?id={id_sudd}"))),
-                    url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
-                                                    paste0("https://swissvotes.ch/vote/", id_official), # nolint: paste_linter
-                                                    NA_character_)) %>%
       # remove obsolete vars
       dplyr::select(-any_of(c("categories.referendum_text_options",
                               "country_code_historical",
@@ -5056,6 +5048,65 @@ add_world_regions <- function(data,
   }
   if (!add_un_country_code) {
     data %<>% dplyr::select(-un_country_code)
+  }
+  
+  data
+}
+```
+
+### `add_urls`
+
+```{r}
+#' Add various URLs to referendum data
+#'
+#' Augments `data` with additional columns holding URLs of the specified `types`. The new columns will be named after `types`, prefixed with `url_`, so
+#' `types = "sudd"` will add the column `url_sudd` etc.
+#'
+#' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `id_sudd` for `types = "sudd"` and the columns
+#'   `country_code`, `level` and `id_official` for `types = "swissvotes"`.
+#' @param types Type(s) of URLs to add. One of `r pal::prose_ls_fn_param(fn = add_urls, param = "types")`.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family augment
+#' @export
+#'
+#' @examples
+#' rdb::rfrnds(country_code = "CH",
+#'             level = "national",
+#'             quiet = TRUE) |>
+#'   rdb::add_urls() |>
+#'   dplyr::select(id,
+#'                 country_code,
+#'                 level,
+#'                 starts_with("id_"),
+#'                 starts_with("url_"))
+add_urls <- function(data,
+                     types = c("sudd", "swissvotes")) {
+  
+  checkmate::assert_data_frame(data)
+  types <- rlang::arg_match(arg = types,
+                            multiple = TRUE)
+  
+  if ("sudd" %in% types) {
+    
+    assert_vars(data = data,
+              vars = "id_sudd")
+    
+    data %<>% dplyr::mutate(url_sudd = dplyr::if_else(is.na(id_sudd),
+                                                      NA_character_,
+                                                      url_sudd(glue::glue("event.php?id={id_sudd}"))))
+  }
+  
+  if ("swissvotes" %in% types) {
+    
+    assert_vars(data = data,
+                vars = c("country_code",
+                         "level",
+                         "id_official"))
+    
+    data %<>% dplyr::mutate(url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
+                                                            paste0("https://swissvotes.ch/vote/", id_official), # nolint: paste_linter
+                                                            NA_character_))
   }
   
   data

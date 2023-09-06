@@ -52,6 +52,7 @@ Other referendum data augmentation functions:
 \code{\link{add_country_name}()},
 \code{\link{add_former_country_flag}()},
 \code{\link{add_period}()},
-\code{\link{add_turnout}()}
+\code{\link{add_turnout}()},
+\code{\link{add_urls}()}
 }
 \concept{augment}

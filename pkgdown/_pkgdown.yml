@@ -71,6 +71,7 @@ reference:
   - add_period
   - add_turnout
   - add_world_regions
+  - add_urls
 - title: Transformation
   desc: Functions to transform the RDB referendum data into other shapes, each with
     a specific purpose.
