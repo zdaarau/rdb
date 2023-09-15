@@ -4251,7 +4251,7 @@ var_vals <- function(var_name) {
 #' Returns the unnested analogue(s) of the specified variable name(s), which result from [unnesting][unnest_var]. For variable names that do *not* refer to
 #' nested list columns, `var_names` is simply returned as-is.
 #'
-#' @inheritParams printify_var_names
+#' @inheritParams prettify_var_names
 #'
 #' @return A character vector of the same length as `var_names`.
 #' @seealso [unnest_var()]
@@ -4272,35 +4272,37 @@ var_name_unnested <- function(var_names) {
 }
 ```
 
-### `printify_var_names`
+### `prettify_var_names`
 
 ```{r}
-#' Convert referendum data variables to their printable version
+#' Prettify referendum data variables
 #'
-#' Converts referendum data variables to their ready-to-print version.
+#' Converts referendum data variable names to their ready-for-publication version. Variable names that are unknown, i.e. not present in [`data_codebook`]), are
+#' left untouched.
 #'
-#' @param var_names Variable name(s) present in [`data_codebook`]. A character vector.
+#' @param var_names Variable name(s). Those not present in [`data_codebook`] remain untouched. A character vector.
 #'
 #' @return A character vector of the same length as `var_names`.
-#' @seealso [printify_col_names()]
+#' @seealso [prettify_col_names()]
 #' @family metadata
 #' @export
 #'
 #' @examples
-#' rdb::printify_var_names("topics_tier_1")
+#' rdb::prettify_var_names("topics_tier_1")
 #' 
 #' # also supports unnested var names
-#' rdb::printify_var_names("topic_tier_1")
-printify_var_names <- function(var_names) {
+#' rdb::prettify_var_names("topic_tier_1")
+#'
+#' # unknown var names are left untouched
+#' rdb::prettify_var_names(var_names = c("topic_tier_1", "topic_tier_99"))
+prettify_var_names <- function(var_names) {
   
-  var_names <- rlang::arg_match(arg = var_names,
-                                values = rfrnd_cols_order,
-                                multiple = TRUE)
+  checkmate::assert_character(var_names)
   
   c(data_codebook$variable_name_print,
     data_codebook$variable_name_unnested_print)[match(x = var_names,
                                                       table = c(data_codebook$variable_name,
-                                                                data_codebook$variable_name_unnested))]
+                                                                data_codebook$variable_name_unnested))] %|% var_names
 }
 ```
 
@@ -5413,12 +5415,12 @@ n_rfrnds_per_period <- function(data,
 }
 ```
 
-### `printify_col_names`
+### `prettify_col_names`
 
 ```{r}
-#' Printify referendum data column names
+#' Prettify referendum data column names
 #'
-#' Renames referendum data column names to be ready to print. Useful e.g. to create publication tables.
+#' Renames referendum data column names to be ready for publication. Useful e.g. to create tables or visualizations.
 #'
 #' Note that
 #' - column names unknown to this function are not changed.
@@ -5428,23 +5430,19 @@ n_rfrnds_per_period <- function(data,
 #' @param data RDB referendum data as returned by [rfrnds()].
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
+#' @seealso [prettify_var_names()]
 #' @family transform
 #' @export
 #'
 #' @examples
 #' rdb::rfrnds(country_code = "IT",
 #'             quiet = TRUE) |>
-#'   rdb::printify_col_names()
-printify_col_names <- function(data) {
+#'   rdb::prettify_col_names()
+prettify_col_names <- function(data) {
   
   data |>
-    dplyr::rename_with(\(x) {
-      
-      c(data_codebook$variable_name_print,
-        data_codebook$variable_name_unnested_print)[match(x = x,
-                                                          table = c(data_codebook$variable_name,
-                                                                    data_codebook$variable_name_unnested))] %|% x
-    }) |>
+    dplyr::rename_with(.cols = everything(),
+                       .fn = prettify_var_names) |>
     # we remove the var lbls so gt doesn't automatically pick them up instead of the column names
     # cf. https://gt.rstudio.com/news/index.html#minor-improvements-and-bug-fixes-0-9-0
     labelled::remove_var_label()
@@ -5934,7 +5932,7 @@ ggplot_streamgraph <- function(data,
                           show.legend = TRUE,
                           bw = bandwidth) +
     ggplot2::scale_fill_discrete(type = colors_by,
-                                 name = printify_var_names(name_by),
+                                 name = prettify_var_names(name_by),
                                  drop = prune_legend) +
     ggplot2::xlab(ggplot2::element_blank()) +
     ggplot2::ylab(ggplot2::element_blank())
@@ -5985,8 +5983,8 @@ Functions to create analyses in tabular form (using [gt](https://gt.rstudio.com/
 #'   - `"ascending"` to sort in ascending order by the number of referendums,
 #'   - `"descending"` to sort in descending order by the number of referendums, or
 #'   - `NULL` to leave the sorting unchanged.
-#' @param incl_row_head Whether or not to include a row heading with the [printified][printify_var_names] name of the first `by` variable.
-#' @param incl_col_head Whether or not to include column headings (in the table's [stub][gt::tab_stubhead]) with the [printified][printify_var_names] names of
+#' @param incl_row_head Whether or not to include a row heading with the [prettified][prettify_var_names] name of the first `by` variable.
+#' @param incl_col_head Whether or not to include column headings (in the table's [stub][gt::tab_stubhead]) with the [prettified][prettify_var_names] names of
 #'   the second and third `by` variables.
 #' @param add_total_row Whether or not to add a summary row at the very end of the table containing column totals. If `NULL`, a total row is added only if
 #'   at least one column is provided in `by`.
@@ -6142,7 +6140,7 @@ tbl_n_rfrnds <- function(data,
   if (incl_row_head && has_by) {
     result %<>% gt::tab_row_group(label =
                                     by_colname_1st |>
-                                    printify_var_names() |>
+                                    prettify_var_names() |>
                                     pal::wrap_chr(wrap = "*") |>
                                     gt::md(),
                                   rows = tidyselect::everything(),
@@ -6176,7 +6174,7 @@ tbl_n_rfrnds <- function(data,
     result %<>%
       gt::tab_stubhead(label =
                          by_colnames_rest |>
-                         printify_var_names() |>
+                         prettify_var_names() |>
                          pal::wrap_chr(wrap = "*") |>
                          paste0(collapse = "<br><br>") |>
                          gt::md()) %>%
@@ -6280,7 +6278,7 @@ tbl_n_rfrnds_per_period <- function(data,
   
   by_names_print <- ifelse(has_by,
                            names(ix_by) %>%
-                             printify_var_names() %>%
+                             prettify_var_names() %>%
                              pal::wrap_chr(wrap = "*") %>%
                              paste0(collapse = "<br><br>"),
                            "")

@@ -78,8 +78,6 @@
 
 ## rdb R package
 
--   Rename `printify_*` to `prettify_*` since they actually have nothing to do with *printing*.
-
 -   Adapt code to use NocoDB's API instead of `services.c2d.ch` after we finished basic transition to NocoDB.
 
     We should probably either use

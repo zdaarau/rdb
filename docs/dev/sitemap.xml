@@ -130,10 +130,10 @@
     <loc>https://rdb.rpkg.dev/dev/reference/plot_topic_share_per_period.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/printify_col_names.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/prettify_col_names.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/printify_var_names.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/prettify_var_names.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/rdb-package.html</loc>

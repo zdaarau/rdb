@@ -1888,7 +1888,7 @@ rdb::data_codebook
 }
 \seealso{
 Other referendum metadata functions:
-\code{\link{printify_var_names}()},
+\code{\link{prettify_var_names}()},
 \code{\link{val_lbls}()},
 \code{\link{val_scale}()},
 \code{\link{var_name_unnested}()},

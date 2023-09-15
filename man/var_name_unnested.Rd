@@ -7,7 +7,7 @@
 var_name_unnested(var_names)
 }
 \arguments{
-\item{var_names}{Variable name(s) present in \code{\link{data_codebook}}. A character vector.}
+\item{var_names}{Variable name(s). Those not present in \code{\link{data_codebook}} remain untouched. A character vector.}
 }
 \value{
 A character vector of the same length as \code{var_names}.
@@ -25,7 +25,7 @@ rdb::var_name_unnested(paste0("topics_tier_", 1:3))
 
 Other referendum metadata functions:
 \code{\link{data_codebook}},
-\code{\link{printify_var_names}()},
+\code{\link{prettify_var_names}()},
 \code{\link{val_lbls}()},
 \code{\link{val_scale}()},
 \code{\link{var_vals}()}

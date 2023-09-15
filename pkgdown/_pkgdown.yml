@@ -51,7 +51,7 @@ reference:
   - val_scale
   - var_vals
   - var_name_unnested
-  - printify_var_names
+  - prettify_var_names
 - title: Referendum topics
   desc: Functions to work with referendum [topics](https://rdb.rpkg.dev/articles/codebook.html#topics).
 - contents:
@@ -80,7 +80,7 @@ reference:
   - unnest_var
   - n_rfrnds
   - n_rfrnds_per_period
-  - printify_col_names
+  - prettify_col_names
 - title: Visualization
   desc: Functions to visualize the RDB referendum data (using [plotly](https://plotly-r.com/)).
 - contents:
