@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{prettify_var_names}
 \alias{prettify_var_names}
-\title{Prettify referendum data variables}
+\title{Prettify referendum data variable names}
 \usage{
 prettify_var_names(var_names)
 }

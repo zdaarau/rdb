@@ -3558,7 +3558,7 @@ var_name_unnested <- function(var_names) {
     variable_name_unnested
 }
 
-#' Prettify referendum data variables
+#' Prettify referendum data variable names
 #'
 #' Converts referendum data variable names to their ready-for-publication version. Variable names that are unknown, i.e. not present in [`data_codebook`]), are
 #' left untouched.
@@ -4923,13 +4923,13 @@ plot_topic_share_per_period <- function(data,
 #'                         max_cache_age = "1 year")
 #'
 #' rdb::ggplot_streamgraph(data = data_rdb,
-#'                         period = "year",
-#'                         by = topics_tier_1)
+#'                         by = topics_tier_1,
+#'                         period = "year")
 #'
 #' # you can specify a different color palette
 #' rdb::ggplot_streamgraph(data = data_rdb,
-#'                         period = "year",
 #'                         by = topics_tier_1,
+#'                         period = "year",
 #'                         color_palette = viridisLite::viridis)
 #'
 #' # by default, only factor levels which occur in data are included in the legend
@@ -4939,17 +4939,17 @@ plot_topic_share_per_period <- function(data,
 #'                         max_cache_age = "1 year")
 #'
 #' rdb::ggplot_streamgraph(data = data_rdb,
-#'                         period = "decade",
-#'                         by = topics_tier_1)
+#'                         by = topics_tier_1,
+#'                         period = "decade")
 #'
 #' # but you can include *all* factor levels in the legend if you want to
 #' rdb::ggplot_streamgraph(data = data_rdb,
-#'                         period = "decade",
 #'                         by = topics_tier_1,
+#'                         period = "decade",
 #'                         prune_legend = FALSE)
 ggplot_streamgraph <- function(data,
-                               period = c("week", "month", "quarter", "year", "decade", "century"),
                                by,
+                               period = c("week", "month", "quarter", "year", "decade", "century"),
                                stacking = c("mirror", "ridge", "proportional"),
                                bandwidth = 0.75,
                                y_lim = NULL,
