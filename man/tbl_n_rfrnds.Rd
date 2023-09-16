@@ -35,9 +35,9 @@ integer scalar or \code{Inf} for an unlimited number of rows.}
 \item \code{NULL} to leave the sorting unchanged.
 }}
 
-\item{incl_row_head}{Whether or not to include a row heading with the \link[=printify_var_names]{printified} name of the first \code{by} variable.}
+\item{incl_row_head}{Whether or not to include a row heading with the \link[=prettify_var_names]{prettified} name of the first \code{by} variable.}
 
-\item{incl_col_head}{Whether or not to include column headings (in the table's \link[gt:tab_stubhead]{stub}) with the \link[=printify_var_names]{printified} names of
+\item{incl_col_head}{Whether or not to include column headings (in the table's \link[gt:tab_stubhead]{stub}) with the \link[=prettify_var_names]{prettified} names of
 the second and third \code{by} variables.}
 
 \item{add_total_row}{Whether or not to add a summary row at the very end of the table containing column totals. If \code{NULL}, a total row is added only if

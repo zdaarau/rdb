@@ -41,6 +41,6 @@ Other referendum data transformation functions:
 \code{\link{as_ballot_dates}()},
 \code{\link{n_rfrnds_per_period}()},
 \code{\link{n_rfrnds}()},
-\code{\link{printify_col_names}()}
+\code{\link{prettify_col_names}()}
 }
 \concept{transform}

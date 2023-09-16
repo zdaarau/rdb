@@ -78,7 +78,7 @@
 
 ## rdb R package
 
--   Rename `printify_*` to `prettify_*` since they actually have nothing to do with *printing*.
+-   Prefix all Plotly fns with `plotly_` instead of `plot_` to avoid misconceptions.
 
 -   Adapt code to use NocoDB's API instead of `services.c2d.ch` after we finished basic transition to NocoDB.
 

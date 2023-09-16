@@ -6,8 +6,8 @@
 \usage{
 ggplot_streamgraph(
   data,
-  period = c("week", "month", "quarter", "year", "decade", "century"),
   by,
+  period = c("week", "month", "quarter", "year", "decade", "century"),
   stacking = c("mirror", "ridge", "proportional"),
   bandwidth = 0.75,
   y_lim = NULL,
@@ -19,9 +19,9 @@ ggplot_streamgraph(
 \item{data}{RDB referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column specified in \code{period} or the column \code{date} (to
 compute the \link[=add_period]{period column}), plus the one(s) specified via \code{by} (if any).}
 
-\item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
-
 \item{by}{\code{data} column to group by before counting number of referendums.}
+
+\item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
 
 \item{stacking}{Stacking type. One of
 \itemize{
@@ -53,13 +53,13 @@ data_rdb <- rdb::rfrnds(country_code = "CH",
                         max_cache_age = "1 year")
 
 rdb::ggplot_streamgraph(data = data_rdb,
-                        period = "year",
-                        by = topics_tier_1)
+                        by = topics_tier_1,
+                        period = "year")
 
 # you can specify a different color palette
 rdb::ggplot_streamgraph(data = data_rdb,
-                        period = "year",
                         by = topics_tier_1,
+                        period = "year",
                         color_palette = viridisLite::viridis)
 
 # by default, only factor levels which occur in data are included in the legend
@@ -69,13 +69,13 @@ data_rdb <- rdb::rfrnds(country_code = "AT",
                         max_cache_age = "1 year")
 
 rdb::ggplot_streamgraph(data = data_rdb,
-                        period = "decade",
-                        by = topics_tier_1)
+                        by = topics_tier_1,
+                        period = "decade")
 
 # but you can include *all* factor levels in the legend if you want to
 rdb::ggplot_streamgraph(data = data_rdb,
-                        period = "decade",
                         by = topics_tier_1,
+                        period = "decade",
                         prune_legend = FALSE)
 }
 \seealso{

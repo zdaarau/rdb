@@ -72,7 +72,7 @@ rdb::rfrnds(country_code = "AT",
 Other referendum data transformation functions:
 \code{\link{as_ballot_dates}()},
 \code{\link{n_rfrnds}()},
-\code{\link{printify_col_names}()},
+\code{\link{prettify_col_names}()},
 \code{\link{unnest_var}()}
 }
 \concept{transform}

@@ -22,7 +22,7 @@ paste0("topics_tier_", 1:3) |> rdb::val_scale()
 \seealso{
 Other referendum metadata functions:
 \code{\link{data_codebook}},
-\code{\link{printify_var_names}()},
+\code{\link{prettify_var_names}()},
 \code{\link{val_lbls}()},
 \code{\link{var_name_unnested}()},
 \code{\link{var_vals}()}

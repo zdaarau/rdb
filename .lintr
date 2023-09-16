@@ -8,7 +8,7 @@ linters: linters_with_defaults(absolute_path_linter             = absolute_path_
                                boolean_arithmetic_linter        = boolean_arithmetic_linter(),
                                class_equals_linter              = class_equals_linter(),
                                # TODO: uncomment once lintr > v3.1.0 is released
-                               # conjunct_test_linter             = conjunct_test_linter(allow_filter = TRUE),
+                               # conjunct_test_linter             = conjunct_test_linter(allow_filter = "always"),
                                consecutive_assertion_linter     = consecutive_assertion_linter(),
                                empty_assignment_linter          = empty_assignment_linter(),
                                expect_comparison_linter         = expect_comparison_linter(),
