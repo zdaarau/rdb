@@ -2328,6 +2328,34 @@ data_cols_absent <-
                                "manually.")) %>%
   dplyr::mutate(msg = paste0("{.arg data} mustn't contain ", msg))
 
+ballot_date_colnames <- c("country_code",
+                          "country_code_long",
+                          "country_code_continual",
+                          "country_name",
+                          "country_name_long",
+                          "subnational_entity_code",
+                          "subnational_entity_name",
+                          "municipality",
+                          "level",
+                          "date",
+                          "week",
+                          "month",
+                          "quarter",
+                          "year",
+                          "decade",
+                          "century",
+                          "era",
+                          "wave_of_democracy",
+                          "is_former_country",
+                          "un_country_code",
+                          "un_region_tier_1_code",
+                          "un_region_tier_1_name",
+                          "un_region_tier_2_code",
+                          "un_region_tier_2_name",
+                          "un_region_tier_3_code",
+                          "un_region_tier_3_name",
+                          "un_subregion")
+
 rfrnd_fields <- list()
 
 rfrnd_fields$all <- c("_id",
@@ -3541,8 +3569,8 @@ var_vals <- function(var_name) {
 #' @inheritParams prettify_var_names
 #'
 #' @return A character vector of the same length as `var_names`.
-#' @seealso [unnest_var()]
 #' @family metadata
+#' @family unnest
 #' @export
 #'
 #' @examples
@@ -3566,8 +3594,8 @@ var_name_unnested <- function(var_names) {
 #' @param var_names Variable name(s). Those not present in [`data_codebook`] remain untouched. A character vector.
 #'
 #' @return A character vector of the same length as `var_names`.
-#' @seealso [prettify_col_names()]
 #' @family metadata
+#' @family prettify
 #' @export
 #'
 #' @examples
@@ -4303,53 +4331,81 @@ add_urls <- function(data,
 #' individual values of all the referendums on a specific ballot date in a specific jurisdiction are preserved in a list column named `rfrnd_data`.
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
+#' @param cols_to_retain Additional non-standard columns to be preserved as top-level columns instead of being nested in the list column `rfrnd_data`. They
+#'   mustn't vary within ballot-date-level observations. `r pkgsnip::param_lbl("tidy_select_support")`
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family transform
 #' @export
 #'
 #' @examples
+#' # standard RDB columns are retained as far as possible
 #' rdb::rfrnds(country_code = "AT",
 #'             quiet = TRUE) |>
 #'   rdb::as_ballot_dates()
-as_ballot_dates <- function(data) {
+#' 
+#' # non-standard columns must be explicitly specified in order to be retained
+#' data_rdb <-
+#'   rdb::rfrnds(country_code = "AT",
+#'               quiet = TRUE) |>
+#'     rdb::add_world_regions() |>
+#'     dplyr::mutate(region_custom =
+#'                     factor(x = dplyr::if_else(country_code == "CH",
+#'                                               "Switzerland & Liechtenstein",
+#'                                               un_region_tier_1_name),
+#'                            levels = c("Switzerland & Liechtenstein",
+#'                                       levels(un_region_tier_1_name))) |>
+#'                     forcats::fct_relevel("Switzerland & Liechtenstein",
+#'                                          after = 3L) |>
+#'                     forcats::fct_recode("rest of Europe" = "Europe"))
+#'
+#' data_rdb |> rdb::as_ballot_dates() |> colnames()
+#' data_rdb |> rdb::as_ballot_dates(cols_to_retain = region_custom) |> colnames()
+#'
+#' # non-standard columns to retain must actually be retainable
+#' try(
+#'   data_rdb |> rdb::as_ballot_dates(cols_to_retain = title_en)
+#' )
+as_ballot_dates <- function(data,
+                            cols_to_retain = NULL) {
+  
+  checkmate::assert_data_frame(data)
+  defused_cols_to_retain <- rlang::enquo(cols_to_retain)
+  ix_cols_to_retain <- tidyselect::eval_select(expr = defused_cols_to_retain,
+                                               data = data)
+  names_cols_to_retain <- names(ix_cols_to_retain)
   
   # ensure date col is present
   if (!("date" %in% colnames(data))) {
     cli::cli_abort("Unable to transform to ballot-date-level data since no {.var {date}} column is present in {.arg data}.")
   }
   
+  # nest data
   cols_to_nest <-
-    data %>%
-    colnames() %>%
-    setdiff(c("country_code",
-              "country_code_long",
-              "country_code_continual",
-              "country_name",
-              "country_name_long",
-              "subnational_entity_code",
-              "subnational_entity_name",
-              "municipality",
-              "level",
-              "date",
-              "week",
-              "month",
-              "quarter",
-              "year",
-              "decade",
-              "century",
-              "era",
-              "is_former_country",
-              "un_country_code",
-              "un_region_tier_1_code",
-              "un_region_tier_1_name",
-              "un_region_tier_2_code",
-              "un_region_tier_2_name",
-              "un_region_tier_3_code",
-              "un_region_tier_3_name",
-              "un_subregion"))
+    data |>
+    colnames() |>
+    setdiff(c(ballot_date_colnames,
+              names_cols_to_retain))
   
-  data %>% tidyr::nest(rfrnd_data = any_of(cols_to_nest))
+  result <- data |> tidyr::nest(rfrnd_data = any_of(cols_to_nest))
+  
+  # ensure `cols_to_retain` don't vary within ballot dates
+  n_rows_nested <-
+    data |>
+    dplyr::summarise(n = dplyr::n(),
+                     .by = any_of(ballot_date_colnames)) %$%
+    n
+  
+  if (!identical(purrr::map_int(result$rfrnd_data,
+                                nrow),
+                 n_rows_nested)) {
+    
+    cli::cli_abort(paste0("Retaining the additional non-standard {cli::qty(length(ix_cols_to_retain))} column{?s} {.var {names_cols_to_retain}} while ",
+                          "converting to ballot-date-level observations is impossible because {?(some of)} {?this/these} column{?s} var{?ies/y} within ballot ",
+                          "dates."))
+  }
+  
+  result
 }
 
 #' Unnest multi-value variable
@@ -4365,8 +4421,8 @@ as_ballot_dates <- function(data) {
 #' `r pkgsnip::param_lbl("tidy_select_support")`
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
-#' @seealso [var_name_unnested()]
 #' @family transform
+#' @family unnest
 #' @export
 #'
 #' @examples
@@ -4587,8 +4643,8 @@ n_rfrnds_per_period <- function(data,
 #' @param data RDB referendum data as returned by [rfrnds()].
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
-#' @seealso [prettify_var_names()]
 #' @family transform
+#' @family prettify
 #' @export
 #'
 #' @examples

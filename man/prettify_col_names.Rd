@@ -29,12 +29,14 @@ rdb::rfrnds(country_code = "IT",
   rdb::prettify_col_names()
 }
 \seealso{
-\code{\link[=prettify_var_names]{prettify_var_names()}}
-
 Other referendum data transformation functions:
 \code{\link{as_ballot_dates}()},
 \code{\link{n_rfrnds_per_period}()},
 \code{\link{n_rfrnds}()},
 \code{\link{unnest_var}()}
+
+Other functions to prettify names:
+\code{\link{prettify_var_names}()}
 }
+\concept{prettify}
 \concept{transform}

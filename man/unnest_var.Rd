@@ -35,12 +35,14 @@ rdb::rfrnds(country_code = "AT",
   rdb::unnest_var(topics_tier_2)
 }
 \seealso{
-\code{\link[=var_name_unnested]{var_name_unnested()}}
-
 Other referendum data transformation functions:
 \code{\link{as_ballot_dates}()},
 \code{\link{n_rfrnds_per_period}()},
 \code{\link{n_rfrnds}()},
 \code{\link{prettify_col_names}()}
+
+Other variable unnesting functions:
+\code{\link{var_name_unnested}()}
 }
 \concept{transform}
+\concept{unnest}

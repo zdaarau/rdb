@@ -26,13 +26,15 @@ rdb::prettify_var_names("topic_tier_1")
 rdb::prettify_var_names(var_names = c("topic_tier_1", "topic_tier_99"))
 }
 \seealso{
-\code{\link[=prettify_col_names]{prettify_col_names()}}
-
 Other referendum metadata functions:
 \code{\link{data_codebook}},
 \code{\link{val_lbls}()},
 \code{\link{val_scale}()},
 \code{\link{var_name_unnested}()},
 \code{\link{var_vals}()}
+
+Other functions to prettify names:
+\code{\link{prettify_col_names}()}
 }
 \concept{metadata}
+\concept{prettify}

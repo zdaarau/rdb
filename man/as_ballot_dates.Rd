@@ -4,10 +4,13 @@
 \alias{as_ballot_dates}
 \title{Transform to ballot-date-level observations}
 \usage{
-as_ballot_dates(data)
+as_ballot_dates(data, cols_to_retain = NULL)
 }
 \arguments{
 \item{data}{RDB referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column \code{date}.}
+
+\item{cols_to_retain}{Additional non-standard columns to be preserved as top-level columns instead of being nested in the list column \code{rfrnd_data}. They
+mustn't vary within ballot-date-level observations. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
@@ -17,9 +20,33 @@ Transforms referendum-level observations to ones on the level of ballot date and
 individual values of all the referendums on a specific ballot date in a specific jurisdiction are preserved in a list column named \code{rfrnd_data}.
 }
 \examples{
+# standard RDB columns are retained as far as possible
 rdb::rfrnds(country_code = "AT",
             quiet = TRUE) |>
   rdb::as_ballot_dates()
+
+# non-standard columns must be explicitly specified in order to be retained
+data_rdb <-
+  rdb::rfrnds(country_code = "AT",
+              quiet = TRUE) |>
+    rdb::add_world_regions() |>
+    dplyr::mutate(region_custom =
+                    factor(x = dplyr::if_else(country_code == "CH",
+                                              "Switzerland & Liechtenstein",
+                                              un_region_tier_1_name),
+                           levels = c("Switzerland & Liechtenstein",
+                                      levels(un_region_tier_1_name))) |>
+                    forcats::fct_relevel("Switzerland & Liechtenstein",
+                                         after = 3L) |>
+                    forcats::fct_recode("rest of Europe" = "Europe"))
+
+data_rdb |> rdb::as_ballot_dates() |> colnames()
+data_rdb |> rdb::as_ballot_dates(cols_to_retain = region_custom) |> colnames()
+
+# non-standard columns to retain must actually be retainable
+try(
+  data_rdb |> rdb::as_ballot_dates(cols_to_retain = title_en)
+)
 }
 \seealso{
 Other referendum data transformation functions:

@@ -21,13 +21,15 @@ rdb::var_name_unnested("inst_object_revision_modes")
 rdb::var_name_unnested(paste0("topics_tier_", 1:3))
 }
 \seealso{
-\code{\link[=unnest_var]{unnest_var()}}
-
 Other referendum metadata functions:
 \code{\link{data_codebook}},
 \code{\link{prettify_var_names}()},
 \code{\link{val_lbls}()},
 \code{\link{val_scale}()},
 \code{\link{var_vals}()}
+
+Other variable unnesting functions:
+\code{\link{unnest_var}()}
 }
 \concept{metadata}
+\concept{unnest}
