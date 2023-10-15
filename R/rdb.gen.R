@@ -3160,7 +3160,7 @@ validate_rfrnds <- function(data,
                         data %>%
                           dplyr::filter(!eval(parse(text = .y))) %$%
                           eval(as.symbol(.x)) %>%
-                          { is.na(.) | purrr::map_lgl(., is.null) } %>% # nolint: brace_linter.
+                          { is.na(.) | purrr::map_lgl(., is.null) } %>%
                           all()
                       }) %>%
     magrittr::extract(. %in% FALSE) %>%
@@ -5710,7 +5710,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
                                              null.ok = TRUE,
                                              coerce = TRUE)
     
-    is_year_missing <- purrr::map_lgl(c(filter$year_min, filter$year_max), is.null) %>% { any(.) && !all(.) } # nolint: brace_linter.
+    is_year_missing <- purrr::map_lgl(c(filter$year_min, filter$year_max), is.null) %>% { any(.) && !all(.) }
     
     if (is_year_missing) {
       filter$year_min <- filter$year_min %||% sudd_min_year
