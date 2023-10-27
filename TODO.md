@@ -165,10 +165,6 @@
     They include Italy ~~1929~~ and 1934, ~~Andorra 1933~~, ~~Austria 1938~~, Romania 2009, ~~Slovenia 2015~~, ~~Bulgaria 2016~~, ~~Netherlands 2016~~, ~~UK
     2016~~.
 
-#### An Joey delegiert
-
--   [x] [Nationale Referenden ohne Resultat (`NA`)](https://hackmd.io/1tNPglerTTaBGpv1FRramQ) nachprüfen.
-
 #### Other
 
 -   A total of 858 referendums don't have a `type` set though it's a mandatory field (at least in the C2D admin interface) -\> the missing `type`s should be
@@ -310,6 +306,7 @@
 
 -   IT-Firmen, die als Nachfolge für CCM Design möglicherweise in Frage kommen:
 
+    -   [Furqan Software](https://furqansoftware.com/); founder [ Mahmud Ridwan ](https://github.com/hjr265) developed two notable Goldmark extensions, [goldmark-d2](https://github.com/FurqanSoftware/goldmark-d2) and [goldmark-katex](https://github.com/FurqanSoftware/goldmark-katex), which [i.a. other notable activity](https://hjr265.me/open-source/) proves he deeply understands how open source is best organized and engineered!
     -   [PM TechHub](https://techhub.p-m.si/), Slowenien: Für den Neubau der `rdb.vote`-Hauptseite. Sie sind JAMStack-Profis und [Maintainer des Git-basierten
         CMS *Decap*](https://techhub.p-m.si/insights/introducing-decap-cms/).
     -   [Brudi](https://www.brudi.com/), Zürich
