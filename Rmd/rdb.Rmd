@@ -1626,11 +1626,11 @@ tidy_rfrnds <- function(data,
                                                       NA_character_,
                                                       number),
                               dplyr::across(any_of("id_official"),
-                                            ~ dplyr::if_else(is.na(.x) & stringr::str_detect(number, "^\\d") %in% TRUE,
+                                            ~ dplyr::if_else(is.na(.x) & stringr::str_detect(number, "^\\d"),
                                                              number,
                                                              .x)),
                               dplyr::across(any_of("id_sudd"),
-                                            ~ dplyr::if_else(is.na(.x) & stringr::str_detect(number, "^\\D") %in% TRUE,
+                                            ~ dplyr::if_else(is.na(.x) & stringr::str_detect(number, "^\\D"),
                                                              # everything beyond the 8th char seems to be manually added -> strip!
                                                              stringr::str_sub(string = number,
                                                                               end = 8L),
@@ -1845,7 +1845,7 @@ untidy_rfrnds <- function(data,
                                         "legal text (formulated proposal)" ~ "legal text (ausformulierter vorschlag)",
                                         "legal text (general proposal)"    ~ "legal text (allg. anregung)",
                                         .default = .x)),
-      ## `inst_trigger_actor` / `inst_object_author`
+      ## `inst_trigger_actor`, `inst_object_author`
       dplyr::across(any_of(c("inst_trigger_actor",
                              "inst_object_author")),
                     ~ dplyr::case_match(.x = .x,
@@ -2138,7 +2138,7 @@ url_codebook <- function(var = NULL) {
       rlang::arg_match0(values = c(data_codebook$variable_name,
                                    # additional HTML anchors
                                    codebook_fragments)) %>%
-      stringr::str_replace_all(pattern = "_",
+      stringr::str_replace_all(pattern = stringr::fixed("_"),
                                replacement = "-")
   }
   
@@ -3017,54 +3017,54 @@ NOTES:
 
 ```{r}
                  # old name                                                 new name
-var_names <- list("_id"                                                  = "id",
-                  "canton"                                               = "subnational_entity_name",
-                  "title.de"                                             = "title_de",
-                  "title.en"                                             = "title_en",
-                  "title.fr"                                             = "title_fr",
-                  "context.states_no"                                    = "subterritories_no",
-                  "context.states_yes"                                   = "subterritories_yes",
-                  "total_electorate"                                     = "electorate_total",
-                  "citizens_abroad"                                      = "electorate_abroad",
-                  "context.votes_per_canton"                             = "votes_per_subterritory",
-                  "context.national_council_yes"                         = "lower_house_yes",
-                  "context.national_council_no"                          = "lower_house_no",
-                  "context.national_council_abstentions"                 = "lower_house_abstentions",
-                  "context.states_council_yes"                           = "upper_house_yes",
-                  "context.states_council_no"                            = "upper_house_no",
-                  "context.states_council_abstentions"                   = "upper_house_abstentions",
-                  "context.recommendation"                               = "position_government",
-                  "draft"                                                = "is_draft",
-                  "created_on"                                           = "date_time_created",
-                  "institution"                                          = "type",
-                  "categories.official_status"                           = "inst_legal_basis_type",
-                  "categories.legal_act_type"                            = "inst_has_urgent_legal_basis",
-                  "categories.vote_result_status"                        = "inst_is_binding",
-                  "categories.counter_proposal"                          = "inst_is_counter_proposal",
-                  "categories.vote_venue"                                = "inst_is_assembly",
-                  "categories.vote_trigger"                              = "inst_trigger_type",
-                  "categories.vote_trigger_actor"                        = "inst_trigger_actor",
-                  "categories.vote_trigger_state_level"                  = "inst_trigger_actor_level",
-                  "categories.vote_trigger_number"                       = "inst_trigger_threshold",
-                  "categories.vote_trigger_time"                         = "inst_trigger_time_limit",
-                  "categories.vote_object"                               = "inst_object_type",
-                  "categories.author_of_the_vote_object"                 = "inst_object_author",
-                  "categories.hierarchy_of_the_legal_norm"               = "inst_object_legal_level",
-                  "categories.degree_of_revision"                        = "inst_object_revision_extent",
-                  "categories.action"                                    = "inst_object_revision_modes",
-                  "categories.turnout_quorum"                            = "inst_quorum_turnout",
-                  "categories.decision_quorum"                           = "inst_quorum_approval",
-                  "categories.institutional_precondition"                = "inst_has_precondition",
-                  "categories.institutional_precondition_decision_actor" = "inst_precondition_actor",
-                  "categories.institutional_precondition_decision"       = "inst_precondition_decision",
-                  "categories.special_topics"                            = "inst_topics_only",
-                  "categories.excluded_topics"                           = "inst_topics_excluded")
+var_names <- list(`_id`                                                = "id",
+                  canton                                               = "subnational_entity_name",
+                  title.de                                             = "title_de",
+                  title.en                                             = "title_en",
+                  title.fr                                             = "title_fr",
+                  context.states_no                                    = "subterritories_no",
+                  context.states_yes                                   = "subterritories_yes",
+                  total_electorate                                     = "electorate_total",
+                  citizens_abroad                                      = "electorate_abroad",
+                  context.votes_per_canton                             = "votes_per_subterritory",
+                  context.national_council_yes                         = "lower_house_yes",
+                  context.national_council_no                          = "lower_house_no",
+                  context.national_council_abstentions                 = "lower_house_abstentions",
+                  context.states_council_yes                           = "upper_house_yes",
+                  context.states_council_no                            = "upper_house_no",
+                  context.states_council_abstentions                   = "upper_house_abstentions",
+                  context.recommendation                               = "position_government",
+                  draft                                                = "is_draft",
+                  created_on                                           = "date_time_created",
+                  institution                                          = "type",
+                  categories.official_status                           = "inst_legal_basis_type",
+                  categories.legal_act_type                            = "inst_has_urgent_legal_basis",
+                  categories.vote_result_status                        = "inst_is_binding",
+                  categories.counter_proposal                          = "inst_is_counter_proposal",
+                  categories.vote_venue                                = "inst_is_assembly",
+                  categories.vote_trigger                              = "inst_trigger_type",
+                  categories.vote_trigger_actor                        = "inst_trigger_actor",
+                  categories.vote_trigger_state_level                  = "inst_trigger_actor_level",
+                  categories.vote_trigger_number                       = "inst_trigger_threshold",
+                  categories.vote_trigger_time                         = "inst_trigger_time_limit",
+                  categories.vote_object                               = "inst_object_type",
+                  categories.author_of_the_vote_object                 = "inst_object_author",
+                  categories.hierarchy_of_the_legal_norm               = "inst_object_legal_level",
+                  categories.degree_of_revision                        = "inst_object_revision_extent",
+                  categories.action                                    = "inst_object_revision_modes",
+                  categories.turnout_quorum                            = "inst_quorum_turnout",
+                  categories.decision_quorum                           = "inst_quorum_approval",
+                  categories.institutional_precondition                = "inst_has_precondition",
+                  categories.institutional_precondition_decision_actor = "inst_precondition_actor",
+                  categories.institutional_precondition_decision       = "inst_precondition_decision",
+                  categories.special_topics                            = "inst_topics_only",
+                  categories.excluded_topics                           = "inst_topics_excluded")
 
                                   # old name       new name
-sub_var_names <- list(files = list("date"       = "date_time_attached",
-                                   "object_key" = "s3_object_key",
-                                   "size"       = "file_size",
-                                   "deleted"    = "is_deleted"))
+sub_var_names <- list(files = list(date       = "date_time_attached",
+                                   object_key = "s3_object_key",
+                                   size       = "file_size",
+                                   deleted    = "is_deleted"))
 
 # create additional formula-lists (mainly to be fed to `dplyr::case_match()`)
 var_names_fms <- as_fm_list(var_names)
@@ -3843,7 +3843,7 @@ validate_rfrnds <- function(data,
                           { is.na(.) | purrr::map_lgl(., is.null) } %>%
                           all()
                       }) %>%
-    magrittr::extract(. %in% FALSE) %>%
+    magrittr::extract(!.) %>%
     names()
     
     n_var_names_violated <- length(var_names_violated)
@@ -4999,7 +4999,7 @@ add_turnout <- function(data,
     # add var lbl
     labelled::set_variable_labels(turnout = var_lbls[["turnout"]] %>% ifelse(test = rough,
                                                                              yes = stringr::str_replace(string = .,
-                                                                                                        pattern = "turnout",
+                                                                                                        pattern = stringr::fixed("turnout"),
                                                                                                         replacement = "turnout (rough)"),
                                                                              no = .))
 }
@@ -5064,7 +5064,7 @@ add_world_regions <- function(data,
                                   "country_code"))) %>%
     # add UN regions
     dplyr::left_join(y = un_regions,
-                     by = c("country_code_continual" = "country_code")) %>%
+                     by = c(country_code_continual = "country_code")) %>%
     # ensure every row got at least a UN tier-1 region assigned
     assertr::assert(predicate = assertr::not_na,
                     un_region_tier_1_code) %>%
