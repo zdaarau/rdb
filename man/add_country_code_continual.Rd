@@ -18,8 +18,7 @@ Augments \code{data} with an additional column \code{country_code_continual} hol
 multiple countries, the code of the largest one in terms of population is taken.
 }
 \examples{
-rdb::rfrnds(country_code = c("CD", "ZRCD"),
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::add_country_code_continual() |>
   dplyr::select(id,
                 starts_with("country_"))

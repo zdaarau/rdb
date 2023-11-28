@@ -31,6 +31,7 @@ Other referendum data functions:
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
 \code{\link{edit_rfrnds}()},
+\code{\link{rfrnds_old}()},
 \code{\link{rfrnds}()},
 \code{\link{rfrnd}()},
 \code{\link{search_rfrnds}()},

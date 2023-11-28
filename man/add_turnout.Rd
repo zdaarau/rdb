@@ -30,8 +30,7 @@ displayMode = TRUE)
 }
 \examples{
 # rough turnout numbers
-rdb::rfrnds(country_code = "IT",
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::add_turnout() |>
   dplyr::select(id,
                 electorate_total,
@@ -39,8 +38,7 @@ rdb::rfrnds(country_code = "IT",
                 turnout)
 
 # strict turnout numbers
-rdb::rfrnds(country_code = "IT",
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::add_turnout(rough = FALSE) |>
   dplyr::select(id,
                 electorate_total,

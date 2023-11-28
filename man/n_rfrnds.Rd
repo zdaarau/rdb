@@ -20,13 +20,11 @@ A \link[tibble:tbl_df-class]{tibble}.
 Counts the number of RDB referendums, optionally by additional columns specified via \code{by}.
 }
 \examples{
-rdb::rfrnds(country_code = "AT",
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::n_rfrnds(by = level)
 
 # count ballot dates instead of referendums
-rdb::rfrnds(country_code = "AT",
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::as_ballot_dates() |>
   rdb::n_rfrnds(by = level)
 }

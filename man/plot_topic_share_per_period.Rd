@@ -32,10 +32,7 @@ referendum topic occurences per period.
 Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
 }
 \examples{
-rdb::rfrnds(country_code = "CH",
-            level = "national",
-            quiet = TRUE,
-            max_cache_age = "1 year") |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::plot_topic_share_per_period(period = "decade")
 }
 \seealso{

@@ -47,10 +47,7 @@ Creates a ggplot2 \href{https://en.wikipedia.org/wiki/Streamgraph}{streamgraph} 
 resolution.
 }
 \examples{
-data_rdb <- rdb::rfrnds(country_code = "CH",
-                        level = "national",
-                        quiet = TRUE,
-                        max_cache_age = "1 year")
+data_rdb <- rdb::rfrnds(quiet = TRUE)
 
 rdb::ggplot_streamgraph(data = data_rdb,
                         by = topics_tier_1,
@@ -63,11 +60,6 @@ rdb::ggplot_streamgraph(data = data_rdb,
                         color_palette = viridisLite::viridis)
 
 # by default, only factor levels which occur in data are included in the legend
-data_rdb <- rdb::rfrnds(country_code = "AT",
-                        level = "national",
-                        quiet = TRUE,
-                        max_cache_age = "1 year")
-
 rdb::ggplot_streamgraph(data = data_rdb,
                         by = topics_tier_1,
                         period = "decade")

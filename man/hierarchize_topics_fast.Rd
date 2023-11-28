@@ -34,8 +34,8 @@ rdb::rfrnd(id = "5bbbe26a92a21351232dd73f") \%$\%
                                unlist(topics_tier_3))
 
 # hierarchize the topics of all Austrian referendums
-rdb::rfrnds(country_code = "AT",
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
+  dplyr::filter(country_code == "AT") |>
   dplyr::group_split(id) |>
   purrr::map(~ rdb::hierarchize_topics_fast(unlist(.x$topics_tier_1),
                                             unlist(.x$topics_tier_2),

@@ -24,8 +24,7 @@ Note that
 }
 }
 \examples{
-rdb::rfrnds(country_code = "IT",
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::prettify_col_names()
 }
 \seealso{

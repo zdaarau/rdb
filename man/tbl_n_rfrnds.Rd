@@ -63,30 +63,25 @@ The first variable specified in \code{by} will be reflected in additional rows i
 will be reflected in additional columns, i.e. expand it horizontally.
 }
 \examples{
-rdb::rfrnds(max_cache_age = Inf,
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::tbl_n_rfrnds()
 
 # grouped by a single column
-rdb::rfrnds(max_cache_age = Inf,
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::tbl_n_rfrnds(by = level)
 
 # grouped by two columns
-rdb::rfrnds(max_cache_age = Inf,
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::tbl_n_rfrnds(by = c(type, level))
 
 # grouped by three columns
-rdb::rfrnds(max_cache_age = Inf,
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::tbl_n_rfrnds(by = c(country_name, level, type),
                     n_rows = 10L,
                     order = "descending")
 
 # count ballot dates instead of referendums
-rdb::rfrnds(max_cache_age = Inf,
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::as_ballot_dates() |>
   rdb::tbl_n_rfrnds(by = c(country_name, level),
                     n_rows = 10L,

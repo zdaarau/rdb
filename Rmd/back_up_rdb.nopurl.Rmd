@@ -17,15 +17,37 @@ library(rlang,
         include.only = c("%|%", "%||%"))
 library(magrittr,
         include.only = c("%>%", "%<>%", "%T>%", "%!>%", "%$%"))
+
+path_backup <- "data-raw/backups/rdb.rds"
 ```
 
 # Back up RDB data
 
+NOTE: Won't work anymore since CCM Design rate-limited the API. See below for our current workaround.
+
 ```{r}
-rdb::rfrnds(is_draft = NULL,
-            incl_archive = TRUE,
-            use_cache = FALSE) |>
-  readr::write_rds(file = "data-raw/backups/rdb.rds",
+#| eval: FALSE
+
+rdb::rfrnds_old(is_draft = NULL,
+                incl_archive = TRUE,
+                use_cache = FALSE) |>
+  readr::write_rds(file = path_backup,
+                   compress = "xz",
+                   version = 3L)
+```
+
+# Update RDB backup
+
+```{r}
+data_latest <- rdb::rfrnds_old(date_time_last_edited_min = clock::as_date(pal::path_mod_time(path_backup)),
+                               is_draft = NULL,
+                               incl_archive = TRUE,
+                               use_cache = FALSE)
+
+readr::read_rds(path_backup) |>
+  dplyr::filter(!(id %in% data_latest$id)) |>
+  dplyr::bind_rows(data_latest) |>
+  readr::write_rds(file = path_backup,
                    compress = "xz",
                    version = 3L)
 ```

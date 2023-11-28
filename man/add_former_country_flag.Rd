@@ -17,7 +17,7 @@ Augments \code{data} with an additional column \code{is_former_country} indicati
 \code{country_code} holds an \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2 code} instead.
 }
 \examples{
-rdb::rfrnds(country_code = c("CD", "ZRCD")) |>
+rdb::rfrnds() |>
   rdb:::add_former_country_flag() |>
   dplyr::select(id,
                 starts_with("country_"),

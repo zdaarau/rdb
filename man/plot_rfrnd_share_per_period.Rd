@@ -29,8 +29,7 @@ referendums per period, grouped by another column.
 Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
 }
 \examples{
-rdb::rfrnds(country_code = "CH",
-            quiet = TRUE,
+rdb::rfrnds(quiet = TRUE,
             max_cache_age = "1 year") |>
   rdb::plot_rfrnd_share_per_period(by = "level")
 }

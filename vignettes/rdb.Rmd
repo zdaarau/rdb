@@ -169,19 +169,18 @@ A table of the number of referendums in the [UN subregion](https://rdb.rpkg.dev/
 say years, can be generated via
 
 ``` r
-rdb::rfrnds(date_min = "2010-01-01") |>
+rdb::rfrnds() |>
   rdb::add_world_regions() |>
-  dplyr::filter(un_subregion == "Polynesia") |>
+  dplyr::filter(un_subregion == "Polynesia" & date > "2009-12-31") |>
   rdb::tbl_n_rfrnds_per_period(period = "year")
 ```
 
 ```{r}
 #| echo: false
 
-rdb::rfrnds(date_min = "2010-01-01",
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb::add_world_regions() |>
-  dplyr::filter(un_subregion == "Polynesia") |>
+  dplyr::filter(un_subregion == "Polynesia" & date > "2009-12-31") |>
   rdb::tbl_n_rfrnds_per_period(period = "year")
 ```
 
@@ -189,7 +188,8 @@ Or a stacked area chart visualizing the worldwide share of referendums per year 
 level](https://rdb.rpkg.dev/articles/codebook.html#level):
 
 ``` r
-rdb::rfrnds(date_min = "1950-01-01") |>
+rdb::rfrnds() |>
+  dplyr::filter(date >= "1950-01-01") |>
   rdb::tbl_n_rfrnds_per_period(period = "year",
                                by = "level")
 ```
@@ -197,8 +197,8 @@ rdb::rfrnds(date_min = "1950-01-01") |>
 ```{r}
 #| echo: false
 
-rdb::rfrnds(date_min = "1950-01-01",
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
+  dplyr::filter(date >= "1950-01-01") |>
   rdb::plot_rfrnd_share_per_period(period = "year",
                                    by = "level") |>
   plotlee::simplify_trace_ids()

@@ -17,9 +17,7 @@ Augments \code{data} with an additional column holding the current or former thr
 code of the country in which the referendum took place (see \href{https://en.wikipedia.org/wiki/ISO_3166-3_alpha-3}{ISO 3166-3} for former country codes).
 }
 \examples{
-rdb::rfrnds(date_max = clock::date_today(zone = "UTC"),
-            date_min = clock::date_today(zone = "UTC") |> clock::add_years(-1L),
-            quiet = TRUE) |>
+rdb::rfrnds(quiet = TRUE) |>
   rdb:::add_country_code_long() |>
   dplyr::select(id,
                 starts_with("country_"))
