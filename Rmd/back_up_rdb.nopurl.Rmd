@@ -18,20 +18,20 @@ library(rlang,
 library(magrittr,
         include.only = c("%>%", "%<>%", "%T>%", "%!>%", "%$%"))
 
-path_backup <- "data-raw/backups/rdb.rds"
+path_backup_rdb <- "data-raw/backups/rdb.rds"
 ```
 
 # Back up RDB data
 
-NOTE: Won't work anymore since CCM Design rate-limited the API. See below for our current workaround.
+NOTE: Unreliable since CCM Design rate-limited the API. See below for our current workaround.
 
 ```{r}
 #| eval: FALSE
 
-rdb::rfrnds_old(is_draft = NULL,
-                incl_archive = TRUE,
-                use_cache = FALSE) |>
-  readr::write_rds(file = path_backup,
+rdb:::rfrnds_old(is_draft = NULL,
+                 incl_archive = TRUE,
+                 use_cache = FALSE) |>
+  readr::write_rds(file = path_backup_rdb,
                    compress = "xz",
                    version = 3L)
 ```
@@ -39,15 +39,33 @@ rdb::rfrnds_old(is_draft = NULL,
 # Update RDB backup
 
 ```{r}
-data_latest <- rdb::rfrnds_old(date_time_last_edited_min = clock::as_date(pal::path_mod_time(path_backup)),
-                               is_draft = NULL,
-                               incl_archive = TRUE,
-                               use_cache = FALSE)
+data_latest <- rdb:::rfrnds_old(date_time_last_edited_min = clock::as_date(pal::path_mod_time(path_backup_rdb)),
+                                is_draft = NULL,
+                                incl_archive = TRUE,
+                                use_cache = FALSE)
 
-readr::read_rds(path_backup) |>
+readr::read_rds(path_backup_rdb) |>
   dplyr::filter(!(id %in% data_latest$id)) |>
   dplyr::bind_rows(data_latest) |>
-  readr::write_rds(file = path_backup,
+  readr::write_rds(file = path_backup_rdb,
                    compress = "xz",
                    version = 3L)
+```
+
+# Back up RDB file attachments
+
+```{r}
+path_backup_s3 <- "~/Arbeit/ZDA/Lokal/Projekte/RDB/s3_backup"
+
+rdb::rfrnds()$files |>
+  purrr::list_rbind() |>
+  dplyr::filter(!is_deleted) %$%
+  s3_object_key |>
+  purrr::walk(.f = \(x) {
+    if (!fs::file_exists(fs::path(path_backup_s3, x))) {
+      rdb::download_file_attachment(s3_object_key = x,
+                                    path = path_backup_s3)
+    }
+  },
+  .progress = TRUE)
 ```
