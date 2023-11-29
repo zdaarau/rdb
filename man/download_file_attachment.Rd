@@ -7,13 +7,18 @@
 download_file_attachment(
   s3_object_key,
   path = ".",
+  use_original_filename = FALSE,
   use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
 )
 }
 \arguments{
-\item{s3_object_key}{The key uniquely identifying the file in the RDB \href{https://en.wikipedia.org/wiki/Amazon_S3#Design}{Amazon S3 bucket}. A character scalar.}
+\item{s3_object_key}{Key uniquely identifying the file in the RDB \href{https://en.wikipedia.org/wiki/Amazon_S3#Design}{Amazon S3 bucket}. A character scalar.}
 
-\item{path}{The path where the downloaded file is written to. If a directory, the original filename returned by the RDB Services API will be used.}
+\item{path}{Path where the downloaded file is written to.}
+
+\item{use_original_filename}{Whether to save the file attachment using its original filename as uploaded. Note that original filenames are \strong{not unique},
+i.e. there are multiple file attachments with the same original filename (but differing content, of course). If \code{FALSE}, \code{s3_object_key} is used as
+filename. Only relevant if \code{path} is a directory.}
 
 \item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.}
 }
@@ -26,13 +31,12 @@ column returned by \code{\link[=rfrnds]{rfrnds()}}.
 }
 \examples{
 \dontrun{
-# get all file object keys...
+# assemble attachment table
 rdb::rfrnds()$files |>
-  purrr::map_depth(1L, purrr::pluck, "s3_object_key") |>
-  purrr::list_flatten() |>
-  purrr::list_c(ptype = character()) |>
-  # ...select first three keys...
-  magrittr::extract(1:3) |>
+  purrr::list_rbind() |>
+  dplyr::filter(!is_deleted) |>
+  # ...select first three S3 object keys...
+  _$s3_object_key[1:3] |>
   # ...and download the corresponding files to the current working dir
   purrr::walk(rdb::download_file_attachment)}
 }

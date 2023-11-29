@@ -40,7 +40,6 @@ test_api <- function(use_testing_server = FALSE) {
   # download_file_attachment ----
   test_that(paste0("`download_file_attachment()` works", " (on testing server)"[use_testing_server]), {
 
-    skip("`/s3_object` API endpoint is currently broken")
     skip_if(use_testing_server && !test_testing)
 
     withr::local_file(.file = list("test.pdf" = download_file_attachment(s3_object_key = "referendum_6231e99713bed420d6ffbcf8_0001.pdf",
