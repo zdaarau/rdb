@@ -16,7 +16,8 @@ compute the \link[=add_period]{period column}), plus the column specified in \co
 
 \item{by}{\code{data} column to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
 
-\item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
+\item{period}{Type of period to count referendums by. One of
+\code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"decade"} or \code{"century"}.}
 }
 \value{
 A \link[plotly:plot_ly]{plotly object}.

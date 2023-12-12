@@ -16,7 +16,8 @@ plot_topic_share_per_period(
 
 \item{tier}{Tier of the topics variable to plot. \code{1L}, \code{2L} or \code{3L}.}
 
-\item{period}{Type of period to count topics by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
+\item{period}{Type of period to count topics by. One of
+\code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"decade"} or \code{"century"}.}
 
 \item{weight_by_n_rfrnds}{Whether or not to weight topic occurences by number of referendums. If \code{TRUE}, for a referendum with n different topics of the same
 \code{tier}, every topic is counted 1/n.}

@@ -30,15 +30,19 @@ Downloads a file attachment from the Referendum Database (RDB). The necessary \c
 column returned by \code{\link[=rfrnds]{rfrnds()}}.
 }
 \examples{
-\dontrun{
-# assemble attachment table
-rdb::rfrnds()$files |>
+# get object keys
+obj_keys <-
+  rdb::rfrnds()$files |>
   purrr::list_rbind() |>
   dplyr::filter(!is_deleted) |>
-  # ...select first three S3 object keys...
-  _$s3_object_key[1:3] |>
-  # ...and download the corresponding files to the current working dir
-  purrr::walk(rdb::download_file_attachment)}
+  _$s3_object_key[1:3]
+
+# download them to the current working dir
+purrr::walk(obj_keys,
+            rdb::download_file_attachment)
+
+# and delete them again
+fs::file_delete(obj_keys)
 }
 \seealso{
 Other referendum data functions:

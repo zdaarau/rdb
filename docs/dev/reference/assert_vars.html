@@ -92,18 +92,13 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnd.html">rfrnd</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"5bbbe26a92a21351232dd73f"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu">assert_vars</span><span class="op">(</span>vars <span class="op">=</span> <span class="st">"country_code"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 1.2 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 1 seconds...</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in map(.x, .f, ..., .progress = .progress):</span> <span style="color: #00BBBB;">ℹ</span> In index: 1.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `assert_api_success()`:</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> API server responded with error <span style="color: #BB0000; font-weight: bold;">server_error</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>country_code <span class="op">=</span> <span class="st">"AN"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu">assert_vars</span><span class="op">(</span>vars <span class="op">=</span> <span class="st">"country_code"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in map(.x, .f, ..., .progress = .progress) : </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #00BBBB;">ℹ</span> In index: 1.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `assert_content()` at rdb/R/rdb.gen.R:3508:5:</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `assert_content()` at rdb/R/rdb.gen.R:3522:5:</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Assertion on `data$country_code` failed: The following country codes have been deleted from ISO 3166-1 and were moved to ISO 3166-3 (former countries)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   instead: <span style="color: #0000BB;">"AN"</span></span>
 </code></pre></div>

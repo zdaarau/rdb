@@ -60,6 +60,7 @@ column returned by <code><a href="rfrnds.html">rfrnds()</a></code>.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">download_file_attachment</span><span class="op">(</span></span>
 <span>  <span class="va">s3_object_key</span>,</span>
 <span>  path <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  use_original_filename <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  use_testing_server <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"use_testing_server"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -67,11 +68,17 @@ column returned by <code><a href="rfrnds.html">rfrnds()</a></code>.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>s3_object_key</dt>
-<dd><p>The key uniquely identifying the file in the RDB <a href="https://en.wikipedia.org/wiki/Amazon_S3#Design" class="external-link">Amazon S3 bucket</a>. A character scalar.</p></dd>
+<dd><p>Key uniquely identifying the file in the RDB <a href="https://en.wikipedia.org/wiki/Amazon_S3#Design" class="external-link">Amazon S3 bucket</a>. A character scalar.</p></dd>
 
 
 <dt>path</dt>
-<dd><p>The path where the downloaded file is written to. If a directory, the original filename returned by the RDB Services API will be used.</p></dd>
+<dd><p>Path where the downloaded file is written to.</p></dd>
+
+
+<dt>use_original_filename</dt>
+<dd><p>Whether to save the file attachment using its original filename as uploaded. Note that original filenames are <strong>not unique</strong>,
+i.e. there are multiple file attachments with the same original filename (but differing content, of course). If <code>FALSE</code>, <code>s3_object_key</code> is used as
+filename. Only relevant if <code>path</code> is a directory.</p></dd>
 
 
 <dt>use_testing_server</dt>
@@ -102,16 +109,19 @@ column returned by <code><a href="rfrnds.html">rfrnds()</a></code>.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="co"># get all file object keys...</span></span></span>
-<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">files</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map_depth.html" class="external-link">map_depth</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fu">purrr</span><span class="fu">::</span><span class="va"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span>, <span class="st">"s3_object_key"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_flatten.html" class="external-link">list_flatten</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_c</a></span><span class="op">(</span>ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="co"># ...select first three keys...</span></span></span>
-<span class="r-in"><span>  <span class="fu">magrittr</span><span class="fu">::</span><span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html" class="external-link">extract</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="co"># ...and download the corresponding files to the current working dir</span></span></span>
-<span class="r-in"><span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="fu">rdb</span><span class="fu">::</span><span class="va">download_file_attachment</span><span class="op">)</span><span class="op">}</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># get object keys</span></span></span>
+<span class="r-in"><span><span class="va">obj_keys</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">files</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">is_deleted</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="va">_</span><span class="op">$</span><span class="va">s3_object_key</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># download them to the current working dir</span></span></span>
+<span class="r-in"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="va">obj_keys</span>,</span></span>
+<span class="r-in"><span>            <span class="fu">rdb</span><span class="fu">::</span><span class="va">download_file_attachment</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># and delete them again</span></span></span>
+<span class="r-in"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/delete.html" class="external-link">file_delete</a></span><span class="op">(</span><span class="va">obj_keys</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

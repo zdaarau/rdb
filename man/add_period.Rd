@@ -12,7 +12,8 @@ add_period(
 \arguments{
 \item{data}{RDB referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column \code{date}.}
 
-\item{period}{Type of period to add. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
+\item{period}{Type of period to add. One of
+\code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"decade"} or \code{"century"}.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.

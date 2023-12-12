@@ -21,7 +21,8 @@ compute the \link[=add_period]{period column}), plus the one(s) specified via \c
 
 \item{by}{\code{data} column to group by before counting number of referendums.}
 
-\item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
+\item{period}{Type of period to count referendums by. One of
+\code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"decade"} or \code{"century"}.}
 
 \item{stacking}{Stacking type. One of
 \itemize{

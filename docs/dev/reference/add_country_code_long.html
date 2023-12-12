@@ -92,18 +92,18 @@ code of the country in which the referendum took place (see <a href="https://en.
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"country_"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17,766 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    id                       country_code country_code_long country_name            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 65096e84481d20233932cc70 PL           POL               Poland                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 65096dc1481d20233932cc6e PL           POL               Poland                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 65096535481d20233932cc66 PL           POL               Poland                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 6509625d481d20233932cc63 PL           POL               Poland                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 64e46f7a481d20233932cc0b EC           ECU               Ecuador                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 64c10be80b8bae0c78c7ec6a CF           CAF               Central African Republic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 64a3ca8b0b8bae0c78c7ebb8 ML           MLI               Mali                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 64a2c7ee0b8bae0c78c7eba6 CH           CHE               Switzerland             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 64a2bcde0b8bae0c78c7eb81 CH           CHE               Switzerland             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 64a2ba730b8bae0c78c7eb7d CH           CHE               Switzerland             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    id                       country_code country_code_long country_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 65096e84481d20233932cc70 PL           POL               Poland      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 65096dc1481d20233932cc6e PL           POL               Poland      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 65096535481d20233932cc66 PL           POL               Poland      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 6509625d481d20233932cc63 PL           POL               Poland      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 650034e4481d20233932cc39 AU           AUS               Australia   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 64e46f7a481d20233932cc0b EC           ECU               Ecuador     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 64e46c8f481d20233932cc09 FM           FSM               Micronesia  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 64c8b3ca0b8bae0c78c7ec8a FM           FSM               Micronesia  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 64c8b19c0b8bae0c78c7ec86 FM           FSM               Micronesia  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 64c8a28d0b8bae0c78c7ec82 FM           FSM               Micronesia  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 17,756 more rows</span></span>
 </code></pre></div>
     </div>

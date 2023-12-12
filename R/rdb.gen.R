@@ -2825,15 +2825,19 @@ rfrnd <- function(id,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # assemble attachment table
-#' rdb::rfrnds()$files |>
+#' # get object keys
+#' obj_keys <-
+#'   rdb::rfrnds()$files |>
 #'   purrr::list_rbind() |>
 #'   dplyr::filter(!is_deleted) |>
-#'   # ...select first three S3 object keys...
-#'   _$s3_object_key[1:3] |>
-#'   # ...and download the corresponding files to the current working dir
-#'   purrr::walk(rdb::download_file_attachment)}
+#'   _$s3_object_key[1:3]
+#'
+#' # download them to the current working dir
+#' purrr::walk(obj_keys,
+#'             rdb::download_file_attachment)
+#' 
+#' # and delete them again
+#' fs::file_delete(obj_keys)
 download_file_attachment <- function(s3_object_key,
                                      path = ".",
                                      use_original_filename = FALSE,
@@ -4130,7 +4134,8 @@ add_country_name_long <- function(data) {
 #' ```
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `date`.
-#' @param period Type of period to add. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
+#' @param period Type of period to add. One of
+#'   `r pal::fn_param_defaults(fn = add_period, param = "period") |> pal::wrap_chr("\x60") |> cli::ansi_collapse(sep2 = " or ", last = " or ")`.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
@@ -4335,7 +4340,8 @@ add_world_regions <- function(data,
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `id_sudd` for `types = "sudd"` and the columns
 #'   `country_code`, `level` and `id_official` for `types = "swissvotes"`.
-#' @param types Type(s) of URLs to add. One of `r pal::prose_ls_fn_param(fn = add_urls, param = "types")`.
+#' @param types Type(s) of URLs to add. One of
+#'   `r pal::fn_param_defaults(fn = add_urls, param = "types") |> pal::wrap_chr("\x60") |> cli::ansi_collapse(sep2 = " or ", last = " or ")`.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family augment
@@ -4574,7 +4580,8 @@ n_rfrnds <- function(data,
 #' @inheritParams n_rfrnds
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
 #'   compute the [period column][add_period]), plus the one(s) specified via `by` (if any).
-#' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
+#' @param period Type of period to count referendums by. One of
+#'   `r pal::fn_param_defaults(fn = add_period, param = "period") |> pal::wrap_chr("\x60") |> cli::ansi_collapse(sep2 = " or ", last = " or ")`.
 #' @param fill_gaps Whether or not to add zero-value rows to the result for `period` gaps in `data`.
 #' @param period_floor Lower `period` limit up to which gaps are filled. If `NULL`, the lower limit is set to the minimum of `period` present in `data`. Only
 #'   relevant if `fill_gaps = TRUE` and `period` is set to a unique timespan type (`"year"`, `"decade"` or `"century"`).
@@ -4718,7 +4725,8 @@ prettify_col_names <- function(data) {
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column specified in `period` or the column `date` (to
 #'   compute the [period column][add_period]), plus the column specified in `by`.
 #' @param by `data` column to group by before counting number of referendums. `r pkgsnip::param_lbl("tidy_select_support")`
-#' @param period Type of period to count referendums by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
+#' @param period Type of period to count referendums by. One of
+#'   `r pal::fn_param_defaults(fn = add_period, param = "period") |> pal::wrap_chr("\x60") |> cli::ansi_collapse(sep2 = " or ", last = " or ")`.
 #'
 #' @return `r pkgsnip::param_lbl("plotly_obj")`
 #' @family visualize
@@ -4942,7 +4950,8 @@ plot_topic_segmentation <- function(data,
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `topics_tier_#` of the specified `tier`.
 #' @param tier Tier of the topics variable to plot. `1L`, `2L` or `3L`.
-#' @param period Type of period to count topics by. One of `r pal::prose_ls_fn_param(fn = add_period, param = "period")`.
+#' @param period Type of period to count topics by. One of
+#'   `r pal::fn_param_defaults(fn = add_period, param = "period") |> pal::wrap_chr("\x60") |> cli::ansi_collapse(sep2 = " or ", last = " or ")`.
 #' @param weight_by_n_rfrnds Whether or not to weight topic occurences by number of referendums. If `TRUE`, for a referendum with n different topics of the same
 #'   `tier`, every topic is counted 1/n.
 #'

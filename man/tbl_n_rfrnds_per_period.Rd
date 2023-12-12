@@ -25,7 +25,8 @@ compute the \link[=add_period]{period column}), plus the one(s) specified via \c
 
 \item{by}{Up to two additional \code{data} columns to group by before counting number of referendums. \link[dplyr:dplyr_tidy_select]{Tidy selections} are supported.}
 
-\item{period}{Type of period to count referendums by. One of \code{"week"},\code{"month"},\code{"quarter"},\code{"year"},\code{"decade"} or \code{"century"}.}
+\item{period}{Type of period to count referendums by. One of
+\code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"decade"} or \code{"century"}.}
 
 \item{fill_gaps}{Whether or not to add zero-value rows to the result for \code{period} gaps in \code{data}.}
 

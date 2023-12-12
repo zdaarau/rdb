@@ -109,9 +109,12 @@ are missing. This assumption is met by <code><a href="rfrnds.html">rfrnds()</a><
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">hierarchize_topics_fast</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">topics_tier_1</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                               <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">topics_tier_2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                               <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">topics_tier_3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 1.7 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 1 seconds...</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in assert_api_success(.):</span> API server responded with error <span style="color: #BB0000; font-weight: bold;">server_error</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   topic_tier_1       topic_tier_2 topic_tier_3               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> state organisation federalism   intergovernmental relations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> state organisation legal system fundamental rights         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> public finance     taxation     tax system                 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># hierarchize the topics of all Austrian referendums</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
