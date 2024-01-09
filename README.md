@@ -29,13 +29,13 @@ Some of rdb’s functionality is controlled via package-specific global configur
 
 ::: {.table-wide}
 
-| **Description**                                                                                                                                            | **R option**               | **Environment variable**   | **Default value** |
-|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------|:---------------------------|:------------------|
-| RDB Services API username                                                                                                                                  | `rdb.api_username`         | `RDB_API_USERNAME`         |                   |
-| RDB Services API password                                                                                                                                  | `rdb.api_password`         | `RDB_API_PASSWORD`         |                   |
-| Maximal timespan to preserve the package’s [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading. | `rdb.global_max_cache_age` | `RDB_GLOBAL_MAX_CACHE_AGE` | `"30 days"`       |
-| Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.                                                | `rdb.use_testing_server`   | `RDB_USE_TESTING_SERVER`   | `FALSE`           |
-| Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.                                    | `rdb.test_testing_server`  | `RDB_TEST_TESTING_SERVER`  | `FALSE`           |
+| **Description**                                                                                                                                            | **R option**               | **Environment variable**     | **Default value** |
+|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------|:-----------------------------|:------------------|
+| RDB Services API username                                                                                                                                  | `rdb.api_username`         | `R_RDB_API_USERNAME`         |                   |
+| RDB Services API password                                                                                                                                  | `rdb.api_password`         | `R_RDB_API_PASSWORD`         |                   |
+| Maximal timespan to preserve the package’s [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading. | `rdb.global_max_cache_age` | `R_RDB_GLOBAL_MAX_CACHE_AGE` | `"30 days"`       |
+| Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.                                                | `rdb.use_testing_server`   | `R_RDB_USE_TESTING_SERVER`   | `FALSE`           |
+| Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.                                    | `rdb.test_testing_server`  | `R_RDB_TEST_TESTING_SERVER`  | `FALSE`           |
 
 :::
 
