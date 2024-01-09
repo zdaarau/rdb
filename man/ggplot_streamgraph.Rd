@@ -61,15 +61,17 @@ rdb::ggplot_streamgraph(data = data_rdb,
                         color_palette = viridisLite::viridis)
 
 # by default, only factor levels which occur in data are included in the legend
-rdb::ggplot_streamgraph(data = data_rdb,
-                        by = topics_tier_1,
-                        period = "decade")
+data_rdb |>
+  dplyr::filter(country_code == "AT") |>
+  rdb::ggplot_streamgraph(by = topics_tier_1,
+                          period = "decade")
 
 # but you can include *all* factor levels in the legend if you want to
-rdb::ggplot_streamgraph(data = data_rdb,
-                        by = topics_tier_1,
-                        period = "decade",
-                        prune_legend = FALSE)
+data_rdb |>
+  dplyr::filter(country_code == "AT") |>
+  rdb::ggplot_streamgraph(by = topics_tier_1,
+                          period = "decade",
+                          prune_legend = FALSE)
 }
 \seealso{
 Other visualization functions:
