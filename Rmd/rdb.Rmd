@@ -3141,7 +3141,8 @@ rfrnds <- function(is_draft = FALSE,
       path_temp <- fs::file_temp(pattern = "rdb-", ext = "rds")
       utils::download.file(url = "https://gitlab.com/zdaarau/rpkgs/rdb/-/raw/master/data-raw/backups/rdb.rds?ref_type=heads&inline=false",
                            destfile = path_temp,
-                           quiet = TRUE)
+                           quiet = TRUE,
+                           mode = "wb")
       
       readRDS(file = path_temp)
     },

@@ -2,7 +2,7 @@
 # See `README.md#r-markdown-format` for more information on the literate programming approach used applying the R Markdown format.
 
 # rdb: Download Data from the Referendum Database (RDB), Which Covers Direct Democratic Votes Worldwide
-# Copyright (C) 2023 Centre for Democracy Studies Aarau (ZDA)
+# Copyright (C) 2024 Centre for Democracy Studies Aarau (ZDA)
 # 
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or any later version.
@@ -2576,7 +2576,8 @@ rfrnds <- function(is_draft = FALSE,
       path_temp <- fs::file_temp(pattern = "rdb-", ext = "rds")
       utils::download.file(url = "https://gitlab.com/zdaarau/rpkgs/rdb/-/raw/master/data-raw/backups/rdb.rds?ref_type=heads&inline=false",
                            destfile = path_temp,
-                           quiet = TRUE)
+                           quiet = TRUE,
+                           mode = "wb")
       
       readRDS(file = path_temp)
     },
