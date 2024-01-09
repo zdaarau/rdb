@@ -57,7 +57,7 @@ readr::read_rds(path_backup_rdb) |>
 ```{r}
 path_backup_s3 <- "~/Arbeit/ZDA/Lokal/Projekte/RDB/s3_backup"
 
-rdb::rfrnds()$files |>
+rdb::rfrnds(use_cache = FALSE)$files |>
   purrr::list_rbind() |>
   dplyr::filter(!is_deleted) %$%
   s3_object_key |>
