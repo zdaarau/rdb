@@ -38,6 +38,8 @@ rdb:::rfrnds_old(is_draft = NULL,
 
 # Update RDB backup
 
+NOTE: Alternative to creating a full backup (chunk above).
+
 ```{r}
 data_latest <- rdb:::rfrnds_old(date_time_last_edited_min = clock::as_date(pal::path_mod_time(path_backup_rdb)),
                                 is_draft = NULL,
@@ -57,7 +59,9 @@ readr::read_rds(path_backup_rdb) |>
 ```{r}
 path_backup_s3 <- "~/Arbeit/ZDA/Lokal/Projekte/RDB/s3_backup"
 
-rdb::rfrnds(use_cache = FALSE)$files |>
+rdb::rfrnds(is_draft = NULL,
+            use_cache = FALSE) %$%
+  files |>
   purrr::list_rbind() |>
   dplyr::filter(!is_deleted) %$%
   s3_object_key |>
