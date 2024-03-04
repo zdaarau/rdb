@@ -23,10 +23,10 @@ path_backup_rdb <- "data-raw/backups/rdb.rds"
 
 # Back up RDB data
 
-NOTE: Unreliable since CCM Design rate-limited the API. See below for our current workaround.
+NOTE: Unreliable since CCM Design changed something under the hood of the API (rate limiting?). See below for our current workaround.
 
 ```{r}
-#| eval: FALSE
+#| eval: TRUE
 
 rdb:::rfrnds_old(is_draft = NULL,
                  incl_archive = TRUE,
@@ -41,6 +41,8 @@ rdb:::rfrnds_old(is_draft = NULL,
 NOTE: Alternative to creating a full backup (chunk above).
 
 ```{r}
+#| eval: FALSE
+
 data_latest <- rdb:::rfrnds_old(date_time_last_edited_min = clock::as_date(pal::path_mod_time(path_backup_rdb)),
                                 is_draft = NULL,
                                 incl_archive = TRUE,
