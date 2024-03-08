@@ -226,7 +226,7 @@ as_fm_list <- function(x) {
 #'   `"2006-01-02"` or `"2006-01-02T15:04:05Z"`; assumed to be in UTC if no timezone is given).
 #' @param query_filter A valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents) which allows for
 #'   maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if `query_filter` is provided, the
-#'   parameters `r formals(assemble_query_filter) %>% names() %>% setdiff(c("query_filter", "base64_encode")) %>% pal::prose_ls(wrap = "\x60")` are ignored.
+#'   parameters `r formals(assemble_query_filter) |> names() |> setdiff(c("query_filter", "base64_encode")) |> pal::enum_str(wrap = "\x60")` are ignored.
 #' @param base64_encode Whether or not to [Base64](https://en.wikipedia.org/wiki/Base64)-encode the resulting query filter document. Note that the
 #'   `query_filter` argument provided to other functions of this package must be Base64-encoded.
 #'
@@ -1776,7 +1776,7 @@ url_admin_portal <- function(...,
 #'
 #' @param var_name Optional variable name to add as the [fragment identifier](https://en.wikipedia.org/wiki/URI_fragment) of the returned URL, which leads to a
 #' direct link to the relevant codebook section. Must be either one of the column names of [`data_codebook`], or a valid fragment identifier of a codebook
-#' section above the individual variables (`r pal::prose_ls(codebook_fragments, last_sep = " or ")`).
+#' section above the individual variables (`r pal::enum_str(codebook_fragments, last = " or ")`).
 #'
 #' @return A character scalar.
 #' @family url_assembly
