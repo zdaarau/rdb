@@ -332,20 +332,21 @@ months_de_fms <- rdb:::as_fm_list(months_de)
 pkg_config <-
   tibble::tibble(key = character(),
                  default_value = list(),
-                 description = character()) %>%
-  tibble::add_row(key = "api_username",
-                  description = "RDB Services API username") %>%
-  tibble::add_row(key = "api_password",
-                  description = "RDB Services API password") %>%
+                 description = character()) |>
+  tibble::add_row(key = "pg_host",
+                  default_value = list("ep-sparkling-voice-33039503.eu-central-1.aws.neon.tech"),
+                  description = paste0("RDB PostgreSQL (neon.tech) host address. Defaults to a [read ",
+                                       "replica](https://neon.tech/docs/introduction/read-replicas) which has no write access to the database.")) |>
+  tibble::add_row(key = "pg_username",
+                  default_value = list("r_anon"),
+                  description = paste0("RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. Defaults to ",
+                                       "the read-only user `r_anon`.")) |>
+  tibble::add_row(key = "pg_password",
+                  default_value = list("WTYUeDtTm0UV4nXzTZ7morHSdM0wQh0p"),
+                  description = "Password for the specified RDB PostgreSQL user.") |>
   tibble::add_row(key = "global_max_cache_age",
                   default_value = list("30 days"),
-                  description = pkgsnip::md_snip("opt_global_max_cache_age")) %>%
-  tibble::add_row(key = "use_testing_server",
-                  default_value = list(FALSE),
-                  description = "Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.") %>%
-  tibble::add_row(key = "test_testing_server",
-                  default_value = list(FALSE),
-                  description = "Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.")
+                  description = pkgsnip::md_snip("opt_global_max_cache_age"))
 ```
 
 ## `rfrnd_cols_order`
