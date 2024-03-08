@@ -171,7 +171,7 @@ var_sections <- function(data,
       if (is_opt) {
         c("#### Origin",
           "",
-          glue::glue("This variable is derived from ", pal::prose_ls(rdb:::md_link_codebook(unlist(derived_from))), " and can be generated on demand via ",
+          glue::glue("This variable is derived from ", pal::enum_str(rdb:::md_link_codebook(unlist(derived_from))), " and can be generated on demand via ",
                      ifelse(strip_extended_pandoc,
                             "[{gen_fn}()]",
                             "[`{gen_fn}()`](https://rdb.rpkg.dev/reference/{gen_fn}.html)"),
