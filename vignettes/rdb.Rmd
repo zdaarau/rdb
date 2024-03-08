@@ -40,7 +40,7 @@ branch](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/master), which we try to kee
 ```
 
 [^1]: We will probably release the package on CRAN once the current database and backend overhaul is complete and the rdb R package is properly adapted to use
-    the new infrastructure, as well as sufficiently tested. This will most likely not happen before the end of 2023.
+    the new infrastructure, as well as sufficiently tested. This will most likely not happen before the end of 2024.
 
 # Usage
 
