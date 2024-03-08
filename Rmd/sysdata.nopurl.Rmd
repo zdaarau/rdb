@@ -50,7 +50,7 @@ data_codebook <- {
     codebook$`02_institutional`$`01_status`$item,
     codebook$`02_institutional`$`02_trigger`$item,
     codebook$`02_institutional`$`03_object`$item,
-    codebook$`02_institutional`$`04_other`$item) %>%
+    codebook$`02_institutional`$`04_other`$item) |>
     purrr::map(~ tibble::tibble(variable_name = .x$variable_name %||% NA_character_,
                                 variable_name_print = .x$variable_name_print %||% NA_character_,
                                 variable_name_unnested = .x$variable_name_unnested %||% variable_name,
@@ -66,18 +66,18 @@ data_codebook <- {
                                 value_default = list(.x$value_default),
                                 value_scale = .x$value_scale %||% NA_character_,
                                 ptype =
-                                  .x$ptype %>%
+                                  .x$ptype |>
                                   pal::when(!is.null(.) ~ eval(parse(text = .)),
-                                            ~ .) %>%
+                                            ~ .) |>
                                   list(),
                                 derived_from =
-                                  .x$derived_from %>%
+                                  .x$derived_from |>
                                   pal::when(is.null(.) ~ list(character()),
                                             is.character(.) ~ list(.),
                                             ~ .),
                                 gen_fn = .x$gen_fn %||% NA_character_,
-                                is_opt = .x$is_opt %||% FALSE)) %>%
-    purrr::list_rbind() %>%
+                                is_opt = .x$is_opt %||% FALSE)) |>
+    purrr::list_rbind() |>
     # infer missing prototypes
     dplyr::mutate(ptype = purrr::pmap(.l = list(is_multi_valued,
                                                 is_nested,
@@ -92,7 +92,7 @@ data_codebook <- {
                                                     value_scale,
                                                     ptype) {
                                         
-                                        value_scale %>%
+                                        value_scale |>
                                           pal::when(!is.null(ptype) ~
                                                       ptype,
                                                     . == "undefined" || is_multi_valued || is_nested ~
@@ -106,7 +106,7 @@ data_codebook <- {
                                                              ordered = . %in% c("ordinal_ascending", "ordinal_descending")),
                                                     . %in% c("interval", "ratio") ~
                                                       integer())
-                                      })) %>%
+                                      })) |>
     # integrity checks
     ## not NA
     assertr::assert(predicate = assertr::not_na,
@@ -119,9 +119,9 @@ data_codebook <- {
                     is_multi_valued,
                     is_nested,
                     ptype,
-                    is_opt) %>%
+                    is_opt) |>
     ## not empty string
-    assertr::assert(predicate = function(x) if (x == "") FALSE else TRUE,
+    assertr::assert(predicate = \(x) !(x == ""),
                     variable_name,
                     variable_name_print,
                     variable_name_unnested,
@@ -179,8 +179,8 @@ SCCAI 2019 and ISO 3166-1:2013](https://www.statcan.gc.ca/en/subjects/standard/s
 
 ```{r}
 data_iso_3166_1 <-
-  ISOcodes::ISO_3166_1 %>%
-  tibble::as_tibble() %>%
+  ISOcodes::ISO_3166_1 |>
+  tibble::as_tibble() |>
   # add `Common_name` where it's currently missing
   # TODO: consider submitting PRs once [upstream issue #44](https://salsa.debian.org/iso-codes-team/iso-codes/-/issues/44) is answered
   # TODO: remove IR, LA and SY once ISOcodes pkg version > 2022.09.29 is released
@@ -194,17 +194,17 @@ data_iso_3166_1 <-
                                                Alpha_2 == "PS" ~ "Palestine",
                                                Alpha_2 == "SY" ~ "Syria",
                                                Alpha_2 == "VA" ~ "Vatican City",
-                                               .default = Common_name)) %>%
+                                               .default = Common_name)) |>
   # extend with unofficial information
   dplyr::add_row(Alpha_2 = "XK",
                  Alpha_3 = "XKS",
                  Numeric = NA_character_,
                  Name = "Kosovo, Republic of",
                  Official_name = "Republic of Kosovo",
-                 Common_name = "Kosovo") %>%
+                 Common_name = "Kosovo") |>
   dplyr::mutate(name_short = Common_name %|% Name,
-                name_long = Official_name %|% Name) %>%
-  dplyr::arrange(Alpha_2) %>%
+                name_long = Official_name %|% Name) |>
+  dplyr::arrange(Alpha_2) |>
   # ensure there are no duplicates
   assertr::assert(predicate = assertr::is_uniq,
                   Alpha_2,
@@ -215,63 +215,60 @@ data_iso_3166_1 <-
 
 ```{r}
 data_iso_3166_3 <-
-  ISOcodes::ISO_3166_3 %>%
-  tibble::as_tibble() %>%
-  dplyr::mutate(Alpha_2 = Alpha_4 %>% stringr::str_sub(end = 2L),
-                Alpha_2_new = Alpha_4 %>% stringr::str_sub(start = 3L),
+  ISOcodes::ISO_3166_3 |>
+  tibble::as_tibble() |>
+  dplyr::mutate(Alpha_2 = stringr::str_sub(string = Alpha_4,
+                                           end = 2L),
+                Alpha_2_new = stringr::str_sub(string = Alpha_4,
+                                               start = 3L),
                 # variation of `Alpha_2_new` that in case of multiple successor countries (*HH/*XX) holds the biggest one (1. population-, then 2. area-wise)
                 # (main purpose is to be able to match with UN M49 area codes)
-                Alpha_2_new_main =
-                  Alpha_4 %>%
-                  purrr::map_chr(~ {
-                    if (stringr::str_detect(.x, "(HH|XX)$")) {
-                      switch(.x,
-                             ANHH = "CW",
-                             CSHH = "CZ",
-                             CSXX = "RS",
-                             FQHH = "AQ",
-                             GEHH = "KI",
-                             NTHH = "IQ",
-                             PCHH = "FM",
-                             SUHH = "RU",
-                             cli::abort(paste0("No ISO 3166-3 alpha-4 \"n-to-1\" ISO 3166-1 alpha-2 conversion rule defined for {.val .x}. Please update ",
-                                               "{.var data_iso_3166_3} accordingly and run again.")))
-                    } else {
-                      stringr::str_sub(.x, start = 3L)
-                    }
-                  }),
+                Alpha_2_new_main = purrr::map_chr(Alpha_4,
+                                                  \(x) {
+                                                    if (stringr::str_detect(x, "(HH|XX)$")) {
+                                                      return(switch(x,
+                                                             ANHH = "CW",
+                                                             CSHH = "CZ",
+                                                             CSXX = "RS",
+                                                             FQHH = "AQ",
+                                                             GEHH = "KI",
+                                                             NTHH = "IQ",
+                                                             PCHH = "FM",
+                                                             SUHH = "RU",
+                                                             cli::abort(paste0("No ISO 3166-3 alpha-4 \"n-to-1\" ISO 3166-1 alpha-2 conversion rule defined ",
+                                                                               "for {.val x}. Please update {.var data_iso_3166_3} accordingly and run ",
+                                                                               "again."))))
+                                                    } else {
+                                                      return(stringr::str_sub(x, start = 3L))
+                                                    }
+                                                  }),
                 Date_withdrawn =
-                  # fix withdrawn date of AN and YU
-                  # TODO: remove this once pkg ISOcodes is recent enough to include
-                  #       [iso-codes MR #28](https://salsa.debian.org/iso-codes-team/iso-codes/-/merge_requests/28)
-                  dplyr::case_when(Alpha_4 == "ANHH" ~ "2010-12-15",
-                                   Alpha_4 == "CSXX" ~ "2006-09-26",
-                                   Alpha_4 == "YUCS" ~ "2003-07-23",
-                                   .default = Date_withdrawn) %>%
-                  purrr::map(~ {
-                    if (nchar(.x) == 4L) {
-                      clock::date_build(year = as.integer(.x))
+                  Date_withdrawn |>
+                  purrr::map(\(x) {
+                    if (nchar(x) == 4L) {
+                      clock::date_build(year = as.integer(x))
                     } else {
-                      clock::date_parse(x = .x,
-                                        format = "%F")
+                      clock::date_parse(x, format = "%F")
                     }
-                  }) %>%
-                  purrr::reduce(c)) %>%
+                  }) |>
+                  purrr::reduce(c)) |>
   dplyr::relocate(Alpha_2, Alpha_2_new, Alpha_2_new_main,
-                  .after = Alpha_3) %>%
+                  .after = Alpha_3) |>
   # harmonize name style
-  dplyr::mutate(name_short = dplyr::case_when(Alpha_4 == "BYAA" ~ "Byelorussian SSR",
-                                              Alpha_4 == "FXFR" ~ "Metropolitan France",
-                                              .default = stringr::str_extract(string = Name,
-                                                                              pattern = "[^,]+")),
-                name_long = dplyr::case_when(Alpha_4 == "BYAA" ~ "Byelorussian Soviet Socialist Republic",
-                                             Alpha_4 == "CSHH" ~ Name,
-                                             Alpha_4 == "SUHH" ~ "Union of Soviet Socialist Republics (USSR)",
-                                             Alpha_4 == "YDYE" ~ "Democratic Yemen, People's Democratic Republic of Yemen",
-                                             .default = stringr::str_replace(string = Name,
-                                                                             pattern = "^([^,]+), (.+)$",
-                                                                             replacement = "\\2 \\1"))) %>%
-  dplyr::arrange(Alpha_4) %>%
+  dplyr::mutate(name_short = dplyr::case_match(Alpha_4,
+                                               "BYAA" ~ "Byelorussian SSR",
+                                               "FXFR" ~ "Metropolitan France",
+                                               .default = stringr::str_extract(string = Name,
+                                                                               pattern = "[^,]+")),
+                name_long = dplyr::case_match(Alpha_4,
+                                              "BYAA" ~ "Byelorussian Soviet Socialist Republic",
+                                              "CSHH" ~ Name,
+                                              "SUHH" ~ "Union of Soviet Socialist Republics (USSR)",
+                                              "YDYE" ~ "Democratic Yemen, People's Democratic Republic of Yemen",
+                                              .default = stringr::str_replace(string = Name,
+                                                                              pattern = "^([^,]+), (.+)$",
+                                                                              replacement = "\\2 \\1"))) |>
+  dplyr::arrange(Alpha_4) |>
   # ensure there are no duplicates
   assertr::assert(predicate = assertr::is_uniq,
                   Alpha_4)
@@ -299,18 +296,19 @@ data_topics <-
   yay::gh_text_file(owner = "zdaarau",
                     name = "c2d-app",
                     rev = "master",
-                    path = "ch.c2d/web/themes.json") %>%
-  jsonlite::fromJSON(flatten = FALSE) %>%
-  tibble::as_tibble() %>%
+                    path = "ch.c2d/web/themes.json") |>
+  jsonlite::fromJSON(flatten = FALSE) |>
+  tibble::as_tibble() |>
   # create tidy data version
   dplyr::rename(topic_tier_1 = name,
-                topic_tier_2 = children) %>%
+                topic_tier_2 = children) |>
   tidyr::unnest(cols = topic_tier_2,
-                keep_empty = TRUE) %>%
+                keep_empty = TRUE) |>
   dplyr::rename(topic_tier_2 = name,
-                topic_tier_3 = children) %>%
+                topic_tier_3 = children) |>
   # ensure consistent col subtypes
-  dplyr::mutate(topic_tier_3 = topic_tier_3 %>% purrr::map(~ { if (is.list(.x)) character() else .x })) %>%
+  dplyr::mutate(topic_tier_3 = purrr::map(topic_tier_3,
+                                          \(x) { if (is.list(x)) character() else x })) |>
   tidyr::unnest(cols = topic_tier_3,
                 keep_empty = TRUE)
 ```
@@ -321,8 +319,8 @@ data_topics <-
 rlang::check_installed("clock")
 
 months_de <-
-  1:12 %>%
-  magrittr::set_names(clock::clock_labels_lookup("de")$month) %>%
+  1:12 |>
+  magrittr::set_names(clock::clock_labels_lookup("de")$month) |>
   as.list()
 
 months_de_fms <- rdb:::as_fm_list(months_de)
@@ -384,15 +382,15 @@ NOTES:
 ```{r}
 # compile `country_code` <-> `un_country_code` dict
 codes <-
-  data_iso_3166_1 %>%
+  data_iso_3166_1 |>
   # temporarily add ISO 3166-1 alpha-3 codes for matching with M49 codes
   dplyr::select(country_code = Alpha_2,
-                Alpha_3) %>%
+                Alpha_3) |>
   # temporarily add M49 code for matching with actual UN region codes and names
-  dplyr::left_join(y = ISOcodes::UN_M.49_Countries %>% dplyr::select(un_country_code = Code,
-                                                                     Alpha_3 = ISO_Alpha_3),
-                   by = "Alpha_3") %>%
-  dplyr::select(-Alpha_3) %>%
+  dplyr::left_join(y = ISOcodes::UN_M.49_Countries |> dplyr::select(un_country_code = Code,
+                                                                    Alpha_3 = ISO_Alpha_3),
+                   by = "Alpha_3") |>
+  dplyr::select(-Alpha_3) |>
   # manual corrections
   dplyr::mutate(
     # certain countries share the same UN country code / don't have their own one for stupid political reasons (like China & Taiwan or Serbia & Kosovo), thus we
@@ -402,40 +400,40 @@ codes <-
     un_country_code = dplyr::case_when(country_code == "TW" ~ "156",
                                        country_code == "XK" ~ "688",
                                        .default = un_country_code)
-  ) %>%
+  ) |>
   # ensure there are no NAs left
   assertr::assert(predicate = assertr::not_na,
                   un_country_code)
 
 # extract UN regions of the 3 different tiers
 un_regions_tier_1 <-
-  ISOcodes::UN_M.49_Regions %>%
-  tibble::as_tibble() %>%
-  dplyr::filter(Type == "Region" & Parent == "001") %>%
+  ISOcodes::UN_M.49_Regions |>
+  tibble::as_tibble() |>
+  dplyr::filter(Type == "Region" & Parent == "001") |>
   tidyr::separate_longer_delim(cols = Children,
-                               delim = ", ") %>%
+                               delim = ", ") |>
   dplyr::mutate(un_region_tier_1_name = Name,
                 un_region_tier_1_code = Code,
                 children_tier_1 = Children,
                 .keep = "none")
 
 un_regions_tier_2 <-
-  ISOcodes::UN_M.49_Regions %>%
-  tibble::as_tibble() %>%
-  dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_1$un_region_tier_1_code) %>%
+  ISOcodes::UN_M.49_Regions |>
+  tibble::as_tibble() |>
+  dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_1$un_region_tier_1_code) |>
   tidyr::separate_longer_delim(cols = Children,
-                               delim = ", ") %>%
+                               delim = ", ") |>
   dplyr::mutate(un_region_tier_2_name = Name,
                 un_region_tier_2_code = Code,
                 children_tier_2 = Children,
                 .keep = "none")
 
 un_regions_tier_3 <-
-  ISOcodes::UN_M.49_Regions %>%
-  tibble::as_tibble() %>%
-  dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_2$un_region_tier_2_code) %>%
+  ISOcodes::UN_M.49_Regions |>
+  tibble::as_tibble() |>
+  dplyr::filter(Type == "Region" & Parent %in% un_regions_tier_2$un_region_tier_2_code) |>
   tidyr::separate_longer_delim(cols = Children,
-                               delim = ", ") %>%
+                               delim = ", ") |>
   dplyr::mutate(un_region_tier_3_name = Name,
                 un_region_tier_3_code = Code,
                 children_tier_3 = Children,
@@ -443,13 +441,13 @@ un_regions_tier_3 <-
 
 # combine UN regions of different tiers into single dataset and add `country_code`
 un_regions <-
-  un_regions_tier_1 %>%
+  un_regions_tier_1 |>
   dplyr::full_join(y = un_regions_tier_2,
                    by = dplyr::join_by(children_tier_1 == un_region_tier_2_code),
-                   relationship = "one-to-many") %>%
+                   relationship = "one-to-many") |>
   dplyr::full_join(y = un_regions_tier_3,
                    by = dplyr::join_by(children_tier_2 == un_region_tier_3_code),
-                   relationship = "one-to-many") %>%
+                   relationship = "one-to-many") |>
   dplyr::mutate(un_region_tier_2_code = dplyr::if_else(is.na(un_region_tier_2_name),
                                                        NA_character_,
                                                        children_tier_1),
@@ -462,22 +460,22 @@ un_regions <-
                 # add UN subregion which, except for Northern Europe, corresponds to the lowest `un_region_tier_*_name`
                 un_subregion = dplyr::if_else(un_region_tier_1_name != "Europe",
                                               un_region_tier_3_name %|% un_region_tier_2_name,
-                                              un_region_tier_2_name)) %>%
+                                              un_region_tier_2_name)) |>
   dplyr::select(un_country_code,
                 starts_with("un_region_tier_1_"),
                 starts_with("un_region_tier_2_"),
                 starts_with("un_region_tier_3_"),
-                un_subregion) %>%
+                un_subregion) |>
   dplyr::left_join(y = codes,
                    by = "un_country_code",
                    # NOTE: we must allow multiple matches because of the manual "corrections" in `codes` above
-                   relationship = "one-to-many") %>%
-  dplyr::relocate(country_code) %>%
+                   relationship = "one-to-many") |>
+  dplyr::relocate(country_code) |>
   # remove rows without `country_code` (Sark)
-  dplyr::filter(!is.na(country_code)) %>%
+  dplyr::filter(!is.na(country_code)) |>
   # ensure there are no NAs left
   assertr::assert(predicate = assertr::not_na,
-                  un_country_code) %>%
+                  un_country_code) |>
   # convert UN cols to type fct
   dplyr::mutate(
     # tier-1 name lvls are ordered alphabetically
@@ -567,9 +565,9 @@ Only for performance-reasons.
 
 ```{r}
 var_lbls <-
-  data_codebook$variable_label %>%
-  pal::strip_md() %>%
-  as.list() %>%
+  data_codebook$variable_label |>
+  pal::strip_md() |>
+  as.list() |>
   magrittr::set_names(value = data_codebook$variable_name)
 ```
 
