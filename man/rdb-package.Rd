@@ -13,11 +13,11 @@ rdb provides access to the Referendum Database (RDB) from R. This database aims 
 
 Some of rdb's functionality is controlled via package-specific global configuration which can either be set via \href{https://rdrr.io/r/base/options.html}{R options} or \href{https://en.wikipedia.org/wiki/Environment_variable}{environment variables} (the former take precedence). This configuration includes:\tabular{llll}{
    \strong{Description} \tab \strong{R option} \tab \strong{Environment variable} \tab \strong{Default value} \cr
-   RDB Services API username \tab \code{rdb.api_username} \tab \code{R_RDB_API_USERNAME} \tab  \cr
-   RDB Services API password \tab \code{rdb.api_password} \tab \code{R_RDB_API_PASSWORD} \tab  \cr
+   NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API authentication token} for our \href{https://admin.rdb.vote/}{admin.rdb.vote} instance. This is required for the \verb{ncdb_*()} family of functions to authenticate. \tab \code{rdb.ncdb_token} \tab \code{R_RDB_NCDB_TOKEN} \tab  \cr
+   RDB PostgreSQL (neon.tech) host address. Defaults to a \href{https://neon.tech/docs/introduction/read-replicas}{read replica} which has no write access to the database. \tab \code{rdb.pg_host} \tab \code{R_RDB_PG_HOST} \tab \code{"ep-frosty-flower-a28keh10.eu-central-1.aws.neon.tech"} \cr
+   RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user \code{r_anon}. \tab \code{rdb.pg_user} \tab \code{R_RDB_PG_USER} \tab \code{"r_anon"} \cr
+   Password for the specified RDB PostgreSQL user. Defaults to the password for user \code{r_anon}. \tab \code{rdb.pg_password} \tab \code{R_RDB_PG_PASSWORD} \tab \code{"WTYUeDtTm0UV4nXzTZ7morHSdM0wQh0p"} \cr
    Maximal timespan to preserve the package's \href{https://pkgpins.rpkg.dev/}{pkgpins} cache. Cache entries older than this will be deleted upon package loading. \tab \code{rdb.global_max_cache_age} \tab \code{R_RDB_GLOBAL_MAX_CACHE_AGE} \tab \code{"30 days"} \cr
-   Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc. \tab \code{rdb.use_testing_server} \tab \code{R_RDB_USE_TESTING_SERVER} \tab \code{FALSE} \cr
-   Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during \code{devtools::test()}. \tab \code{rdb.test_testing_server} \tab \code{R_RDB_TEST_TESTING_SERVER} \tab \code{FALSE} \cr
 }
 }
 

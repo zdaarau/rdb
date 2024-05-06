@@ -16,24 +16,25 @@ utils::globalVariables(names = c(".",
                                  # tidyselect fns
                                  "all_of",
                                  "any_of",
+                                 "ends_with",
                                  "everything",
                                  "matches",
                                  "starts_with",
                                  "where",
                                  ".x",
                                  # other
-                                 "Alpha_2",
-                                 "Alpha_3",
-                                 "Alpha_4",
+                                 "alpha_2",
+                                 "alpha_2_old",
+                                 "alpha_3",
+                                 "alpha_4",
                                  "applicability_constraint",
                                  "archive",
-                                 "Children",
                                  "children_tier_1",
                                  "children_tier_2",
                                  "children_tier_3",
-                                 "Code",
+                                 "column_default",
+                                 "column_name",
                                  "committee_name",
-                                 "Common_name",
                                  "content-disposition",
                                  "count",
                                  "country_code",
@@ -42,16 +43,20 @@ utils::globalVariables(names = c(".",
                                  "country_name",
                                  "country_name_de",
                                  "country_name_long",
+                                 "data_type",
                                  "date_last_edited",
-                                 "date_time_created",
                                  "date_time_last_active",
-                                 "date_time_last_edited",
-                                 "Date_withdrawn",
+                                 "updated_at",
+                                 "date_withdrawn",
                                  "day",
                                  "electorate_abroad",
                                  "electorate_total",
                                  "files",
+                                 "generated",
+                                 "generation_expression",
+                                 "has_default",
                                  "id",
+                                 "identity_generation",
                                  "id_official",
                                  "id_sudd",
                                  "id_sudd_prefix",
@@ -78,24 +83,31 @@ utils::globalVariables(names = c(".",
                                  "inst_trigger_time_limit",
                                  "inst_trigger_type",
                                  "is_draft",
+                                 "is_filled_auto",
+                                 "is_filled_nocodb",
+                                 "is_filled_pg",
                                  "is_former_country",
+                                 "is_generated",
+                                 "is_identity",
                                  "is_multi_valued",
+                                 "is_nullable",
                                  "is_opt",
+                                 "is_pk",
+                                 "is_self_referencing",
                                  "is_testing_server",
-                                 "ISO_Alpha_3",
+                                 "is_updatable",
                                  "items",
                                  "level",
                                  "lower_house_abstentions",
                                  "lower_house_no",
                                  "lower_house_yes",
                                  "month",
-                                 "municipality",
+                                 "municipality_name",
                                  "n",
-                                 "Name",
                                  "name_long",
+                                 "name_short",
                                  "number",
-                                 "Official_name",
-                                 "Parent",
+                                 "ordinal_position",
                                  "parent_topic",
                                  "position_government",
                                  "ptype",
@@ -103,6 +115,8 @@ utils::globalVariables(names = c(".",
                                  "question_en",
                                  "referendum_text_options",
                                  "remarks",
+                                 "req",
+                                 "resp",
                                  "result",
                                  "rowid",
                                  "sources",
@@ -111,6 +125,7 @@ utils::globalVariables(names = c(".",
                                  "subterritories_no",
                                  "subterritories_yes",
                                  "sudd_prefix",
+                                 "table_name",
                                  "tags",
                                  "topic",
                                  "topic_tier_1",
@@ -126,7 +141,6 @@ utils::globalVariables(names = c(".",
                                  "title_en",
                                  "turnout",
                                  "type",
-                                 "Type",
                                  "un_country_code",
                                  "un_region_tier_1_code",
                                  "un_region_tier_2_name",
@@ -169,197 +183,12 @@ has_katex <- function() {
 
 
 
-api_failure <- function(parsed,
-                        raw = NULL,
-                        prefix = "") {
-  
-  env <- parent.frame(n = 2L)
-  
-  assign(x = "parsed",
-         value = parsed,
-         pos = env)
-  
-  msg_part_val <- ifelse(utils::hasName(parsed$error, "value"),
-                         paste0(": ", paste0("{.var ", names(parsed$error$value), "}: {.warn ", parsed$error$value, "}",
-                                             collapse = ", ")),
-                         "")
-  
-  msg_part_error <- ifelse(utils::hasName(parsed, "error"),
-                           paste0("error {.err {parsed$error$id}}", msg_part_val),
-                           "{.err {.y}}.")
-  
-  cli_div_id <- cli::cli_div(theme = cli_theme)
-  cli::cli_alert_warning(paste0(prefix, "The API server responded with ", msg_part_error),
-                         .envir = env)
-  if (!is.null(raw)) {
-    cli::cli_alert_info("The following JSON payload was sent: {.content {raw}}")
-  }
-  cli::cli_end(id = cli_div_id)
-}
-
 as_fm_list <- function(x) {
   
   purrr::imap(x,
               ~ rlang::new_formula(lhs = .y,
                                    rhs = .x,
                                    env = emptyenv()))
-}
-
-#' Assemble MongoDB query filter document
-#'
-#' @param country_code The `country_code`(s) to be included. A character vector.
-#' @param subnational_entity_name The `subnational_entity_name`(s) to be included. A character vector.
-#' @param municipality The `municipality`(s) to be included. A character vector.
-#' @param level The `level`(s) to be included. A character vector.
-#' @param type The `type`(s) to be included. A character vector.
-#' @param date_min The minimum `date` to be included. A [date][Date] or something coercible to.
-#' @param date_max The maximum `date` to be included. A [date][Date] or something coercible to.
-#' @param is_draft `TRUE` means to include only referendum entries with _draft_ status, `FALSE` to include only normal entries. Set to `NULL` in order to
-#'   include both draft and normal entries.
-#' @param date_time_created_min The minimum `date_time_created` to be included. A [datetime][base::DateTimeClasses], or something coercible to (like
-#'   `"2006-01-02"` or `"2006-01-02T15:04:05Z"`; assumed to be in UTC if no timezone is given).
-#' @param date_time_created_max The maximum `date_time_created` to be included. A [datetime][base::DateTimeClasses], or something coercible to (like
-#'   `"2006-01-02"` or `"2006-01-02T15:04:05Z"`; assumed to be in UTC if no timezone is given).
-#' @param date_time_last_edited_min The minimum `date_time_last_edited` to be included. A [datetime][base::DateTimeClasses], or something coercible to (like
-#'   `"2006-01-02"` or `"2006-01-02T15:04:05Z"`; assumed to be in UTC if no timezone is given).
-#' @param date_time_last_edited_max The maximum `date_time_last_edited` to be included. A [datetime][base::DateTimeClasses], or something coercible to (like
-#'   `"2006-01-02"` or `"2006-01-02T15:04:05Z"`; assumed to be in UTC if no timezone is given).
-#' @param query_filter A valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents) which allows for
-#'   maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if `query_filter` is provided, the
-#'   parameters `r formals(assemble_query_filter) |> names() |> setdiff(c("query_filter", "base64_encode")) |> pal::enum_str(wrap = "\x60")` are ignored.
-#' @param base64_encode Whether or not to [Base64](https://en.wikipedia.org/wiki/Base64)-encode the resulting query filter document. Note that the
-#'   `query_filter` argument provided to other functions of this package must be Base64-encoded.
-#'
-#' @return A character scalar containing a valid [MongoDB JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents),
-#'   [Base64](https://en.wikipedia.org/wiki/Base64)-encoded if `base64_encode = TRUE`.
-#' @keywords internal
-assemble_query_filter <- function(country_code = NULL,
-                                  subnational_entity_name = NULL,
-                                  municipality = NULL,
-                                  level = NULL,
-                                  type = NULL,
-                                  date_min = NULL,
-                                  date_max = NULL,
-                                  is_draft = NULL,
-                                  date_time_created_min = NULL,
-                                  date_time_created_max = NULL,
-                                  date_time_last_edited_min = NULL,
-                                  date_time_last_edited_max = NULL,
-                                  query_filter = NULL,
-                                  base64_encode = TRUE) {
-  
-  checkmate::assert_string(query_filter,
-                           null.ok = TRUE)
-  checkmate::assert_flag(base64_encode)
-  
-  # assemble JSON query filter document if `query_filter` is not provided
-  if (is.null(query_filter)) {
-    
-    purrr::map_chr(.x = country_code,
-                   .f = checkmate::assert_choice,
-                   choices = val_set$country_code,
-                   null.ok = TRUE,
-                   .var.name = "country_code")
-    checkmate::assert_character(subnational_entity_name,
-                                any.missing = FALSE,
-                                null.ok = TRUE)
-    checkmate::assert_character(municipality,
-                                any.missing = FALSE,
-                                null.ok = TRUE)
-    purrr::map_chr(.x = level,
-                   .f = checkmate::assert_choice,
-                   choices = var_vals("level"),
-                   null.ok = TRUE,
-                   .var.name = "level")
-    purrr::map_chr(.x = type,
-                   .f = checkmate::assert_choice,
-                   choices = var_vals("type"),
-                   null.ok = TRUE,
-                   .var.name = "type")
-    checkmate::assert_flag(is_draft,
-                           null.ok = TRUE)
-    
-    date_min %<>% lubridate::as_date()
-    date_max %<>% lubridate::as_date()
-    date_time_created_min %<>% lubridate::as_datetime(tz = "UTC")
-    date_time_created_max %<>% lubridate::as_datetime(tz = "UTC")
-    date_time_last_edited_min %<>% lubridate::as_datetime(tz = "UTC")
-    date_time_last_edited_max %<>% lubridate::as_datetime(tz = "UTC")
-    
-    query_filter <-
-      list(country_code = query_filter_in(country_code),
-           canton = query_filter_in(subnational_entity_name),
-           municipality = query_filter_in(municipality),
-           level = query_filter_in(level),
-           institution =
-             type %>%
-             pal::when(length(.) == 0L ~ .,
-                       ~ dplyr::case_match(.x = .,
-                                           "citizens' assembly" ~ "citizen assembly",
-                                           .default = .) %>%
-                         stringr::str_to_sentence()) %>%
-             query_filter_in(),
-           date = query_filter_date(min = date_min,
-                                    max = date_max),
-           draft = is_draft,
-           created_on = query_filter_datetime(min = date_time_created_min,
-                                              max = date_time_created_max),
-           date_time_last_edited = query_filter_datetime(min = date_time_last_edited_min,
-                                                         max = date_time_last_edited_max)) %>%
-      # remove `NULL` elements
-      purrr::compact() %>%
-      # convert to JSON
-      jsonlite::toJSON(POSIXt = "ISO8601",
-                       auto_unbox = TRUE,
-                       digits = NA,
-                       pretty = FALSE)
-  }
-  
-  if (base64_encode) {
-    query_filter %<>% jsonlite::base64_enc()
-  }
-  
-  query_filter
-}
-
-assert_api_success <- function(x) {
-  
-  if (!is.null(x$error$id)) {
-    cli_div_id <- cli::cli_div(theme = cli_theme)
-    cli::cli_abort("API server responded with error {.err {x$error$id}}")
-    cli::cli_end(id = cli_div_id)
-  }
-  
-  invisible(x)
-}
-
-assert_cols_absent <- function(data,
-                               type) {
-  
-  type <- rlang::arg_match0(arg = type,
-                            values = unique(unlist(data_cols_absent$type)))
-  cols <-
-    data_cols_absent %>%
-    dplyr::filter(purrr::map_lgl(type,
-                                 ~ !!type %in% .x)) %$%
-    col
-  
-  col_names <- colnames(data)
-  
-  purrr::walk(cols,
-              ~ {
-                
-                if (.x %in% col_names) {
-                  
-                  data_cols_absent %>%
-                    dplyr::filter(col == !!.x & purrr::map_lgl(type,
-                                                               ~ !!type %in% .x)) %$%
-                    msg %>%
-                    cli::cli_abort()
-                }
-              })
-  
-  invisible(data)
 }
 
 assert_cols_valid <- function(data,
@@ -488,19 +317,19 @@ assert_cols_valid <- function(data,
     }
   }
   
-  ## check `municipality`
+  ## check `municipality_name`
   if (any(data[["level"]] == "local")) {
     
-    if (!("municipality" %in% colnames(data))) {
+    if (!("municipality_name" %in% colnames(data))) {
       cli::cli_progress_done(id = cli_progress_id,
                              result = "failed")
-      action(paste0("Referendums of {.var level = \"local\"} present in {.arg data} but column {.var municipality} is missing."))
+      action(paste0("Referendums of {.var level = \"local\"} present in {.arg data} but column {.var municipality_name} is missing."))
     }
     
     ix_missing_municipalities <-
       data %>%
       tibble::rowid_to_column() %>%
-      dplyr::filter(level == "local" & is.na(municipality)) %$%
+      dplyr::filter(level == "local" & is.na(municipality_name)) %$%
       rowid
     
     n_missing_municipalities <- length(ix_missing_municipalities)
@@ -508,16 +337,16 @@ assert_cols_valid <- function(data,
     if (n_missing_municipalities) {
       cli::cli_progress_done(id = cli_progress_id,
                              result = "failed")
-      action(paste0("{n_missing_municipalities} row{?s} in {.arg data} {?is/are} missing a {.var municipality}. Affected {?is/are} the row{?s} with ",
+      action(paste0("{n_missing_municipalities} row{?s} in {.arg data} {?is/are} missing a {.var municipality_name}. Affected {?is/are} the row{?s} with ",
                     "ind{?ex/ices} {.val {ix_missing_subnational_entities}}."))
     }
   }
-  if ("municipality" %in% colnames(data)) {
+  if ("municipality_name" %in% colnames(data)) {
     
     ix_illegal_municipalities <-
       data %>%
       tibble::rowid_to_column() %>%
-      dplyr::filter(level != "local" & !is.na(municipality)) %$%
+      dplyr::filter(level != "local" & !is.na(municipality_name)) %$%
       rowid
     
     n_illegal_municipalities <- length(ix_illegal_municipalities)
@@ -525,7 +354,7 @@ assert_cols_valid <- function(data,
     if (n_illegal_municipalities) {
       cli::cli_progress_done(id = cli_progress_id,
                              result = "failed")
-      action(paste0("{n_illegal_municipalities} row{?s} in {.arg data} {?has/have} a {.var municipality} set although they are not on the local level. ",
+      action(paste0("{n_illegal_municipalities} row{?s} in {.arg data} {?has/have} a {.var municipality_name} set although they are not on the local level. ",
                     "Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal_municipalities}}."))
     }
   }
@@ -582,120 +411,43 @@ assert_cols_valid <- function(data,
   invisible(data)
 }
 
-assert_content <- function(x) {
+col_names_autofilled <- function(tbl_name = tbl_metadata$name) {
   
-  if (!nchar(x)) {
-    cli::cli_abort("Received empty response from RDB API. Please debug.",
-                   .internal = TRUE)
+  tbl_name <- rlang::arg_match(tbl_name)
+  
+  result <-
+    paste0("pg_metadata_", tbl_name) |>
+    get() |>
+    dplyr::filter(is_filled_auto) |>
+    dplyr::pull(column_name)
+  
+  if (tbl_name == "referendums") {
+    
+    result %<>% c(eval(expr = formals(fun = add_period)$period),
+                  col_names_un,
+                  "country_code_continual",
+                  "country_code_long",
+                  "country_name",
+                  "country_name_long",
+                  "is_former_country",
+                  "municipality_name",
+                  "subnational_entity_name",
+                  "turnout",
+                  "url_sudd",
+                  "url_swissvotes")
   }
   
-  invisible(x)
+  result
 }
 
-#' Authenticate a user session for the [RDB API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#1-reflexive-routes)
-#'
-#' Creates a new user session token if necessary. The token is stored in the R option `rdb.user_session_tokens`, a [tibble][tibble::tbl_df] with the columns
-#' `email`, `token` and `date_time_last_active`.
-#' 
-#' `email` and `password` default to the [package configuration options][pkg_config] `api_username` and `api_password` respectively.
-#'
-#' User session tokens expire automatically after 15 days of inactivity.
-#'
-#' @inheritParams url_api
-#' @param email The e-mail address of the user for which a session should be created. A character scalar.
-#' @param password The password of the user for which a session should be created. A character scalar.
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
-#'
-#' @return The user session token as a character scalar, invisibly.
-#' @keywords internal
-auth_session <- function(email = pal::pkg_config_val(key = "api_username",
-                                                     pkg = this_pkg),
-                         password = pal::pkg_config_val(key = "api_password",
-                                                        pkg = this_pkg),
-                         use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                  pkg = this_pkg),
-                         quiet = FALSE) {
+col_names_mandatory <- function(tbl_name = tbl_metadata$name) {
   
-  checkmate::assert_string(email,
-                           min.chars = 3L)
-  checkmate::assert_string(password,
-                           min.chars = 1L)
-  checkmate::assert_flag(quiet)
+  tbl_name <- rlang::arg_match(tbl_name)
   
-  # get existing tokens or initialize empty tibble
-  tokens <-
-    getOption("rdb.user_session_tokens") %>%
-    pal::when(all(c("email", "token", "date_time_last_active") %in% colnames(.)) ~ .,
-              ~ tibble::tibble(email = character(),
-                               token = character(),
-                               is_testing_server = logical(),
-                               date_time_last_active = as.POSIXct(NULL)))
-  # extract latest token
-  token <- tokens %>% dplyr::filter(email == !!email & is_testing_server == !!use_testing_server)
-  
-  if (nrow(token)) {
-    token %<>% dplyr::filter(date_time_last_active == max(date_time_last_active))
-    token %<>% .[1L, ]
-  }
-  
-  # ensure token is not expired (checked if older than 14 days), else set to `NULL`
-  if (nrow(token) &&
-      checkmate::test_string(token$token, min.chars = 1L) &&
-      ((token$date_time_last_active > clock::add_days(clock::date_now(zone = "UTC"), -14L)) || !is_session_expired(token = token$token,
-                                                                                                                   use_testing_server = use_testing_server))) {
-    token <- token$token
-    
-  } else {
-    token <- NULL
-  }
-  
-  # create new session if necessary
-  if (is.null(token)) {
-    
-    if (!quiet) {
-      status_msg <- "Authenticating new user session"
-      cli::cli_progress_step(msg = status_msg,
-                             msg_done = paste(status_msg, "done"),
-                             msg_failed = paste(status_msg, "failed"))
-    }
-    
-    token <-
-      httr::RETRY(verb = "POST",
-                  url = url_api("users/session",
-                                .use_testing_server = use_testing_server),
-                  config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
-                  times = 3L,
-                  encode = "json",
-                  body = list(email = email,
-                              password = password)) %>%
-      # ensure we actually got a JSON response
-      pal::assert_mime_type(mime_type = "application/json",
-                            msg_suffix = mime_error_suffix) %>%
-      # parse response
-      httr::content(as = "parsed") %$%
-      token
-    
-    if (!quiet) {
-      cli::cli_progress_done()
-    }
-  }
-  
-  # update `rdb.user_session_tokens` option
-  options(rdb.user_session_tokens =
-            tokens %>%
-            dplyr::filter(token != !!token) %>%
-            tibble::add_row(email = email,
-                            token = token,
-                            is_testing_server = use_testing_server,
-                            date_time_last_active = clock::date_now(zone = "UTC")))
-  # return token
-  invisible(token)
-}
-
-md_link_codebook <- function(var_names) {
-  
-  purrr::map_chr(var_names,
-                 \(x) paste0("[`", x, "`](", url_codebook(x), ")"))
+  paste0("pg_metadata_", tbl_name) |>
+    get() |>
+    dplyr::filter(!is_nullable & !is_filled_auto) |>
+    dplyr::pull(column_name)
 }
 
 country_code_to_name <- function(country_code) {
@@ -708,14 +460,14 @@ country_code_to_name <- function(country_code) {
                       
                       result <-
                         data_iso_3166_3 %>%
-                        dplyr::filter(Alpha_4 == !!.x) %$%
+                        dplyr::filter(alpha_4 == !!.x) %$%
                         name_short
                       
                     } else {
                       
                       result <-
                         data_iso_3166_1 %>%
-                        dplyr::filter(Alpha_2 == !!.x) %$%
+                        dplyr::filter(alpha_2 == !!.x) %$%
                         name_short
                     }
                     
@@ -725,124 +477,6 @@ country_code_to_name <- function(country_code) {
                     
                     result
                   })
-}
-
-field_to_var_name <- function(x) {
-  
-  x %>% purrr::map_chr(~ var_names[[.x]] %||% .x)
-}
-
-derive_country_vars <- function(country_code,
-                                date) {
-  
-  country_code %<>% as.character()
-  subnational_entity_code <- NA_character_
-  
-  # handle subnational entities
-  ## Ascension
-  if (country_code == "AC") {
-    
-    country_code <- "SH"
-    subnational_entity_code <- "SH-AC"
-  }
-  
-  # assign canonical pseudo codes
-  ## Kosovo
-  country_code %<>% dplyr::case_match(.x = .,
-                                      "KS" ~ "XK",
-                                      .default = .)
-  data_former <-
-    data_iso_3166_3 %>%
-    dplyr::filter(Alpha_2 == !!country_code & !!date <= (clock::add_years(Date_withdrawn, 50L))) %>%
-    dplyr::filter(Date_withdrawn == pal::safe_max(Date_withdrawn))
-  
-  is_former <- nrow(data_former) > 0L
-  is_current <- !is_former && country_code %in% data_iso_3166_1$Alpha_2
-  
-  if (!(is_former || is_current) && !(country_code %in% country_codes_sudd_invalid)) {
-    cli::cli_alert_warning("Neither ISO 3166-1 alpha-2 nor ISO 3166-3 alpha-4 {.var country_code} found for {.val {country_code}}.")
-  }
-  
-  country_code <-
-    country_code %>%
-    pal::when(is_former ~
-                data_former %>%
-                dplyr::filter(Date_withdrawn == min(Date_withdrawn)) %>%
-                assertr::verify(nrow(.) == 1L) %$%
-                Alpha_4,
-              is_current ~
-                country_code,
-              ~
-                NA_character_)
-  
-  tibble::tibble(country_code = country_code,
-                 country_name = country_code_to_name(country_code),
-                 is_former_country = is_former,
-                 subnational_entity_code = subnational_entity_code)
-}
-
-drop_disabled_vars <- function(data,
-                               to_drop) {
-  
-  to_drop_present <- intersect(to_drop, colnames(data))
-  n_to_drop_present <- length(to_drop_present)
-  
-  if (n_to_drop_present) {
-    
-    cli::cli_alert_warning(paste0("The {cli::qty(n_to_drop_present)} column{?s} {.var {to_drop_present}} in {.arg data} are ignored because setting/altering ",
-                                  "the corresponding values is disabled."))
-    
-    data %<>% dplyr::select(-any_of(to_drop))
-  }
-  
-  data
-}
-
-drop_implicit_vars <- function(data,
-                               type = c("add", "edit")) {
-  
-  type <- rlang::arg_match(type)
-  
-  to_drop <-
-    data_cols_absent %>%
-    dplyr::filter(purrr::map_lgl(type,
-                                 ~ !!type %in% .x)) %$%
-    col
-  
-  data %>% dplyr::select(-any_of(to_drop))
-}
-
-drop_non_applicable_vars <- function(data) {
-  
-  if ("level" %in% colnames(data)) {
-    
-    if (data$level != "local") {
-      data %<>% dplyr::select(-any_of("municipality"))
-    }
-    if (data$level == "national") {
-      data %<>% dplyr::select(-any_of("subnational_entity_name"))
-    }
-    # TODO: remove this as soon as [issue #52](https://github.com/zdaarau/c2d-app/issues/52) is resolved
-    if (data$level != "national" || data$country_code != "CH") {
-      data %<>% dplyr::select(-any_of(c("votes_per_subterritory",
-                                        "lower_house_yes",
-                                        "lower_house_no",
-                                        "lower_house_abstentions",
-                                        "upper_house_yes",
-                                        "upper_house_no",
-                                        "upper_house_abstentions",
-                                        "position_government")))
-    }
-  }
-  
-  data %<>% dplyr::select(-any_of(c(
-    "files",
-    "is_former_country",
-    # TODO: remove this as soon as [issue #81](https://github.com/zdaarau/c2d-app/issues/81) is fixed
-    "sources"
-  )))
-  
-  data
 }
 
 fct_flip <- function(x) {
@@ -857,54 +491,10 @@ fct_flip <- function(x) {
   x %>% forcats::fct_recode(!!!flip_map)
 }
 
-flatten_array_as_is <- function(x) {
+md_link_codebook <- function(var_names) {
   
-  x %<>% unlist()
-  
-  if (!is.null(x)) {
-    x %<>% I()
-  }
-  
-  x
-}
-
-
-
-is_session_expired <- function(token,
-                               use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                        pkg = this_pkg)) {
-  response <-
-    httr::RETRY(verb = "GET",
-                url = url_api("users/profile",
-                              .use_testing_server = use_testing_server),
-                config = httr::add_headers(Authorization = paste("Bearer", token),
-                                           Origin = url_admin_portal(.use_testing_server = use_testing_server)),
-                times = 3L) %>%
-    # ensure we actually got a JSON response
-    pal::assert_mime_type(mime_type = "application/json",
-                          msg_suffix = mime_error_suffix) %>%
-    # parse response
-    httr::content(as = "parsed")
-  
-  is.null(response[["profile"]])
-}
-
-#' Lowercase non-abbreviations
-#'
-#' @param x A character vector.
-#'
-#' @return A character vector of the same length as `x`.
-#' @keywords internal
-lower_non_abbrs <- function(x) {
-  
-  x %>%
-    stringr::str_split(pattern = "\\b") %>%
-    purrr::map_chr(~ .x %>%
-                     dplyr::if_else(stringr::str_detect(string = .,
-                                                        pattern = "^[^[:lower:]]+$"),
-                                    .,
-                                    stringr::str_to_lower(.)) %>%
-                     paste0(collapse = ""))
+  purrr::map_chr(var_names,
+                 \(x) paste0("[`", x, "`](", url_codebook(x), ")"))
 }
 
 order_rfrnd_cols <- function(data) {
@@ -912,29 +502,24 @@ order_rfrnd_cols <- function(data) {
   data %>% dplyr::relocate(any_of(rfrnd_cols_order))
 }
 
-parse_datetime <- function(x) {
+#' Get primary key column names(s)
+#'
+#' Returns the primary key column names(s) of the specified table, based on PostgreSQL metadata obtained at package-build time. This function is faster
+#' than [pg_pk()] since it doesn't perform network requests. But it can return outdated information if changes were made to the RDB PostgreSQL schema *after*
+#' the package was last built.
+#'
+#' @inheritParams pg_pk
+#'
+#' @return A character scalar.
+#' @keywords internal
+pk <- function(tbl_name = tbl_metadata$name) {
   
-  x %<>% unlist(use.names = FALSE)
+  tbl_name <- rlang::arg_match(tbl_name)
   
-  if (is.character(x) && stringr::str_detect(string = x,
-                                             pattern = "^-?\\d+$",
-                                             negate = TRUE)) {
-    result <-
-      x %>%
-      clock::naive_time_parse(format = "%Y-%m-%dT%H:%M:%SZ",
-                              precision = "millisecond") %>%
-      clock::as_date_time(zone = "UTC")
-    
-  } else {
-    
-    result <-
-      as.numeric(x) %>%
-      magrittr::divide_by(1000L) %>%
-      as.POSIXct(origin = "1970-01-01",
-                 tz = "UTC")
-  }
-  
-  result
+  paste0("pg_metadata_", tbl_name) |>
+    get() |>
+    dplyr::filter(is_pk) |>
+    dplyr::pull(column_name)
 }
 
 plot_share_per_period <- function(data_freq,
@@ -1071,705 +656,34 @@ topic_frequency <- function(topics,
     dplyr::summarise(n = dplyr::n())
 }
 
-#' Tidy "raw" RDB API referendum data
-#'
-#' Converts the "raw" MongoDB data from the RDB API to the tidied [rfrnds()] schema.
-#'
-#' You can reverse this function again using [untidy_rfrnds()].
-#'
-#' @param data The MongoDB data as a list (converted from the JSON returned by the RDB API using [jsonlite::fromJSON()]).
-#' @param tidy Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If `FALSE`, the raw MongoDB
-#'   referendum data will only be modified just enough to be able to return it as a [tibble][tibble::tbl_df]. Note that untidy data doesn't conform to the 
-#'   [codebook][data_codebook] (i.a. different variable names).
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @keywords internal
-tidy_rfrnds <- function(data,
-                        tidy = TRUE) {
-  
-  checkmate::assert_flag(tidy)
-  this_env <- rlang::current_env()
-  
-  data %<>%
-    # unnest columns and ensure list type for multi-value columns
-    # NOTE that despite of the [speed-up in v1.1.4](https://github.com/tidyverse/tidyr/releases/tag/v1.1.4), `tidyr::unnest()` is still much slower than our
-    # custom function
-    purrr::map(.f = function(l,
-                             category_names = names(l$categories),
-                             context_names = names(l$context),
-                             title_langs = names(l$title)) {
-      
-      for (name in category_names) {
-        l[[paste0("categories.", name)]] <- l$categories[[name]]
-      }
-      
-      for (name in context_names) {
-        l[[paste0("context.", name)]] <- l$context[[name]]
-      }
-      
-      for (lang in title_langs) {
-        l[[paste0("title.", lang)]] <- l$title[[lang]]
-      }
-      
-      l$categories <- NULL
-      l$context <- NULL
-      l$title <- NULL
-      
-      for (name in c("tags",
-                     "categories.action",
-                     "categories.special_topics",
-                     "categories.excluded_topics")) {
-        l[[name]] %<>% purrr::list_c(ptype = character()) %>% list()
-      }
-      
-      for (name in c("archive",
-                     "files",
-                     "context.votes_per_canton")) {
-        l[[name]] %<>% list()
-      }
-      
-      l
-    }) %>%
-    # drop empty fields
-    purrr::modify_depth(.depth = 1L,
-                        .f = purrr::compact) %>%
-    # convert to tibble
-    purrr::map(tibble::as_tibble_row) %>%
-    purrr::list_rbind()
-  
-  # tidy data
-  if (nrow(data) > 0L && tidy) {
-    
-    data %<>%
-      # rename variables (mind that the MongoDB-based API doesn't demand a fixed schema)
-      pal::rename_from(dict = var_names) %>%
-      # create/recode variables
-      dplyr::mutate(
-        # ensure all supposed to floating-point numbers are actually of type double (JSON API is not reliable in this respect)
-        dplyr::across(any_of(c("subterritories_no",
-                               "subterritories_yes",
-                               # TODO: remove/adapt next two lines once [issue #78](https://github.com/zdaarau/c2d-app/issues/78) is resolved
-                               "date_time_created"["date_time_created" %in% colnames(.)
-                                                   && any(purrr::map_lgl(.$date_time_created, is.numeric))],
-                               "date_time_last_edited"["date_time_last_edited" %in% colnames(.)
-                                                       && any(purrr::map_lgl(.$date_time_last_edited, is.numeric))])),
-                      ~ purrr::map_dbl(.x, ~ if (is.null(.x)) NA_real_ else as.double(.x))),
-        
-        # use explicit NA values
-        dplyr::across(where(is.integer),
-                      ~ dplyr::if_else(.x %in% c(-1L, -2L),
-                                       NA_integer_,
-                                       .x)),
-        dplyr::across(where(is.character),
-                      ~ dplyr::if_else(.x %in% c("", "-1", "-2"),
-                                       NA_character_,
-                                       .x)),
-        dplyr::across(any_of(c("subterritories_yes", "subterritories_no")),
-                      ~ dplyr::if_else(.x %in% c(-1.0, -2.0),
-                                       NA_real_,
-                                       .x)),
-        dplyr::across(any_of("result"),
-                      ~ dplyr::if_else(.x %in% c("Unknown", "Not provided"),
-                                       NA_character_,
-                                       .x)),
-        # convert all values to lowercase
-        ## vectors
-        dplyr::across(any_of(c("result",
-                               "type",
-                               "inst_legal_basis_type",
-                               "inst_object_type",
-                               "inst_object_legal_level",
-                               "inst_object_revision_extent",
-                               "inst_trigger_type",
-                               "inst_trigger_actor_level",
-                               "inst_trigger_time_limit",
-                               "inst_quorum_approval",
-                               "inst_precondition_decision")),
-                      stringr::str_to_lower),
-        ## lists
-        dplyr::across(any_of(c("inst_object_revision_modes",
-                               "inst_topics_only",
-                               "inst_topics_excluded")),
-                      ~ purrr::map(.x = .x,
-                                   .f = stringr::str_to_lower)),
-        
-        # convert only non-abbreviated values to lowercase
-        dplyr::across(any_of(c("inst_object_author",
-                               "inst_trigger_actor",
-                               "inst_precondition_actor")),
-                      ~ purrr::map_chr(.x = .x,
-                                       .f = lower_non_abbrs)),
-        
-        # specific recodings
-        ## binary (dummies)
-        dplyr::across(any_of("position_government"),
-                      ~ dplyr::case_when(.x == "Acceptance" ~ "yes",
-                                         .x == "Rejection" ~ "no",
-                                         .default = NA_character_)),
-        dplyr::across(any_of("inst_has_urgent_legal_basis"),
-                      ~ dplyr::case_when(.x == "Urgent" ~ TRUE,
-                                         .x == "Normal" ~ FALSE,
-                                         .default = NA)),
-        dplyr::across(any_of("inst_is_binding"),
-                      ~ dplyr::case_when(.x == "Binding" ~ TRUE,
-                                         .x == "Non-binding" ~ FALSE,
-                                         .default = NA)),
-        dplyr::across(any_of("inst_is_counter_proposal"),
-                      ~ dplyr::case_when(.x == "Yes" ~ TRUE,
-                                         .x == "No" ~ FALSE,
-                                         .default = NA)),
-        dplyr::across(any_of("inst_is_assembly"),
-                      ~ dplyr::case_when(.x == "Assembly" ~ TRUE,
-                                         .x == "Ballot" ~ FALSE,
-                                         .default = NA)),
-        dplyr::across(any_of("inst_has_precondition"),
-                      ~ dplyr::case_when(.x == "Exists" ~ TRUE,
-                                         .x == "Does not exist" ~ FALSE,
-                                         .default = NA)),
-        ## nominal
-        ### flatten `id`
-        id = purrr::list_c(id,
-                           ptype = character()),
-        ### split `tags` into separate per-tier vars
-        topics_tier_1 = tags %>% purrr::map(infer_topics,
-                                            tier = 1L),
-        topics_tier_2 = tags %>% purrr::map(infer_topics,
-                                            tier = 2L),
-        topics_tier_3 = tags %>% purrr::map(~ .x[.x %in% topics_tier_3_]),
-        ### various cleanups
-        dplyr::across(any_of("type"),
-                      ~ dplyr::case_match(.x = .x,
-                                          "citizen assembly" ~ "citizens' assembly",
-                                          "not provided"     ~ NA_character_,
-                                          .default = .x)),
-        dplyr::across(any_of(c("inst_trigger_actor",
-                               "inst_object_author")),
-                      ~ dplyr::case_match(.x = .x,
-                                          "institution" ~ "other institution",
-                                          .default = .x)),
-        dplyr::across(any_of("inst_object_type"),
-                      ~ dplyr::case_match(.x = .x,
-                                          "legal text (ausformulierter vorschlag)" ~ "legal text (formulated proposal)",
-                                          "legal text (allg. anregung)"            ~ "legal text (general proposal)",
-                                          .default = .x)),
-        dplyr::across(any_of("inst_topics_only"),
-                      ~ purrr::map(.x = .x,
-                                   .f = \(x) dplyr::case_match(.x = x,
-                                                               "infrastructural act"                ~ "infrastructural acts",
-                                                               "competence shift"                   ~ "competence shifts",
-                                                               "financial act"                      ~ "financial acts",
-                                                               "financial act (expenses)"           ~ "financial acts (expenses)",
-                                                               "financial act (taxes)"              ~ "financial acts (taxes)",
-                                                               "financial act (obligations)"        ~ "financial acts (obligations)",
-                                                               "total revision of the constitution" ~ "total revisions of the constitution",
-                                                               .default = x))),
-        dplyr::across(any_of("inst_topics_excluded"),
-                      ~ purrr::map(.x = .x,
-                                   .f = \(x) dplyr::case_match(.x = x,
-                                                               "budget"                   ~ "budgets",
-                                                               "parliamentary competence" ~ "everything within parliamentary competence",
-                                                               .default = x))),
-        dplyr::across(any_of("inst_quorum_turnout"),
-                      ~ stringr::str_replace_all(string = .x,
-                                                 pattern = c("^(\\s+)?>(\\s+)?" = ">\u202f",
-                                                             "(\\s+)?%(\\s+)?$" = "\u202f%"))),
-        ## ordinal
-        ## interval
-        # TODO: Remove else-clauses once [this](https://github.com/zdaarau/c2d-app/commit/6b72d1928e0182f01b188f3973ba15482fc8c04a) is deployed to
-        #       production
-        date = if (is.list(date)) {
-          clock::as_date(parse_datetime(date))
-        } else {
-          clock::date_parse(date)
-        },
-        dplyr::across(any_of(c("date_time_created",
-                               "date_time_last_edited")),
-                      parse_datetime),
-        ## undefined
-        files = files %>% purrr::map(~ .x %>% purrr::map(~ .x %>%
-                                                           # unnest and restore `date`
-                                                           purrr::modify_in(.where = "date",
-                                                                            .f = parse_datetime) %>%
-                                                           # change subvariable names
-                                                           pal::rename_from(dict = sub_var_names$files))))
-    
-    # complement `id_official` and `id_sudd` (a two-letter country code plus a 6-digit number) by old `number`
-    # TODO: once [issue #?](https://github.com/zdaarau/c2d-app/issues/?) is resolved:
-    #       - correct this upstream using `edit_rfrnds()`
-    #       - remove corresponding code below
-    #       - file issue to completely get rid of field `number`
-    if ("number" %in% colnames(data)) {
-      
-      data %<>% dplyr::mutate(number = dplyr::if_else(number %in% c("0", ""),
-                                                      NA_character_,
-                                                      number),
-                              dplyr::across(any_of("id_official"),
-                                            ~ dplyr::if_else(is.na(.x) & stringr::str_detect(number, "^\\d"),
-                                                             number,
-                                                             .x)),
-                              dplyr::across(any_of("id_sudd"),
-                                            ~ dplyr::if_else(is.na(.x) & stringr::str_detect(number, "^\\D"),
-                                                             # everything beyond the 8th char seems to be manually added -> strip!
-                                                             stringr::str_sub(string = number,
-                                                                              end = 8L),
-                                                             .x)))
-    }
-    
-    # ensure `id_official` and `id_sudd` are present
-    if (!("id_official" %in% colnames(data))) data$id_official <- NA_character_
-    if (!("id_sudd" %in% colnames(data))) data$id_sudd <- NA_character_
-    
-    # TODO: remove this once [issue #]() has been resolved
-    # create `inst_is_variable/divisible` if necessary
-    if ("categories.referendum_text_options" %in% colnames(data)) {
-      
-      if (!("inst_is_variable" %in% colnames(data))) {
-        data %<>% dplyr::mutate(inst_is_variable = dplyr::case_when(
-          categories.referendum_text_options %in% c("Variants possible", "Variants / splitting up possible") ~ TRUE,
-          is.na(categories.referendum_text_options)                                                          ~ NA,
-          .default                                                                                           = FALSE
-        ))
-      }
-      if (!("inst_is_divisible" %in% colnames(data))) {
-        data %<>% dplyr::mutate(inst_is_divisible = dplyr::case_when(
-          categories.referendum_text_options %in% c("Splitting up possible", "Variants / splitting up possible") ~ TRUE,
-          is.na(categories.referendum_text_options)                                                              ~ NA,
-          .default                                                                                               = FALSE
-        ))
-      }
-    }
-    
-    # ensure all country codes are known and assign canonical country name
-    data %<>% add_country_name()
-    
-    data %<>%
-      # remove obsolete vars
-      dplyr::select(-any_of(c("categories.referendum_text_options",
-                              "country_code_historical",
-                              "is_past_jurisdiction",
-                              "number",
-                              "tags"))) %>%
-      
-      # convert to (ordered) factor where appropriate
-      ## based on codebook
-      dplyr::mutate(dplyr::across(everything(),
-                                  ~ {
-                                    metadata <- data_codebook %>% dplyr::filter(variable_name == dplyr::cur_column())
-                                    
-                                    if (nrow(metadata) != 1L) {
-                                      cli::cli_abort("Missing codebook metadata! Please debug",
-                                                     .internal = TRUE)
-                                    }
-                                    
-                                    if (is.factor(unlist(metadata$ptype))) {
-                                      
-                                      lvls <- levels(unlist(metadata$ptype))
-                                      is_ordered <- metadata$value_scale %in% c("ordinal_ascending", "ordinal_descending")
-                                      
-                                      if (is.list(.x)) {
-                                        .x %>% purrr::map(.f = factor,
-                                                          levels = lvls,
-                                                          ordered = is_ordered)
-                                      } else {
-                                        factor(x = .x,
-                                               levels = lvls,
-                                               ordered = is_ordered)
-                                      }
-                                    } else {
-                                      .x
-                                    }
-                                  })) %>%
-      ## fctrs without explicit variable_values set in codebook
-      dplyr::mutate(
-        ### fctrs where we defined a finite set of values
-        country_code = factor(x = country_code,
-                              levels = val_set$country_code,
-                              ordered = FALSE),
-        
-        ### fctrs where we did not define a finite set of values (yet)
-        dplyr::across(any_of(c("subnational_entity_name",
-                               "municipality")),
-                      as.factor)
-      ) %>%
-      # add vars which aren't always included and coerce to proper types
-      vctrs::tib_cast(to =
-                        data_codebook %>%
-                        dplyr::filter(!is_opt) %$%
-                        magrittr::set_names(x = ptype,
-                                            value = variable_name) %>%
-                        tibble::as_tibble(),
-                      call = this_env) %>%
-      # harmonize col order
-      order_rfrnd_cols()
-  }
-  
-  # convert nested list cols to tibbles
-  data %>%
-    dplyr::mutate(dplyr::across(any_of(c("files",
-                                         "votes_per_subterritory")),
-                                ~ purrr::map(.x,
-                                             \(x) if (length(x) > 0L) x %>% purrr::map(tibble::as_tibble) %>% purrr::list_rbind() else NULL)),
-                  dplyr::across(any_of("archive"),
-                                ~ purrr::map(.x,
-                                             \(x) if (length(x) > 0L) tibble::as_tibble(x) else NULL))) %>%
-    # add variable labels (must be done at last since mutations above drop attrs)
-    labelled::set_variable_labels(.labels = var_lbls,
-                                  .strict = FALSE)
-}
-
-untidy_date <- function(x) {
-  
-  as.numeric(x) %>%
-    magrittr::multiply_by(1000.0) %>%
-    as.list() %>%
-    magrittr::set_names(rep("$date",
-                            times = length(.)))
-}
-
-#' Untidy into "raw" RDB API referendum data
-#'
-#' Converts from the tidied [rfrnds()] to the "raw" MongoDB schema used by the RDB API. Basically reverts [tidy_rfrnds()].
-#'
-#' @param data The data to untidy as returned by [rfrnds()].
-#' @param as_tibble Whether or not to return the result as a [tibble][tibble::tbl_df]. If `FALSE`, a list is returned.
-#'
-#' @return
-#' If `as_tibble = FALSE`, a list with one element per referendum, suitable to be converted [jsonlite::toJSON()] and then fed to the RDB API.
-#'
-#' Otherwise a [tibble][tibble::tbl_df] of the same format as returned by [`rfrnds(tidy = FALSE)`][rfrnds].
-#' @keywords internal
-untidy_rfrnds <- function(data,
-                          as_tibble = FALSE) {
-  
-  checkmate::assert_flag(as_tibble)
-  
-  var_names_inverse <-
-    names(var_names) %>%
-    magrittr::set_names(purrr::list_c(var_names, ptype = character()))
-  
-  sub_var_names_files_inverse <-
-    names(sub_var_names$files) %>%
-    magrittr::set_names(purrr::list_c(sub_var_names$files, ptype = character()))
-  
-  # restore `number`
-  if (all(c("id_official", "id_sudd") %in% colnames(data))) {
-    data %<>% dplyr::mutate(id_sudd = dplyr::if_else(is.na(id_sudd),
-                                                     id_official,
-                                                     id_sudd))
-  }
-  
-  data %<>%
-    # remove variable labels
-    labelled::remove_var_label() %>%
-    dplyr::mutate(
-      # restore strings
-      dplyr::across(c(any_of("date"),
-                      where(is.factor)),
-                    as.character),
-      dplyr::across(where(is.list),
-                    ~ {
-                      if (is.factor(.x[[1L]])) {
-                        .x %>% purrr::map(as.character)
-                      } else {
-                        .x
-                      }
-                    }),
-      # restore dates
-      dplyr::across(any_of(c("date_time_created",
-                             "date_time_last_edited")),
-                    untidy_date),
-      # restore individual variables
-      ## `files`
-      dplyr::across(any_of("files"),
-                    ~ purrr::map(.x = .x,
-                                 .f = \(x) {
-                                   
-                                   if ("date_time_attached" %in% colnames(x)) {
-                                     
-                                     x$date_time_attached %<>% untidy_date()
-                                   }
-                                   
-                                   x %<>% pal::rename_from(dict = sub_var_names_files_inverse)
-                                 })),
-      ## `inst_topics_excluded`
-      dplyr::across(any_of("inst_topics_excluded"),
-                    ~ purrr::map(.x = .x,
-                                 .f = \(x) dplyr::case_match(.x = x,
-                                                             "budgets" ~ "budget",
-                                                             .default = x))),
-      ## `inst_topics_only`
-      dplyr::across(any_of("inst_topics_only"),
-                    ~ purrr::map(.x = .x,
-                                 .f = \(x) dplyr::case_match(.x = x,
-                                                             "infrastructural acts"                ~ "infrastructural act",
-                                                             "competence shifts"                   ~ "competence shift",
-                                                             "financial acts"                      ~ "financial act",
-                                                             "financial acts (expenses)"           ~ "financial act (expenses)",
-                                                             "financial acts (taxes)"              ~ "financial act (taxes)",
-                                                             "financial acts (obligations)"        ~ "financial act (obligations)",
-                                                             "total revisions of the constitution" ~ "total revision of the constitution",
-                                                             .default = x))),
-      ## `inst_object_type`
-      dplyr::across(any_of("inst_object_type"),
-                    ~ dplyr::case_match(.x = .x,
-                                        "legal text (formulated proposal)" ~ "legal text (ausformulierter vorschlag)",
-                                        "legal text (general proposal)"    ~ "legal text (allg. anregung)",
-                                        .default = .x)),
-      ## `inst_trigger_actor`, `inst_object_author`
-      dplyr::across(any_of(c("inst_trigger_actor",
-                             "inst_object_author")),
-                    ~ dplyr::case_match(.x = .x,
-                                        "other institution" ~ "institution",
-                                        .default = .x)),
-      ## `inst_precondition_actor`
-      dplyr::across(any_of("inst_precondition_actor"),
-                    ~ dplyr::case_match(.x = .x,
-                                        "parliament and president"  ~ "parliament and President",
-                                        "parliament and government" ~ "parliament and Government",
-                                        .default = .x)),
-      ## `type`
-      dplyr::across(any_of("type"),
-                    ~ dplyr::case_match(.x = .x,
-                                        "citizens' assembly" ~ "citizen assembly",
-                                        NA_character_        ~ "not provided",
-                                        .default = .x)),
-      ## `id`
-      dplyr::across(any_of("id"),
-                    ~ as.list(.x) %>% magrittr::set_names(rep("$oid", times = length(.)))),
-      ## binary (dummies)
-      dplyr::across(any_of("position_government"),
-                    ~ dplyr::case_match(.x = .x,
-                                        "yes" ~ "Acceptance",
-                                        "no"  ~ "Rejection",
-                                        .default = .x)),
-      dplyr::across(any_of("inst_has_urgent_legal_basis"),
-                    ~ dplyr::if_else(.x,
-                                     "Urgent",
-                                     "Normal")),
-      dplyr::across(any_of("inst_is_binding"),
-                    ~ dplyr::if_else(.x,
-                                     "Binding",
-                                     "Non-binding")),
-      dplyr::across(any_of("inst_is_counter_proposal"),
-                    ~ dplyr::if_else(.x,
-                                     "Yes",
-                                     "No")),
-      dplyr::across(any_of("inst_is_assembly"),
-                    ~ dplyr::if_else(.x,
-                                     "Assembly",
-                                     "Ballot")),
-      dplyr::across(any_of("inst_has_precondition"),
-                    ~ dplyr::if_else(.x,
-                                     "Exists",
-                                     "Does not exist")),
-      # uppercase first letter of various vars
-      dplyr::across(any_of(c("result",
-                             "type",
-                             "inst_legal_basis_type",
-                             "inst_object_type",
-                             "inst_object_legal_level",
-                             "inst_object_revision_extent",
-                             "inst_trigger_type",
-                             "inst_trigger_actor_level",
-                             "inst_trigger_time_limit",
-                             "inst_quorum_approval",
-                             "inst_precondition_decision",
-                             # vars containing uppercase abbreviations
-                             "inst_object_author",
-                             "inst_trigger_actor",
-                             "inst_precondition_actor")),
-                    ~ pal::sentenceify(x = .x,
-                                       punctuation_mark = "")),
-      dplyr::across(any_of(c("inst_object_revision_modes",
-                             "inst_topics_only",
-                             "inst_topics_excluded")),
-                    ~ purrr::map(.x = .x,
-                                 .f = pal::sentenceify,
-                                 punctuation_mark = "")),
-      # restore NA values
-      dplyr::across(where(is.character) & !any_of("result"),
-                    ~ tidyr::replace_na(data = .x,
-                                        replace = "")),
-      ## implicit NAs (i.e. 'not provided' (-2))
-      dplyr::across(where(is.integer) & !any_of(field_to_var_name(union(rfrnd_fields$required_for_additions, rfrnd_fields$required_for_edits))),
-                    ~ tidyr::replace_na(data = .x,
-                                        replace = -2L)),
-      ## explicit NAs (i.e. 'unknown' (-1))
-      dplyr::across(any_of("result"),
-                    ~ tidyr::replace_na(data = .x,
-                                        replace = "Unknown")),
-      dplyr::across(where(is.integer) & any_of(field_to_var_name(union(rfrnd_fields$required_for_additions, rfrnd_fields$required_for_edits))),
-                    ~ tidyr::replace_na(data = .x,
-                                        replace = -1L)),
-      dplyr::across(any_of(c("subterritories_yes", "subterritories_no")),
-                    ~ tidyr::replace_na(data = .x,
-                                        replace = -1.0))
-    ) %>%
-    # restore variable names
-    pal::rename_from(dict = var_names_inverse)
-  
-  # restore `referendum_text_options`
-  if (all(c("inst_is_divisible", "inst_is_variable") %in% colnames(data))) {
-    data %<>% dplyr::mutate(referendum_text_options = dplyr::case_when(!inst_is_divisible & !inst_is_variable ~ "Whole text only",
-                                                                       inst_is_divisible & inst_is_variable   ~ "Variants / splitting up possible",
-                                                                       inst_is_divisible                      ~ "Splitting up possible",
-                                                                       inst_is_variable                       ~ "Variants possible",
-                                                                       .default                               = NA_character_))
-  }
-  
-  # restore `tags`
-  topics_var_names <- paste0("topics_tier_", 1:3)
-  topics_vars_present <- topics_var_names %in% colnames(data)
-  
-  if (any(topics_vars_present)) {
-    
-    if (!all(topics_vars_present)) {
-      topics_vars_missing <- topics_var_names %>% setdiff(topics_vars_present)
-      cli::cli_abort(paste0("{cli::qty(topics_vars_missing)}The following {.var {'topics_tier_#'}} variable{?s} {?is/are} missing from {.arg data}: ",
-                            "{.var {topics_vars_missing}}"))
-    }
-    
-    data %<>%
-      dplyr::mutate(tags = restore_topics(topics_tier_1,
-                                          topics_tier_2,
-                                          topics_tier_3)) %>%
-      dplyr::select(-any_of(topics_var_names))
-  }
-  
-  # remove unknown columns
-  data %<>% dplyr::select(any_of(rfrnd_fields$all_flat))
-  
-  if (!as_tibble) {
-    
-    # remove nested field prefixes
-    data %<>% dplyr::rename_with(.cols = matches("^(categories|context|title)\\."),
-                                 .fn = ~ stringr::str_remove(string = .x,
-                                                             pattern = "^\\w+?\\."))
-    
-    # restore nested structure
-    categories_fields_present <-
-      names(var_names) %>%
-      stringr::str_subset(pattern = "^categories\\.") %>%
-      stringr::str_remove(pattern = "^categories\\.") %>%
-      intersect(colnames(data))
-    
-    context_fields_present <-
-      names(var_names) %>%
-      stringr::str_subset(pattern = "^context\\.") %>%
-      stringr::str_remove(pattern = "^context\\.") %>%
-      intersect(colnames(data))
-    
-    title_fields_present <-
-      names(var_names) %>%
-      stringr::str_subset(pattern = "^title\\.") %>%
-      stringr::str_remove(pattern = "^title\\.") %>%
-      intersect(colnames(data))
-    
-    if (length(categories_fields_present)) {
-      data %<>% tidyr::nest(categories = all_of(categories_fields_present))
-    }
-    if (length(context_fields_present)) {
-      data %<>% tidyr::nest(context = all_of(context_fields_present))
-    }
-    if (length(title_fields_present)) {
-      data %<>% tidyr::nest(title = all_of(title_fields_present))
-    }
-    
-    data %<>%
-      # convert to list
-      dplyr::group_split(dplyr::row_number(),
-                         .keep = FALSE) %>%
-      purrr::map(as.list) %>%
-      # tweak list structure
-      purrr::modify_depth(.depth = 1L,
-                          .f = ~
-                            .x %>%
-                            # flatten unnecessarily nested elements
-                            purrr::modify_at(.at = "tags",
-                                             .f = flatten_array_as_is) %>%
-                            # convert nested tibbles to lists
-                            purrr::modify_at(.at = "files",
-                                             .f = ~
-                                               .x[[1L]] %>%
-                                               pal::when(is.null(.) ~ list(),
-                                                         ~ dplyr::group_split(.tbl = .,
-                                                                              dplyr::row_number(),
-                                                                              .keep = FALSE) %>%
-                                                           purrr::map(as.list))) %>%
-                            purrr::modify_at(.at = c("archive",
-                                                     "categories",
-                                                     "context",
-                                                     "title"),
-                                             .f = ~
-                                               .x %>%
-                                               purrr::map(as.list) %>%
-                                               unlist(recursive = FALSE)) %>%
-                            # reduce nesting of nested tibble
-                            pal::when(is.null(purrr::pluck(., "context", "votes_per_canton")) ~ .,
-                                      ~ purrr::modify_in(.x = .,
-                                                         .where = c("context", "votes_per_canton"),
-                                                         .f = dplyr::first)) %>%
-                            # reduce nesting of array fields
-                            pal::when(is.null(purrr::pluck(., "categories", "action")) ~ .,
-                                      ~ purrr::modify_in(.x = .,
-                                                         .where = c("categories", "action"),
-                                                         .f = flatten_array_as_is)) %>%
-                            pal::when(is.null(purrr::pluck(., "categories", "excluded_topics")) ~ .,
-                                      ~ purrr::modify_in(.x = .,
-                                                         .where = c("categories", "excluded_topics"),
-                                                         .f = flatten_array_as_is)) %>%
-                            pal::when(is.null(purrr::pluck(., "categories", "special_topics")) ~ .,
-                                      ~ purrr::modify_in(.x = .,
-                                                         .where = c("categories", "special_topics"),
-                                                         .f = flatten_array_as_is)))
-  }
-  
-  data
-}
-
-#' Assemble RDB Services API URL
+#' Assemble C2D Services API URL
 #'
 #' @param ... Optional path components added to the base URL.
-#' @param .use_testing_server `r pkg_config$description[pkg_config$key == "use_testing_server"]`
 #'
 #' @return A character scalar.
 #' @family url_assembly
 #' @keywords internal
 #'
 #' @examples
-#' rdb:::url_api("health")
-url_api <- function(...,
-                    .use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                              pkg = this_pkg)) {
-  checkmate::assert_flag(.use_testing_server)
+#' rdb:::url_api_old("health")
+url_api_old <- function(...) {
   
-  ifelse(.use_testing_server,
-         "stagservices.c2d.ch",
-         "services.c2d.ch") %>%
-    fs::path(...) %>%
-    paste0("https://", .)
+  fs::path("services.c2d.ch", ...) %>% paste0("https://", .)
 }
 
 #' Assemble RDB admin portal URL
 #'
-#' @inheritParams url_api
+#' @inheritParams url_api_old
 #'
-#' @inherit url_api return
+#' @inherit url_api_old return
 #' @family url_assembly
 #' @keywords internal
 #'
 #' @examples
 #' rdb:::url_admin_portal("referendum/5bbbfd7b92a21351232e46b5")
-url_admin_portal <- function(...,
-                             .use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                       pkg = this_pkg)) {
-  checkmate::assert_flag(.use_testing_server)
+url_admin_portal <- function(...) {
   
-  ifelse(.use_testing_server,
-         "c2d-admin.netlify.app",
-         "admin.c2d.ch") %>%
-    fs::path(...) %>%
-    paste0("https://", .)
+  fs::path("admin.c2d.ch", ...) %>% paste0("https://", .)
 }
 
 #' Assemble codebook URL
@@ -1785,66 +699,816 @@ url_admin_portal <- function(...,
 #' @examples
 #' rdb:::url_codebook("level")
 #' rdb:::url_codebook("topics")
-url_codebook <- function(var = NULL) {
+url_codebook <- function(var_name = NULL) {
   
-  checkmate::assert_string(var,
+  checkmate::assert_string(var_name,
                            null.ok = TRUE)
   
-  if (!is.null(var)) {
+  if (!is.null(var_name)) {
     
-    var %<>%
-      rlang::arg_match0(values = c(data_codebook$variable_name,
-                                   # additional HTML anchors
-                                   codebook_fragments)) %>%
-      stringr::str_replace_all(pattern = stringr::fixed("_"),
-                               replacement = "-")
+    var_name %<>% stringr::str_replace_all(pattern = stringr::fixed("_"),
+                                           replacement = "-")
   }
   
-  paste0("https://rdb.rpkg.dev/articles/codebook.html", "#"[!is.null(var)], var)
+  paste0("https://rdb.rpkg.dev/articles/codebook.html", "#"[!is.null(var_name)], var_name)
+}
+
+#' Assemble NocoDB URL
+#'
+#' @param ... Optional path components added to the base URL.
+#'
+#' @return A character scalar.
+#' @family url_assembly
+#' @keywords internal
+#'
+#' @examples
+#' rdb:::url_ncdb("api/v2/meta/bases/")
+url_ncdb <- function(...) {
+  
+  fs::path("admin.rdb.vote", ...) %>%
+    paste0("https://", .)
 }
 
 #' Assemble website URL
 #'
-#' @inheritParams url_api
+#' @inheritParams url_ncdb
 #'
-#' @inherit url_api return
+#' @inherit url_ncdb return
 #' @family url_assembly
 #' @keywords internal
 #'
 #' @examples
 #' rdb:::url_website("referendum/CH/5bbc04f692a21351232e5a01")
-url_website <- function(...,
-                        .use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                  pkg = this_pkg)) {
-  checkmate::assert_flag(.use_testing_server)
+url_website <- function(...) {
   
-  ifelse(.use_testing_server,
-         "c2d-site.netlify.app",
-         "c2d.ch") %>%
-    fs::path(...) %>%
+  fs::path("c2d.ch", ...) %>%
     paste0("https://", .)
 }
 
-query_filter_date <- function(min,
-                              max) {
-  list(`$gte` = min,
-       `$lte` = max) %>%
-    purrr::compact()
+#' Call NocoDB API
+#'
+#' Returns the response from an API call to the RDB NocoDB server as a list.
+#'
+#' @inheritParams pal::req_cached
+#' @inheritParams httr2::req_perform
+#' @inheritParams httr2::req_body_json
+#' @param path NocoDB API endpoint path. A character scalar.
+#' @param method [HTTP request method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). One of
+#'   `r pal::enum_fn_param_defaults(param = "method", fn = "ncdb_api")`.
+#' @param body_json Data to include as JSON in the HTTP request body. Set to `NULL` for an empty body.
+#' @param auto_unbox Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
+#' @param auth_token NocoDB API authentication token. A character scalar.
+#'
+#' @return A list.
+#' @family ncdb
+#' @keywords internal
+ncdb_api <- function(path,
+                     method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
+                     body_json = NULL,
+                     auto_unbox = TRUE,
+                     auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                      pkg = this_pkg),
+                     max_tries = 3L,
+                     verbosity = NULL) {
+  
+  checkmate::assert_string(path)
+  method <- rlang::arg_match(method)
+  checkmate::assert_flag(auto_unbox)
+  checkmate::assert_string(auth_token)
+  
+  req <-
+    httr2::request(base_url = url_ncdb(path)) |>
+    httr2::req_method(method = method) |>
+    httr2::req_headers(`xc-token` = auth_token) |>
+    httr2::req_retry(max_tries = max_tries)
+  
+  if (!is.null(body_json)) {
+    req %<>% httr2::req_body_json(data = body_json,
+                                  auto_unbox = auto_unbox)
+  }
+  
+  resp <- httr2::req_perform(req = req,
+                             verbosity = verbosity)
+  
+  if (httr2::resp_content_type(resp) == "application/json") {
+    resp %<>% httr2::resp_body_json(simplifyVector = TRUE)
+  } else {
+    resp %<>% httr2::resp_body_string()
+  }
+  
+  resp
 }
 
-query_filter_datetime <- function(min,
-                                  max) {
+#' Get NocoDB base ID
+#'
+#' Returns the identifier of the base with the specified title on the RDB NocoDB server.
+#'
+#' @inheritParams ncdb_api
+#' @param title NocoDB base title. A character scalar.
+#'
+#' @return A character scalar if a base titled `title` exists, otherwise a zero-length character vector.
+#' @family ncdb
+#' @keywords internal
+ncdb_base_id <- function(title = "Main",
+                         auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                          pkg = this_pkg)) {
+  checkmate::assert_string(title)
   
-  list(`$gte` = purrr::compact(list(`$date` = min)),
-       `$lte` = purrr::compact(list(`$date` = max))) %>%
-    purrr::compact()
+  result <-
+    ncdb_bases(auth_token = auth_token) |>
+    dplyr::filter(title == !!title) |>
+    dplyr::pull(id)
+  
+  n_result <- length(result)
+  
+  if (n_result > 1L) {
+    result <- result[1L]
+    cli::cli_warn("{.val {n_result}} bases with title {.val {title}} present. The identifier of the first one listed in the API response is returned.")
+  }
+  
+  result
 }
 
-query_filter_in <- function(x) {
+#' NocoDB bases metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about bases on the RDB NocoDB server from its
+#' [`/api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
+#'
+#' @inheritParams ncdb_api
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family ncdb
+#' @keywords internal
+ncdb_bases <- function(auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                        pkg = this_pkg)) {
+  ncdb_api(path = "api/v2/meta/bases",
+           method = "GET",
+           auth_token = auth_token) |>
+    _$list |>
+    tibble::as_tibble() |>
+    tidy_ncdb_date_time_cols()
+}
+
+#' Get NocoDB table ID
+#'
+#' Returns the identifier of the table with the specified name in the base with specified ID on the RDB NocoDB server.
+#'
+#' @inheritParams ncdb_tbls
+#' @inheritParams pg_pk
+#'
+#' @return A character scalar.
+#' @family ncdb
+#' @keywords internal
+ncdb_tbl_id <- function(base_id = ncdb_base_id(),
+                        tbl_name = tbl_metadata$name,
+                        auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                         pkg = this_pkg)) {
+  tbl_name <- rlang::arg_match(tbl_name)
   
-  x %>% pal::when(length(.) == 0L ~ NULL,
-                  length(.) == 1L ~ .,
-                  ~ list(`$in` = .))
+  result <-
+    ncdb_tbls(base_id = base_id,
+              auth_token = auth_token) |>
+    dplyr::filter(table_name == !!tbl_name) |>
+    dplyr::pull(id)
+  
+  n_result <- length(result)
+  
+  if (n_result > 1L) {
+    result <- result[1L]
+    cli::cli_warn("{.val {n_result}} tables with name {.val {tbl_name}} present. The identifier of the first one listed in the API response is returned.")
+  } else if (n_result == 0L) {
+    cli::cli_abort("No table with name {.val {tbl_name}} present in base with ID {}.")
+  }
+  
+  result
+}
+
+#' NocoDB table column metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the specified column on the RDB NocoDB server from its
+#' [`/api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
+#'
+#' @inheritParams ncdb_api
+#' @param col_id NocoDB column identifier as returned by [ncdb_tbl_col_id()]. A character scalar.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family ncdb
+#' @keywords internal
+ncdb_tbl_col <- function(col_id,
+                         auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                          pkg = this_pkg)) {
+  checkmate::assert_string(col_id)
+  
+  ncdb_api(path = glue::glue("api/v2/meta/columns/{col_id}"),
+           method = "GET",
+           auth_token = auth_token) |>
+    purrr::compact() |>
+    tibble::as_tibble() |>
+    tidy_ncdb_date_time_cols()
+}
+
+#' Get NocoDB column ID
+#'
+#' Returns the identifier of the column with the specified `col_name` or `col_title` in the table with the specified `tbl_id` on the RDB NocoDB server.
+#'
+#' @inheritParams ncdb_tbl_cols
+#' @param col_name NocoDB column name. A character scalar.
+#' @param col_title NocoDB column title. A character scalar.
+#'
+#' @return A character scalar.
+#' @family ncdb
+#' @keywords internal
+ncdb_tbl_col_id <- function(tbl_id,
+                            col_name = NULL,
+                            col_title = NULL,
+                            auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                             pkg = this_pkg)) {
+  checkmate::assert_string(col_name,
+                           null.ok = TRUE)
+  checkmate::assert_string(col_title,
+                           null.ok = TRUE)
+  if (is.null(col_name) && is.null(col_title)) {
+    cli::cli_abort("At least one of {.or {.arg {c('col_name', 'col_title')}}} must be provided.")
+  }
+  
+  result <-
+    ncdb_tbl_cols(tbl_id = tbl_id,
+                  auth_token = auth_token) |>
+    pal::when(is.null(col_name) ~ .,
+              ~ dplyr::filter(., column_name == !!col_name)) |>
+    pal::when(is.null(col_title) ~ .,
+              ~ dplyr::filter(., title == !!col_title)) |>
+    dplyr::pull(id)
+  
+  n_result <- length(result)
+  
+  if (n_result > 1L) {
+    result <- result[1L]
+    cli::cli_warn(paste0("{.val {n_result}} columns with name {.val {col_name}} present in table with identifier {.val {tbl_id}}. The identifier of the ",
+                         "first column listed in the API response is returned."))
+    
+  } else if (n_result == 0L) {
+    cli::cli_abort("No column with name {.val {col_name}} present in table with identifier {.val {tbl_id}}.")
+  }
+  
+  result
+}
+
+#' NocoDB table columns metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the table with the specified ID on the RDB NocoDB server from its
+#' [`/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#'
+#' @inheritParams ncdb_tbl
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family ncdb
+#' @keywords internal
+ncdb_tbl_cols <- function(tbl_id = ncdb_tbl_id(),
+                          auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                           pkg = this_pkg)) {
+  checkmate::assert_string(tbl_id)
+  
+  ncdb_api(path = glue::glue("api/v2/meta/tables/{tbl_id}"),
+           method = "GET",
+           auth_token = auth_token) |>
+    _$columns |>
+    tibble::as_tibble() |>
+    tidy_ncdb_date_time_cols()
+}
+
+#' NocoDB table metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the table with the specified ID on the RDB NocoDB server from its
+#' [`/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#'
+#' @inheritParams ncdb_api
+#' @param tbl_id NocoDB table identifier as returned by [ncdb_tbl_id()]. A character scalar.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family ncdb
+#' @keywords internal
+ncdb_tbl <- function(tbl_id = ncdb_tbl_id(),
+                     auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                      pkg = this_pkg)) {
+  checkmate::assert_string(tbl_id)
+  
+  ncdb_api(path = glue::glue("api/v2/meta/tables/{tbl_id}"),
+           method = "GET",
+           auth_token = auth_token) |>
+    purrr::discard_at(at = c("columns", "columnsById")) |>
+    purrr::compact() |>
+    tibble::as_tibble() |>
+    tidy_ncdb_date_time_cols()
+}
+
+#' NocoDB tables metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified ID on the RDB NocoDB server from its
+#' [`/api/v2/meta/bases/{base_id}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
+#'
+#' @inheritParams ncdb_api
+#' @param base_id NocoDB base identifier as returned by [ncdb_base_id()]. A character scalar.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family ncdb
+#' @keywords internal
+ncdb_tbls <- function(base_id = ncdb_base_id(),
+                      auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                       pkg = this_pkg)) {
+  checkmate::assert_string(base_id)
+  
+  ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}/tables"),
+           method = "GET",
+           auth_token = auth_token) |>
+    _$list |>
+    tibble::as_tibble() |>
+    tidy_ncdb_date_time_cols()
+}
+
+#' Re-order NocoDB table
+#'
+#' Sets the numeric order of the specified table on the RDB NocoDB server via the
+#' [POST `/api/v2/meta/tables/{tbl_id}/reorder`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder) API endpoint.
+#'
+#' Lower numbers place the table higher up in the UI and vice versa. The current order of all the tables in a base can be determined via [ncdb_tbls()].
+#'
+#' @inheritParams ncdb_tbl
+#'
+#' @return `tbl_id`, invisibly.
+#' @family ncdb
+#' @keywords internal
+reorder_ncdb_tbl <- function(tbl_id = ncdb_tbl_id(),
+                             order = 1L,
+                             auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                              pkg = this_pkg)) {
+  checkmate::assert_string(tbl_id)
+  checkmate::assert_number(order)
+  
+  ncdb_api(path = glue::glue("api/v2/meta/tables/{tbl_id}/reorder"),
+           method = "POST",
+           body_json = list(order = order),
+           auth_token = auth_token)
+  
+  invisible(tbl_id)
+}
+
+#' Set column as NocoDB display value
+#'
+#' Sets a column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on the RDB NocoDB server.
+#'
+#' @inheritParams ncdb_tbl_col
+#'
+#' @return `TRUE`, invisibly.
+#' @family ncdb
+#' @keywords internal
+set_ncdb_display_val <- function(col_id,
+                                 auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                                  pkg = this_pkg)) {
+  checkmate::assert_string(col_id)
+  
+  ncdb_api(path = glue::glue("api/v2/meta/columns/{col_id}/primary"),
+           method = "POST",
+           auth_token = auth_token) |>
+    as.logical() |>
+    invisible()
+}
+
+#' Set all NocoDB display value columns
+#'
+#' Sets the proper column as the [display value](https://docs.nocodb.com/fields/display-value/) for all tables on the RDB NocoDB server.
+#'
+#' @inheritParams ncdb_tbls
+#'
+#' @return `NULL`, invisibly.
+#' @family ncdb
+#' @keywords internal
+set_ncdb_display_vals <- function(base_id = ncdb_base_id(),
+                                  auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                                   pkg = this_pkg)) {
+  purrr::walk2(tbl_metadata$name,
+               tbl_metadata$ncdb_display_col,
+               \(tbl_name, col_name) {
+                 
+                 pal::cli_progress_step_quick(msg = "Setting NocoDB display column for table {.field {tbl_name}} to {.val {col_name}}")
+                 
+                 ncdb_tbl_id(base_id = base_id,
+                             tbl_name = tbl_name,
+                             auth_token = auth_token) |>
+                   ncdb_tbl_col_id(col_name = col_name,
+                                   auth_token = auth_token) |>
+                   set_ncdb_display_val(auth_token = auth_token)
+               })
+  
+  invisible(NULL)
+}
+
+#' Set metadata for all NocoDB tables
+#'
+#' @description
+#' Sets the proper table metadata for all tables on the RDB NocoDB server. Currently, this includes:
+#' 
+#' - Setting the order of the tables in the base.
+#' - Setting our desired [table icons](https://docs.nocodb.com/tables/actions-on-table/#change-table-icon) (emojis).
+#'
+#' @inheritParams ncdb_tbls
+#'
+#' @return `NULL`, invisibly.
+#' @family ncdb
+#' @keywords internal
+set_ncdb_tbl_metadata <- function(base_id = ncdb_base_id(),
+                                  auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                                   pkg = this_pkg)) {
+  nrow(tbl_metadata) |>
+    pal::safe_seq_len() |>
+    purrr::walk(\(i) {
+      
+      name <- tbl_metadata$name[i]
+      icon <- tbl_metadata$ncdb_meta.icon[i]
+      id <- ncdb_tbl_id(base_id = base_id,
+                        tbl_name = name,
+                        auth_token = auth_token)
+      
+      pal::cli_progress_step_quick(msg = "Setting order for NocoDB table {.field {name}} to {.val {i}}")
+      
+      reorder_ncdb_tbl(tbl_id = id,
+                       order = i,
+                       auth_token = auth_token)
+      
+      pal::cli_progress_step_quick(msg = "Setting icon for NocoDB table {.field {name}} to {.val {icon}}")
+      
+      if (!is.na(icon)) {
+        update_ncdb_tbl(tbl_id = id,
+                        body_json = list(meta = list(icon = icon)),
+                        auth_token = auth_token,
+                        quiet = TRUE)
+      }
+    })
+  
+  invisible(NULL)
+}
+
+tidy_ncdb_date_time_cols <- function(data) {
+  
+  data |> dplyr::mutate(dplyr::across(.cols = ends_with("_at"),
+                                      .fns = \(x) clock::date_time_parse_RFC_3339(x = x,
+                                                                                  separator = " ",
+                                                                                  offset = "%Ez")))
+}
+
+#' Update NocoDB table metadata
+#'
+#' Updates the metadata of the specified table on the RDB NocoDB server via the
+#' [PATCH `/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
+#'
+#' @inheritParams ncdb_tbl
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `tbl_id`, invisibly.
+#' @family ncdb
+#' @keywords internal
+update_ncdb_tbl <- function(tbl_id,
+                            body_json,
+                            auto_unbox = TRUE,
+                            auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                             pkg = this_pkg),
+                            quiet = FALSE) {
+  
+  checkmate::assert_string(tbl_id)
+  checkmate::assert_flag(quiet)
+  
+  result <- ncdb_api(path = glue::glue("api/v2/meta/tables/{tbl_id}"),
+                     method = "PATCH",
+                     body_json = body_json,
+                     auto_unbox = auto_unbox,
+                     auth_token = auth_token)
+  if (!quiet) {
+    if (stringr::str_detect(result$msg, "updated successfully")) {
+      cli::cli_alert_success(result$msg)
+    } else {
+      cli::cli_alert_info(result$msg)
+    }
+  }
+  
+  invisible(tbl_id)
+}
+
+#' Update NocoDB table column metadata
+#'
+#' Updates the metadata of the specified table column on the RDB NocoDB server via the
+#' [PATCH `/api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update) API endpoint.
+#'
+#' @inheritParams ncdb_tbl_col
+#'
+#' @return ?
+#' @family ncdb
+#' @keywords internal
+update_ncdb_tbl_col <- function(col_id,
+                                body_json,
+                                auto_unbox = TRUE,
+                                auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                                 pkg = this_pkg)) {
+  checkmate::assert_string(col_id)
+  
+  ncdb_api(path = glue::glue("api/v2/meta/columns/{col_id}"),
+           method = "PATCH",
+           body_json = body_json,
+           auto_unbox = auto_unbox,
+           auth_token = auth_token) |>
+    invisible()
+}
+
+
+
+#' Get PostreSQL column metadata
+#'
+#' @inheritParams pg_pk
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family pg
+#' @keywords internal
+pg_col_metadata <- function(tbl_name,
+                            schema = pg_schema,
+                            connection = connect()) {
+  
+  checkmate::assert_string(tbl_name)
+  checkmate::assert_string(schema)
+  
+  result <-
+    glue::glue_sql(.con = connection,
+                   "SELECT * FROM information_schema.columns",
+                   "  WHERE table_schema = {schema} AND table_name = {tbl_name};") |>
+    DBI::dbSendQuery(conn = connection)
+  
+  data <-
+    result |>
+    DBI::dbFetch() |>
+    tibble::as_tibble()
+  
+  DBI::dbClearResult(result)
+  
+  data |>
+    dplyr::rename(generated = is_generated) |>
+    dplyr::mutate(dplyr::across(.cols = any_of(c("is_nullable",
+                                                 "is_self_referencing",
+                                                 "is_identity",
+                                                 "is_updatable")),
+                                .fns = \(x) dplyr::case_match(.x = x,
+                                                              "YES" ~ TRUE,
+                                                              "NO" ~ FALSE,
+                                                              .default = NA,
+                                                              .ptype = logical())),
+                  has_default = !is.na(column_default),
+                  is_filled_pg = has_default | (is_identity & identity_generation == "ALWAYS") | generated != "NEVER",
+                  is_filled_nocodb = column_name %in% col_names_nocodb_filled,
+                  is_filled_auto = is_filled_pg | is_filled_nocodb,
+                  is_pk = column_name %in% pg_pk(tbl_name = tbl_name,
+                                                 schema = schema,
+                                                 connection = connection)) |>
+    dplyr::select(column_name,
+                  ordinal_position,
+                  column_default,
+                  data_type,
+                  has_default,
+                  is_pk,
+                  is_nullable,
+                  is_filled_pg,
+                  is_filled_nocodb,
+                  is_filled_auto,
+                  is_updatable,
+                  is_self_referencing,
+                  is_identity,
+                  identity_generation,
+                  generated,
+                  generation_expression)
+}
+
+#' Test whether PostreSQL table exists
+#'
+#' @inheritParams pg_pk
+#'
+#' @return A logical scalar.
+#' @family pg
+#' @keywords internal
+pg_has_tbl <- function(tbl_name,
+                       schema = pg_schema,
+                       connection = connect()) {
+  
+  checkmate::assert_string(tbl_name)
+  checkmate::assert_string(schema)
+  
+  # NOTE: `glue::glue_sql()` wraps interpolated strings in single quotes, which we don't want here
+  result <- glue::glue("SELECT to_regclass('{schema}.{tbl_name}') AS \"tbl\";") |> DBI::dbSendQuery(conn = connection)
+  data <- DBI::dbFetch(result)
+  DBI::dbClearResult(result)
+  
+  !is.na(data$tbl)
+}
+
+#' Get primary key column names(s) from PostgreSQL
+#'
+#' Returns the primary key column names(s) from RDB's DBMS, a PostgreSQL server.
+#'
+#' @inheritParams read_tbl
+#' @param tbl_name Table name. A character scalar.
+#' @param schema Schema name. A character scalar.
+#'
+#' @return A character scalar if `tbl_name` exists. Otherwise an empty character vector.
+#' @family pg
+#' @keywords internal
+pg_pk <- function(tbl_name,
+                  schema = pg_schema,
+                  connection = connect()) {
+  
+  checkmate::assert_string(tbl_name)
+  checkmate::assert_string(schema)
+  
+  # return early if tbl doesn't exist
+  if (!pg_has_tbl(tbl_name = tbl_name,
+                  schema = schema,
+                  connection = connection)) {
+    
+    return(character())
+  }
+  
+  result <-
+    glue::glue_sql(.con = connection,
+                   "SELECT pg_attribute.attname AS column_name",               
+                   "  FROM pg_index, pg_class, pg_attribute, pg_namespace",
+                   "  WHERE pg_class.oid = {tbl_name}::regclass",
+                   "    AND indrelid = pg_class.oid ",
+                   "    AND nspname = {schema} ",
+                   "    AND pg_class.relnamespace = pg_namespace.oid",
+                   "    AND pg_attribute.attrelid = pg_class.oid",
+                   "    AND pg_attribute.attnum = any(pg_index.indkey)",
+                   "    AND indisprimary;") |>
+    DBI::dbSendQuery(conn = connection)
+  
+  data <- DBI::dbFetch(result)
+  DBI::dbClearResult(result)
+  
+  if (nrow(data) == 0L) {
+    cli::cli_abort("Table {.field {schema}.{tbl_name}} has no primary key set.")
+  }
+  
+  data$column_name
+}
+
+#' Delete specified data from PostgreSQL table
+#'
+#' @param tbl Table from which data is to be deleted. A data frame, [tibble][tibble::tbl_df] or tibble extension like [`tbl_lazy`][dbplyr::tbl_lazy]. 
+#' @param data Table data to delete. A data frame that must contain the table's primary key column. Additional columns are ignored.
+#' @param pk_col_name Primary key column name. A character scalar.
+#'
+#' @inherit pg_tbl_update return
+#' @family pg
+#' @keywords internal
+pg_tbl_del <- function(tbl,
+                       data,
+                       pk_col_name) {
+  
+  pal::assert_df_or_tibble(tbl)
+  checkmate::assert_data_frame(data)
+  checkmate::assert_string(pk_col_name)
+  
+  pk_vals_to_rm <- data |> dplyr::pull(!!pk_col_name)
+  
+  tbl |>
+    dplyr::filter(!!as.symbol(pk_col_name) %in% !!pk_vals_to_rm) |>
+    dplyr::select(!!pk_col_name) |>
+    dplyr::rows_delete(x = tbl,
+                       by = pk_col_name,
+                       unmatched = "ignore",
+                       copy = FALSE,
+                       in_place = TRUE)
+}
+
+#' Delete everything from PostgreSQL table except specified data
+#'
+#' @inheritParams pg_tbl_del
+#' @param data Table data to keep. A data frame that must contain the table's primary key column. Additional columns are ignored.
+#'
+#' @inherit pg_tbl_update return
+#' @family pg
+#' @keywords internal
+pg_tbl_keep <- function(tbl,
+                        data,
+                        pk_col_name) {
+  
+  pal::assert_df_or_tibble(tbl)
+  checkmate::assert_data_frame(data)
+  checkmate::assert_string(pk_col_name)
+  
+  pk_vals_to_keep <- data |> dplyr::pull(!!pk_col_name)
+  
+  result <- tbl
+  tbl_obsolete <- tbl |> dplyr::filter(!(!!as.symbol(pk_col_name) %in% !!pk_vals_to_keep))
+  nrow_tbl_obsolete <-
+    tbl_obsolete |>
+    dplyr::tally() |>
+    dplyr::pull(n)
+  
+  if (nrow_tbl_obsolete > 0L) {
+    
+    result <-
+      tbl_obsolete |>
+      dplyr::select(!!pk_col_name) |>
+      dplyr::rows_delete(x = tbl,
+                         by = pk_col_name,
+                         unmatched = "ignore",
+                         copy = FALSE,
+                         in_place = TRUE)
+  }
+  
+  invisible(result)
+}
+
+#' Update PostgreSQL table
+#'
+#' @inheritParams read_tbl
+#' @param tbl Table to be updated. A data frame, [tibble][tibble::tbl_df] or tibble extension like [`tbl_lazy`][dbplyr::tbl_lazy].
+#' @param data New or updated table data. A data frame that must contain at least the table's primary key column plus any additional columns with new values to
+#'   update the corresponding database fields with.
+#' @param sweep Whether or not to also sweep the table, i.e. delete rows that are not contained in `data`.
+#'
+#' @return The updated table data as a [tibble][tibble::tbl_df], invisibly.
+#' @keywords internal
+pg_tbl_update <- function(tbl,
+                          data,
+                          sweep = FALSE,
+                          tbl_name,
+                          connection = connect()) {
+  
+  checkmate::assert_flag(sweep)
+  
+  pk_col_name <-
+    pg_pk(tbl_name = tbl_name,
+          connection = connection) |>
+    # multi-col pks aren't supported
+    checkmate::assert_string(.var.name = "pk_col_name")
+  
+  # delete obsolete data if requested
+  if (sweep) {
+    pg_tbl_keep(tbl = tbl,
+                data = data,
+                pk_col_name = pk_col_name)
+  }
+  
+  # update existing and add new data
+  dplyr::rows_upsert(x = tbl,
+                     y = data,
+                     by = pk_col_name,
+                     copy = TRUE,
+                     in_place = TRUE)
+}
+
+derive_country_vars <- function(country_code,
+                                date) {
+  
+  country_code %<>% as.character()
+  subnational_entity_code <- NA_character_
+  
+  # handle subnational entities
+  ## Ascension
+  if (country_code == "AC") {
+    
+    country_code <- "SH"
+    subnational_entity_code <- "SH-AC"
+  }
+  
+  # assign canonical pseudo codes
+  ## Kosovo
+  country_code %<>% dplyr::case_match(.x = .,
+                                      "KS" ~ "XK",
+                                      .default = .)
+  data_former <-
+    data_iso_3166_3 %>%
+    dplyr::filter(alpha_2_old == !!country_code & !!date <= (clock::add_years(date_withdrawn, 50L))) %>%
+    dplyr::filter(date_withdrawn == pal::safe_max(date_withdrawn))
+  
+  is_former <- nrow(data_former) > 0L
+  is_current <- !is_former && country_code %in% data_iso_3166_1$alpha_2
+  
+  if (!(is_former || is_current) && !(country_code %in% country_codes_sudd_invalid)) {
+    cli::cli_alert_warning("Neither ISO 3166-1 alpha-2 nor ISO 3166-3 alpha-4 {.var country_code} found for {.val {country_code}}.")
+  }
+  
+  country_code <-
+    country_code %>%
+    pal::when(is_former ~
+                data_former %>%
+                dplyr::filter(date_withdrawn == min(date_withdrawn)) %>%
+                assertr::verify(nrow(.) == 1L) %$%
+                alpha_4,
+              is_current ~
+                country_code,
+              ~
+                NA_character_)
+  
+  tibble::tibble(country_code = country_code,
+                 country_name = country_code_to_name(country_code),
+                 is_former_country = is_former,
+                 subnational_entity_code = subnational_entity_code)
 }
 
 parse_sudd_date <- function(x) {
@@ -2299,39 +1963,6 @@ url_sudd <- function(x = "") {
 
 this_pkg <- utils::packageName()
 
-cli_theme <-
-  cli::builtin_theme() %>%
-  purrr::list_modify(span.err = list(color = "red",
-                                     `font-weight` = "bold"),
-                     span.warn = list(color = "orange",
-                                     `font-weight` = "bold"),
-                     span.content = list(color = "mediumorchid"))
-
-date_backup_rdb <- pal::path_mod_time("data-raw/backups/rdb.rds") |> clock::as_date()
-
-codebook_fragments <- c("institution-level-variables",
-                        "referendum-level-variables",
-                        "topics")
-
-data_cols_absent <-
-  tibble::tibble(col = character(),
-                 type = list(),
-                 msg = character()) %>%
-  tibble::add_row(col = "id",
-                  type = list("add"),
-                  msg = "an {.var id} column. It is automatically set by the RDB API back-end. Did you mean to {.fun edit_rfrnds} instead?") %>%
-  tibble::add_row(col = "country_name",
-                  type = list(c("add", "edit")),
-                  msg = "a {.var country_name} column. It is automatically set by the RDB API back-end based on {.var country_code}.") %>%
-  tibble::add_row(col = "date_time_created",
-                  type = list(c("add", "edit")),
-                  msg = "a {.var date_time_created} column. This date is automatically set by the RDB API back-end and not supposed to be changed.") %>%
-  tibble::add_row(col = "date_time_last_edited",
-                  type = list(c("add", "edit")),
-                  msg = paste0("a {.var date_time_last_edited} column. This date is automatically set by the RDB API back-end and not supposed to be changed ",
-                               "manually.")) %>%
-  dplyr::mutate(msg = paste0("{.arg data} mustn't contain ", msg))
-
 ballot_date_colnames <- c("country_code",
                           "country_code_long",
                           "country_code_continual",
@@ -2339,7 +1970,7 @@ ballot_date_colnames <- c("country_code",
                           "country_name_long",
                           "subnational_entity_code",
                           "subnational_entity_name",
-                          "municipality",
+                          "municipality_name",
                           "level",
                           "date",
                           "week",
@@ -2360,122 +1991,82 @@ ballot_date_colnames <- c("country_code",
                           "un_region_tier_3_name",
                           "un_subregion")
 
-rfrnd_fields <- list()
+cli_theme <-
+  cli::builtin_theme() %>%
+  purrr::list_modify(span.err = list(color = "red",
+                                     `font-weight` = "bold"),
+                     span.warn = list(color = "orange",
+                                     `font-weight` = "bold"),
+                     span.content = list(color = "mediumorchid"))
 
-rfrnd_fields$all <- c("_id",
-                      "archive",
-                      "canton",
-                      "categories",
-                      "citizens_abroad",
-                      "committee_name",
-                      "context",
-                      "country_code",
-                      "country_code_historical",
-                      "country_name",
-                      "created_on",
-                      "date",
-                      "date_time_last_edited",
-                      "draft",
-                      "files",
-                      "id_official",
-                      "id_sudd",
-                      "institution",
-                      "is_past_jurisdiction",
-                      "level",
-                      "question",
-                      "question_en",
-                      "municipality",
-                      "number",
-                      "remarks",
-                      "result",
-                      "sources",
-                      "tags",
-                      "title",
-                      "total_electorate",
-                      "votes_empty",
-                      "votes_invalid",
-                      "votes_no",
-                      "votes_yes")
+codebook_fragments <- c("institution-level-variables",
+                        "referendum-level-variables",
+                        "topics")
 
-rfrnd_fields$all_flat <-
-  rfrnd_fields$all %>%
-  setdiff(c("categories", "context", "title")) %>%
-  union(c("categories.action",
-          "categories.author_of_the_vote_object",
-          "categories.counter_proposal",
-          "categories.decision_quorum",
-          "categories.degree_of_revision",
-          "categories.excluded_topics",
-          "categories.hierarchy_of_the_legal_norm",
-          "categories.institutional_precondition",
-          "categories.institutional_precondition_decision",
-          "categories.institutional_precondition_decision_actor",
-          "categories.legal_act_type",
-          "categories.official_status",
-          "categories.referendum_text_options",
-          "categories.special_topics",
-          "categories.turnout_quorum",
-          "categories.vote_object",
-          "categories.vote_result_status",
-          "categories.vote_trigger",
-          "categories.vote_trigger_actor",
-          "categories.vote_trigger_number",
-          "categories.vote_trigger_state_level",
-          "categories.vote_trigger_time",
-          "categories.vote_venue",
-          "context.national_council_abstentions",
-          "context.national_council_no",
-          "context.national_council_yes",
-          "context.recommendation",
-          "context.states_council_abstentions",
-          "context.states_council_no",
-          "context.states_council_yes",
-          "context.states_no",
-          "context.states_yes",
-          "context.votes_per_canton",
-          "title.de",
-          "title.en",
-          "title.fr"))
+date_backup_rdb <- pal::path_mod_time("data-raw/backups/rdb.rds") |> clock::as_date()
 
-rfrnd_fields$required_for_edits <- c("_id",
-                                     "draft",
-                                     "total_electorate",
-                                     "citizens_abroad",
-                                     "votes_yes",
-                                     "votes_no",
-                                     "votes_empty",
-                                     "votes_invalid")
+ncdb_col_metadata <- tibble::tribble(
+  ~tbl_name,     ~col_name,     ~uidt,         ~meta.richMode,
+  "referendums", "attachments", "Attachment",  NA,             
+  NA_character_, "description", NA_character_, TRUE,
+  NA_character_, "label",       NA_character_, TRUE,
+  NA_character_, "remarks",     NA_character_, TRUE
+)
 
-rfrnd_fields$required_for_additions <- c("country_code",
-                                         "level",
-                                         "date",
-                                         "title.en",
-                                         "result",
-                                         "total_electorate",
-                                         "citizens_abroad",
-                                         "votes_yes",
-                                         "votes_no",
-                                         "votes_empty",
-                                         "votes_invalid",
-                                         "draft",
-                                         "institution")
+# the virtual columns NocoDB maintains for foreign keys not always have optimal default titles, so we have to tweak 'em
+# NOTE: columns of `uidt == "Links"` are automatically renamed if necessary
+ncdb_col_renames <- tibble::tribble(
+  ~uidt,                 ~col_title_old,         ~col_title_new,
+  "LinkToAnotherRecord", "actors",               "actor",
+  "LinkToAnotherRecord", "countries",            "country",
+  "LinkToAnotherRecord", "languages",            "language",
+  "LinkToAnotherRecord", "legal_bases",          "legal_base",
+  "LinkToAnotherRecord", "options",              "option",
+  "LinkToAnotherRecord", "referendums",          "referendum",
+  "LinkToAnotherRecord", "subnational_entities", "subnational_entity"
+)
 
-rfrnd_fields$never_empty <- c("_id",
-                              "country_code",
-                              "country_name",
-                              "created_on",
-                              "level",
-                              "total_electorate",
-                              "citizens_abroad",
-                              "votes_yes",
-                              "votes_no",
-                              "votes_empty",
-                              "votes_invalid",
-                              "draft")
+pg_db <- "rdb"
+pg_port <- 5432L
+pg_schema <- "public"
 
-                 # old name                                                 new name
+sudd_years <-
+  url_sudd("index.php") %>%
+  xml2::read_html() %>%
+  rvest::html_element(css = "select[id='first']") %>%
+  rvest::html_elements("option") %>%
+  rvest::html_attr("value") %>%
+  as.integer()
+
+sudd_max_year <- pal::safe_max(sudd_years)
+sudd_min_year <- pal::safe_min(sudd_years)
+rm(sudd_years)
+
+tbl_metadata <-
+  tibble::tribble(
+    ~name,                  ~ncdb_display_col,         ~ncdb_meta.icon, # alternative icon
+    "actors",               "label",                   "\U0001F3AD",
+    "options",              "label",                   "\u2611",
+    "legal_bases",          "title",                   "\U0001F4DC",
+    "referendums",          "id",                      "\U0001F5F3",
+    "referendum_titles",    "title",                   "\U0001F4D5",
+    "referendum_questions", "question",                "\u2753",
+    "referendum_positions", "option_id",               "\U0001F4E3",
+    "referendum_votes",     "option_id",               "\U0001F9FE",
+    "referendum_sub_votes", "subnational_entity_code", "\U0001F9FE",
+    "countries",            "name",                    "\U0001F512",    # "\U0001F1FA\U0001F1F3"
+    "subnational_entities", "name",                    "\U0001F512",
+    "municipalities",       "name",                    "\U0001F512",    # "\U0001F3D8"
+    "languages",            "name",                    "\U0001F512",    # "\U0001F310"
+  ) |>
+  # add Unicode image variation selector
+  dplyr::mutate(ncdb_meta.icon = paste0(ncdb_meta.icon, "\ufe0f"))
+
+# for renaming between C2D Services API and RDB
+#                 old name                                               new name
 var_names <- list(`_id`                                                = "id",
                   canton                                               = "subnational_entity_name",
+                  municipality                                         = "municipality_name",
                   title.de                                             = "title_de",
                   title.en                                             = "title_en",
                   title.fr                                             = "title_fr",
@@ -2492,7 +2083,8 @@ var_names <- list(`_id`                                                = "id",
                   context.states_council_abstentions                   = "upper_house_abstentions",
                   context.recommendation                               = "position_government",
                   draft                                                = "is_draft",
-                  created_on                                           = "date_time_created",
+                  created_on                                           = "created_at",
+                  date_time_last_edited                                = "updated_at",
                   institution                                          = "type",
                   categories.official_status                           = "inst_legal_basis_type",
                   categories.legal_act_type                            = "inst_has_urgent_legal_basis",
@@ -2517,7 +2109,7 @@ var_names <- list(`_id`                                                = "id",
                   categories.special_topics                            = "inst_topics_only",
                   categories.excluded_topics                           = "inst_topics_excluded")
 
-                                  # old name       new name
+#                                  old name     new name
 sub_var_names <- list(files = list(date       = "date_time_attached",
                                    object_key = "s3_object_key",
                                    size       = "file_size",
@@ -2528,38 +2120,68 @@ var_names_fms <- as_fm_list(var_names)
 sub_var_names_fms <- purrr::imap(sub_var_names,
                                  ~ as_fm_list(.x))
 
-mime_error_suffix <- "This indicates either some network issue or a change in the RDB API."
-
-sudd_years <-
-  url_sudd("index.php") %>%
-  xml2::read_html() %>%
-  rvest::html_element(css = "select[id='first']") %>%
-  rvest::html_elements("option") %>%
-  rvest::html_attr("value") %>%
-  as.integer()
-
-sudd_max_year <- pal::safe_max(sudd_years)
-sudd_min_year <- pal::safe_min(sudd_years)
-rm(sudd_years)
-
 #' Get referendum data
 #'
 #' Downloads the referendum data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
 #'
-#' @inheritParams rfrnds_old
+#' @param connection Database connection to [RDB's PostgreSQL DBMS][connect]. `r pkgsnip::param_lbl("dbi_connection")`
+#' @param disconnect Whether or not to [terminate][DBI::dbDisconnect] the database connection when finished.
+#' @param incl_drafts Whether or not to include database entries with _draft_ status.
+#' @param use_cache `r pkgsnip::param_lbl("use_cache")`
+#' @param max_cache_age `r pkgsnip::param_lbl("max_cache_age")`
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
-#' @family rfrnd
+#' @family data
 #' @export
 #'
 #' @examples
 #' # get all referendums (excl. drafts)
 #' rdb::rfrnds()
-rfrnds <- function(is_draft = FALSE,
-                   incl_archive = FALSE,
+rfrnds <- function(connection = connect(),
+                   disconnect = TRUE,
+                   incl_drafts = FALSE,
                    use_cache = TRUE,
-                   max_cache_age = "1 week",
-                   quiet = FALSE) {
+                   max_cache_age = "1 week") {
+  
+  checkmate::assert_flag(incl_drafts)
+  
+  pkgpins::with_cache(
+    expr = {
+      
+      read_tbl(tbl_name = "referendums",
+               connection = connection,
+               disconnect = disconnect) |>
+        dplyr::filter(is_draft %in% c(FALSE, incl_drafts))
+    },
+    pkg = this_pkg,
+    from_fn = "rfrnds",
+    incl_drafts,
+    use_cache = use_cache,
+    max_cache_age = max_cache_age
+  )
+}
+
+#' Get *old* referendum data
+#'
+#' Downloads the latest backup of the old referendum data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all
+#' variables.
+#'
+#' @inheritParams rfrnds
+#' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the Referendum Database (RDB).
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family data
+#' @keywords internal
+#'
+#' @examples
+#' # get all referendums (excl. drafts)
+#' rdb::rfrnds_old()
+rfrnds_old <- function(is_draft = FALSE,
+                       incl_archive = FALSE,
+                       use_cache = TRUE,
+                       max_cache_age = "1 week",
+                       quiet = FALSE) {
   
   checkmate::assert_flag(is_draft,
                          null.ok = TRUE)
@@ -2582,7 +2204,7 @@ rfrnds <- function(is_draft = FALSE,
       readRDS(file = path_temp)
     },
     pkg = this_pkg,
-    from_fn = "rfrnds",
+    from_fn = "rfrnds_old",
     use_cache = use_cache,
     max_cache_age = max_cache_age
   )
@@ -2598,214 +2220,69 @@ rfrnds <- function(is_draft = FALSE,
   result
 }
 
-#' Get referendum data (old version)
+#' Get legal bases data
 #'
-#' Downloads the referendum data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
+#' Downloads the legal bases data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
 #'
-#' @inheritParams assemble_query_filter
-#' @inheritParams tidy_rfrnds
-#' @inheritParams url_api
-#' @param incl_archive Whether or not to include an `archive` column containing data from an earlier, obsolete state of the Referendum Database (RDB).
-#' @param use_cache `r pkgsnip::param_lbl("use_cache")`
-#' @param max_cache_age `r pkgsnip::param_lbl("max_cache_age")`
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#' @inheritParams rfrnds
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
-#' @family rfrnd
-#' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' # get all referendums (excl. drafts)
-#' rdb::rfrnds_old()
-#' 
-#' # get only referendums in Austria and Australia on subnational level
-#' rdb::rfrnds_old(country_code = c("AT", "AU"),
-#'                 level = "subnational",
-#'                 quiet = TRUE)
-#'
-#' # get referendums in 2020
-#' rdb::rfrnds_old(date_min = "2020-01-01",
-#'                 date_max = "2020-12-31",
-#'                 quiet = TRUE)
-#'
-#' # get referendums added to the database during the last 30 days
-#' rdb::rfrnds_old(date_time_created_min = clock::date_today(zone = "UTC") |> clock::add_days(-30L),
-#'                 date_time_created_max = clock::date_today(zone = "UTC"),
-#'                 quiet = TRUE)
-#' 
-#' # provide custom `query_filter` for more complex queries like regex matches
-#' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-#' rdb::rfrnds_old(query_filter = '{"country_code":{"$regex":"A."}}',
-#'                 quiet = TRUE)}
-rfrnds_old <- function(country_code = NULL,
-                       subnational_entity_name = NULL,
-                       municipality = NULL,
-                       level = NULL,
-                       type = NULL,
-                       date_min = NULL,
-                       date_max = NULL,
-                       is_draft = FALSE,
-                       date_time_created_min = NULL,
-                       date_time_created_max = NULL,
-                       date_time_last_edited_min = NULL,
-                       date_time_last_edited_max = NULL,
-                       query_filter = NULL,
-                       incl_archive = FALSE,
-                       tidy = TRUE,
-                       use_cache = TRUE,
-                       max_cache_age = "1 week",
-                       use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                pkg = this_pkg),
-                       quiet = FALSE) {
-  
-  checkmate::assert_flag(incl_archive)
-  checkmate::assert_flag(quiet)
-  
-  # TODO: remove this check as soon as [issue #78](https://github.com/zdaarau/c2d-app/issues/78) is resolved
-  if (isTRUE(use_testing_server)) cli::cli_abort("{.code mode=stream} is not yet supported on the testing servers.")
-  
-  result <- pkgpins::with_cache(expr = {
-    
-    if (!quiet) {
-      status_msg <- "Fetching JSON data from RDB API..."
-      cli::cli_progress_step(msg = status_msg,
-                             msg_done = paste(status_msg, "done"),
-                             msg_failed = paste(status_msg, "failed"))
-    }
-    
-    data <-
-      httr::RETRY(verb = "GET",
-                  url = url_api("referendums",
-                                .use_testing_server = use_testing_server),
-                  query = list(mode = "stream",
-                               format = "json",
-                               filter = assemble_query_filter(country_code = country_code,
-                                                              subnational_entity_name = subnational_entity_name,
-                                                              municipality = municipality,
-                                                              level = level,
-                                                              type = type,
-                                                              date_min = date_min,
-                                                              date_max = date_max,
-                                                              is_draft = is_draft,
-                                                              date_time_created_min = date_time_created_min,
-                                                              date_time_created_max = date_time_created_max,
-                                                              date_time_last_edited_min = date_time_last_edited_min,
-                                                              date_time_last_edited_max = date_time_last_edited_max,
-                                                              query_filter = query_filter)),
-                  if (!quiet) httr::progress(type = "down"),
-                  times = 3L) %>%
-      # ensure we actually got a JSON response
-      pal::assert_mime_type(mime_type = "application/json",
-                            msg_suffix = mime_error_suffix) %>%
-      # extract JSON
-      httr::content(as = "text",
-                    encoding = "UTF-8") %>%
-      # ensure body is not empty
-      assert_content()
-    
-    if (!quiet) {
-      status_msg <- "Converting JSON to list data..."
-      cli::cli_progress_step(msg = status_msg,
-                             msg_done = paste(status_msg, "done"),
-                             msg_failed = paste(status_msg, "failed"))
-    }
-    # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result (depending on `query`)
-    data %<>%
-      jsonlite::fromJSON(simplifyVector = FALSE,
-                         simplifyDataFrame = FALSE,
-                         simplifyMatrix = FALSE,
-                         flatten = FALSE) %$%
-      items
-    
-    if (!quiet) {
-      status_msg <- "Tidying data..."
-      cli::cli_progress_step(msg = status_msg,
-                             msg_done = paste(status_msg, "done"),
-                             msg_failed = paste(status_msg, "failed"))
-    }
-    
-    data %>% tidy_rfrnds(tidy = tidy)
-  },
-  pkg = this_pkg,
-  from_fn = "rfrnds",
-  country_code,
-  subnational_entity_name,
-  municipality,
-  level,
-  type,
-  date_min,
-  date_max,
-  is_draft,
-  date_time_created_min,
-  date_time_created_max,
-  date_time_last_edited_min,
-  date_time_last_edited_max,
-  query_filter,
-  tidy,
-  use_testing_server,
-  use_cache = use_cache,
-  max_cache_age = max_cache_age)
-  
-  # exclude `archive` if requested
-  if (!incl_archive) result %<>% dplyr::select(-any_of("archive"))
-  
-  result
-}
-
-#' Get a single referendum's data
-#'
-#' Downloads a single referendum's data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
-#'
-#' @inheritParams rfrnds_old
-#' @param id Referendum's unique [identifier](`r url_codebook("id")`).
-#'
-#' @inherit rfrnds return
-#' @family rfrnd
+#' @family data
 #' @export
 #'
 #' @examples
-#' rdb::rfrnd(id = "5bbbe26a92a21351232dd73f")
-rfrnd <- function(id,
-                  incl_archive = FALSE,
-                  tidy = TRUE,
-                  use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                           pkg = this_pkg)) {
-  checkmate::assert_string(id,
-                           min.chars = 1L)
-  checkmate::assert_flag(incl_archive)
-  checkmate::assert_flag(tidy)
+#' # get all legal bases
+#' rdb::legal_bases()
+legal_bases <- function(connection = connect(),
+                        disconnect = TRUE,
+                        use_cache = TRUE,
+                        max_cache_age = "1 week") {
+  pkgpins::with_cache(
+    expr = {
+      
+      read_tbl(tbl_name = "legal_bases",
+               connection = connection,
+               disconnect = disconnect)
+    },
+    pkg = this_pkg,
+    from_fn = "legal_bases",
+    use_cache = use_cache,
+    max_cache_age = max_cache_age
+  )
+}
+
+#' Read in RDB table
+#'
+#' Fetches a table from the [RDB DBMS][connect]'s `r pal::wrap_chr(pg_schema, "\x60")` schema and returns it as a [tibble][tibble::tbl_df].
+#'
+#' @inheritParams rfrnds
+#' @param tbl_name Table name. One of `r pal::as_md_vals(tbl_metadata$name) |> pal::enum_str()`.
+#'
+#' @return `r pkgsnip::param_lbl("tibble")`
+#' @family data
+#' @export
+#'
+#' @examples
+#' rdb::read_tbl("countries")
+read_tbl <- function(tbl_name = tbl_metadata$name,
+                     connection = connect(),
+                     disconnect = TRUE) {
   
-  # retrieve data
+  tbl_name <- rlang::arg_match(tbl_name)
+  checkmate::assert_flag(disconnect)
+  
+  # necessary to avoid error on first run of `connect()`
+  force(connection)
+  
   data <-
-    httr::RETRY(verb = "GET",
-                url = url_api("referendums", id,
-                              .use_testing_server = use_testing_server),
-                config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
-                times = 3L) %>%
-    # ensure we actually got a JSON response
-    pal::assert_mime_type(mime_type = "application/json",
-                          msg_suffix = mime_error_suffix) %>%
-    # extract JSON
-    httr::content(as = "text",
-                  encoding = "UTF-8") %>%
-    # ensure body is not empty
-    assert_content() %>%
-    # convert JSON to list
-    # NOTE that we cannot rely on params `simplify*` and `flatten` because of varying field lengths in API result
-    jsonlite::fromJSON(simplifyVector = FALSE,
-                       simplifyDataFrame = FALSE,
-                       simplifyMatrix = FALSE,
-                       flatten = FALSE) %>%
-    # ensure no error occured
-    assert_api_success() %>%
-    # tidy data
-    tidy_rfrnds(tidy = tidy)
+    DBI::dbReadTable(conn = connection,
+                     name = tbl_name) |>
+    tibble::as_tibble()
   
-  # exclude `archive` if requested
-  if (!incl_archive) data %<>% dplyr::select(-any_of("archive"))
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
   
-  # return data
   data
 }
 
@@ -2814,7 +2291,6 @@ rfrnd <- function(id,
 #' Downloads a file attachment from the Referendum Database (RDB). The necessary `s3_object_key`s identifying individual files are found in the `files` list
 #' column returned by [rfrnds()].
 #'
-#' @inheritParams url_api
 #' @param s3_object_key Key uniquely identifying the file in the RDB [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design). A character scalar.
 #' @param path Path where the downloaded file is written to.
 #' @param use_original_filename Whether to save the file attachment using its original filename as uploaded. Note that original filenames are **not unique**,
@@ -2822,16 +2298,12 @@ rfrnd <- function(id,
 #'   filename. Only relevant if `path` is a directory.
 #'
 #' @return A [response object][httr::response], invisibly.
-#' @family rfrnd
+#' @family data
 #' @export
 #'
 #' @examples
 #' # get object keys
-#' obj_keys <-
-#'   rdb::rfrnds()$files |>
-#'   purrr::list_rbind() |>
-#'   dplyr::filter(!is_deleted) |>
-#'   _$s3_object_key[1:3]
+#' obj_keys <- ""
 #'
 #' # download them to the current working dir
 #' purrr::walk(obj_keys,
@@ -2841,15 +2313,11 @@ rfrnd <- function(id,
 #' fs::file_delete(obj_keys)
 download_file_attachment <- function(s3_object_key,
                                      path = ".",
-                                     use_original_filename = FALSE,
-                                     use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                              pkg = this_pkg)) {
+                                     use_original_filename = FALSE) {
+  
   checkmate::assert_string(s3_object_key)
   checkmate::assert_atomic(path)
   checkmate::assert_flag(use_original_filename)
-  
-  # TODO: remove this check as soon as [issue #78](https://github.com/zdaarau/c2d-app/issues/78) is resolved
-  if (isTRUE(use_testing_server)) cli::cli_abort("Accessing file attachments is not yet supported on the testing servers.")
   
   is_dir <- fs::is_dir(path)
   
@@ -2863,18 +2331,14 @@ download_file_attachment <- function(s3_object_key,
   
   temp_path <- fs::file_temp()
   
-  response <- httr::RETRY(verb = "GET",
-                          url = url_api("s3_objects", s3_object_key,
-                                        .use_testing_server = use_testing_server),
-                          httr::write_disk(path = temp_path),
-                          times = 3L)
+  # TODO
   
   if (is_dir) {
     
     if (use_original_filename) {
       
       final_path <-
-        response %>%
+        resp %>%
         httr::headers() %$%
         `content-disposition` %>%
         stringr::str_extract(pattern = "(?<=filename=\").+?(?=\")") %>%
@@ -2891,294 +2355,7 @@ download_file_attachment <- function(s3_object_key,
   fs::file_move(path = temp_path,
                 new_path = final_path)
   
-  invisible(response)
-}
-
-#' Add new referendums to the RDB
-#'
-#' Adds new referendum entries to the Referendum Database (RDB) via [its
-#' API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes).
-#'
-#' @details
-#' Note that adding/editing the column `files` is not supported, i.e. it is simply dropped from `data`.
-#'
-#' @inheritParams url_api
-#' @param data The new referendum data. A [tibble][tibble::tbl_df] that in any case must contain the columns
-#' `r rfrnd_fields$required_for_additions %>% dplyr::case_match(.x = ., !!!var_names_fms, .default = .) %>% md_link_codebook() %>% pal::as_md_list()`
-#'   
-#' plus the column [`subnational_entity_name`](`r url_codebook("subnational_entity_name")`) for referendums of
-#' [`level`](`r url_codebook("subnational_entity_name")`) below `"national"`, and the column [`municipality`](`r url_codebook("municipality")`) for referendums
-#' of `level = "local"`,
-#'   
-#' plus any additional [valid][codebook] columns containing the values for the corresponding database fields.
-#' @param email The e-mail address of the RDB API user account to be used for authentication. A character scalar.
-#' @param password The password of the RDB API user account to be used for authentication. A character scalar.
-#' @param quiet Whether or not to print the newly created referendum IDs to console.
-#'
-#' @return A character vector of newly created referendum IDs.
-#' @family rfrnd
-#' @export
-add_rfrnds <- function(data,
-                       email = pal::pkg_config_val(key = "api_username",
-                                                   pkg = this_pkg),
-                       password = pal::pkg_config_val(key = "api_password",
-                                                      pkg = this_pkg),
-                       use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                pkg = this_pkg),
-                       quiet = FALSE) {
-  
-  checkmate::assert_data_frame(data,
-                               min.rows = 1L)
-  checkmate::assert_flag(quiet)
-  
-  ## ensure forbidden columns are absent
-  assert_cols_absent(data = data,
-                     type = "add")
-  
-  ## ensure mandatory columns are present
-  rfrnd_fields$required_for_additions %>%
-    dplyr::case_match(.x = .,
-                      !!!var_names_fms,
-                      .default = .) %>%
-    purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
-  
-  # drop non-applicable columns (they're supposed to be absent in MongoDB)
-  data %<>% drop_non_applicable_vars()
-  
-  ## ensure remaining columns are valid
-  assert_cols_valid(data = data,
-                    type = "add")
-  
-  # convert data to MongoDB schema
-  json_items <-
-    data %>%
-    # restore MongoDB fields
-    untidy_rfrnds() %>%
-    # convert to JSON
-    purrr::map(jsonlite::toJSON,
-               auto_unbox = TRUE,
-               digits = NA)
-  
-  # add data to the MongoDB via HTTP POST on `/referendums` API endpoint
-  responses <-
-    json_items %>%
-    purrr::map(\(x) {
-      
-      httr::RETRY(verb = "POST",
-                  url = url_api("referendums",
-                                .use_testing_server = use_testing_server),
-                  config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server),
-                                             Authorization = paste("Bearer", auth_session(email = email,
-                                                                                          password = password,
-                                                                                          use_testing_server = use_testing_server))),
-                  body = x,
-                  times = 3L,
-                  httr::content_type_json()) %>%
-        # ensure we actually got a JSON response
-        pal::assert_mime_type(mime_type = "application/json",
-                              msg_suffix = mime_error_suffix) %>%
-        # extract JSON string
-        httr::content(as = "text",
-                      encoding = "UTF-8") %>%
-        # ensure body is not empty
-        assert_content() %>%
-        # convert to list
-        jsonlite::fromJSON(simplifyDataFrame = FALSE,
-                           simplifyMatrix = FALSE)
-    }) %>%
-    # ensure no error occured
-    assert_api_success()
-  
-  # throw warnings for unsuccessful API calls
-  purrr::walk2(.x = responses,
-               .y = seq_along(responses),
-               .f = ~ if (!is.list(.x) || !isTRUE(nchar(.x$`_id`$`$oid`) > 0L)) {
-                 
-                 api_failure(.x,
-                             raw = json_items[[.y]],
-                             prefix = "Failed to add the {.y}. referendum. ")
-               })
-  
-  ids_new <- unlist(responses,
-                    use.names = FALSE)
-  
-  if (!quiet) {
-    cli::cli_alert_info("New referendum entries created with {.var id}s:")
-    cli::cli_li(ids_new)
-  }
-  
-  invisible(ids_new)
-}
-
-#' Edit existing referendums in the RDB
-#'
-#' Edits existing referendum entries in the  API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes) via [its
-#' API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes).
-#'
-#' @inherit add_rfrnds details
-#' 
-#' @inheritParams add_rfrnds
-#' @param data Updated referendum data. A [tibble][tibble::tbl_df] that must contain an [`id`](`r url_codebook("id")`) column
-#'   identifying the referendums to be edited plus any additional columns containing the new values to update the corresponding database fields with. Note that
-#'   due to [current API requirements](https://github.com/zdaarau/c2d-app/issues/50#issuecomment-1222660683), the following columns must always be supplied:
-#'   
-#'   ```{r, echo = FALSE, results = "asis"}
-#'   rfrnd_fields$required_for_edits %>%
-#'     dplyr::case_match(.x = .,
-#'                       !!!var_names_fms,
-#'                       .default = .) |>
-#'     setdiff("id") |>
-#'     md_link_codebook() |>
-#'     pal::as_md_list() |>
-#'     cat()
-#'   ```
-#'
-#' @return `data`, invisibly.
-#' @family rfrnd
-#' @export
-edit_rfrnds <- function(data,
-                        email = pal::pkg_config_val(key = "api_username",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "api_password",
-                                                       pkg = this_pkg),
-                        use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                 pkg = this_pkg)) {
-  # ensure `data` is valid
-  checkmate::assert_data_frame(data,
-                               min.rows = 1L)
-  
-  ## ensure forbidden columns are absent
-  assert_cols_absent(data = data,
-                     type = "edit")
-  
-  ## ensure mandatory columns are present
-  rfrnd_fields$required_for_edits %>%
-    dplyr::case_match(.x = .,
-                      !!!var_names_fms,
-                      .default = .) %>%
-    c("id") %>%
-    purrr::walk(~ if (!(.x %in% colnames(data))) cli::cli_abort(paste0("Mandatory column {.var ", .x, "} is missing from {.arg data}.")))
-  
-  # drop non-applicable columns (they're absent in MongoDB)
-  data %<>% drop_non_applicable_vars()
-  
-  ## ensure remaining columns are valid
-  assert_cols_valid(data,
-                    type = "edit")
-  
-  # convert data to MongoDB schema
-  ids <- data$id
-  
-  json_items <-
-    data %>%
-    # drop `id`
-    dplyr::select(-id) %>%
-    # restore MongoDB fields
-    untidy_rfrnds() %>%
-    # convert to JSON
-    purrr::map(jsonlite::toJSON,
-               auto_unbox = TRUE,
-               digits = NA)
-  
-  # edit data in the MongoDB via HTTP PUT on `/referendums/{id}` API endpoint
-  responses <- purrr::map2(.x = ids,
-                           .y = json_items,
-                           .f = ~
-                             httr::RETRY(verb = "PUT",
-                                         url = url_api("referendums", .x,
-                                                       .use_testing_server = use_testing_server),
-                                         config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server),
-                                                                    Authorization = paste("Bearer", auth_session(email = email,
-                                                                                                                 password = password,
-                                                                                                                 use_testing_server = use_testing_server))),
-                                         body = .y,
-                                         times = 3L,
-                                         httr::content_type_json()) %>%
-                             # ensure we actually got a JSON response
-                             pal::assert_mime_type(mime_type = "application/json",
-                                                   msg_suffix = mime_error_suffix) %>%
-                             # extract JSON string
-                             httr::content(as = "text",
-                                           encoding = "UTF-8") %>%
-                             # ensure body is not empty
-                             assert_content())
-  
-  # throw warnings for unsuccessful API calls
-  purrr::walk(.x = seq_along(ids),
-              .f = ~ {
-                
-                parsed <- jsonlite::fromJSON(responses[[.x]])
-                
-                if (!isTRUE(parsed$ok)) {
-                  api_failure(parsed,
-                              raw = json_items[[.x]],
-                              prefix = paste0("Failed to edit referendum with {.var id} {.val ", ids[.x], "}. "))
-                }
-              })
-  
-  invisible(data)
-}
-
-#' Delete referendums in the RDB
-#'
-#' Deletes existing referendum entries in the Referendum Database (RDB) via [its
-#' API](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes).
-#'
-#' @inheritParams add_rfrnds
-#' @param ids IDs of the referendums to be deleted. A character vector.
-#'
-#' @return `ids`, invisibly.
-#' @family rfrnd
-#' @export
-delete_rfrnds <- function(ids,
-                          email = pal::pkg_config_val(key = "api_username",
-                                                      pkg = this_pkg),
-                          password = pal::pkg_config_val(key = "api_password",
-                                                         pkg = this_pkg),
-                          use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                   pkg = this_pkg)) {
-  checkmate::assert_character(ids,
-                              min.chars = 1L,
-                              any.missing = FALSE,
-                              unique = TRUE)
-  
-  # TODO: remove this as soon as https://github.com/zdaarau/c2d-app/issues/45 is deployed to master
-  if (!use_testing_server) {
-    cli::cli_abort("Referendum deletions are not yet supported on the production servers.")
-  }
-  
-  responses <- purrr::map(.x = ids,
-                          .f = ~
-                            httr::RETRY(verb = "DELETE",
-                                        url = url_api("referendums", .x,
-                                                      .use_testing_server = use_testing_server),
-                                        config = httr::add_headers(Authorization = paste("Bearer", auth_session(email = email,
-                                                                                                                password = password,
-                                                                                                                use_testing_server = use_testing_server))),
-                                        times = 3L) %>%
-                            # ensure we actually got a JSON response
-                            pal::assert_mime_type(mime_type = "application/json",
-                                                  msg_suffix = mime_error_suffix) %>%
-                            # extract JSON string
-                            httr::content(as = "text",
-                                          encoding = "UTF-8") %>%
-                            # ensure body is not empty
-                            assert_content())
-  
-  # throw warnings for unsuccessful API calls
-  purrr::walk2(.x = ids,
-               .y = responses,
-               .f = ~ {
-                 
-                 parsed <- jsonlite::fromJSON(.y)
-                 
-                 if (!isTRUE(parsed$ok)) {
-                   api_failure(parsed,
-                               prefix = "Failed to delete referendum with {.var id} {.val {.x}}. ")
-                 }
-               })
-  
-  invisible(ids)
+  invisible(resp)
 }
 
 #' Validate referendum data
@@ -3190,7 +2367,7 @@ delete_rfrnds <- function(ids,
 #' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](`r url_codebook("id_sudd")`) prefixes are valid.
 #'
 #' @return `data`, invisibly.
-#' @family rfrnd
+#' @family data
 #' @export
 validate_rfrnds <- function(data,
                             check_applicability_constraint = TRUE,
@@ -3337,134 +2514,6 @@ validate_rfrnds <- function(data,
   invisible(data)
 }
 
-#' Count number of referendums
-#'
-#' Counts the number of referendums per [`level`](`r url_codebook("level")`) in the Referendum Database (RDB).
-#'
-#' @inheritParams assemble_query_filter
-#' @inheritParams url_api
-#'
-#' @return A named list with `level` as names and referendum counts as values.
-#' @family rfrnd
-#' @export
-#'
-#' @examples
-#' # the whole database (excl. drafts)
-#' rdb::count_rfrnds()
-#' 
-#' # only Swiss and Austrian referendums
-#' rdb::count_rfrnds(country_code = c("CH", "AT"))
-#' 
-#' # only Swiss referendums created between 2020 and 2021
-#' rdb::count_rfrnds(country_code = "CH",
-#'                   date_time_created_min = "2020-01-01",
-#'                   date_time_created_max = "2021-01-01")
-count_rfrnds <- function(is_draft = FALSE,
-                         country_code = NULL,
-                         subnational_entity_name = NULL,
-                         municipality = NULL,
-                         level = NULL,
-                         type = NULL,
-                         date_min = NULL,
-                         date_max = NULL,
-                         date_time_created_min = NULL,
-                         date_time_created_max = NULL,
-                         date_time_last_edited_min = NULL,
-                         date_time_last_edited_max = NULL,
-                         query_filter = NULL,
-                         use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                  pkg = this_pkg)) {
-  httr::RETRY(verb = "GET",
-              url = url_api("referendums/stats",
-                            .use_testing_server = use_testing_server),
-              query = list(filter = assemble_query_filter(country_code = country_code,
-                                                          subnational_entity_name = subnational_entity_name,
-                                                          municipality = municipality,
-                                                          level = level,
-                                                          type = type,
-                                                          date_min = date_min,
-                                                          date_max = date_max,
-                                                          is_draft = is_draft,
-                                                          date_time_created_min = date_time_created_min,
-                                                          date_time_created_max = date_time_created_max,
-                                                          date_time_last_edited_min = date_time_last_edited_min,
-                                                          date_time_last_edited_max = date_time_last_edited_max,
-                                                          query_filter = query_filter)),
-              config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
-              times = 3L) %>%
-    # ensure we actually got a JSON response
-    pal::assert_mime_type(mime_type = "application/json",
-                          msg_suffix = mime_error_suffix) %>%
-    # parse response
-    httr::content(as = "parsed") %$%
-    votes %>%
-    magrittr::set_names(names(.) %>% dplyr::case_match(.x = ., "sub_national" ~ "subnational", .default = .))
-}
-
-#' Search in English referendum titles
-#'
-#' Allows to use the RDB API's primitive search functionality. Note that
-#' - the search is not case-sensitive and no [fuzzy search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are
-#'   returned).
-#' - only up to the first **5** matching results will be returned.
-#'
-#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
-#' titles.
-#'
-#' @inheritParams url_api
-#' @param term Search term. A character scalar.
-#'
-#' @return A character vector of English referendum titles matching the search `term`.
-#' @family rfrnd
-#' @export
-#'
-#' @examples
-#' rdb::search_rfrnds("freedom")
-search_rfrnds <- function(term,
-                          use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                   pkg = this_pkg)) {
-  httr::RETRY(verb = "GET",
-              url = url_api("referendums",
-                            .use_testing_server = use_testing_server),
-              query = list(mode = "search",
-                           term = checkmate::assert_string(term)),
-              config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
-              times = 3L) %>%
-    # ensure we actually got a JSON response
-    pal::assert_mime_type(mime_type = "application/json",
-                          msg_suffix = mime_error_suffix) %>%
-    # parse response
-    httr::content(as = "parsed") %$%
-    items %>%
-    purrr::list_c(ptype = character()) 
-}
-
-#' Test if referendum ID exists
-#'
-#' Tests whether the referendum with the supplied `id` exists or not.
-#'
-#' @inheritParams rfrnd
-#' @inheritParams url_api
-#'
-#' @return A logical scalar.
-#' @family rfrnd
-#' @export
-#'
-#' @examples
-#' rdb::rfrnd_exists("6303a4cba52c3995043a8c24")
-rfrnd_exists <- function(id,
-                         .use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                   pkg = this_pkg)) {
-  checkmate::assert_string(id,
-                           min.chars = 1L)
-  
-  httr::GET(url = url_api("referendums", id,
-                          .use_testing_server = .use_testing_server),
-            config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = .use_testing_server))) %>%
-    httr::http_error() %>%
-    magrittr::not()
-}
-
 #' Assert referendum variables are present
 #'
 #' Asserts the specified `vars` are present in the supplied referendum `data`. Depending on `vars`, additional integrity checks are performed.
@@ -3473,7 +2522,7 @@ rfrnd_exists <- function(id,
 #' @param vars Names of the variables to check. A character vector.
 #'
 #' @return `data`, invisibly.
-#' @family rfrnd
+#' @family data
 #' @export
 #'
 #' @examples
@@ -3506,7 +2555,7 @@ assert_vars <- function(data,
                                if (!isTRUE(check)) {
                                  
                                  expired_codes <- intersect(as.character(x),
-                                                            data_iso_3166_3$Alpha_2)
+                                                            data_iso_3166_3$alpha_2_old)
                                  cli::cli_abort(paste0(
                                    "Assertion on {.var data$country_code} failed: ",
                                                        ifelse(length(expired_codes),
@@ -3525,6 +2574,81 @@ assert_vars <- function(data,
   
   invisible(data)
 }
+
+#' ISO 3166-1 data
+#'
+#' [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) data, corrected and extended by unofficial information for countries which are not covered by the ISO
+#' standard yet. See also the [Differences between SCCAI 2019 and ISO
+#' 3166-1:2013](https://www.statcan.gc.ca/en/subjects/standard/sccai/2019/sccai2019-iso3166-12013) for inspiration on name corrections.
+#'
+#' @format `r pkgsnip::return_lbl("tibble")`
+#' @family aux_data
+#' @export
+#'
+#' @examples
+#' rdb::data_iso_3166_1
+"data_iso_3166_1"
+
+#' ISO 3166-2 data
+#'
+#' @description
+#' [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) data, extended by
+#' 
+#' - unofficial information for subnational entities which ceased to exist before the ISO standard was first published in 1998 – and hence don't have an
+#'   official ISO 3166-2 code assigned. Such unofficial codes are of the form `AB-CUSTOM-1`, `AB-CUSTOM-2`, etc., where `AB` is the official [ISO 3166-1 alpha-2
+#'   country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) and `CUSTOM-1`, `CUSTOM-2` etc. are sequential subdivision codes. Note that these custom
+#'   codes are assigned in random order and have no further meaning.
+#'
+#' - information on the period of validity. Due to lack of official revocation information in ISO 3166-2, we construct our own (delayed) `valid_from` and
+#'   `valid_to` date columns based on detected changes in [`ISOcodes::ISO_3166_2`][ISOcodes::ISO_3166_2].
+#'
+#' @format `r pkgsnip::return_lbl("tibble")`
+#' @family aux_data
+#' @export
+#'
+#' @examples
+#' rdb::data_iso_3166_2
+"data_iso_3166_2"
+
+#' ISO 3166-3 data
+#'
+#' [ISO 3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) data, extended by some deduced information.
+#'
+#' @format `r pkgsnip::return_lbl("tibble")`
+#' @family aux_data
+#' @export
+#'
+#' @examples
+#' rdb::data_iso_3166_3
+"data_iso_3166_3"
+
+#' ISO 639-1 data
+#'
+#' [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1) data.
+#'
+#' @format `r pkgsnip::return_lbl("tibble")`
+#' @family aux_data
+#' @export
+#'
+#' @examples
+#' rdb::data_iso_639_1
+"data_iso_639_1"
+
+#' Municipality data
+#'
+#' Municipality data...
+#'
+#' Currently, municipalities in the following countries are covered by this dataset:
+#' 
+#' - [Switzerland](https://en.wikipedia.org/wiki/Community_Identification_Number#Switzerland)
+#'
+#' @format `r pkgsnip::return_lbl("tibble")`
+#' @family aux_data
+#' @export
+#'
+#' @examples
+#' rdb::data_municipalities
+"data_municipalities"
 
 #' RDB Codebook
 #'
@@ -3834,7 +2958,7 @@ hierarchize_topics <- function(x) {
 #'
 #' Reconstructs the hierarchical relations between the three topic variables `topics_tier_1`, `topics_tier_2` and `topics_tier_3`. Other than
 #' [hierarchize_topics()], this function assumes that the three topic variables are always *complete*, i.e. that no (grand)parent topics of lower-tier topics
-#' are missing. This assumption is met by [rfrnds()] and [rfrnd()].
+#' are missing. This assumption is met by the data returned by [rfrnds()].
 #'
 #' @param topics_tier_1 First-tier topics. A character vector.
 #' @param topics_tier_2 Second-tier topics. A character vector.
@@ -3860,8 +2984,8 @@ hierarchize_topics <- function(x) {
 #'                                             unlist(.x$topics_tier_2),
 #'                                             unlist(.x$topics_tier_3)))
 hierarchize_topics_fast <- function(topics_tier_1 = character(),
-                                  topics_tier_2 = character(),
-                                  topics_tier_3 = character()) {
+                                    topics_tier_2 = character(),
+                                    topics_tier_3 = character()) {
   
   checkmate::assert_subset(topics_tier_1,
                            choices = topics_tier_1_)
@@ -3987,7 +3111,7 @@ add_country_code_continual <- function(data) {
                                                                       .y = add_former_country_flag(data)$is_former_country,
                                                                       .f = ~ {
                                                                         if (.y) {
-                                                                          data_iso_3166_3$Alpha_2_new_main[data_iso_3166_3$Alpha_4 == .x]
+                                                                          data_iso_3166_3$alpha_2_new_main[data_iso_3166_3$alpha_4 == .x]
                                                                           
                                                                         } else {
                                                                           .x
@@ -4028,9 +3152,9 @@ add_country_code_long <- function(data) {
     dplyr::mutate(country_code_long = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                                  .y = add_former_country_flag(data)$is_former_country,
                                                                  .f = ~ if (.y) {
-                                                                   data_iso_3166_3$Alpha_3[data_iso_3166_3$Alpha_4 == .x]
+                                                                   data_iso_3166_3$alpha_3[data_iso_3166_3$alpha_4 == .x]
                                                                  } else {
-                                                                   data_iso_3166_1$Alpha_3[data_iso_3166_1$Alpha_2 == .x]
+                                                                   data_iso_3166_1$alpha_3[data_iso_3166_1$alpha_2 == .x]
                                                                  }),
                                              levels = val_set$country_code_long,
                                              ordered = FALSE)) %>%
@@ -4070,9 +3194,9 @@ add_country_name <- function(data) {
     dplyr::mutate(country_name = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                             .y = add_former_country_flag(data)$is_former_country,
                                                             .f = ~ if (.y) {
-                                                              data_iso_3166_3$name_short[data_iso_3166_3$Alpha_4 == .x]
+                                                              data_iso_3166_3$name_short[data_iso_3166_3$alpha_4 == .x]
                                                             } else {
-                                                              data_iso_3166_1$name_short[data_iso_3166_1$Alpha_2 == .x]
+                                                              data_iso_3166_1$name_short[data_iso_3166_1$alpha_2 == .x]
                                                             }),
                                         levels = val_set$country_name,
                                         ordered = FALSE)) %>%
@@ -4112,9 +3236,9 @@ add_country_name_long <- function(data) {
     dplyr::mutate(country_name_long = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                                  .y = add_former_country_flag(data)$is_former_country,
                                                                  .f = ~ if (.y) {
-                                                                   data_iso_3166_3$name_long[data_iso_3166_3$Alpha_4 == .x]
+                                                                   data_iso_3166_3$name_long[data_iso_3166_3$alpha_4 == .x]
                                                                  } else {
-                                                                   data_iso_3166_1$name_long[data_iso_3166_1$Alpha_2 == .x]
+                                                                   data_iso_3166_1$name_long[data_iso_3166_1$alpha_2 == .x]
                                                                  }),
                                              levels = val_set$country_name_long,
                                              ordered = FALSE)) %>%
@@ -4160,12 +3284,12 @@ add_period <- function(data,
   
   # define necessary date transformations
   get_period <- switch(EXPR    = period,
-                       week    = function(x) clock::as_iso_year_week_day(x) %>% clock::get_week(),
-                       month   = function(x) clock::get_month(x),
-                       quarter = function(x) clock::as_year_quarter_day(x) %>% clock::get_quarter(),
-                       year    = function(x) clock::get_year(x),
-                       decade  = function(x) (clock::get_year(x) %/% 10L) * 10L,
-                       century = function(x) (clock::get_year(x) %/% 100L) * 100L)
+                       week    = \(x) clock::as_iso_year_week_day(x) %>% clock::get_week(),
+                       month   = \(x) clock::get_month(x),
+                       quarter = \(x) clock::as_year_quarter_day(x) %>% clock::get_quarter(),
+                       year    = \(x) clock::get_year(x),
+                       decade  = \(x) (clock::get_year(x) %/% 10L) * 10L,
+                       century = \(x) (clock::get_year(x) %/% 100L) * 100L)
   
   # define lbl parts
   period_lbl <- switch(EXPR    = period,
@@ -4173,11 +3297,11 @@ add_period <- function(data,
                        month   = glue::glue("{period} (1\u201312)"),
                        quarter = glue::glue("{period} (1\u20134)"),
                        period)
-  data %>%
+  data |>
     # add period
-    dplyr::mutate(!!as.symbol(period) := get_period(date)) %>%
+    dplyr::mutate(!!as.symbol(period) := get_period(date)) |>
     # harmonize col order
-    order_rfrnd_cols() %>%
+    order_rfrnd_cols() |>
     # add var lbl
     labelled::set_variable_labels(.labels = var_lbls[period])
 }
@@ -4315,14 +3439,7 @@ add_world_regions <- function(data,
     order_rfrnd_cols() %>%
     # add var lbl
     labelled::set_variable_labels(.labels = purrr::keep_at(x = var_lbls,
-                                                           at = c("un_country_code",
-                                                                  "un_region_tier_1_code",
-                                                                  "un_region_tier_1_name",
-                                                                  "un_region_tier_2_code",
-                                                                  "un_region_tier_2_name",
-                                                                  "un_region_tier_3_code",
-                                                                  "un_region_tier_3_name",
-                                                                  "un_subregion")))
+                                                           at = col_names_un))
   # drop vars if necessary/requested
   if (!has_country_code_continual) {
     data %<>% dplyr::select(-country_code_continual)
@@ -5541,6 +4658,292 @@ tbl_n_rfrnds_per_period <- function(data,
                   locations = gt::cells_stubhead())
 }
 
+#' Connect to RDB DBMS
+#'
+#' Connects to RDB's database management system, a PostgreSQL server managed by [neon.tech](https://neon.tech/).
+#'
+#' @param host `r pkg_config |> dplyr::filter(key == "pg_host") %$% description`
+#' @param user `r pkg_config |> dplyr::filter(key == "pg_user") %$% description`
+#' @param password `r pkg_config |> dplyr::filter(key == "pg_password") %$% description`
+#' @param sslmode PostgreSQL connection parameter that determines whether or with what priority a secure TLS connection is negotiated with the server. See the
+#'   [official documentation](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE) for more information about the supported
+#'   keywords.
+#'
+#' @return `r pkgsnip::return_lbl("dbi_connection")` This object is used to communicate with the database engine.
+#' @family admin
+#' @export
+#'
+#' @examples
+#' con <- rdb::connect()
+#' 
+#' con |> DBI::dbListTables()
+connect <- function(host = pal::pkg_config_val(key = "pg_host",
+                                               pkg = this_pkg),
+                    user = pal::pkg_config_val(key = "pg_user",
+                                               pkg = this_pkg),
+                    password = pal::pkg_config_val(key = "pg_password",
+                                                   pkg = this_pkg),
+                    sslmode = "verify-full") {
+  
+  DBI::dbConnect(drv = RPostgres::Postgres(),
+                 dbname = pg_db,
+                 host = host,
+                 port = pg_port,
+                 user = user,
+                 password = password,
+                 sslmode = sslmode,
+                 sslrootcert = fs::path_package(package = "rdb",
+                                                "certs/ISRG_Root_X1.crt"))
+}
+
+#' Update RDB `referendums` table
+#'
+#' Updates the RDB's `referendums` table with `data`. By default, rows not contained in `data` are kept.
+#'
+#' @inheritParams rfrnds
+#' @inheritParams pg_tbl_update
+#' @param data New or updated referendum data. A [tibble][tibble::tbl_df] that must contain a [`r pg_pk("referendums")`](`r url_codebook("id")`) column
+#'   identifying the referendums to be updated plus any additional columns containing the new values to update the corresponding database fields with.
+#'
+#' @return The updated `referendums` data as a tibble, invisibly.
+#' @family admin
+#' @export
+update_rfrnds <- function(data,
+                          sweep = FALSE,
+                          connection = connect(),
+                          disconnect = TRUE) {
+  
+  checkmate::assert_flag(disconnect)
+  
+  # necessary to avoid error on first run of `connect()`
+  force(connection)
+  
+  result <-
+    dplyr::tbl(src = connection,
+               from = "referendums") |>
+    pg_tbl_update(data = data,
+                  sweep = sweep,
+                  tbl_name = "referendums",
+                  connection = connection)
+  
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(result)
+}
+
+#' Delete referendums from the RDB
+#'
+#' Deletes `data` from the RDB's `referendums` table.
+#'
+#' @inheritParams rfrnds
+#' @param data Referendum data to be deleted. A [tibble][tibble::tbl_df] that at least must contain the column
+#'   `r pk("referendums") |> pal::wrap_chr("\x60")`.
+#'
+#' @return The updated `referendums` table data as a tibble, invisibly.
+#' @family admin
+#' @family data
+#' @export
+delete_rfrnds <- function(data,
+                          connection = connect(),
+                          disconnect = TRUE) {
+  
+  checkmate::assert_flag(disconnect)
+  
+  # necessary to avoid error on first run of `connect()`
+  force(connection)
+  
+  result <-
+    dplyr::tbl(src = connection,
+               from = "referendums") |>
+    pg_tbl_del(data = data,
+               pk_col_name = pg_pk(tbl_name = "referendums",
+                                   connection = connection))
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(result)
+}
+
+#' Update RDB `countries` table
+#'
+#' Updates the RDB's `countries` table with the data from [`data_iso_3166_1`][data_iso_3166_1].
+#'
+#' @inheritParams update_rfrnds
+#'
+#' @return The updated `countries` table data as a tibble, invisibly.
+#' @family admin
+#' @export
+update_countries <- function(sweep = TRUE,
+                             connection = connect(),
+                             disconnect = TRUE) {
+  
+  checkmate::assert_flag(disconnect)
+  
+  # necessary to avoid error on first run of `connect()`
+  force(connection)
+  
+  data <-
+    data_iso_3166_1 |>
+    dplyr::select(code = alpha_2,
+                  code_long = alpha_3,
+                  code_numeric = numeric,
+                  name = name_short,
+                  name_long)
+  
+  dplyr::tbl(src = connection,
+             from = "countries") |>
+    pg_tbl_update(data = data,
+                  sweep = sweep,
+                  tbl_name = "countries",
+                  connection = connection)
+  
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(data)
+}
+
+#' Update RDB `subnational_entities` table
+#'
+#' Updates the RDB's `subnational_entities` table with the data from [`data_iso_3166_2`][data_iso_3166_2].
+#'
+#' @inheritParams update_rfrnds
+#'
+#' @return The updated `subnational_entities` table data as a tibble, invisibly.
+#' @family admin
+#' @export
+update_subnational_entities <- function(sweep = TRUE,
+                                        connection = connect(),
+                                        disconnect = TRUE) {
+  checkmate::assert_flag(disconnect)
+  
+  # necessary to avoid error on first run of `connect()`
+  force(connection)
+  
+  dplyr::tbl(src = connection,
+             from = "subnational_entities") |>
+    pg_tbl_update(data = data_iso_3166_2,
+                  sweep = sweep,
+                  tbl_name = "subnational_entities",
+                  connection = connection)
+  
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(data_iso_3166_2)
+}
+
+#' Generate RDB `municipalities` table
+#'
+#' Updates the RDB's `municipalities` table with the data from [`data_municipalities`][data_municipalities].
+#'
+#' @inheritParams update_rfrnds
+#'
+#' @return The updated `municipalities` table data as a tibble, invisibly.
+#' @family admin
+#' @export
+update_municipalities <- function(sweep = TRUE,
+                                  connection = connect(),
+                                  disconnect = TRUE) {
+  checkmate::assert_flag(sweep)
+  checkmate::assert_flag(disconnect)
+  
+  # necessary to avoid error on first run of `connect()`
+  force(connection)
+  
+  tbl <- dplyr::tbl(src = connection,
+                    from = "municipalities")
+  pk_col_name <-
+    pg_pk(tbl_name = "municipalities",
+          connection = connection) |>
+    # multi-col pks aren't supported
+    checkmate::assert_string(.var.name = "pk_col_name")
+  
+  # delete obsolete data if requested
+  if (sweep) {
+    pg_tbl_keep(tbl = tbl,
+                data = data_municipalities,
+                pk_col_name = pk_col_name)
+  }
+  
+  # update existing and add new data
+  data_municipalities |>
+    # we can't write the PK column since it's `GENERATED ALWAYS`
+    dplyr::select(-!!pk_col_name) |>
+    dplyr::rows_upsert(x = tbl,
+                       y = _,
+                       by = c("country_code", "id_official", "valid_from"),
+                       copy = TRUE,
+                       in_place = TRUE)
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(data_municipalities)
+}
+
+#' Generate RDB `languages` table
+#'
+#' Updates the RDB's `languages` table with the data from [`data_iso_639_1`][data_iso_639_1].
+#'
+#' @inheritParams update_rfrnds
+#'
+#' @return The updated `languages` table data as a tibble, invisibly.
+#' @family admin
+#' @export
+update_langs <- function(sweep = TRUE,
+                         connection = connect(),
+                         disconnect = TRUE) {
+  
+  checkmate::assert_flag(disconnect)
+  
+  # necessary to avoid error on first run of `connect()`
+  force(connection)
+  
+  dplyr::tbl(src = connection,
+             from = "languages") |>
+    pg_tbl_update(data = data_iso_639_1,
+                  sweep = sweep,
+                  tbl_name = "languages",
+                  connection = connection)
+  
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(data_iso_639_1)
+}
+
+#' Configure NocoDB
+#'
+#' @description
+#' Configures the RDB NocoDB server according to our needs. Currently, this includes:
+#' 
+#' - [Setting the correct display value columm][set_ncdb_display_vals] for all tables.
+#' - [Setting the proper metadata][set_ncdb_tbl_metadata] for all tables..
+#'
+#' @inheritParams ncdb_tbls
+#'
+#' @return `NULL`, invisibly.
+#' @family ncdb
+#' @family admin
+#' @export
+config_ncdb <- function(base_id = ncdb_base_id(),
+                        auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                         pkg = this_pkg)) {
+  set_ncdb_display_vals(base_id = base_id,
+                        auth_token = auth_token)
+  
+  set_ncdb_tbl_metadata(base_id = base_id,
+                        auth_token = auth_token)
+  invisible(NULL)
+}
+
 #' List referendum territories from [sudd.ch](https://sudd.ch/)
 #'
 #' Lists [all referendum territories from sudd.ch](https://sudd.ch/list.php?mode=allareas), which means each `country_name_de` together with all the associated
@@ -5982,53 +5385,6 @@ sudd_rfrnds <- function(ids_sudd,
   ids_sudd,
   use_cache = use_cache,
   max_cache_age = max_cache_age)
-}
-
-#' Test RDB API availability
-#'
-#' Checks if the RDB API server is online and operational.
-#'
-#' @inheritParams url_api
-#' @param quiet Whether or not to suppress printing a warning in case the API is unavailable.
-#'
-#' @return A logical scalar.
-#' @family api_status
-#' @export
-is_online <- function(use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                               pkg = this_pkg),
-                      quiet = FALSE) {
-  
-  checkmate::assert_flag(quiet)
-  
-  result <- FALSE
-  response <- tryCatch(expr = httr::RETRY(verb = "GET",
-                                          url = url_api("health",
-                                                        .use_testing_server = use_testing_server),
-                                          times = 3L),
-                       error = function(e) e$message)
-  
-  if (inherits(response, "response")) {
-    
-    response %<>%
-      # ensure we actually got a plaintext response
-      pal::assert_mime_type(mime_type = "text/plain",
-                            msg_suffix = mime_error_suffix) %>%
-      # parse response
-      httr::content(as = "text",
-                    encoding = "UTF-8")
-    
-    if (response == "OK") {
-      result <- TRUE
-      
-    } else if (!quiet) {
-      cli::cli_alert_warning("RDB API server responded with: {.val {response}}")
-    }
-    
-  } else {
-    cli::cli_alert_warning(response)
-  }
-  
-  result
 }
 
 #' `r this_pkg` package configuration metadata

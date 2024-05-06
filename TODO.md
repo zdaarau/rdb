@@ -7,10 +7,6 @@
 
 ## To be discussed (-\> convert to GitLab issues (adding an additional `to be discussed` label)!)
 
--   [New data schema](https://hackmd.io/fqOb9I04RLiDI5wm9-VR6Q).
-
--   Experiment with `plotly::plot_ly(colors = viridis::turbo(n = ?))` in `plot_topic_segmentation()`
-
 -   There is at least one "Landsgemeinde" referendum (`id = 5bbc004292a21351232e52e7`) with no result (`NA`) where the result should actually be `"no"`
     (Landsgemeinde rejected proposal) if I'm not mistaken. Do we handle "Landsgemeinde" votes specially or why is that?
 
@@ -73,23 +69,25 @@
     I could probably write some validation fn in pkg rdb that checks all PDFs for text content to determine if they're OCR'ed, but maybe there's already more
     sophisticated software available for this.
 
-    Ideally, the data portal should ensure the minimum quality requirements upon upload and display an informative warning in case of violation (with an opt-in
-    override to upload nevertheless).
+    Ideally, NocoDB should ensure the minimum quality requirements upon upload and display an informative warning in case of violation (with an opt-in override
+    to upload nevertheless).
 
 ## rdb R package
 
+-   Implement `rm_obsolete_ncdb_attachments()` for removal of "dead" attachments from `rdb_attachments` B2 bucket since [this won't be implemented in NocoDB
+    anytime soon it appears](https://github.com/nocodb/nocodb/issues/7895).
+
 -   Prefix all Plotly fns with `plotly_` instead of `plot_` to avoid misconceptions.
 
--   Adapt code to use NocoDB's API instead of `services.c2d.ch` after we finished basic transition to NocoDB.
+-   Consider explicitly starting the Neon rw/ compute instance [via a REST API call](https://api-docs.neon.tech/reference/startprojectendpoint) to avoid
+    connection timeouts due to startup delay when instance was suspended before (not necessary for public access since R/O instance doesn't suspend)
 
-    We should probably either use
-
-    -   the R package [rapiclient](https://github.com/bergant/rapiclient) which can automatically extract the relevant specs from the OpenAPI definition, or
-    -   the [OpenAPI Generator](https://openapi-generator.tech/) which apparently can [generate a ready-made R package from an OpenAPI
-        definition](https://community.rstudio.com/t/generate-rest-api-clients-in-r-using-openapi-generator/141374) (see also [this
-        post](https://community.rstudio.com/t/anyone-using-openapi-generator-to-generate-r-packages/94486)).
+-   Check out the [GeoNames](https://www.geonames.org/about.html) database and figure out whether it'd be worth to incorporate a suitable subset of it into our
+    `countries`, `subnational_entites` and `municipalities` tables. Note that there's a dedicated R package [geonames](https://docs.ropensci.org/geonames/).
 
 -   Automated vote entry creation by feeding scraped sudd.ch data to `rdb::add_rfrnds()`.
+
+-   Implement `add_wikidata_id()` if possible: search Wikidata for proper type at ballot date in jurisdiction (country, subnational entity, municipality)
 
 -   For meaningful cross-time analyses, we need additional information about countries ("jurisdictions"):
 
@@ -289,8 +287,6 @@
 
 ### Miscellaneous
 
--   Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons [generiert werden](https://realfavicongenerator.net/)!)
-
 -   Harvard Dataverse näher anschauen (Uwe meint, die RDB dort "aufzunehmen", könnte passen) und vergleichen mit [Zenodo](https://zenodo.org/) (siehe
     FA-Notizen) und [Datahub](https://datahub.io/).
 
@@ -306,7 +302,9 @@
 
 -   IT-Firmen, die als Nachfolge für CCM Design möglicherweise in Frage kommen:
 
-    -   [Furqan Software](https://furqansoftware.com/); founder [ Mahmud Ridwan ](https://github.com/hjr265) developed two notable Goldmark extensions, [goldmark-d2](https://github.com/FurqanSoftware/goldmark-d2) and [goldmark-katex](https://github.com/FurqanSoftware/goldmark-katex), which [i.a. other notable activity](https://hjr265.me/open-source/) proves he deeply understands how open source is best organized and engineered!
+    -   [Furqan Software](https://furqansoftware.com/); founder [Mahmud Ridwan](https://github.com/hjr265) developed two notable Goldmark extensions,
+        [goldmark-d2](https://github.com/FurqanSoftware/goldmark-d2) and [goldmark-katex](https://github.com/FurqanSoftware/goldmark-katex), which [i.a. other
+        notable activity](https://hjr265.me/open-source/) proves he deeply understands how open source is best organized and engineered!
     -   [PM TechHub](https://techhub.p-m.si/), Slowenien: Für den Neubau der `rdb.vote`-Hauptseite. Sie sind JAMStack-Profis und [Maintainer des Git-basierten
         CMS *Decap*](https://techhub.p-m.si/insights/introducing-decap-cms/).
     -   [Brudi](https://www.brudi.com/), Zürich
@@ -348,38 +346,6 @@
     Was meint Irina?
 
 ## Obsolete (referring to old CCM-Design infrastructure which is to be replaced)
-
--   MongoDB/API: Track atomic edit history, traceable by author, and make it visually inspectable (some kind of diff viewer would be cool). On top of this, some
-    method to easily undo specific or all edits by a specific user account should be added.
-
-    See [issue #34](https://github.com/ccmdesign/c2d-app/issues/34) (point 3) for a tentative request and [\@liviass'
-    answer](https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636) about an already existing events collection (with no API endpoint so far).
-
--   MongoDB: optimize order of subvariables (`files` and `context.votes_per_canton`); doing this post-hoc in R is slow/inefficient, so getting the JSON in the
-    desired order directly from the API would be cool...
-
-    but is this actually possible? generally, the order of variables in the returned JSON seems random: compare e.g. `date` of
-    [here](https://services.c2d.ch/referendums/6102ae4ec72633da60229941) vs. [here](https://services.c2d.ch/referendums/604b33cb4132d76d38bfe97b)
-
--   C2D Website: Ditch the `by ccm.design` promo in the footer?## Reported to [CCM Design](https://github.com/ccmdesign/c2d-app/issues/)
-
--   Publish code under AGPL \>= 3, see [issue #26](https://github.com/ccmdesign/c2d-app/issues/26)
-
-    We should then make the repository public!
-
--   C2D Admin Front-end: Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange) -\> see [issue
-    #26](https://github.com/ccmdesign/c2d-app/issues/27)
-
--   C2D Website: Lizenzierung der Daten fehlt (betrifft auch den Download via rdb-Paket)! [ODC-ODbL](https://opendatacommons.org/licenses/odbl/summary/) würde
-    sich anbieten. -\> see [issue #37](https://github.com/ccmdesign/c2d-app/issues/37)
-
-    Once this is implemented, the same license terms should be added to the rdb package documentation!
-
--   Introduce `date_time_last_edited` holding the timestamp of a referendum entry's last edit. -\> see [issue
-    #29](https://github.com/ccmdesign/c2d-app/issues/29)
-
--   Add `id_official` and `id_sudd`! Then I can populate them with the (corrected) data from the former `number` variable and `number` can be deleted. -\> see
-    [issue #29](https://github.com/ccmdesign/c2d-app/issues/29)
 
 -   Introduce `subnational_entity_code`; [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) codes seem perfectly suitable
 
@@ -500,3 +466,4 @@
 -   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook).
 
 -   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
+

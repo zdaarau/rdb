@@ -6,11 +6,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="index.html">rdb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9046</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9047</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,10 +27,7 @@
 <li class="nav-item">
   <a class="nav-link" href="articles/codebook.html">RDB codebook</a>
 </li>
-      </ul><form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
-
-      <ul class="navbar-nav"><li class="nav-item">
+      </ul><ul class="navbar-nav"><li class="nav-item">
   <a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="gitlab">
     <span class="fab fa fab fa-gitlab fa-lg"></span>
      
@@ -55,9 +52,7 @@
 </ul></div>
 <div class="section level2">
 <h2 id="to-be-discussed---convert-to-gitlab-issues-adding-an-additional-to-be-discussed-label">To be discussed (-&gt; convert to GitLab issues (adding an additional <code>to be discussed</code> label)!)<a class="anchor" aria-label="anchor" href="#to-be-discussed---convert-to-gitlab-issues-adding-an-additional-to-be-discussed-label"></a></h2>
-<ul><li><p><a href="https://hackmd.io/fqOb9I04RLiDI5wm9-VR6Q" class="external-link">New data schema</a>.</p></li>
-<li><p>Experiment with <code>plotly::plot_ly(colors = viridis::turbo(n = ?))</code> in <code><a href="reference/plot_topic_segmentation.html">plot_topic_segmentation()</a></code></p></li>
-<li><p>There is at least one “Landsgemeinde” referendum (<code>id = 5bbc004292a21351232e52e7</code>) with no result (<code>NA</code>) where the result should actually be <code>"no"</code> (Landsgemeinde rejected proposal) if I’m not mistaken. Do we handle “Landsgemeinde” votes specially or why is that?</p></li>
+<ul><li><p>There is at least one “Landsgemeinde” referendum (<code>id = 5bbc004292a21351232e52e7</code>) with no result (<code>NA</code>) where the result should actually be <code>"no"</code> (Landsgemeinde rejected proposal) if I’m not mistaken. Do we handle “Landsgemeinde” votes specially or why is that?</p></li>
 <li><p>Should we also try to collect “surrounding conditions” information besides the formal institutional stuff? For example, international law recognizes a <a href="https://specials.dekoder.org/faq-schein-referendum-donezk-luhansk-cherson-saporishshja#q2" class="external-link">set of conditions that must be met for a secession referendum to be considered legal</a>.</p></li>
 <li>
 <p>Add additional database fields:</p>
@@ -101,19 +96,17 @@
 <ul><li>
 <p>We should ensure minimum quality of attachments (e.g. correct orientation, page ordering, OCR). Bad example: <a href="https://services.c2d.ch/s3_objects/referendum_5bbbf59192a21351232e2e65_0001.pdf" class="external-link uri">https://services.c2d.ch/s3_objects/referendum_5bbbf59192a21351232e2e65_0001.pdf</a></p>
 <p>I could probably write some validation fn in pkg rdb that checks all PDFs for text content to determine if they’re OCR’ed, but maybe there’s already more sophisticated software available for this.</p>
-<p>Ideally, the data portal should ensure the minimum quality requirements upon upload and display an informative warning in case of violation (with an opt-in override to upload nevertheless).</p>
+<p>Ideally, NocoDB should ensure the minimum quality requirements upon upload and display an informative warning in case of violation (with an opt-in override to upload nevertheless).</p>
 </li>
 </ul></div>
 <div class="section level2">
 <h2 id="rdb-r-package">rdb R package<a class="anchor" aria-label="anchor" href="#rdb-r-package"></a></h2>
-<ul><li><p>Prefix all Plotly fns with <code>plotly_</code> instead of <code>plot_</code> to avoid misconceptions.</p></li>
-<li>
-<p>Adapt code to use NocoDB’s API instead of <code>services.c2d.ch</code> after we finished basic transition to NocoDB.</p>
-<p>We should probably either use</p>
-<ul><li>the R package <a href="https://github.com/bergant/rapiclient" class="external-link">rapiclient</a> which can automatically extract the relevant specs from the OpenAPI definition, or</li>
-<li>the <a href="https://openapi-generator.tech/" class="external-link">OpenAPI Generator</a> which apparently can <a href="https://community.rstudio.com/t/generate-rest-api-clients-in-r-using-openapi-generator/141374" class="external-link">generate a ready-made R package from an OpenAPI definition</a> (see also <a href="https://community.rstudio.com/t/anyone-using-openapi-generator-to-generate-r-packages/94486" class="external-link">this post</a>).</li>
-</ul></li>
-<li><p>Automated vote entry creation by feeding scraped sudd.ch data to <code><a href="reference/add_rfrnds.html">rdb::add_rfrnds()</a></code>.</p></li>
+<ul><li><p>Implement <code>rm_obsolete_ncdb_attachments()</code> for removal of “dead” attachments from <code>rdb_attachments</code> B2 bucket since <a href="https://github.com/nocodb/nocodb/issues/7895" class="external-link">this won’t be implemented in NocoDB anytime soon it appears</a>.</p></li>
+<li><p>Prefix all Plotly fns with <code>plotly_</code> instead of <code>plot_</code> to avoid misconceptions.</p></li>
+<li><p>Consider explicitly starting the Neon rw/ compute instance <a href="https://api-docs.neon.tech/reference/startprojectendpoint" class="external-link">via a REST API call</a> to avoid connection timeouts due to startup delay when instance was suspended before (not necessary for public access since R/O instance doesn’t suspend)</p></li>
+<li><p>Check out the <a href="https://www.geonames.org/about.html" class="external-link">GeoNames</a> database and figure out whether it’d be worth to incorporate a suitable subset of it into our <code>countries</code>, <code>subnational_entites</code> and <code>municipalities</code> tables. Note that there’s a dedicated R package <a href="https://docs.ropensci.org/geonames/" class="external-link">geonames</a>.</p></li>
+<li><p>Automated vote entry creation by feeding scraped sudd.ch data to <code>rdb::add_rfrnds()</code>.</p></li>
+<li><p>Implement <code>add_wikidata_id()</code> if possible: search Wikidata for proper type at ballot date in jurisdiction (country, subnational entity, municipality)</p></li>
 <li>
 <p>For meaningful cross-time analyses, we need additional information about countries (“jurisdictions”):</p>
 <ul><li>
@@ -251,8 +244,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="miscellaneous">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous"></a></h3>
-<ul><li><p>Die Datenbank braucht ein Logo! (Dann könnten auch passende Favicons <a href="https://realfavicongenerator.net/" class="external-link">generiert werden</a>!)</p></li>
-<li>
+<ul><li>
 <p>Harvard Dataverse näher anschauen (Uwe meint, die RDB dort “aufzunehmen”, könnte passen) und vergleichen mit <a href="https://zenodo.org/" class="external-link">Zenodo</a> (siehe FA-Notizen) und <a href="https://datahub.io/" class="external-link">Datahub</a>.</p>
 <p>Abklären:</p>
 <ul><li><p><em>Lizenzanforderungen?</em> Default für Uploads ist CC0, aber es kann eine abweichende Lizenz definiert werden (es finden sich Beispiele mit ODbL 1.0!); darüber hinaus gelten nicht-rechtlich-bindende <a href="https://dataverse.org/best-practices/dataverse-community-norms" class="external-link"><em>community norms</em></a> (viel besserer Ansatz als in FORSbase!)</p></li>
@@ -306,26 +298,6 @@
 <div class="section level2">
 <h2 id="obsolete-referring-to-old-ccm-design-infrastructure-which-is-to-be-replaced">Obsolete (referring to old CCM-Design infrastructure which is to be replaced)<a class="anchor" aria-label="anchor" href="#obsolete-referring-to-old-ccm-design-infrastructure-which-is-to-be-replaced"></a></h2>
 <ul><li>
-<p>MongoDB/API: Track atomic edit history, traceable by author, and make it visually inspectable (some kind of diff viewer would be cool). On top of this, some method to easily undo specific or all edits by a specific user account should be added.</p>
-<p>See <a href="https://github.com/ccmdesign/c2d-app/issues/34" class="external-link">issue #34</a> (point 3) for a tentative request and <a href="https://github.com/ccmdesign/c2d-app/issues/34#issuecomment-852566636" class="external-link">@liviass’ answer</a> about an already existing events collection (with no API endpoint so far).</p>
-</li>
-<li>
-<p>MongoDB: optimize order of subvariables (<code>files</code> and <code>context.votes_per_canton</code>); doing this post-hoc in R is slow/inefficient, so getting the JSON in the desired order directly from the API would be cool…</p>
-<p>but is this actually possible? generally, the order of variables in the returned JSON seems random: compare e.g. <code>date</code> of <a href="https://services.c2d.ch/referendums/6102ae4ec72633da60229941" class="external-link">here</a> vs. <a href="https://services.c2d.ch/referendums/604b33cb4132d76d38bfe97b" class="external-link">here</a></p>
-</li>
-<li><p>C2D Website: Ditch the <code>by ccm.design</code> promo in the footer?## Reported to <a href="https://github.com/ccmdesign/c2d-app/issues/" class="external-link">CCM Design</a></p></li>
-<li>
-<p>Publish code under AGPL &gt;= 3, see <a href="https://github.com/ccmdesign/c2d-app/issues/26" class="external-link">issue #26</a></p>
-<p>We should then make the repository public!</p>
-</li>
-<li><p>C2D Admin Front-end: Add possibility to filter by draft status (binary) and color draft rows (e.g. in orange) -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/27" class="external-link">issue #26</a></p></li>
-<li>
-<p>C2D Website: Lizenzierung der Daten fehlt (betrifft auch den Download via rdb-Paket)! <a href="https://opendatacommons.org/licenses/odbl/summary/" class="external-link">ODC-ODbL</a> würde sich anbieten. -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/37" class="external-link">issue #37</a></p>
-<p>Once this is implemented, the same license terms should be added to the rdb package documentation!</p>
-</li>
-<li><p>Introduce <code>date_time_last_edited</code> holding the timestamp of a referendum entry’s last edit. -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
-<li><p>Add <code>id_official</code> and <code>id_sudd</code>! Then I can populate them with the (corrected) data from the former <code>number</code> variable and <code>number</code> can be deleted. -&gt; see <a href="https://github.com/ccmdesign/c2d-app/issues/29" class="external-link">issue #29</a></p></li>
-<li>
 <p>Introduce <code>subnational_entity_code</code>; <a href="https://en.wikipedia.org/wiki/ISO_3166-2" class="external-link">ISO 3166-2</a> codes seem perfectly suitable</p>
 <p>open points:</p>
 <ul><li><p>we need to establish a policy on which <code>country_code</code> to assign to <a href="https://en.wikipedia.org/wiki/ISO_3166-2#Subdivisions_included_in_ISO_3166-1" class="external-link">subnational entitites that have both an ISO 3166-1 country code as well as an ISO-3166-2 subdivision code</a> (recommended: avoid using the own ISO 3166-1 country code but assign the one from the subdivision’s “parent” country)</p></li>
@@ -405,11 +377,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Salim Brüggemann, Uwe Serdült.</p>
+  <p>Developed by Salim Brüggemann, Uwe Serdült.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
     </footer></div>

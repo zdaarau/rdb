@@ -6,11 +6,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">rdb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9046</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9047</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,10 +27,7 @@
 <li class="nav-item">
   <a class="nav-link" href="../articles/codebook.html">RDB codebook</a>
 </li>
-      </ul><form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
-
-      <ul class="navbar-nav"><li class="nav-item">
+      </ul><ul class="navbar-nav"><li class="nav-item">
   <a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="gitlab">
     <span class="fab fa fab fa-gitlab fa-lg"></span>
      
@@ -59,20 +56,20 @@
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a> with the columns <code>key</code>, <code>default_value</code>, and <code>description</code>.</p>
+    <p>A <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a> with the columns <code>key</code>, <code>default_value</code>, <code>default_value_dynamic</code>, and <code>description</code>.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="va">pkg_config</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   key                  default_value description                                                                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                                                                                                                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> api_username         <span style="color: #949494;">&lt;NULL&gt;</span>        RDB Services API username                                                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> api_password         <span style="color: #949494;">&lt;NULL&gt;</span>        RDB Services API password                                                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> global_max_cache_age <span style="color: #949494;">&lt;chr [1]&gt;</span>     Maximal timespan to preserve the package's [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> use_testing_server   <span style="color: #949494;">&lt;lgl [1]&gt;</span>     Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> test_testing_server  <span style="color: #949494;">&lt;lgl [1]&gt;</span>     Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   key                  default_value default_value_dynamic description                                                                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                                                                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> ncdb_token           <span style="color: #949494;">&lt;NULL&gt;</span>        <span style="color: #BB0000;">NA</span>                    NocoDB [API authentication token](https://docs.nocodb.com/account-settings/api-tokens/) for our [adm…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> pg_host              <span style="color: #949494;">&lt;chr [1]&gt;</span>     <span style="color: #BB0000;">NA</span>                    RDB PostgreSQL (neon.tech) host address. Defaults to a [read replica](https://neon.tech/docs/introdu…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> pg_user              <span style="color: #949494;">&lt;chr [1]&gt;</span>     <span style="color: #BB0000;">NA</span>                    RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> pg_password          <span style="color: #949494;">&lt;chr [1]&gt;</span>     <span style="color: #BB0000;">NA</span>                    Password for the specified RDB PostgreSQL user. Defaults to the password for user `r_anon`.          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> global_max_cache_age <span style="color: #949494;">&lt;chr [1]&gt;</span>     <span style="color: #BB0000;">NA</span>                    Maximal timespan to preserve the package's [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries…</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -80,11 +77,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Salim Brüggemann, Uwe Serdült.</p>
+  <p>Developed by Salim Brüggemann, Uwe Serdült.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
     </footer></div>

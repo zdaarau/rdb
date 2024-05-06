@@ -4,17 +4,17 @@ title = "RDB codebook"
 [01_main]
 [[01_main.item]]
 variable_name = "id"
-variable_name_print = "RDB ID"
+variable_name_print = "RDB identifier"
 variable_label = "a 24-character value that uniquely identifies the referendum and corresponds to the [MongoDB `ObjectId`](https://docs.mongodb.com/manual/reference/bson-types/#std-label-objectid) in the RDB"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "id_official"
-variable_name_print = "Official ID"
+variable_name_print = "Official identifier"
 variable_label = "the referendum's official identifier assigned by the authorities; this is only guaranteed to be unique per respective jurisdiction"
 value_scale = "nominal"
 [[01_main.item]]
 variable_name = "id_sudd"
-variable_name_print = "sudd.ch ID"
+variable_name_print = "sudd.ch identifier"
 variable_label = "the referendum's identifier assigned by [sudd.ch](https://sudd.ch/); multiple referendum's might share the same identifier"
 value_scale = "nominal"
 [[01_main.item]]
@@ -65,7 +65,7 @@ variable_label = "the English name of the [subnational political entity](https:/
 applicability_constraint = "level %in% c('local', 'subnational')"
 value_scale = "nominal"
 [[01_main.item]]
-variable_name = "municipality"
+variable_name = "municipality_name"
 variable_name_print = "Municipality"
 variable_label = "the municipality in which the referendum took place"
 applicability_constraint = "level == 'local'"
@@ -602,13 +602,13 @@ value_label_prefix = "The entry is"
 value_labels = [ "marked as a draft", "not marked as a draft" ]
 value_scale = "binary"
 [[01_main.item]]
-variable_name = "date_time_created"
+variable_name = "created_at"
 variable_name_print = "Creation date/time"
 variable_label = "the date and time on which the referendum's data entry was created"
 value_scale = "interval"
 ptype = "vctrs::new_datetime()"
 [[01_main.item]]
-variable_name = "date_time_last_edited"
+variable_name = "updated_at"
 variable_name_print = "Updated date/time"
 variable_label = "the date and time on which the referendum's data entry was last modified"
 value_scale = "interval"

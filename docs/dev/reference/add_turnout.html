@@ -10,11 +10,11 @@ votes_yes+votes_no+votes_empty+votes_invalidelectorate_total\frac{votes\_yes+vot
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">rdb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9046</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9047</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,10 +31,7 @@ votes_yes+votes_no+votes_empty+votes_invalidelectorate_total\frac{votes\_yes+vot
 <li class="nav-item">
   <a class="nav-link" href="../articles/codebook.html">RDB codebook</a>
 </li>
-      </ul><form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
-
-      <ul class="navbar-nav"><li class="nav-item">
+      </ul><ul class="navbar-nav"><li class="nav-item">
   <a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="gitlab">
     <span class="fab fa fab fa-gitlab fa-lg"></span>
      
@@ -90,8 +87,8 @@ data errors or (officially) tampered numbers.</p></dd>
     <div class="dont-index"><p>Other referendum data augmentation functions:
 <code><a href="add_country_code_continual.html">add_country_code_continual</a>()</code>,
 <code><a href="add_country_code_long.html">add_country_code_long</a>()</code>,
-<code><a href="add_country_name_long.html">add_country_name_long</a>()</code>,
 <code><a href="add_country_name.html">add_country_name</a>()</code>,
+<code><a href="add_country_name_long.html">add_country_name_long</a>()</code>,
 <code><a href="add_former_country_flag.html">add_former_country_flag</a>()</code>,
 <code><a href="add_period.html">add_period</a>()</code>,
 <code><a href="add_urls.html">add_urls</a>()</code>,
@@ -107,20 +104,7 @@ data errors or (officially) tampered numbers.</p></dd>
 <span class="r-in"><span>                <span class="va">electorate_total</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"votes_"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                <span class="va">turnout</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17,766 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    id                       electorate_total votes_yes votes_no votes_empty votes_invalid votes_per_subterritory turnout</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 65096e84481d20233932cc70         29<span style="text-decoration: underline;">532</span>595    <span style="text-decoration: underline;">608</span>254 10<span style="text-decoration: underline;">675</span>211           0        <span style="text-decoration: underline;">173</span>734 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.388</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 65096dc1481d20233932cc6e         29<span style="text-decoration: underline;">532</span>595    <span style="text-decoration: underline;">608</span>254 10<span style="text-decoration: underline;">675</span>211           0        <span style="text-decoration: underline;">799</span>123 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 65096535481d20233932cc66         29<span style="text-decoration: underline;">532</span>595    <span style="text-decoration: underline;">445</span>270 10<span style="text-decoration: underline;">808</span>410           0        <span style="text-decoration: underline;">828</span>908 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 6509625d481d20233932cc63         29<span style="text-decoration: underline;">532</span>595    <span style="text-decoration: underline;">360</span>803 10<span style="text-decoration: underline;">878</span>863           0        <span style="text-decoration: underline;">842</span>922 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 650034e4481d20233932cc39         17<span style="text-decoration: underline;">671</span>784   6<span style="text-decoration: underline;">286</span>894  9<span style="text-decoration: underline;">452</span>792           0        <span style="text-decoration: underline;">155</span>545 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.899</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 64e46f7a481d20233932cc0b         13<span style="text-decoration: underline;">045</span>553   5<span style="text-decoration: underline;">541</span>585  3<span style="text-decoration: underline;">859</span>507      <span style="text-decoration: underline;">841</span>696        <span style="text-decoration: underline;">574</span>474 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.829</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 64e46c8f481d20233932cc09               <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span> <span style="color: #949494;">&lt;NULL&gt;</span>                  <span style="color: #BB0000;">NA</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 64c8b3ca0b8bae0c78c7ec8a               <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span> <span style="color: #949494;">&lt;NULL&gt;</span>                  <span style="color: #BB0000;">NA</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 64c8b19c0b8bae0c78c7ec86               <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span> <span style="color: #949494;">&lt;NULL&gt;</span>                  <span style="color: #BB0000;">NA</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 64c8a28d0b8bae0c78c7ec82               <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span> <span style="color: #949494;">&lt;NULL&gt;</span>                  <span style="color: #BB0000;">NA</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 17,756 more rows</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::rfrnds(quiet = TRUE):</span> unused argument (quiet = TRUE)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># strict turnout numbers</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
@@ -129,20 +113,7 @@ data errors or (officially) tampered numbers.</p></dd>
 <span class="r-in"><span>                <span class="va">electorate_total</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"votes_"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                <span class="va">turnout</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 17,766 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    id                       electorate_total votes_yes votes_no votes_empty votes_invalid votes_per_subterritory turnout</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 65096e84481d20233932cc70         29<span style="text-decoration: underline;">532</span>595    <span style="text-decoration: underline;">608</span>254 10<span style="text-decoration: underline;">675</span>211           0        <span style="text-decoration: underline;">173</span>734 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.388</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 65096dc1481d20233932cc6e         29<span style="text-decoration: underline;">532</span>595    <span style="text-decoration: underline;">608</span>254 10<span style="text-decoration: underline;">675</span>211           0        <span style="text-decoration: underline;">799</span>123 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 65096535481d20233932cc66         29<span style="text-decoration: underline;">532</span>595    <span style="text-decoration: underline;">445</span>270 10<span style="text-decoration: underline;">808</span>410           0        <span style="text-decoration: underline;">828</span>908 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 6509625d481d20233932cc63         29<span style="text-decoration: underline;">532</span>595    <span style="text-decoration: underline;">360</span>803 10<span style="text-decoration: underline;">878</span>863           0        <span style="text-decoration: underline;">842</span>922 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 650034e4481d20233932cc39         17<span style="text-decoration: underline;">671</span>784   6<span style="text-decoration: underline;">286</span>894  9<span style="text-decoration: underline;">452</span>792           0        <span style="text-decoration: underline;">155</span>545 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.899</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 64e46f7a481d20233932cc0b         13<span style="text-decoration: underline;">045</span>553   5<span style="text-decoration: underline;">541</span>585  3<span style="text-decoration: underline;">859</span>507      <span style="text-decoration: underline;">841</span>696        <span style="text-decoration: underline;">574</span>474 <span style="color: #949494;">&lt;NULL&gt;</span>                   0.829</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 64e46c8f481d20233932cc09               <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span> <span style="color: #949494;">&lt;NULL&gt;</span>                  <span style="color: #BB0000;">NA</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 64c8b3ca0b8bae0c78c7ec8a               <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span> <span style="color: #949494;">&lt;NULL&gt;</span>                  <span style="color: #BB0000;">NA</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 64c8b19c0b8bae0c78c7ec86               <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span> <span style="color: #949494;">&lt;NULL&gt;</span>                  <span style="color: #BB0000;">NA</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 64c8a28d0b8bae0c78c7ec82               <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span> <span style="color: #949494;">&lt;NULL&gt;</span>                  <span style="color: #BB0000;">NA</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 17,756 more rows</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::rfrnds(quiet = TRUE):</span> unused argument (quiet = TRUE)</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -150,11 +121,11 @@ data errors or (officially) tampered numbers.</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Salim Brüggemann, Uwe Serdült.</p>
+  <p>Developed by Salim Brüggemann, Uwe Serdült.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
     </footer></div>

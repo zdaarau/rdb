@@ -25,17 +25,13 @@ try(
 )
 }
 \seealso{
-Other referendum data functions:
-\code{\link{add_rfrnds}()},
-\code{\link{count_rfrnds}()},
+Other data functions:
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
-\code{\link{edit_rfrnds}()},
-\code{\link{rfrnd_exists}()},
-\code{\link{rfrnds_old}()},
+\code{\link{legal_bases}()},
+\code{\link{read_tbl}()},
 \code{\link{rfrnds}()},
-\code{\link{rfrnd}()},
-\code{\link{search_rfrnds}()},
+\code{\link{rfrnds_old}()},
 \code{\link{validate_rfrnds}()}
 }
-\concept{rfrnd}
+\concept{data}

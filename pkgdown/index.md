@@ -27,13 +27,13 @@ Some of rdb's functionality is controlled via package-specific global configurat
 
 ::: {.table-wide}
 
-  **Description**                                                                                                                                              **R option**                 **Environment variable**       **Default value**
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------ ---------------------------- ------------------------------ -------------------
-  RDB Services API username                                                                                                                                    `rdb.api_username`           `R_RDB_API_USERNAME`           
-  RDB Services API password                                                                                                                                    `rdb.api_password`           `R_RDB_API_PASSWORD`           
-  Maximal timespan to preserve the package's [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading.   `rdb.global_max_cache_age`   `R_RDB_GLOBAL_MAX_CACHE_AGE`   `"30 days"`
-  Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.                                                  `rdb.use_testing_server`     `R_RDB_USE_TESTING_SERVER`     `FALSE`
-  Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.                                      `rdb.test_testing_server`    `R_RDB_TEST_TESTING_SERVER`    `FALSE`
+  **Description**                                                                                                                                                                                                                **R option**                 **Environment variable**       **Default value**
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ---------------------------- ------------------------------ ----------------------------------------------------------
+  NocoDB [API authentication token](https://docs.nocodb.com/account-settings/api-tokens/) for our [admin.rdb.vote](https://admin.rdb.vote/) instance. This is required for the `ncdb_*()` family of functions to authenticate.   `rdb.ncdb_token`             `R_RDB_NCDB_TOKEN`             
+  RDB PostgreSQL (neon.tech) host address. Defaults to a [read replica](https://neon.tech/docs/introduction/read-replicas) which has no write access to the database.                                                            `rdb.pg_host`                `R_RDB_PG_HOST`                `"ep-frosty-flower-a28keh10.eu-central-1.aws.neon.tech"`
+  RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user `r_anon`.                                                                                   `rdb.pg_user`                `R_RDB_PG_USER`                `"r_anon"`
+  Password for the specified RDB PostgreSQL user. Defaults to the password for user `r_anon`.                                                                                                                                    `rdb.pg_password`            `R_RDB_PG_PASSWORD`            `"WTYUeDtTm0UV4nXzTZ7morHSdM0wQh0p"`
+  Maximal timespan to preserve the package's [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading.                                                                     `rdb.global_max_cache_age`   `R_RDB_GLOBAL_MAX_CACHE_AGE`   `"30 days"`
 
 :::
 
@@ -43,7 +43,7 @@ Some of rdb's functionality is controlled via package-specific global configurat
 
 This package's source code is written in the [R Markdown](https://rmarkdown.rstudio.com/) file format to facilitate practices commonly referred to as [*literate programming*](https://en.wikipedia.org/wiki/Literate_programming). It allows the actual code to be freely mixed with explanatory and supplementary information in expressive Markdown format instead of having to rely on [`#` comments](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Comments) only.
 
-All the `.gen.R` suffixed R source code found under [`R/`](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/master/R/) is generated from the respective R Markdown counterparts under [`Rmd/`](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/master/Rmd/) using [`pkgpurl::purl_rmd()`](https://pkgpurl.rpkg.dev/dev/reference/purl_rmd.html)[^1]. Always make changes only to the `.Rmd` files -- never the `.R` files -- and then run `pkgpurl::purl_rmd()` to regenerate the R source files.
+All the `.gen.R` suffixed R source code found under [`R/`](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/pg/R/) is generated from the respective R Markdown counterparts under [`Rmd/`](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/pg/Rmd/) using [`pkgpurl::purl_rmd()`](https://pkgpurl.rpkg.dev/dev/reference/purl_rmd.html)[^1]. Always make changes only to the `.Rmd` files -- never the `.R` files -- and then run `pkgpurl::purl_rmd()` to regenerate the R source files.
 
 ### Coding style
 
@@ -73,7 +73,7 @@ This package borrows a lot of the [Tidyverse](https://www.tidyverse.org/) design
 
 -   Usage of [R's right-hand assignment operator `->`](https://rdrr.io/r/base/assignOps.html) is not allowed[^3].
 
--   R source code is *not* split over several files as [suggested by the TSG](https://style.tidyverse.org/package-files.html) but instead is (as far as possible) kept in the single file [`Rmd/rdb.Rmd`](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/master/Rmd/rdb.Rmd) which is well-structured thanks to its [Markdown support](#r-markdown-format).
+-   R source code is *not* split over several files as [suggested by the TSG](https://style.tidyverse.org/package-files.html) but instead is (as far as possible) kept in the single file [`Rmd/rdb.Rmd`](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/pg/Rmd/rdb.Rmd) which is well-structured thanks to its [Markdown support](#r-markdown-format).
 
 As far as possible, these deviations from the TSG plus some additional restrictions are formally specified in [`pkgpurl::default_linters`](https://pkgpurl.rpkg.dev/reference/default_linters), which is (by default) used in [`pkgpurl::lint_rmd()`](https://pkgpurl.rpkg.dev/reference/lint_rmd), which in turn is the recommended way to lint this package.
 

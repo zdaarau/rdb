@@ -4,7 +4,7 @@
 \alias{url_codebook}
 \title{Assemble codebook URL}
 \usage{
-url_codebook(var = NULL)
+url_codebook(var_name = NULL)
 }
 \arguments{
 \item{var_name}{Optional variable name to add as the \href{https://en.wikipedia.org/wiki/URI_fragment}{fragment identifier} of the returned URL, which leads to a
@@ -24,7 +24,8 @@ rdb:::url_codebook("topics")
 \seealso{
 Other URL assembly functions:
 \code{\link{url_admin_portal}()},
-\code{\link{url_api}()},
+\code{\link{url_api_old}()},
+\code{\link{url_ncdb}()},
 \code{\link{url_website}()}
 }
 \concept{url_assembly}

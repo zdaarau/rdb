@@ -2,42 +2,42 @@
 % Please edit documentation in R/rdb.gen.R
 \name{delete_rfrnds}
 \alias{delete_rfrnds}
-\title{Delete referendums in the RDB}
+\title{Delete referendums from the RDB}
 \usage{
-delete_rfrnds(
-  ids,
-  email = pal::pkg_config_val(key = "api_username", pkg = this_pkg),
-  password = pal::pkg_config_val(key = "api_password", pkg = this_pkg),
-  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
-)
+delete_rfrnds(data, connection = connect(), disconnect = TRUE)
 }
 \arguments{
-\item{ids}{IDs of the referendums to be deleted. A character vector.}
+\item{data}{Referendum data to be deleted. A \link[tibble:tbl_df-class]{tibble} that at least must contain the column
+``.}
 
-\item{email}{The e-mail address of the RDB API user account to be used for authentication. A character scalar.}
+\item{connection}{Database connection to \link[=connect]{RDB's PostgreSQL DBMS}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 
-\item{password}{The password of the RDB API user account to be used for authentication. A character scalar.}
-
-\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.}
+\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
-\code{ids}, invisibly.
+The updated \code{referendums} table data as a tibble, invisibly.
 }
 \description{
-Deletes existing referendum entries in the Referendum Database (RDB) via \href{https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes}{its API}.
+Deletes \code{data} from the RDB's \code{referendums} table.
 }
 \seealso{
-Other referendum data functions:
-\code{\link{add_rfrnds}()},
+Other administration functions:
+\code{\link{config_ncdb}()},
+\code{\link{connect}()},
+\code{\link{update_countries}()},
+\code{\link{update_langs}()},
+\code{\link{update_municipalities}()},
+\code{\link{update_rfrnds}()},
+\code{\link{update_subnational_entities}()}
+
+Other data functions:
 \code{\link{assert_vars}()},
-\code{\link{count_rfrnds}()},
 \code{\link{download_file_attachment}()},
-\code{\link{edit_rfrnds}()},
-\code{\link{rfrnd_exists}()},
-\code{\link{rfrnds_old}()},
+\code{\link{legal_bases}()},
+\code{\link{read_tbl}()},
 \code{\link{rfrnds}()},
-\code{\link{rfrnd}()},
-\code{\link{search_rfrnds}()},
+\code{\link{rfrnds_old}()},
 \code{\link{validate_rfrnds}()}
 }
-\concept{rfrnd}
+\concept{admin}
+\concept{data}

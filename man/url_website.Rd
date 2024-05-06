@@ -4,15 +4,10 @@
 \alias{url_website}
 \title{Assemble website URL}
 \usage{
-url_website(
-  ...,
-  .use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
-)
+url_website(...)
 }
 \arguments{
 \item{...}{Optional path components added to the base URL.}
-
-\item{.use_testing_server}{Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.}
 }
 \value{
 A character scalar.
@@ -26,8 +21,9 @@ rdb:::url_website("referendum/CH/5bbc04f692a21351232e5a01")
 \seealso{
 Other URL assembly functions:
 \code{\link{url_admin_portal}()},
-\code{\link{url_api}()},
-\code{\link{url_codebook}()}
+\code{\link{url_api_old}()},
+\code{\link{url_codebook}()},
+\code{\link{url_ncdb}()}
 }
 \concept{url_assembly}
 \keyword{internal}

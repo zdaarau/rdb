@@ -27,6 +27,28 @@ library(magrittr,
 
 # Define data
 
+## `col_names_nocodb_filled`
+
+```{r}
+col_names_nocodb_filled <- c("created_by",
+                             "updated_by")
+```
+
+## `col_names_un`
+
+UN world region variables
+
+```{r}
+col_names_un <- c("un_country_code",
+                  "un_region_tier_1_code",
+                  "un_region_tier_1_name",
+                  "un_region_tier_2_code",
+                  "un_region_tier_2_name",
+                  "un_region_tier_3_code",
+                  "un_region_tier_3_name",
+                  "un_subregion")
+```
+
 ## `data_codebook`
 
 TODO:
@@ -131,7 +153,7 @@ data_codebook <- {
 }
 ```
 
-## ISO 3166
+## ISO Codes
 
 NOTES:
 
@@ -181,34 +203,84 @@ SCCAI 2019 and ISO 3166-1:2013](https://www.statcan.gc.ca/en/subjects/standard/s
 data_iso_3166_1 <-
   ISOcodes::ISO_3166_1 |>
   tibble::as_tibble() |>
-  # add `Common_name` where it's currently missing
+  # convert column names to snake_case
+  dplyr::rename_with(.cols = everything(),
+                     .fn = snakecase::to_snake_case) |>
+  # add `common_name` where it's currently missing
   # TODO: consider submitting PRs once [upstream issue #44](https://salsa.debian.org/iso-codes-team/iso-codes/-/issues/44) is answered
-  # TODO: remove IR, LA and SY once ISOcodes pkg version > 2022.09.29 is released
-  dplyr::mutate(Common_name = dplyr::case_when(Alpha_2 == "BN" ~ "Brunei",
-                                               Alpha_2 == "CD" ~ "Democratic Republic of Congo",
-                                               Alpha_2 == "CG" ~ "Congo Republic",
-                                               Alpha_2 == "FK" ~ "Falkland Islands",
-                                               Alpha_2 == "FM" ~ "Micronesia",
-                                               Alpha_2 == "IR" ~ "Iran",
-                                               Alpha_2 == "LA" ~ "Laos",
-                                               Alpha_2 == "PS" ~ "Palestine",
-                                               Alpha_2 == "SY" ~ "Syria",
-                                               Alpha_2 == "VA" ~ "Vatican City",
-                                               .default = Common_name)) |>
+  dplyr::mutate(common_name = dplyr::case_when(alpha_2 == "BN" ~ "Brunei",
+                                               alpha_2 == "CD" ~ "Democratic Republic of Congo",
+                                               alpha_2 == "CG" ~ "Congo Republic",
+                                               alpha_2 == "FK" ~ "Falkland Islands",
+                                               alpha_2 == "FM" ~ "Micronesia",
+                                               alpha_2 == "PS" ~ "Palestine",
+                                               alpha_2 == "VA" ~ "Vatican City",
+                                               .default = common_name)) |>
   # extend with unofficial information
-  dplyr::add_row(Alpha_2 = "XK",
-                 Alpha_3 = "XKS",
-                 Numeric = NA_character_,
-                 Name = "Kosovo, Republic of",
-                 Official_name = "Republic of Kosovo",
-                 Common_name = "Kosovo") |>
-  dplyr::mutate(name_short = Common_name %|% Name,
-                name_long = Official_name %|% Name) |>
-  dplyr::arrange(Alpha_2) |>
+  dplyr::add_row(alpha_2 = "XK",
+                 alpha_3 = "XKS",
+                 numeric = NA_character_,
+                 name = "Kosovo, Republic of",
+                 official_name = "Republic of Kosovo",
+                 common_name = "Kosovo") |>
+  # assemble complete name vars
+  dplyr::mutate(name_short = common_name %|% name,
+                name_long = official_name %|% name) |>
+  dplyr::arrange(alpha_2) |>
   # ensure there are no duplicates
   assertr::assert(predicate = assertr::is_uniq,
-                  Alpha_2,
-                  Alpha_3)
+                  alpha_2,
+                  alpha_3,
+                  name_short,
+                  name_long) |>
+  assertr::assert(predicate = \(x) assertr::is_uniq(x, allow.na = TRUE),
+                  numeric)
+```
+
+### `data_iso_3166_2`
+
+TODO:
+
+-   Install older ISOcodes pkg versions and check whether codes were deleted meanwhile; if so, add them!
+
+NOTES:
+
+-   By design, we don't have any codes for subnational entities that ceased to exist before [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) was first
+    published in 1998. In such cases, we assign `CUSTOM-` codes.
+
+-   Due to lack of official revocation information in ISO 3166-2, we construct our own (delayed) `valid_from` and `valid_to` date columns based on detected
+    changes in `ISOcodes::ISO_3166_2`. Ideally, these dates would be added to the
+    [`iso_3166-2.json`](https://salsa.debian.org/iso-codes-team/iso-codes/-/blob/main/data/iso_3166-2.json) source file gathered from officially anounced
+    [changes](https://en.wikipedia.org/wiki/ISO_3166-2#Changes).
+
+```{r}
+# TEMP
+data_iso_3166_2 <-
+  rdb:::data_iso_3166_2 |>
+  dplyr::mutate(valid_from = clock::date_parse("0000-01-01"),
+                valid_to = as.Date(NA))
+
+data_iso_3166_2 <-
+  rdb:::data_iso_3166_2 |>
+  dplyr::filter(!(code %in% ISOcodes::ISO_3166_2$Code)) |>
+  tidyr::replace_na(replace = list(valid_to = clock::date_today(zone = "UTC")))
+
+data_iso_3166_2 <-
+  ISOcodes::ISO_3166_2 |>
+  tibble::as_tibble() |>
+  # convert column names to snake_case
+  dplyr::rename_with(.cols = everything(),
+                     .fn = snakecase::to_snake_case) |>
+  dplyr::mutate(valid_from = clock::date_today(zone = "UTC") - 1L,
+                valid_to = as.Date(NA)) |>
+  dplyr::relocate(code_parent = parent,
+                  .after = code) |>
+  # add expired codes
+  dplyr::bind_rows(data_iso_3166_2) |>
+  # ensure there are no duplicates
+  assertr::assert(predicate = assertr::is_uniq,
+                  code) |>
+  dplyr::arrange(code)
 ```
 
 ### `data_iso_3166_3`
@@ -217,13 +289,16 @@ data_iso_3166_1 <-
 data_iso_3166_3 <-
   ISOcodes::ISO_3166_3 |>
   tibble::as_tibble() |>
-  dplyr::mutate(Alpha_2 = stringr::str_sub(string = Alpha_4,
-                                           end = 2L),
-                Alpha_2_new = stringr::str_sub(string = Alpha_4,
+  # convert column names to snake_case
+  dplyr::rename_with(.cols = everything(),
+                     .fn = snakecase::to_snake_case) |>
+  dplyr::mutate(alpha_2_old = stringr::str_sub(string = alpha_4,
+                                               end = 2L),
+                alpha_2_new = stringr::str_sub(string = alpha_4,
                                                start = 3L),
-                # variation of `Alpha_2_new` that in case of multiple successor countries (*HH/*XX) holds the biggest one (1. population-, then 2. area-wise)
+                # variation of `alpha_2_new` that in case of multiple successor countries (*HH/*XX) holds the biggest one (1. population-, then 2. area-wise)
                 # (main purpose is to be able to match with UN M49 area codes)
-                Alpha_2_new_main = purrr::map_chr(Alpha_4,
+                alpha_2_new_main = purrr::map_chr(alpha_4,
                                                   \(x) {
                                                     if (stringr::str_detect(x, "(HH|XX)$")) {
                                                       return(switch(x,
@@ -242,8 +317,8 @@ data_iso_3166_3 <-
                                                       return(stringr::str_sub(x, start = 3L))
                                                     }
                                                   }),
-                Date_withdrawn =
-                  Date_withdrawn |>
+                date_withdrawn =
+                  date_withdrawn |>
                   purrr::map(\(x) {
                     if (nchar(x) == 4L) {
                       clock::date_build(year = as.integer(x))
@@ -252,26 +327,224 @@ data_iso_3166_3 <-
                     }
                   }) |>
                   purrr::reduce(c)) |>
-  dplyr::relocate(Alpha_2, Alpha_2_new, Alpha_2_new_main,
-                  .after = Alpha_3) |>
+  dplyr::relocate(alpha_2_old, alpha_2_new, alpha_2_new_main,
+                  .after = alpha_3) |>
   # harmonize name style
-  dplyr::mutate(name_short = dplyr::case_match(Alpha_4,
+  dplyr::mutate(name_short = dplyr::case_match(alpha_4,
                                                "BYAA" ~ "Byelorussian SSR",
                                                "FXFR" ~ "Metropolitan France",
-                                               .default = stringr::str_extract(string = Name,
+                                               .default = stringr::str_extract(string = name,
                                                                                pattern = "[^,]+")),
-                name_long = dplyr::case_match(Alpha_4,
+                name_long = dplyr::case_match(alpha_4,
                                               "BYAA" ~ "Byelorussian Soviet Socialist Republic",
-                                              "CSHH" ~ Name,
+                                              "CSHH" ~ name,
                                               "SUHH" ~ "Union of Soviet Socialist Republics (USSR)",
                                               "YDYE" ~ "Democratic Yemen, People's Democratic Republic of Yemen",
-                                              .default = stringr::str_replace(string = Name,
+                                              .default = stringr::str_replace(string = name,
                                                                               pattern = "^([^,]+), (.+)$",
                                                                               replacement = "\\2 \\1"))) |>
-  dplyr::arrange(Alpha_4) |>
+  dplyr::arrange(alpha_2_old,
+                 alpha_2_new_main) |>
   # ensure there are no duplicates
   assertr::assert(predicate = assertr::is_uniq,
-                  Alpha_4)
+                  alpha_4,
+                  alpha_3)
+```
+
+### `data_iso_639_1`
+
+```{r}
+data_iso_639_1 <-
+  ISOcodes::ISO_639_2 |>
+  tibble::as_tibble() |>
+  # convert column names to snake_case
+  dplyr::rename_with(.cols = everything(),
+                     .fn = snakecase::to_snake_case) |>
+  dplyr::filter(!is.na(alpha_2)) |>
+  dplyr::select(code = alpha_2,
+                name) |>
+  dplyr::arrange(code) |>
+  # ensure there are no duplicates or NAs
+  assertr::assert(predicate = assertr::is_uniq,
+                  code,
+                  name) |>
+  assertr::assert(predicate = assertr::not_na,
+                  code,
+                  name)
+```
+
+## `data_municipalities`
+
+TODO:
+
+-   Add more countries which have an [official municipality identifier](https://en.wikipedia.org/wiki/Community_Identification_Number).
+
+    -   `AT`: [ÖSTAT-Nr](https://de.wikipedia.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel#%C3%96sterreich)
+    -   `DE`: [Amtlicher Gemeindeschlüssel (AGS)](https://de.wikipedia.org/wiki/Amtlicher_Gemeindeschl%C3%BCssel#Deutschland)
+    -   `FR`: [INSEE code](https://en.wikipedia.org/wiki/INSEE_code)
+    -   `GB`
+        -   UK municipalities don't seem to have an "official municipality identifier" as such, but it appears we can resort to the [phone dialling
+            codes](https://en.wikipedia.org/wiki/List_of_dialling_codes_in_the_United_Kingdom#List_of_dialling_codes). That dialling codes do not exactly
+            correspond to political boundaries shouldn't matter as long as we can identify each relevant municipality.
+        -   UN/LOCODE for London [is `GB LON`](https://service.unece.org/trade/locode/gb.htm).
+
+NOTES:
+
+-   Unfortunately, there is no ISO code standard for municipalities or any other standard with full coverage of all municipalities worldwide. We resort to the
+    *UN/LOCODE*, the [United Nations Code for Trade and Transport Locations](https://en.wikipedia.org/wiki/UN/LOCODE), as the best available global municipality
+    identifier. UN/LOCODE covers more than just municipalities, including entities like seaports, rail and road terminals, airports or border crossing points –
+    we just use the subset of codes referring to municipalities. Not all municipalities worldwide have received a UN/LOCODE (yet), so we can't use it as primary
+    key for the coresponding SQL table in the RDB (`municipalities`).
+
+    We rely on the [`un-locode`](https://github.com/datasets/un-locode) dataset that is part of [DataHub's core data](https://datahub.io/docs/core-data). It's a
+    regularly updated, structured JSON representation of the official [UNECE data](https://unece.org/trade/uncefact/unlocode). Column descriptions are found
+    [here](https://service.unece.org/trade/locode/Service/LocodeColumn.htm).
+
+    There is also an [official JSON-LD API](https://vocabulary.uncefact.org/unlocode-about). But since it doesn't include the change date, we rely on the
+    unofficial `un-locode` dataset mentioned above. To retrieve the main dataset from the JSON-LD API, run:
+
+    ``` r
+    httr2::request(base_url = "https://vocabulary.uncefact.org/unlocode") |>
+      httr2::req_headers(Accept = "application/ld+json") |>
+      httr2::req_retry(max_tries = 3L) |>
+      httr2::req_perform() |>
+      httr2::resp_body_json(simplifyVector = TRUE)
+    ```
+
+    Note that there [appear to be duplicates in the source data, i.e. territories that have multiple LOCODEs
+    assigned](https://github.com/uncefact/vocab-locode/issues/11). The underlying reason is currently unknown to us. Since there are duplicates that *only*
+    differ in the LOCODE itself (i.e. all other columns are identical), we can't resolve them programmatically. Instead, we have to explicitly remove the
+    affected entries and just validate that there are no more duplicates in the resulting subset we actually use (`data_municipalities`). To inspect potential
+    duplicates, run:
+
+    ``` r
+    data_un_locode |>
+      dplyr::group_by(country_code, subnational_entity_code, name) |>
+      dplyr::summarise(n = dplyr::n()) |>
+      dplyr::filter(n > 1L)
+    ```
+
+-   Additionally, we store the [official municipality identifier](https://en.wikipedia.org/wiki/Community_Identification_Number) assigned by the national
+    authorities as `id_official`, *if available*. `id_official` is expected to be unique *per country*. If no suitable official identifier exists, we assign
+    `CUSTOM-` with a simple serial number suffix.
+
+    So far, we included official municipality identifiers for the following countries:
+
+    -   [Switzerland](https://en.wikipedia.org/wiki/Community_Identification_Number#Switzerland)
+
+-   As unique identifier we create our own one consisting of `{country_code}_{id_official}_{valid_from}`. It serves as primary key for the `municipalities` SQL
+    table.
+
+```{r}
+# CH
+## define function to recursively determine root entity (= subnational entity = canton)
+## NOTE: this is inefficient by design
+## TODO: add an optimized and polished version of this fn to pkg swissmuni?
+derive_subnational_entity_code <- function(id) {
+  
+  parent <-
+    data_municipalities |>
+    dplyr::filter(Identifier == !!id) |>
+    # choose most recent entry in case of multiple ones
+    tidyr::replace_na(replace = list(ValidTo = clock::date_today(zone = "UTC") + 1L)) |>
+    dplyr::filter(ValidTo == max(ValidTo)) |>
+    # this is necessary to filter out Identifiers that are assigned more than once (god knows why)
+    dplyr::filter(Level == min(Level))
+  
+  if (nrow(parent) == 0L) {
+    cli::cli_alert_warning("No parent entry found for entity with OFS code {.val {id}}.")
+    return(NA_character_)
+    
+  } else if (nrow(parent) > 1L) {
+    cli::cli_alert_warning("Multiple parent entries found for entity with OFS code {.val {id}}.")
+    return(NA_character_)
+  }
+  
+  # abort recursion if no more parent
+  if (is.na(parent$Parent)) {
+    
+    result <-
+      BFS::register_kt |>
+      dplyr::filter(KTNR == !!parent$Identifier) |>
+      dplyr::pull(GDEKT) %>%
+      paste0("CH-", .)
+    
+  } else {
+    result <- derive_subnational_entity_code(parent$Parent)
+  }
+  
+  result
+}
+
+data_municipalities <- swissmuni::snapshots(start_date = "0000-01-01",
+                                            end_date = clock::date_today(zone = "UTC"))
+data_municipalities %<>%
+  # reduce to only municipalities
+  dplyr::filter(Level == 3L) %>%
+  # add `country_code` and derive `subnational_entity_code`
+  dplyr::mutate(country_code = "CH",
+                subnational_entity_code = purrr::map_chr(Parent,
+                                                         derive_subnational_entity_code)) %>%
+  # tidy cols
+  dplyr::select(country_code,
+                subnational_entity_code,
+                id_official = CODE_OFS_1_Text_en,
+                name = Name_en,
+                valid_from = ValidFrom,
+                valid_to = ValidTo)
+
+# add our municipality ID
+data_municipalities %<>% dplyr::mutate(id = paste(country_code, id_official, valid_from,
+                                                  sep = "_"),
+                                       .before = 1L)
+# add UN/LOCODEs
+data_un_locode <-
+  readr::read_csv(file = "https://raw.githubusercontent.com/datasets/un-locode/main/data/code-list.csv",
+                  col_types = "c") |>
+  dplyr::rename_with(.cols = everything(),
+                     .fn = snakecase::to_snake_case) |>
+  dplyr::mutate(country_code = country,
+                subnational_entity_code = dplyr::if_else(is.na(country_code) | is.na(subdivision),
+                                                         NA_character_,
+                                                         paste(country_code, subdivision,
+                                                               sep = "-")),
+                un_locode = dplyr::if_else(is.na(country_code) | is.na(location),
+                                           NA_character_,
+                                           paste(country_code, location)),
+                # NOTE: contrary to what one would expect, there are actually diacritics present in the municipality names of multiple countries incl. CZ,
+                #       HR, JP, VN and more, so we ASCII-fy the names ourselves
+                name_ascii = stringi::stri_trans_general(str = name_wo_diacritics,
+                                                         id = "Latin-ASCII"),
+                # apparently, the original date format is `%y%m`, i.e. has no day component
+                updated_at = clock::date_parse(x = ifelse(is.na(date),
+                                                          date,
+                                                          paste0(date, "01")),
+                                               format = "%y%m%d"),
+                .before = 1L) |>
+  dplyr::relocate(name,
+                  .before = name_ascii) |>
+  dplyr::select(-c(country, date, location, name_wo_diacritics, subdivision)) |>
+  # filter out all entries without a country code
+  dplyr::filter(!is.na(un_locode)) |>
+  # remove duplicates, see NOTES above
+  ## CH Schönenbuch: we keep `CH SOH` which was created first
+  dplyr::filter(un_locode != "CH SBC")
+
+data_municipalities <-
+  data_un_locode |>
+  dplyr::filter(country_code == "CH") |>
+  dplyr::select(subnational_entity_code, un_locode, name) |>
+  dplyr::left_join(x = data_municipalities,
+                   by = c("name", "subnational_entity_code"),
+                   relationship = "many-to-one") |>
+  dplyr::relocate(un_locode,
+                  .after = id_official)
+
+# arrange sensibly
+data_municipalities %<>% dplyr::arrange(country_code,
+                                        stringr::str_rank(id_official,
+                                                          numeric = TRUE),
+                                        valid_from)
 ```
 
 ## `country_codes_sudd_invalid`
@@ -280,9 +553,9 @@ data_iso_3166_3 <-
 country_codes_sudd_invalid <- c("MB", "ZZ")
 
 # ensure they aren't used in ISO 3166
-if (any(country_codes_sudd_invalid %in% c(data_iso_3166_1$Alpha_2,
-                                          data_iso_3166_3$Alpha_2,
-                                          data_iso_3166_3$Alpha_2_new_main))) {
+if (any(country_codes_sudd_invalid %in% c(data_iso_3166_1$alpha_2,
+                                          data_iso_3166_3$alpha_2_old,
+                                          data_iso_3166_3$alpha_2_new_main))) {
   
   cli::cli_abort("At least one of {.var country_codes_sudd_invalid} is used in regular ISO 3166 alpha-2 codes. Please investigate.")
 }
@@ -316,8 +589,6 @@ data_topics <-
 ## `months_de*`
 
 ```{r}
-rlang::check_installed("clock")
-
 months_de <-
   1:12 |>
   magrittr::set_names(clock::clock_labels_lookup("de")$month) |>
@@ -326,24 +597,38 @@ months_de <-
 months_de_fms <- rdb:::as_fm_list(months_de)
 ```
 
+## `pg_metadata_*`
+
+```{r}
+rdb:::tbl_metadata$name |>
+  purrr::walk(\(tbl_name) assign(x = paste0("pg_metadata_", tbl_name),
+                                 value = rdb:::pg_col_metadata(tbl_name = tbl_name),
+                                 pos = globalenv()))
+```
+
 ## `pkg_config`
 
 ```{r}
 pkg_config <-
   tibble::tibble(key = character(),
                  default_value = list(),
+                 default_value_dynamic = character(),
                  description = character()) |>
+  tibble::add_row(key = "ncdb_token",
+                  description = paste0("NocoDB [API authentication token](https://docs.nocodb.com/account-settings/api-tokens/) for our ",
+                                       "[admin.rdb.vote](https://admin.rdb.vote/) instance. This is required for the `ncdb_*()` family of functions to ",
+                                       "authenticate.")) |>
   tibble::add_row(key = "pg_host",
-                  default_value = list("ep-sparkling-voice-33039503.eu-central-1.aws.neon.tech"),
+                  default_value = list("ep-frosty-flower-a28keh10.eu-central-1.aws.neon.tech"),
                   description = paste0("RDB PostgreSQL (neon.tech) host address. Defaults to a [read ",
                                        "replica](https://neon.tech/docs/introduction/read-replicas) which has no write access to the database.")) |>
-  tibble::add_row(key = "pg_username",
+  tibble::add_row(key = "pg_user",
                   default_value = list("r_anon"),
                   description = paste0("RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. Defaults to ",
                                        "the read-only user `r_anon`.")) |>
   tibble::add_row(key = "pg_password",
                   default_value = list("WTYUeDtTm0UV4nXzTZ7morHSdM0wQh0p"),
-                  description = "Password for the specified RDB PostgreSQL user.") |>
+                  description = "Password for the specified RDB PostgreSQL user. Defaults to the password for user `r_anon`.") |>
   tibble::add_row(key = "global_max_cache_age",
                   default_value = list("30 days"),
                   description = pkgsnip::md_snip("opt_global_max_cache_age"))
@@ -385,13 +670,13 @@ NOTES:
 codes <-
   data_iso_3166_1 |>
   # temporarily add ISO 3166-1 alpha-3 codes for matching with M49 codes
-  dplyr::select(country_code = Alpha_2,
-                Alpha_3) |>
+  dplyr::select(country_code = alpha_2,
+                alpha_3) |>
   # temporarily add M49 code for matching with actual UN region codes and names
   dplyr::left_join(y = ISOcodes::UN_M.49_Countries |> dplyr::select(un_country_code = Code,
-                                                                    Alpha_3 = ISO_Alpha_3),
-                   by = "Alpha_3") |>
-  dplyr::select(-Alpha_3) |>
+                                                                    alpha_3 = ISO_Alpha_3),
+                   by = "alpha_3") |>
+  dplyr::select(-alpha_3) |>
   # manual corrections
   dplyr::mutate(
     # certain countries share the same UN country code / don't have their own one for stupid political reasons (like China & Taiwan or Serbia & Kosovo), thus we
@@ -560,6 +845,22 @@ un_regions <-
   )
 ```
 
+## `val_set`
+
+```{r}
+val_set                        <- list()
+val_set$country_code           <- c(data_iso_3166_1$alpha_2,
+                                    data_iso_3166_3$alpha_4)
+val_set$country_code_long      <- sort(unique(c(data_iso_3166_1$alpha_3,
+                                                data_iso_3166_3$alpha_3)))
+val_set$country_code_continual <- sort(unique(data_iso_3166_1$alpha_2,
+                                              data_iso_3166_3$alpha_2_new_main))
+val_set$country_name           <- sort(unique(c(data_iso_3166_1$name_short,
+                                                data_iso_3166_3$name_short)))
+val_set$country_name_long      <- sort(unique(c(data_iso_3166_1$name_long,
+                                                data_iso_3166_3$name_long)))
+```
+
 ## `var_lbls`
 
 Only for performance-reasons.
@@ -572,45 +873,74 @@ var_lbls <-
   magrittr::set_names(value = data_codebook$variable_name)
 ```
 
-## `val_set`
-
-```{r}
-val_set                        <- list()
-val_set$country_code           <- c(data_iso_3166_1$Alpha_2,
-                                    data_iso_3166_3$Alpha_4)
-val_set$country_code_long      <- sort(unique(c(data_iso_3166_1$Alpha_3,
-                                                data_iso_3166_3$Alpha_3)))
-val_set$country_code_continual <- sort(unique(data_iso_3166_1$Alpha_2,
-                                              data_iso_3166_3$Alpha_2_new_main))
-val_set$country_name           <- sort(unique(c(data_iso_3166_1$name_short,
-                                                data_iso_3166_3$name_short)))
-val_set$country_name_long      <- sort(unique(c(data_iso_3166_1$name_long,
-                                                data_iso_3166_3$name_long)))
-```
-
 # Write data
 
 Save all the small data objects as a single internal file `R/sysdata.rda`. Note that when documenting them, they must be explicitly `@export`ed to be available
 to package users.
 
 ```{r}
-usethis::use_data(country_codes_sudd_invalid,
+usethis::use_data(col_names_nocodb_filled,
+                  col_names_un,
+                  country_codes_sudd_invalid,
                   data_codebook,
                   data_iso_3166_1,
+                  data_iso_3166_2,
                   data_iso_3166_3,
+                  data_iso_639_1,
+                  data_municipalities,
                   data_topics,
                   months_de,
                   months_de_fms,
+                  pg_metadata_actors,
+                  pg_metadata_countries,
+                  pg_metadata_languages,
+                  pg_metadata_legal_bases,
+                  pg_metadata_municipalities,
+                  pg_metadata_options,
+                  pg_metadata_referendum_positions,
+                  pg_metadata_referendum_questions,
+                  pg_metadata_referendum_sub_votes,
+                  pg_metadata_referendum_titles,
+                  pg_metadata_referendum_votes,
+                  pg_metadata_referendums,
+                  pg_metadata_subnational_entities,
                   pkg_config,
                   rfrnd_cols_order,
                   topics_tier_1_,
                   topics_tier_2_,
                   topics_tier_3_,
                   un_regions,
-                  var_lbls,
                   val_set,
+                  var_lbls,
                   internal = TRUE,
                   overwrite = TRUE,
                   compress = "xz",
                   version = 3L)
+```
+
+# Remind to regenerate RDB tables if necessary
+
+```{r}
+if (pal::desc_dep_vrsn(pkg = "ISOcodes") < max(as.numeric_version(pal::ls_pkg(pkg = "ISOcodes")$Version))) {
+  
+  cli::cli_alert_warning(paste0("New ISOcodes package version in use. Please run {.run {paste0('rdb::', c('update_countries()', 'update_langs()', ",
+                                "'update_subnational_entities()', 'use_pkg(\"ISOcodes\", type = \"s\")'))}} after rebuilding the {.pkg rdb} package."))
+}
+```
+
+# Update ISRG Root X1 certificate
+
+NOTES:
+
+-   We just blindly copy over the root certificate from the system if it exists and user=salim. This ensures the certificate is updated before it expires.
+
+```{r}
+path_sys_root_cert <- "/usr/share/ca-certificates/mozilla/ISRG_Root_X1.crt"
+
+if (Sys.info()[["user"]] == "salim" && fs::file_exists(path_sys_root_cert)) {
+  
+  fs::file_copy(path = path_sys_root_cert,
+                new_path = "inst/certs/ISRG_Root_X1.crt",
+                overwrite = TRUE)
+}
 ```

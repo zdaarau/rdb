@@ -23,7 +23,7 @@ A \link[tibble:tbl_df-class]{tibble} with the columns \code{topic_tier_1}, \code
 \description{
 Reconstructs the hierarchical relations between the three topic variables \code{topics_tier_1}, \code{topics_tier_2} and \code{topics_tier_3}. Other than
 \code{\link[=hierarchize_topics]{hierarchize_topics()}}, this function assumes that the three topic variables are always \emph{complete}, i.e. that no (grand)parent topics of lower-tier topics
-are missing. This assumption is met by \code{\link[=rfrnds]{rfrnds()}} and \code{\link[=rfrnd]{rfrnd()}}.
+are missing. This assumption is met by the data returned by \code{\link[=rfrnds]{rfrnds()}}.
 }
 \examples{
 library(magrittr)

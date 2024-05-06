@@ -7,8 +7,7 @@
 download_file_attachment(
   s3_object_key,
   path = ".",
-  use_original_filename = FALSE,
-  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg)
+  use_original_filename = FALSE
 )
 }
 \arguments{
@@ -19,8 +18,6 @@ download_file_attachment(
 \item{use_original_filename}{Whether to save the file attachment using its original filename as uploaded. Note that original filenames are \strong{not unique},
 i.e. there are multiple file attachments with the same original filename (but differing content, of course). If \code{FALSE}, \code{s3_object_key} is used as
 filename. Only relevant if \code{path} is a directory.}
-
-\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.}
 }
 \value{
 A \link[httr:response]{response object}, invisibly.
@@ -31,11 +28,7 @@ column returned by \code{\link[=rfrnds]{rfrnds()}}.
 }
 \examples{
 # get object keys
-obj_keys <-
-  rdb::rfrnds()$files |>
-  purrr::list_rbind() |>
-  dplyr::filter(!is_deleted) |>
-  _$s3_object_key[1:3]
+obj_keys <- ""
 
 # download them to the current working dir
 purrr::walk(obj_keys,
@@ -45,17 +38,13 @@ purrr::walk(obj_keys,
 fs::file_delete(obj_keys)
 }
 \seealso{
-Other referendum data functions:
-\code{\link{add_rfrnds}()},
+Other data functions:
 \code{\link{assert_vars}()},
-\code{\link{count_rfrnds}()},
 \code{\link{delete_rfrnds}()},
-\code{\link{edit_rfrnds}()},
-\code{\link{rfrnd_exists}()},
-\code{\link{rfrnds_old}()},
+\code{\link{legal_bases}()},
+\code{\link{read_tbl}()},
 \code{\link{rfrnds}()},
-\code{\link{rfrnd}()},
-\code{\link{search_rfrnds}()},
+\code{\link{rfrnds_old}()},
 \code{\link{validate_rfrnds}()}
 }
-\concept{rfrnd}
+\concept{data}

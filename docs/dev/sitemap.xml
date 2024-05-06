@@ -40,9 +40,6 @@
     <loc>https://rdb.rpkg.dev/dev/reference/add_period.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/add_rfrnds.html</loc>
-  </url>
-  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/add_turnout.html</loc>
   </url>
   <url>
@@ -55,19 +52,31 @@
     <loc>https://rdb.rpkg.dev/dev/reference/as_ballot_dates.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/assemble_query_filter.html</loc>
-  </url>
-  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/assert_vars.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/auth_session.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/config_ncdb.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/count_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/connect.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/data_codebook.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/data_iso_3166_1.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/data_iso_3166_2.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/data_iso_3166_3.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/data_iso_639_1.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/data_municipalities.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/data_topics.html</loc>
@@ -77,9 +86,6 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/download_file_attachment.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/edit_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/ggplot_streamgraph.html</loc>
@@ -97,7 +103,7 @@
     <loc>https://rdb.rpkg.dev/dev/reference/infer_topics.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/is_online.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/legal_bases.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/list_sudd_rfrnds.html</loc>
@@ -109,13 +115,58 @@
     <loc>https://rdb.rpkg.dev/dev/reference/list_sudd_titles.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/lower_non_abbrs.html</loc>
-  </url>
-  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds_per_period.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_api.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_base_id.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_bases.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl_col.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl_col_id.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl_cols.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl_id.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbls.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/pg_col_metadata.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/pg_has_tbl.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/pg_pk.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_del.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_keep.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_update.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/pk.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/pkg_config.html</loc>
@@ -139,10 +190,10 @@
     <loc>https://rdb.rpkg.dev/dev/reference/rdb-package.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/rfrnd.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/read_tbl.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/rfrnd_exists.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/reorder_ncdb_tbl.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/rfrnds.html</loc>
@@ -151,7 +202,13 @@
     <loc>https://rdb.rpkg.dev/dev/reference/rfrnds_old.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/search_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/set_ncdb_display_val.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/set_ncdb_display_vals.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/set_ncdb_tbl_metadata.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/sudd_rfrnds.html</loc>
@@ -163,25 +220,43 @@
     <loc>https://rdb.rpkg.dev/dev/reference/tbl_n_rfrnds_per_period.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/tidy_rfrnds.html</loc>
-  </url>
-  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/topics.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/unnest_var.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/untidy_rfrnds.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/update_countries.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/update_langs.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/update_municipalities.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/update_ncdb_tbl.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/update_ncdb_tbl_col.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/update_rfrnds.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/update_subnational_entities.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/url_admin_portal.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/url_api.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/url_api_old.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/url_codebook.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/url_ncdb.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/url_website.html</loc>

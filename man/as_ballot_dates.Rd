@@ -48,8 +48,8 @@ try(
 }
 \seealso{
 Other referendum data transformation functions:
-\code{\link{n_rfrnds_per_period}()},
 \code{\link{n_rfrnds}()},
+\code{\link{n_rfrnds_per_period}()},
 \code{\link{prettify_col_names}()},
 \code{\link{unnest_var}()}
 }

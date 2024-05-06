@@ -2,75 +2,22 @@
 % Please edit documentation in R/rdb.gen.R
 \name{rfrnds_old}
 \alias{rfrnds_old}
-\title{Get referendum data (old version)}
+\title{Get \emph{old} referendum data}
 \usage{
 rfrnds_old(
-  country_code = NULL,
-  subnational_entity_name = NULL,
-  municipality = NULL,
-  level = NULL,
-  type = NULL,
-  date_min = NULL,
-  date_max = NULL,
   is_draft = FALSE,
-  date_time_created_min = NULL,
-  date_time_created_max = NULL,
-  date_time_last_edited_min = NULL,
-  date_time_last_edited_max = NULL,
-  query_filter = NULL,
   incl_archive = FALSE,
-  tidy = TRUE,
   use_cache = TRUE,
   max_cache_age = "1 week",
-  use_testing_server = pal::pkg_config_val(key = "use_testing_server", pkg = this_pkg),
   quiet = FALSE
 )
 }
 \arguments{
-\item{country_code}{The \code{country_code}(s) to be included. A character vector.}
-
-\item{subnational_entity_name}{The \code{subnational_entity_name}(s) to be included. A character vector.}
-
-\item{municipality}{The \code{municipality}(s) to be included. A character vector.}
-
-\item{level}{The \code{level}(s) to be included. A character vector.}
-
-\item{type}{The \code{type}(s) to be included. A character vector.}
-
-\item{date_min}{The minimum \code{date} to be included. A \link[=Date]{date} or something coercible to.}
-
-\item{date_max}{The maximum \code{date} to be included. A \link[=Date]{date} or something coercible to.}
-
-\item{is_draft}{\code{TRUE} means to include only referendum entries with \emph{draft} status, \code{FALSE} to include only normal entries. Set to \code{NULL} in order to
-include both draft and normal entries.}
-
-\item{date_time_created_min}{The minimum \code{date_time_created} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
-\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
-
-\item{date_time_created_max}{The maximum \code{date_time_created} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
-\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
-
-\item{date_time_last_edited_min}{The minimum \code{date_time_last_edited} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
-\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
-
-\item{date_time_last_edited_max}{The maximum \code{date_time_last_edited} to be included. A \link[base:DateTimeClasses]{datetime}, or something coercible to (like
-\code{"2006-01-02"} or \code{"2006-01-02T15:04:05Z"}; assumed to be in UTC if no timezone is given).}
-
-\item{query_filter}{A valid \href{https://docs.mongodb.com/manual/core/document/#query-filter-documents}{MongoDB JSON query filter document} which allows for
-maximum control over what data is included. This takes precedence over all of the above listed parameters, i.e. if \code{query_filter} is provided, the
-parameters \code{country_code}, \code{subnational_entity_name}, \code{municipality}, \code{level}, \code{type}, \code{date_min}, \code{date_max}, \code{is_draft}, \code{date_time_created_min}, \code{date_time_created_max}, \code{date_time_last_edited_min} and \code{date_time_last_edited_max} are ignored.}
-
 \item{incl_archive}{Whether or not to include an \code{archive} column containing data from an earlier, obsolete state of the Referendum Database (RDB).}
-
-\item{tidy}{Whether or not to tidy the referendum data, i.e. apply various data cleansing tasks and add additional variables. If \code{FALSE}, the raw MongoDB
-referendum data will only be modified just enough to be able to return it as a \link[tibble:tbl_df-class]{tibble}. Note that untidy data doesn't conform to the
-\link[=data_codebook]{codebook} (i.a. different variable names).}
 
 \item{use_cache}{Whether or not to return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{max_cache_age}.}
 
 \item{max_cache_age}{Duration after which cached results are refreshed (i.e. newly fetched). A valid \link[lubridate:as.duration]{lubridate duration}. Use \code{Inf} to disable cache expiry. Only relevant if \code{use_cache = TRUE}.}
-
-\item{use_testing_server}{Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
@@ -78,46 +25,22 @@ referendum data will only be modified just enough to be able to return it as a \
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Downloads the referendum data from the Referendum Database (RDB). See the \code{\link{codebook}} for a detailed description of all variables.
+Downloads the latest backup of the old referendum data from the Referendum Database (RDB). See the \code{\link{codebook}} for a detailed description of all
+variables.
 }
 \examples{
-\dontrun{
 # get all referendums (excl. drafts)
 rdb::rfrnds_old()
-
-# get only referendums in Austria and Australia on subnational level
-rdb::rfrnds_old(country_code = c("AT", "AU"),
-                level = "subnational",
-                quiet = TRUE)
-
-# get referendums in 2020
-rdb::rfrnds_old(date_min = "2020-01-01",
-                date_max = "2020-12-31",
-                quiet = TRUE)
-
-# get referendums added to the database during the last 30 days
-rdb::rfrnds_old(date_time_created_min = clock::date_today(zone = "UTC") |> clock::add_days(-30L),
-                date_time_created_max = clock::date_today(zone = "UTC"),
-                quiet = TRUE)
-
-# provide custom `query_filter` for more complex queries like regex matches
-# cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-rdb::rfrnds_old(query_filter = '{"country_code":{"$regex":"A."}}',
-                quiet = TRUE)}
 }
 \seealso{
-Other referendum data functions:
-\code{\link{add_rfrnds}()},
+Other data functions:
 \code{\link{assert_vars}()},
-\code{\link{count_rfrnds}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
-\code{\link{edit_rfrnds}()},
-\code{\link{rfrnd_exists}()},
+\code{\link{legal_bases}()},
+\code{\link{read_tbl}()},
 \code{\link{rfrnds}()},
-\code{\link{rfrnd}()},
-\code{\link{search_rfrnds}()},
 \code{\link{validate_rfrnds}()}
 }
-\concept{rfrnd}
+\concept{data}
 \keyword{internal}

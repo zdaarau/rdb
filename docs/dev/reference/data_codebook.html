@@ -6,11 +6,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">rdb</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9046</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9047</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,10 +27,7 @@
 <li class="nav-item">
   <a class="nav-link" href="../articles/codebook.html">RDB codebook</a>
 </li>
-      </ul><form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
-
-      <ul class="navbar-nav"><li class="nav-item">
+      </ul><ul class="navbar-nav"><li class="nav-item">
   <a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="gitlab">
     <span class="fab fa fab fa-gitlab fa-lg"></span>
      
@@ -224,7 +221,7 @@
 </div>
 
 <div class="section">
-<h4 id="municipality"><code>municipality</code><a class="anchor" aria-label="anchor" href="#municipality"></a></h4>
+<h4 id="municipality-name"><code>municipality_name</code><a class="anchor" aria-label="anchor" href="#municipality-name"></a></h4>
 
 
 <p>The municipality in which the referendum took place.</p><div class="section">
@@ -1305,7 +1302,7 @@
 </div>
 
 <div class="section">
-<h4 id="date-time-created"><code>date_time_created</code><a class="anchor" aria-label="anchor" href="#date-time-created"></a></h4>
+<h4 id="created-at"><code>created_at</code><a class="anchor" aria-label="anchor" href="#created-at"></a></h4>
 
 
 <p>The date and time on which the referendum's data entry was created.</p><div class="section">
@@ -1319,7 +1316,7 @@
 </div>
 
 <div class="section">
-<h4 id="date-time-last-edited"><code>date_time_last_edited</code><a class="anchor" aria-label="anchor" href="#date-time-last-edited"></a></h4>
+<h4 id="updated-at"><code>updated_at</code><a class="anchor" aria-label="anchor" href="#updated-at"></a></h4>
 
 
 <p>The date and time on which the referendum's data entry was last modified.</p><div class="section">
@@ -1899,16 +1896,16 @@ specific legal setting is in force).</p><div class="section">
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 88 × 18</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    variable_name           variable_name_print     variable_name_unnested variable_name_unnest…¹ variable_label is_multi_valued is_nested applicability_constr…²</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> id                      RDB ID                  id                     RDB ID                 a 24-characte… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> id_official             Official ID             id_official            Official ID            the referendu… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> id_sudd                 sudd.ch ID              id_sudd                sudd.ch ID             the referendu… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> id                      RDB identifier          id                     RDB identifier         a 24-characte… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> id_official             Official identifier     id_official            Official identifier    the referendu… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> id_sudd                 sudd.ch identifier      id_sudd                sudd.ch identifier     the referendu… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> country_code            ISO 3166-1 alpha-2 / I… country_code           ISO 3166-1 alpha-2 / … the two- or f… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> country_code_long       ISO 3166-1 alpha-3      country_code_long      ISO 3166-1 alpha-3     the three-let… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> country_code_continual  ISO 3166-1 alpha-2 (co… country_code_continual ISO 3166-1 alpha-2 (c… the current o… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> country_name            Country                 country_name           Country                the English n… FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> country_name_long       Country (full name)     country_name_long      Country (full name)    the official … FALSE           FALSE     <span style="color: #BB0000;">NA</span>                    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> subnational_entity_name Subnational entity      subnational_entity_na… Subnational entity     the English n… FALSE           FALSE     level %in% c('local',…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> municipality            Municipality            municipality           Municipality           the municipal… FALSE           FALSE     level == 'local'      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> municipality_name       Municipality            municipality_name      Municipality           the municipal… FALSE           FALSE     level == 'local'      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 78 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ abbreviated names: ¹​variable_name_unnested_print, ²​applicability_constraint</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 10 more variables: variable_values &lt;list&gt;, value_label_prefix &lt;chr&gt;, value_labels &lt;list&gt;, value_label_suffix &lt;chr&gt;, value_default &lt;list&gt;,</span></span>
@@ -1920,11 +1917,11 @@ specific legal setting is in force).</p><div class="section">
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Salim Brüggemann, Uwe Serdült.</p>
+  <p>Developed by Salim Brüggemann, Uwe Serdült.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
     </footer></div>

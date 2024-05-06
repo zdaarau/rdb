@@ -24,17 +24,13 @@ validate_rfrnds(
 Performs various data validation steps to ensure there are no errors in the supplied \code{data}.
 }
 \seealso{
-Other referendum data functions:
-\code{\link{add_rfrnds}()},
+Other data functions:
 \code{\link{assert_vars}()},
-\code{\link{count_rfrnds}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
-\code{\link{edit_rfrnds}()},
-\code{\link{rfrnd_exists}()},
-\code{\link{rfrnds_old}()},
+\code{\link{legal_bases}()},
+\code{\link{read_tbl}()},
 \code{\link{rfrnds}()},
-\code{\link{rfrnd}()},
-\code{\link{search_rfrnds}()}
+\code{\link{rfrnds_old}()}
 }
-\concept{rfrnd}
+\concept{data}

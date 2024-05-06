@@ -31,20 +31,23 @@ navbar:
       text: RDB codebook
       href: articles/codebook.html
 reference:
-- title: Referendum data
+- title: Data
 - contents:
   - rfrnds
-  - rfrnd
+  - rfrnds_old
+  - legal_bases
+  - read_tbl
   - download_file_attachment
-  - add_rfrnds
-  - edit_rfrnds
-  - delete_rfrnds
   - validate_rfrnds
-  - count_rfrnds
-  - search_rfrnds
-  - rfrnd_exists
   - assert_vars
-- title: Referendum metadata
+- subtitle: Auxiliary data
+- contents:
+  - data_iso_3166_1
+  - data_iso_3166_2
+  - data_iso_3166_3
+  - data_iso_639_1
+  - data_municipalities
+- title: Metadata
 - contents:
   - data_codebook
   - val_lbls
@@ -52,7 +55,7 @@ reference:
   - var_vals
   - var_name_unnested
   - prettify_var_names
-- title: Referendum topics
+- title: Political topics
   desc: Functions to work with referendum [topics](https://rdb.rpkg.dev/articles/codebook.html#topics).
 - contents:
   - data_topics
@@ -94,6 +97,16 @@ reference:
 - contents:
   - tbl_n_rfrnds
   - tbl_n_rfrnds_per_period
+- title: Administration
+- contents:
+  - connect
+  - update_rfrnds
+  - delete_rfrnds
+  - update_countries
+  - update_subnational_entities
+  - update_municipalities
+  - update_langs
+  - config_ncdb
 - title: sudd.ch scraping
   desc: Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database.
 - contents:
@@ -102,6 +115,4 @@ reference:
   - list_sudd_rfrnds
   - sudd_rfrnds
 - title: Miscellaneous
-- contents:
-  - is_online
-  - pkg_config
+- contents: pkg_config

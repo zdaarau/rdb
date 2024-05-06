@@ -131,7 +131,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
-\subsection{\code{municipality}}{
+\subsection{\code{municipality_name}}{
 
 The municipality in which the referendum took place.
 \subsection{Applicability constraint}{
@@ -1268,7 +1268,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
-\subsection{\code{date_time_created}}{
+\subsection{\code{created_at}}{
 
 The date and time on which the referendum's data entry was created.
 \subsection{Level of measurement}{
@@ -1278,7 +1278,7 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 
 }
 
-\subsection{\code{date_time_last_edited}}{
+\subsection{\code{updated_at}}{
 
 The date and time on which the referendum's data entry was last modified.
 \subsection{Level of measurement}{

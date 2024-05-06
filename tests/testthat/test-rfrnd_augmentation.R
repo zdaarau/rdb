@@ -1,5 +1,7 @@
 # define some repeatedly used stuff
-single_rfrnd <- rfrnd(id = "5bbbe26a92a21351232dd73f")
+single_rfrnd <-
+  rfrnds_old() |>
+  dplyr::filter(id == "5bbbe26a92a21351232dd73f")
 
 # define fn to run common augmentation tests
 test_augmentation <- function(fns = c("add_former_country_flag",

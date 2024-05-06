@@ -18,8 +18,8 @@ rdb::data_topics
 }
 \seealso{
 Other referendum topic functions:
-\code{\link{hierarchize_topics_fast}()},
 \code{\link{hierarchize_topics}()},
+\code{\link{hierarchize_topics_fast}()},
 \code{\link{infer_topics}()},
 \code{\link{topics}()}
 }
