@@ -29,6 +29,7 @@ Returns the identifier of the column with the specified \code{col_name} or \code
 \seealso{
 Other NocoDB API functions
 \code{\link{config_ncdb}()},
+\code{\link{create_ncdb_user}()},
 \code{\link{ncdb_api}()},
 \code{\link{ncdb_base_id}()},
 \code{\link{ncdb_bases}()},
@@ -37,6 +38,7 @@ Other NocoDB API functions
 \code{\link{ncdb_tbl_cols}()},
 \code{\link{ncdb_tbl_id}()},
 \code{\link{ncdb_tbls}()},
+\code{\link{ncdb_users}()},
 \code{\link{reorder_ncdb_tbl}()},
 \code{\link{set_ncdb_display_val}()},
 \code{\link{set_ncdb_display_vals}()},

@@ -14,7 +14,7 @@ update the corresponding database fields with.}
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
 
-\item{tbl_name}{Table name. One of \code{"actors"}, \code{"options"}, \code{"legal_bases"}, \code{"referendums"}, \code{"referendum_titles"}, \code{"referendum_questions"}, \code{"referendum_positions"}, \code{"referendum_votes"}, \code{"referendum_sub_votes"}, \code{"countries"}, \code{"subnational_entities"}, \code{"municipalities"} and \code{"languages"}.}
+\item{tbl_name}{Table name. One of \code{"actors"}, \code{"options"}, \code{"legal_norms"}, \code{"referendum_types"}, \code{"referendums"}, \code{"referendum_titles"}, \code{"referendum_questions"}, \code{"referendum_positions"}, \code{"referendum_votes"}, \code{"referendum_sub_votes"}, \code{"countries"}, \code{"subnational_entities"}, \code{"municipalities"} and \code{"languages"}.}
 
 \item{connection}{Database connection to \link[=connect]{RDB's PostgreSQL DBMS}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 }

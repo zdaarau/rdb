@@ -27,8 +27,7 @@ remotes::install_gitlab(repo = "zdaarau/rpkgs/rdb")
 
 Some of rdb’s functionality is controlled via package-specific global configuration which can either be set via [R options](https://rdrr.io/r/base/options.html) or [environment variables](https://en.wikipedia.org/wiki/Environment_variable) (the former take precedence). This configuration includes:
 
-::: {.table-wide}
-
+::: table-wide
 | **Description**                                                                                                                                                                                                              | **R option**               | **Environment variable**     | **Default value**                                        |
 |:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------|:-----------------------------|:---------------------------------------------------------|
 | NocoDB [API authentication token](https://docs.nocodb.com/account-settings/api-tokens/) for our [admin.rdb.vote](https://admin.rdb.vote/) instance. This is required for the `ncdb_*()` family of functions to authenticate. | `rdb.ncdb_token`           | `R_RDB_NCDB_TOKEN`           |                                                          |
@@ -36,7 +35,6 @@ Some of rdb’s functionality is controlled via package-specific global configur
 | RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user `r_anon`.                                                                                 | `rdb.pg_user`              | `R_RDB_PG_USER`              | `"r_anon"`                                               |
 | Password for the specified RDB PostgreSQL user. Defaults to the password for user `r_anon`.                                                                                                                                  | `rdb.pg_password`          | `R_RDB_PG_PASSWORD`          | `"WTYUeDtTm0UV4nXzTZ7morHSdM0wQh0p"`                     |
 | Maximal timespan to preserve the package’s [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading.                                                                   | `rdb.global_max_cache_age` | `R_RDB_GLOBAL_MAX_CACHE_AGE` | `"30 days"`                                              |
-
 :::
 
 ## Development

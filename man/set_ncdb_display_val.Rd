@@ -18,11 +18,12 @@ set_ncdb_display_val(
 \code{TRUE}, invisibly.
 }
 \description{
-Sets a column as the corresponding table's \href{https://docs.nocodb.com/fields/display-value/}{display value} on the RDB NocoDB server.
+Sets a column as the corresponding table's \href{https://docs.nocodb.com/fields/display-value/}{display value} on the RDB NocoDB server via the \href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set}{POST \verb{/api/v2/meta/columns/\{col_id\}/primary}} API endpoint.
 }
 \seealso{
 Other NocoDB API functions
 \code{\link{config_ncdb}()},
+\code{\link{create_ncdb_user}()},
 \code{\link{ncdb_api}()},
 \code{\link{ncdb_base_id}()},
 \code{\link{ncdb_bases}()},
@@ -32,6 +33,7 @@ Other NocoDB API functions
 \code{\link{ncdb_tbl_cols}()},
 \code{\link{ncdb_tbl_id}()},
 \code{\link{ncdb_tbls}()},
+\code{\link{ncdb_users}()},
 \code{\link{reorder_ncdb_tbl}()},
 \code{\link{set_ncdb_display_vals}()},
 \code{\link{set_ncdb_tbl_metadata}()},

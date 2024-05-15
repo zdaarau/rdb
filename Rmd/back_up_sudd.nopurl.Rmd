@@ -10,15 +10,6 @@ editor_options:
 
 -   The chunks below have to be manually executed in order to update the backed up data.
 
-# Setup
-
-```{r}
-library(rlang,
-        include.only = c("%|%", "%||%"))
-library(magrittr,
-        include.only = c("%>%", "%<>%", "%T>%", "%!>%", "%$%"))
-```
-
 # Back up data from `sudd.ch`
 
 ```{r}

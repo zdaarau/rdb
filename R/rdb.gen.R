@@ -780,7 +780,9 @@ ncdb_api <- function(path,
     httr2::request(base_url = url_ncdb(path)) |>
     httr2::req_method(method = method) |>
     httr2::req_headers(`xc-token` = auth_token) |>
-    httr2::req_retry(max_tries = max_tries)
+    httr2::req_user_agent(string = "rdb R package (https://rdb.rpkg.dev)") |>
+    httr2::req_retry(max_tries = max_tries) |>
+    httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg)
   
   if (!is.null(body_json)) {
     req %<>% httr2::req_body_json(data = body_json,
@@ -829,7 +831,7 @@ ncdb_base_id <- function(title = "Main",
   result
 }
 
-#' NocoDB bases metadata
+#' Get NocoDB bases metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about bases on the RDB NocoDB server from its
 #' [`/api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
@@ -883,7 +885,7 @@ ncdb_tbl_id <- function(base_id = ncdb_base_id(),
   result
 }
 
-#' NocoDB table column metadata
+#' Get NocoDB table column metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified column on the RDB NocoDB server from its
 #' [`/api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
@@ -954,9 +956,9 @@ ncdb_tbl_col_id <- function(tbl_id,
   result
 }
 
-#' NocoDB table columns metadata
+#' Get NocoDB table columns metadata
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the table with the specified ID on the RDB NocoDB server from its
+#' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on the RDB NocoDB server from its
 #' [`/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams ncdb_tbl
@@ -977,9 +979,9 @@ ncdb_tbl_cols <- function(tbl_id = ncdb_tbl_id(),
     tidy_ncdb_date_time_cols()
 }
 
-#' NocoDB table metadata
+#' Get NocoDB table metadata
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the table with the specified ID on the RDB NocoDB server from its
+#' Returns a [tibble][tibble::tbl_df] with metadata about the specified table on the RDB NocoDB server from its
 #' [`/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams ncdb_api
@@ -1002,9 +1004,9 @@ ncdb_tbl <- function(tbl_id = ncdb_tbl_id(),
     tidy_ncdb_date_time_cols()
 }
 
-#' NocoDB tables metadata
+#' Get NocoDB tables metadata
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified ID on the RDB NocoDB server from its
+#' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified base on the RDB NocoDB server from its
 #' [`/api/v2/meta/bases/{base_id}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
 #'
 #' @inheritParams ncdb_api
@@ -1024,6 +1026,67 @@ ncdb_tbls <- function(base_id = ncdb_base_id(),
     _$list |>
     tibble::as_tibble() |>
     tidy_ncdb_date_time_cols()
+}
+
+#' Get NocoDB users metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on the RDB NocoDB server from its
+#' [GET `/api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
+#'
+#' @inheritParams ncdb_tbls
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family ncdb
+#' @keywords internal
+ncdb_users <- function(base_id = ncdb_base_id(),
+                       auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                        pkg = this_pkg)) {
+  checkmate::assert_string(base_id)
+  
+  ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}/users"),
+           method = "GET",
+           auth_token = auth_token) |>
+    _$users$list |>
+    tibble::as_tibble()
+}
+
+#' Create NocoDB user
+#'
+#' Adds a new user account to the specified base on the RDB NocoDB server via the
+#' [POST `/api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
+#'
+#' @param email E-mail address of the new user.
+#' @param role Base role to assign to the new user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "create_ncdb_user")`.
+#' @inheritParams ncdb_tbls
+#'
+#' @return `email`, invisibly.
+#' @family ncdb
+#' @keywords internal
+create_ncdb_user <- function(email,
+                             role = c("no-access", "commenter", "editor", "guest", "owner", "viewer", "creator"),
+                             base_id = ncdb_base_id(),
+                             auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                              pkg = this_pkg),
+                             quiet = FALSE) {
+  
+  checkmate::assert_string(email)
+  role <- rlang::arg_match(role)
+  checkmate::assert_string(base_id)
+  
+  result <- ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}/users"),
+                     method = "POST",
+                     body_json = list(email = email,
+                                      roles = role),
+                     auth_token = auth_token)
+  if (!quiet) {
+    if (stringr::str_detect(result$msg, "invited successfully")) {
+      cli::cli_alert_success(result$msg)
+    } else {
+      cli::cli_alert_info(result$msg)
+    }
+  }
+  
+  invisible(email)
 }
 
 #' Re-order NocoDB table
@@ -1055,7 +1118,8 @@ reorder_ncdb_tbl <- function(tbl_id = ncdb_tbl_id(),
 
 #' Set column as NocoDB display value
 #'
-#' Sets a column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on the RDB NocoDB server.
+#' Sets a column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on the RDB NocoDB server via the [POST
+#' `/api/v2/meta/columns/{col_id}/primary`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set) API endpoint.
 #'
 #' @inheritParams ncdb_tbl_col
 #'
@@ -2020,8 +2084,8 @@ ncdb_col_renames <- tibble::tribble(
   "LinkToAnotherRecord", "actors",               "actor",
   "LinkToAnotherRecord", "countries",            "country",
   "LinkToAnotherRecord", "languages",            "language",
-  "LinkToAnotherRecord", "legal_bases",          "legal_base",
   "LinkToAnotherRecord", "options",              "option",
+  "LinkToAnotherRecord", "referendum_types",     "referendum_type",
   "LinkToAnotherRecord", "referendums",          "referendum",
   "LinkToAnotherRecord", "subnational_entities", "subnational_entity"
 )
@@ -2047,7 +2111,8 @@ tbl_metadata <-
     ~name,                  ~ncdb_display_col,         ~ncdb_meta.icon, # alternative icon
     "actors",               "label",                   "\U0001F3AD",
     "options",              "label",                   "\u2611",
-    "legal_bases",          "title",                   "\U0001F4DC",
+    "legal_norms",          "title",                   "\U0001F4DC",
+    "referendum_types",     "title",                   "\U0001F3DB",
     "referendums",          "id",                      "\U0001F5F3",
     "referendum_titles",    "title",                   "\U0001F4D5",
     "referendum_questions", "question",                "\u2753",
@@ -2232,20 +2297,20 @@ rfrnds_old <- function(is_draft = FALSE,
 #'
 #' @examples
 #' # get all legal bases
-#' rdb::legal_bases()
-legal_bases <- function(connection = connect(),
+#' rdb::rfrnd_types()
+rfrnd_types <- function(connection = connect(),
                         disconnect = TRUE,
                         use_cache = TRUE,
                         max_cache_age = "1 week") {
   pkgpins::with_cache(
     expr = {
       
-      read_tbl(tbl_name = "legal_bases",
+      read_tbl(tbl_name = "referendum_types",
                connection = connection,
                disconnect = disconnect)
     },
     pkg = this_pkg,
-    from_fn = "legal_bases",
+    from_fn = "rfrnd_types",
     use_cache = use_cache,
     max_cache_age = max_cache_age
   )

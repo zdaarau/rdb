@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{ncdb_tbls}
 \alias{ncdb_tbls}
-\title{NocoDB tables metadata}
+\title{Get NocoDB tables metadata}
 \usage{
 ncdb_tbls(
   base_id = ncdb_base_id(),
@@ -18,12 +18,13 @@ ncdb_tbls(
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Returns a \link[tibble:tbl_df-class]{tibble} with metadata about tables in the specified ID on the RDB NocoDB server from its
+Returns a \link[tibble:tbl_df-class]{tibble} with metadata about tables in the specified base on the RDB NocoDB server from its
 \href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list}{\verb{/api/v2/meta/bases/\{base_id\}/tables}} API endpoint.
 }
 \seealso{
 Other NocoDB API functions
 \code{\link{config_ncdb}()},
+\code{\link{create_ncdb_user}()},
 \code{\link{ncdb_api}()},
 \code{\link{ncdb_base_id}()},
 \code{\link{ncdb_bases}()},
@@ -32,6 +33,7 @@ Other NocoDB API functions
 \code{\link{ncdb_tbl_col_id}()},
 \code{\link{ncdb_tbl_cols}()},
 \code{\link{ncdb_tbl_id}()},
+\code{\link{ncdb_users}()},
 \code{\link{reorder_ncdb_tbl}()},
 \code{\link{set_ncdb_display_val}()},
 \code{\link{set_ncdb_display_vals}()},

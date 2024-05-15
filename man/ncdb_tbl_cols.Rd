@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{ncdb_tbl_cols}
 \alias{ncdb_tbl_cols}
-\title{NocoDB table columns metadata}
+\title{Get NocoDB table columns metadata}
 \usage{
 ncdb_tbl_cols(
   tbl_id = ncdb_tbl_id(),
@@ -18,12 +18,13 @@ ncdb_tbl_cols(
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the columns of the table with the specified ID on the RDB NocoDB server from its
+Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the columns of the specified table on the RDB NocoDB server from its
 \href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read}{\verb{/api/v2/meta/tables/\{tbl_id\}}} API endpoint.
 }
 \seealso{
 Other NocoDB API functions
 \code{\link{config_ncdb}()},
+\code{\link{create_ncdb_user}()},
 \code{\link{ncdb_api}()},
 \code{\link{ncdb_base_id}()},
 \code{\link{ncdb_bases}()},
@@ -32,6 +33,7 @@ Other NocoDB API functions
 \code{\link{ncdb_tbl_col_id}()},
 \code{\link{ncdb_tbl_id}()},
 \code{\link{ncdb_tbls}()},
+\code{\link{ncdb_users}()},
 \code{\link{reorder_ncdb_tbl}()},
 \code{\link{set_ncdb_display_val}()},
 \code{\link{set_ncdb_display_vals}()},

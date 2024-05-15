@@ -35,7 +35,7 @@ reference:
 - contents:
   - rfrnds
   - rfrnds_old
-  - legal_bases
+  - rfrnd_types
   - read_tbl
   - download_file_attachment
   - validate_rfrnds

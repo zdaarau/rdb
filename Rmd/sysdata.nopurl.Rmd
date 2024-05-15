@@ -20,7 +20,7 @@ editor_options:
 
 ```{r}
 library(rlang,
-        include.only = c("%|%", "%||%"))
+        include.only = "%|%")
 library(magrittr,
         include.only = c("%>%", "%<>%", "%T>%", "%!>%", "%$%"))
 ```
@@ -78,8 +78,8 @@ data_codebook <- {
                                 variable_name_unnested = .x$variable_name_unnested %||% variable_name,
                                 variable_name_unnested_print = .x$variable_name_unnested_print %||% variable_name_print,
                                 variable_label = .x$variable_label %||% NA_character_,
-                                is_multi_valued = .x$is_multi_valued %||% FALSE,
-                                is_nested = .x$is_nested %||% FALSE,
+                                is_multi_valued = isTRUE(.x$is_multi_valued),
+                                is_nested = isTRUE(.x$is_nested),
                                 applicability_constraint = .x$applicability_constraint %||% NA_character_,
                                 variable_values = list(.x$variable_values %||% character()),
                                 value_label_prefix = .x$value_label_prefix %||% NA_character_,
@@ -98,7 +98,7 @@ data_codebook <- {
                                             is.character(.) ~ list(.),
                                             ~ .),
                                 gen_fn = .x$gen_fn %||% NA_character_,
-                                is_opt = .x$is_opt %||% FALSE)) |>
+                                is_opt = isTRUE(.x$is_opt))) |>
     purrr::list_rbind() |>
     # infer missing prototypes
     dplyr::mutate(ptype = purrr::pmap(.l = list(is_multi_valued,
@@ -894,13 +894,13 @@ usethis::use_data(col_names_nocodb_filled,
                   pg_metadata_actors,
                   pg_metadata_countries,
                   pg_metadata_languages,
-                  pg_metadata_legal_bases,
                   pg_metadata_municipalities,
                   pg_metadata_options,
                   pg_metadata_referendum_positions,
                   pg_metadata_referendum_questions,
                   pg_metadata_referendum_sub_votes,
                   pg_metadata_referendum_titles,
+                  pg_metadata_referendum_types,
                   pg_metadata_referendum_votes,
                   pg_metadata_referendums,
                   pg_metadata_subnational_entities,

@@ -7,7 +7,7 @@
 update_rfrnds(data, sweep = FALSE, connection = connect(), disconnect = TRUE)
 }
 \arguments{
-\item{data}{New or updated referendum data. A \link[tibble:tbl_df-class]{tibble} that must contain a \href{https://rdb.rpkg.dev/articles/codebook.html#id}{} column
+\item{data}{New or updated referendum data. A \link[tibble:tbl_df-class]{tibble} that must contain a \href{https://rdb.rpkg.dev/articles/codebook.html#id}{id} column
 identifying the referendums to be updated plus any additional columns containing the new values to update the corresponding database fields with.}
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}

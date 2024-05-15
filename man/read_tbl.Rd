@@ -11,7 +11,7 @@ read_tbl(
 )
 }
 \arguments{
-\item{tbl_name}{Table name. One of \code{"actors"}, \code{"options"}, \code{"legal_bases"}, \code{"referendums"}, \code{"referendum_titles"}, \code{"referendum_questions"}, \code{"referendum_positions"}, \code{"referendum_votes"}, \code{"referendum_sub_votes"}, \code{"countries"}, \code{"subnational_entities"}, \code{"municipalities"} and \code{"languages"}.}
+\item{tbl_name}{Table name. One of \code{"actors"}, \code{"options"}, \code{"legal_norms"}, \code{"referendum_types"}, \code{"referendums"}, \code{"referendum_titles"}, \code{"referendum_questions"}, \code{"referendum_positions"}, \code{"referendum_votes"}, \code{"referendum_sub_votes"}, \code{"countries"}, \code{"subnational_entities"}, \code{"municipalities"} and \code{"languages"}.}
 
 \item{connection}{Database connection to \link[=connect]{RDB's PostgreSQL DBMS}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 
@@ -31,7 +31,7 @@ Other data functions:
 \code{\link{assert_vars}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
-\code{\link{legal_bases}()},
+\code{\link{rfrnd_types}()},
 \code{\link{rfrnds}()},
 \code{\link{rfrnds_old}()},
 \code{\link{validate_rfrnds}()}

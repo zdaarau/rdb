@@ -37,8 +37,8 @@ Other data functions:
 \code{\link{assert_vars}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
-\code{\link{legal_bases}()},
 \code{\link{read_tbl}()},
+\code{\link{rfrnd_types}()},
 \code{\link{rfrnds}()},
 \code{\link{validate_rfrnds}()}
 }

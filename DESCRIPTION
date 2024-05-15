@@ -17,7 +17,7 @@ License: AGPL (>= 3)
 URL: https://rdb.rpkg.dev, https://gitlab.com/zdaarau/rpkgs/rdb
 BugReports: https://gitlab.com/zdaarau/rpkgs/rdb/issues
 Depends: 
-    R (>= 4.2)
+    R (>= 4.4)
 Imports: 
     assertr (>= 2.8),
     checkmate (>= 2.0.0),

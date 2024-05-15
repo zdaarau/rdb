@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{ncdb_bases}
 \alias{ncdb_bases}
-\title{NocoDB bases metadata}
+\title{Get NocoDB bases metadata}
 \usage{
 ncdb_bases(
   auth_token = pal::pkg_config_val(key = "ncdb_token", pkg = this_pkg)
@@ -21,6 +21,7 @@ Returns a \link[tibble:tbl_df-class]{tibble} with metadata about bases on the RD
 \seealso{
 Other NocoDB API functions
 \code{\link{config_ncdb}()},
+\code{\link{create_ncdb_user}()},
 \code{\link{ncdb_api}()},
 \code{\link{ncdb_base_id}()},
 \code{\link{ncdb_tbl}()},
@@ -29,6 +30,7 @@ Other NocoDB API functions
 \code{\link{ncdb_tbl_cols}()},
 \code{\link{ncdb_tbl_id}()},
 \code{\link{ncdb_tbls}()},
+\code{\link{ncdb_users}()},
 \code{\link{reorder_ncdb_tbl}()},
 \code{\link{set_ncdb_display_val}()},
 \code{\link{set_ncdb_display_vals}()},
