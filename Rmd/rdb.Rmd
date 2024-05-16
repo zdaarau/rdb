@@ -921,7 +921,8 @@ ncdb_api <- function(path,
   req <-
     httr2::request(base_url = url_ncdb(path)) |>
     httr2::req_method(method = method) |>
-    httr2::req_headers(`xc-token` = auth_token) |>
+    httr2::req_headers(`xc-token` = auth_token,
+                       .redact = "xc-token") |>
     httr2::req_user_agent(string = "rdb R package (https://rdb.rpkg.dev)") |>
     httr2::req_retry(max_tries = max_tries) |>
     httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg)
@@ -1517,7 +1518,8 @@ upload_attachment_to_ncdb <- function(auth_token = pal::pkg_config_val(key = "nc
   
   httr2::request(base_url = url_ncdb("api/v2/storage/upload")) |>
     httr2::req_method(method = "POST") |>
-    httr2::req_headers(`xc-token` = auth_token) |>
+    httr2::req_headers(`xc-token` = auth_token,
+                       .redact = "xc-token") |>
     httr2::req_body_multipart(file = curl::form_file(path = "/home/salim/Downloads/MIDI_sample.mid",
                                                      name = "example.midi",
                                                      type = "audio/midi"),

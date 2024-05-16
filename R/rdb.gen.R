@@ -779,7 +779,8 @@ ncdb_api <- function(path,
   req <-
     httr2::request(base_url = url_ncdb(path)) |>
     httr2::req_method(method = method) |>
-    httr2::req_headers(`xc-token` = auth_token) |>
+    httr2::req_headers(`xc-token` = auth_token,
+                       .redact = "xc-token") |>
     httr2::req_user_agent(string = "rdb R package (https://rdb.rpkg.dev)") |>
     httr2::req_retry(max_tries = max_tries) |>
     httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg)
