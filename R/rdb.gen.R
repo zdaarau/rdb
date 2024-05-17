@@ -1283,7 +1283,63 @@ update_ncdb_tbl_col <- function(col_id,
     invisible()
 }
 
-
+#' Upload attachments to NocoDB
+#'
+#' Uploads one or more files to the RDB NocoDB server as [attachments](https://docs.nocodb.com/fields/field-types/custom-types/attachment/) via the [POST
+#' `/api/v2/storage/upload`](https://meta-apis-v2.nocodb.com/#tag/Storage) API endpoint. Uploaded files are stored under `/nc/uploads/` in the Backblaze B2
+#' bucket `rdb-attachments`.
+#'
+#' @inheritParams ncdb_api
+#' @param paths Path(s) to the file(s) to be uploaded. A character vector.
+#' @param names File name(s) to assign to the uploaded file(s). A character vector. Note that a random string like `_NnW3C` is always appended to the resulting
+#'   file name before its file type suffix, so `name = "some-pic.jpg"` will result in something like `some-pic_NnW3C.jpg`, for example.
+#' @param types [Media type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)(s) of the uploaded files. A character vector.
+#'
+#' @return A [tibble][tibble::tbl_df] containing metadata about the uploaded attachments.
+#' @family ncdb
+#' @keywords internal
+upload_attachments_to_ncdb <- function(paths,
+                                       names = fs::path_file(paths),
+                                       types = mime::guess_type(paths),
+                                       auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                                        pkg = this_pkg),
+                                       max_tries = 3L,
+                                       verbosity = NULL) {
+  rlang::check_installed("mime",
+                         reason = pal::reason_pkg_required())
+  purrr::walk(paths,
+              \(x) checkmate::assert_file_exists(x = x,
+                                                 access = "r",
+                                                 .var.name = "paths"))
+  checkmate::assert_character(names,
+                              any.missing = FALSE)
+  checkmate::assert_subset(types,
+                           choices = mime::mimemap)
+  
+  if (length(unique(c(length(paths), length(names), length(types)))) > 1L) {
+    cli::cli_abort("Arguments {.arg {c('paths', 'names', 'types')}} must all have the same length.")
+  }
+  
+  # assemble multipart req body
+  files <- purrr::pmap(list(paths, names, types),
+                       \(path, name, type) curl::form_file(path = path,
+                                                           name = name,
+                                                           type = type))
+  # NOTE: the object names don't matter; we just chose `file#` for clarity
+  names(files) <- paste0("file", seq_along(paths))
+  
+  httr2::request(base_url = url_ncdb("api/v2/storage/upload")) |>
+    httr2::req_method(method = "POST") |>
+    httr2::req_headers(`xc-token` = auth_token,
+                       .redact = "xc-token") |>
+    httr2::req_body_multipart(!!!files) |>
+    httr2::req_retry(max_tries = max_tries) |>
+    httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg) |>
+    httr2::req_perform(verbosity = verbosity) |>
+    httr2::resp_body_json() |>
+    purrr::map(tibble::as_tibble) |>
+    purrr::list_rbind()
+}
 
 #' Get PostreSQL column metadata
 #'

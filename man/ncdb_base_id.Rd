@@ -38,7 +38,8 @@ Other NocoDB API functions
 \code{\link{set_ncdb_display_vals}()},
 \code{\link{set_ncdb_tbl_metadata}()},
 \code{\link{update_ncdb_tbl}()},
-\code{\link{update_ncdb_tbl_col}()}
+\code{\link{update_ncdb_tbl_col}()},
+\code{\link{upload_attachments_to_ncdb}()}
 }
 \concept{ncdb}
 \keyword{internal}

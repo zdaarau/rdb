@@ -94,8 +94,8 @@
 <code><a href="assert_vars.html">assert_vars</a>()</code>,
 <code><a href="delete_rfrnds.html">delete_rfrnds</a>()</code>,
 <code><a href="download_file_attachment.html">download_file_attachment</a>()</code>,
-<code><a href="legal_bases.html">legal_bases</a>()</code>,
 <code><a href="read_tbl.html">read_tbl</a>()</code>,
+<code><a href="rfrnd_types.html">rfrnd_types</a>()</code>,
 <code><a href="rfrnds_old.html">rfrnds_old</a>()</code>,
 <code><a href="validate_rfrnds.html">validate_rfrnds</a>()</code></p></div>
     </div>
@@ -104,9 +104,9 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># get all referendums (excl. drafts)</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">rfrnds</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Failed to prepare query : ERROR:  relation "referendums" does not exist</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> LINE 1: SELECT * FROM  "referendums"</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>                        ^</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 14</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 variables: id &lt;int&gt;, id_sudd &lt;chr&gt;, id_official &lt;chr&gt;, is_draft &lt;lgl&gt;, date &lt;date&gt;, country_code &lt;chr&gt;, level &lt;chr&gt;, subnational_entity_code &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   legal_base_id &lt;int&gt;, attachments &lt;chr&gt;, created_by &lt;chr&gt;, updated_by &lt;chr&gt;, created_at &lt;dttm&gt;, updated_at &lt;dttm&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

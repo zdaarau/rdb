@@ -61,6 +61,9 @@
     <loc>https://rdb.rpkg.dev/dev/reference/connect.html</loc>
   </url>
   <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/create_ncdb_user.html</loc>
+  </url>
+  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/data_codebook.html</loc>
   </url>
   <url>
@@ -103,9 +106,6 @@
     <loc>https://rdb.rpkg.dev/dev/reference/infer_topics.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/legal_bases.html</loc>
-  </url>
-  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/list_sudd_rfrnds.html</loc>
   </url>
   <url>
@@ -146,6 +146,9 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbls.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_users.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/pg_col_metadata.html</loc>
@@ -194,6 +197,9 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/reorder_ncdb_tbl.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/rfrnd_types.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/rfrnds.html</loc>
@@ -245,6 +251,9 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/update_subnational_entities.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/upload_attachments_to_ncdb.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/url_admin_portal.html</loc>
