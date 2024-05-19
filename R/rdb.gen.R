@@ -1283,7 +1283,7 @@ update_ncdb_tbl_col <- function(col_id,
     invisible()
 }
 
-#' Upload attachments to NocoDB
+#' Upload NocoDB attachments
 #'
 #' Uploads one or more files to the RDB NocoDB server as [attachments](https://docs.nocodb.com/fields/field-types/custom-types/attachment/) via the [POST
 #' `/api/v2/storage/upload`](https://meta-apis-v2.nocodb.com/#tag/Storage) API endpoint. Uploaded files are stored under `/nc/uploads/` in the Backblaze B2
@@ -1298,13 +1298,13 @@ update_ncdb_tbl_col <- function(col_id,
 #' @return A [tibble][tibble::tbl_df] containing metadata about the uploaded attachments.
 #' @family ncdb
 #' @keywords internal
-upload_attachments_to_ncdb <- function(paths,
-                                       names = fs::path_file(paths),
-                                       types = mime::guess_type(paths),
-                                       auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                                        pkg = this_pkg),
-                                       max_tries = 3L,
-                                       verbosity = NULL) {
+upload_ncdb_attachments <- function(paths,
+                                    names = fs::path_file(paths),
+                                    types = mime::guess_type(paths),
+                                    auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                                     pkg = this_pkg),
+                                    max_tries = 5L,
+                                    verbosity = NULL) {
   rlang::check_installed("mime",
                          reason = pal::reason_pkg_required())
   purrr::walk(paths,
