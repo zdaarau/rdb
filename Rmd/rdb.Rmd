@@ -1520,6 +1520,11 @@ NOTES:
     Therefore, we refrain from specifying any subdirs and let NocoDB upload files at the default location (`/nc/uploads/` in the `rdb-attachments` Backblaze B2
     bucket).
 
+-   From time to time it's possible the upload request fails with HTTP error `503 Service Unavailable` and message `No tomes available`. This is a weird
+    Backblaze B2 backend failure, see e.g. [this issue](https://github.com/mastodon/mastodon/issues/30030).
+
+    We can't do much except for trying to increase `max_tries` in such case.
+
 ```{r}
 #' Upload NocoDB attachments
 #'
