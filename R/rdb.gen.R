@@ -1477,7 +1477,7 @@ pg_pk <- function(tbl_name,
 
 #' Delete specified data from PostgreSQL table
 #'
-#' @param tbl Table from which data is to be deleted. A data frame, [tibble][tibble::tbl_df] or tibble extension like [`tbl_lazy`][dbplyr::tbl_lazy]. 
+#' @param tbl PostgreSQL database table from which data is to be deleted. A [`tbl.src_dbi`][dbplyr::tbl.src_dbi] object.
 #' @param data Table data to delete. A data frame that must contain the table's primary key column. Additional columns are ignored.
 #' @param pk_col_name Primary key column name. A character scalar.
 #'
@@ -1488,7 +1488,8 @@ pg_tbl_del <- function(tbl,
                        data,
                        pk_col_name) {
   
-  pal::assert_df_or_tibble(tbl)
+  checkmate::assert_class(tbl,
+                          classes = "tbl_PqConnection")
   checkmate::assert_data_frame(data)
   checkmate::assert_string(pk_col_name)
   
@@ -1516,7 +1517,8 @@ pg_tbl_keep <- function(tbl,
                         data,
                         pk_col_name) {
   
-  pal::assert_df_or_tibble(tbl)
+  checkmate::assert_class(tbl,
+                          classes = "tbl_PqConnection")
   checkmate::assert_data_frame(data)
   checkmate::assert_string(pk_col_name)
   
@@ -1546,26 +1548,39 @@ pg_tbl_keep <- function(tbl,
 
 #' Update PostgreSQL table
 #'
+#' Updates the specified PostgreSQL `tbl` with values from `data`.
+#'
+#' If the `tbl`'s primary key column is `GENERATED ALWAYS`, rows to be newly added must have `NA` values in the corresponding `data` column. This is a safety
+#' restriction to avoid accidental insertions.
+#'
 #' @inheritParams read_tbl
-#' @param tbl Table to be updated. A data frame, [tibble][tibble::tbl_df] or tibble extension like [`tbl_lazy`][dbplyr::tbl_lazy].
+#' @param tbl PostgreSQL database table to be updated. A [`tbl.src_dbi`][dbplyr::tbl.src_dbi] object.
 #' @param data New or updated table data. A data frame that must contain at least the table's primary key column plus any additional columns with new values to
 #'   update the corresponding database fields with.
 #' @param sweep Whether or not to also sweep the table, i.e. delete rows that are not contained in `data`.
 #'
-#' @return The updated table data as a [tibble][tibble::tbl_df], invisibly.
+#' @return The updated table data as a [tibble][tibble::tbl_df], invisibly. Note that newly inserted rows aren't included if the table's primary key column is
+#'   `GENERATED ALWAYS`.
 #' @keywords internal
 pg_tbl_update <- function(tbl,
                           data,
                           sweep = FALSE,
                           tbl_name,
+                          schema = pg_schema,
                           connection = connect()) {
   
+  checkmate::assert_class(tbl,
+                          classes = "tbl_PqConnection")
   checkmate::assert_flag(sweep)
   
+  col_metadata <- pg_col_metadata(tbl_name = tbl_name,
+                                  schema = schema,
+                                  connection = connection)
   pk_col_name <-
-    pg_pk(tbl_name = tbl_name,
-          connection = connection) |>
-    # multi-col pks aren't supported
+    col_metadata |>
+    dplyr::filter(is_pk) |>
+    dplyr::pull(column_name) |>
+    # we don't yet properly handle multi-col pks, so check for them
     checkmate::assert_string(.var.name = "pk_col_name")
   
   # delete obsolete data if requested
@@ -1576,11 +1591,54 @@ pg_tbl_update <- function(tbl,
   }
   
   # update existing and add new data
-  dplyr::rows_upsert(x = tbl,
-                     y = data,
-                     by = pk_col_name,
-                     copy = TRUE,
-                     in_place = TRUE)
+  # NOTE: we can't use `dplyr::rows_in/upsert()` on tables with always-generated pk col
+  is_pk_writable <-
+    col_metadata |>
+    dplyr::filter(is_pk) |>
+    dplyr::pull(identity_generation) |>
+    magrittr::equals("ALWAYS") |>
+    magrittr::not()
+  
+  if (is_pk_writable) {
+    
+    result <- dplyr::rows_upsert(x = tbl,
+                                 y = data,
+                                 by = pk_col_name,
+                                 copy = TRUE,
+                                 in_place = TRUE)
+  } else {
+    
+    pk_vals_new <- setdiff(data[[pk_col_name]],
+                           c(dplyr::pull(tbl, !!pk_col_name), NA))
+    n_pk_vals_new <- length(pk_vals_new)
+    
+    if (n_pk_vals_new > 0L) {
+      cli::cli_abort(paste0("{.val {n_pk_vals_new}} row{?s} in {.arg data} detected that {?has/have} an {.var {pk_col_name}} value set that is not present in ",
+                            "the {.field {tbl_name}} table. Rows to be newly inserted into the table must have `NA` values in {.arg data} column ",
+                            "{.var {pk_col_name}}."))
+    }
+    
+    result <- dplyr::rows_update(x = tbl,
+                                 y = data,
+                                 by = pk_col_name,
+                                 copy = TRUE,
+                                 in_place = TRUE,
+                                 unmatched = "ignore")
+    
+    if (NA %in% data[[pk_col_name]]) {
+      
+      # NOTE: we can't append the result of `DBI::dbAppendTable()` to `result` since the former just returns an integer scalar
+      data |>
+        dplyr::filter(is.na(!!as.symbol(pk_col_name))) |>
+        dplyr::select(-!!pk_col_name) |>
+        DBI::dbAppendTable(conn = connection,
+                           name = DBI::Id(schema = schema,
+                                          table = tbl_name),
+                           value = _)
+    }
+  }
+  
+  result
 }
 
 derive_country_vars <- function(country_code,
@@ -2273,6 +2331,16 @@ rfrnds <- function(connection = connect(),
       read_tbl(tbl_name = "referendums",
                connection = connection,
                disconnect = disconnect) |>
+        # parse NocoDB attachment col to sub-tibble
+        dplyr::mutate(attachments = purrr::map(attachments,
+                                               \(x) {
+                                                 
+                                                 if (is.na(x) || x == "[]") {
+                                                   return(NULL)
+                                                 }
+                                                 
+                                                 tibble::as_tibble(jsonlite::fromJSON(txt = x))
+                                               })) |>
         dplyr::filter(is_draft %in% c(FALSE, incl_drafts))
     },
     pkg = this_pkg,
@@ -4840,9 +4908,21 @@ update_rfrnds <- function(data,
   # necessary to avoid error on first run of `connect()`
   force(connection)
   
+  # convert `attachments` list col to JSON strings
+  data %<>% dplyr::mutate(dplyr::across(.cols = any_of("attachments"),
+                                        .fns = \(col) purrr::map_chr(col,
+                                                                     \(x) {
+                                                                       
+                                                                       if (is.null(x) || nrow(x) == 0L) {
+                                                                         return(NA_character_)
+                                                                       }
+                                                                       
+                                                                       jsonlite::toJSON(x = x)
+                                                                     })))
   result <-
     dplyr::tbl(src = connection,
-               from = "referendums") |>
+               from = dbplyr::in_schema(schema = pg_schema,
+                                        table = "referendums")) |>
     pg_tbl_update(data = data,
                   sweep = sweep,
                   tbl_name = "referendums",
@@ -4878,7 +4958,8 @@ delete_rfrnds <- function(data,
   
   result <-
     dplyr::tbl(src = connection,
-               from = "referendums") |>
+               from = dbplyr::in_schema(schema = pg_schema,
+                                        table = "referendums")) |>
     pg_tbl_del(data = data,
                pk_col_name = pg_pk(tbl_name = "referendums",
                                    connection = connection))
@@ -4916,7 +4997,8 @@ update_countries <- function(sweep = TRUE,
                   name_long)
   
   dplyr::tbl(src = connection,
-             from = "countries") |>
+             from = dbplyr::in_schema(schema = pg_schema,
+                                      table = "countries")) |>
     pg_tbl_update(data = data,
                   sweep = sweep,
                   tbl_name = "countries",
@@ -4947,7 +5029,8 @@ update_subnational_entities <- function(sweep = TRUE,
   force(connection)
   
   dplyr::tbl(src = connection,
-             from = "subnational_entities") |>
+             from = dbplyr::in_schema(schema = pg_schema,
+                                      table = "subnational_entities")) |>
     pg_tbl_update(data = data_iso_3166_2,
                   sweep = sweep,
                   tbl_name = "subnational_entities",
@@ -4979,7 +5062,8 @@ update_municipalities <- function(sweep = TRUE,
   force(connection)
   
   tbl <- dplyr::tbl(src = connection,
-                    from = "municipalities")
+                    from = dbplyr::in_schema(schema = pg_schema,
+                                             table = "municipalities"))
   pk_col_name <-
     pg_pk(tbl_name = "municipalities",
           connection = connection) |>
@@ -5028,7 +5112,8 @@ update_langs <- function(sweep = TRUE,
   force(connection)
   
   dplyr::tbl(src = connection,
-             from = "languages") |>
+             from = dbplyr::in_schema(schema = pg_schema,
+                                      table = "languages")) |>
     pg_tbl_update(data = data_iso_639_1,
                   sweep = sweep,
                   tbl_name = "languages",

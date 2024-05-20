@@ -4,10 +4,17 @@
 \alias{pg_tbl_update}
 \title{Update PostgreSQL table}
 \usage{
-pg_tbl_update(tbl, data, sweep = FALSE, tbl_name, connection = connect())
+pg_tbl_update(
+  tbl,
+  data,
+  sweep = FALSE,
+  tbl_name,
+  schema = pg_schema,
+  connection = connect()
+)
 }
 \arguments{
-\item{tbl}{Table to be updated. A data frame, \link[tibble:tbl_df-class]{tibble} or tibble extension like \code{\link[dbplyr:tbl_lazy]{tbl_lazy}}.}
+\item{tbl}{PostgreSQL database table to be updated. A \code{\link[dbplyr:tbl.src_dbi]{tbl.src_dbi}} object.}
 
 \item{data}{New or updated table data. A data frame that must contain at least the table's primary key column plus any additional columns with new values to
 update the corresponding database fields with.}
@@ -19,9 +26,14 @@ update the corresponding database fields with.}
 \item{connection}{Database connection to \link[=connect]{RDB's PostgreSQL DBMS}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 }
 \value{
-The updated table data as a \link[tibble:tbl_df-class]{tibble}, invisibly.
+The updated table data as a \link[tibble:tbl_df-class]{tibble}, invisibly. Note that newly inserted rows aren't included if the table's primary key column is
+\verb{GENERATED ALWAYS}.
 }
 \description{
-Update PostgreSQL table
+Updates the specified PostgreSQL \code{tbl} with values from \code{data}.
+}
+\details{
+If the \code{tbl}'s primary key column is \verb{GENERATED ALWAYS}, rows to be newly added must have \code{NA} values in the corresponding \code{data} column. This is a safety
+restriction to avoid accidental insertions.
 }
 \keyword{internal}

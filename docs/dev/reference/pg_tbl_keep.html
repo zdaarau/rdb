@@ -57,7 +57,7 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>tbl</dt>
-<dd><p>Table from which data is to be deleted. A data frame, <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a> or tibble extension like <code><a href="https://dbplyr.tidyverse.org/reference/tbl_lazy.html" class="external-link">tbl_lazy</a></code>.</p></dd>
+<dd><p>PostgreSQL database table from which data is to be deleted. A <code><a href="https://dbplyr.tidyverse.org/reference/tbl.src_dbi.html" class="external-link">tbl.src_dbi</a></code> object.</p></dd>
 
 
 <dt>data</dt>
@@ -72,7 +72,8 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>The updated table data as a <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a>, invisibly.</p>
+<p>The updated table data as a <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a>, invisibly. Note that newly inserted rows aren't included if the table's primary key column is
+<code>GENERATED ALWAYS</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -7,14 +7,15 @@
 pg_tbl_del(tbl, data, pk_col_name)
 }
 \arguments{
-\item{tbl}{Table from which data is to be deleted. A data frame, \link[tibble:tbl_df-class]{tibble} or tibble extension like \code{\link[dbplyr:tbl_lazy]{tbl_lazy}}.}
+\item{tbl}{PostgreSQL database table from which data is to be deleted. A \code{\link[dbplyr:tbl.src_dbi]{tbl.src_dbi}} object.}
 
 \item{data}{Table data to delete. A data frame that must contain the table's primary key column. Additional columns are ignored.}
 
 \item{pk_col_name}{Primary key column name. A character scalar.}
 }
 \value{
-The updated table data as a \link[tibble:tbl_df-class]{tibble}, invisibly.
+The updated table data as a \link[tibble:tbl_df-class]{tibble}, invisibly. Note that newly inserted rows aren't included if the table's primary key column is
+\verb{GENERATED ALWAYS}.
 }
 \description{
 Delete specified data from PostgreSQL table
