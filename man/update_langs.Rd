@@ -24,6 +24,7 @@ Other administration functions:
 \code{\link{config_ncdb}()},
 \code{\link{connect}()},
 \code{\link{delete_rfrnds}()},
+\code{\link{dm}()},
 \code{\link{update_countries}()},
 \code{\link{update_municipalities}()},
 \code{\link{update_rfrnds}()},

@@ -90,6 +90,7 @@ keywords.</p></dd>
     <div class="dont-index"><p>Other administration functions:
 <code><a href="config_ncdb.html">config_ncdb</a>()</code>,
 <code><a href="delete_rfrnds.html">delete_rfrnds</a>()</code>,
+<code><a href="dm.html">dm</a>()</code>,
 <code><a href="update_countries.html">update_countries</a>()</code>,
 <code><a href="update_langs.html">update_langs</a>()</code>,
 <code><a href="update_municipalities.html">update_municipalities</a>()</code>,
@@ -102,9 +103,9 @@ keywords.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu">connect</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">con</span> <span class="op">|&gt;</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "legal_bases"          "actors"               "options"              "referendums"          "municipalities"       "legal_norms"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "countries"            "subnational_entities" "languages"            "referendum_questions" "referendum_sub_votes" "legal_bases_norms"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "referendum_positions" "referendum_titles"    "referendum_votes"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "options"                      "countries"                    "municipalities"               "languages"                    "subnational_entities"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "referendums"                  "referendum_positions"         "referendum_questions"         "referendum_titles"            "referendum_types_legal_norms"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "referendum_votes"             "actors"                       "referendum_types"             "legal_norms"                  "referendum_sub_votes"        </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

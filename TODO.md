@@ -82,6 +82,9 @@
 -   Consider explicitly starting the Neon rw/ compute instance [via a REST API call](https://api-docs.neon.tech/reference/startprojectendpoint) to avoid
     connection timeouts due to startup delay when instance was suspended before (not necessary for public access since R/O instance doesn't suspend)
 
+-   Add support to read sensitive pkg config vals from system keystore via [keyring](https://keyring.r-lib.org/) pkg (add support for this in
+    `pal::*pkg_config_val*()` fns via an additional param `sensitive` (default `FALSE`) which makes them first try the system keystore before the other srcs)
+
 -   Check out the [GeoNames](https://www.geonames.org/about.html) database and figure out whether it'd be worth to incorporate a suitable subset of it into our
     `countries`, `subnational_entites` and `municipalities` tables. Note that there's a dedicated R package [geonames](https://docs.ropensci.org/geonames/).
 
@@ -466,4 +469,3 @@
 -   As soon as [issue #57](https://github.com/ccmdesign/c2d-app/issues/57) is resolved, properly process the question variables (and adapt codebook).
 
 -   Implement fn to rename file attachments as soon as [issue #69](https://github.com/ccmdesign/c2d-app/issues/69) is resolved.
-

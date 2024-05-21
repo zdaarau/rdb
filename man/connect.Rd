@@ -37,6 +37,7 @@ con |> DBI::dbListTables()
 Other administration functions:
 \code{\link{config_ncdb}()},
 \code{\link{delete_rfrnds}()},
+\code{\link{dm}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},

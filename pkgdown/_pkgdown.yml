@@ -100,6 +100,7 @@ reference:
 - title: Administration
 - contents:
   - connect
+  - dm
   - update_rfrnds
   - delete_rfrnds
   - update_countries

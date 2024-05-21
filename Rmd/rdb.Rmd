@@ -1345,19 +1345,21 @@ set_ncdb_display_val <- function(col_id,
 set_ncdb_display_vals <- function(base_id = ncdb_base_id(),
                                   auth_token = pal::pkg_config_val(key = "ncdb_token",
                                                                    pkg = this_pkg)) {
-  purrr::walk2(tbl_metadata$name,
-               tbl_metadata$ncdb_display_col,
-               \(tbl_name, col_name) {
-                 
-                 pal::cli_progress_step_quick(msg = "Setting NocoDB display column for table {.field {tbl_name}} to {.val {col_name}}")
-                 
-                 ncdb_tbl_id(base_id = base_id,
-                             tbl_name = tbl_name,
-                             auth_token = auth_token) |>
-                   ncdb_tbl_col_id(col_name = col_name,
-                                   auth_token = auth_token) |>
-                   set_ncdb_display_val(auth_token = auth_token)
-               })
+  tbl_metadata |>
+    dplyr::filter(!is.na(ncdb_display_col)) %$%
+    purrr::walk2(name,
+                 ncdb_display_col,
+                 \(tbl_name, col_name) {
+                   
+                   pal::cli_progress_step_quick(msg = "Setting NocoDB display column for table {.field {tbl_name}} to {.val {col_name}}")
+                   
+                   ncdb_tbl_id(base_id = base_id,
+                               tbl_name = tbl_name,
+                               auth_token = auth_token) |>
+                     ncdb_tbl_col_id(col_name = col_name,
+                                     auth_token = auth_token) |>
+                     set_ncdb_display_val(auth_token = auth_token)
+                 })
   
   invisible(NULL)
 }
@@ -1382,12 +1384,16 @@ set_ncdb_display_vals <- function(base_id = ncdb_base_id(),
 set_ncdb_tbl_metadata <- function(base_id = ncdb_base_id(),
                                   auth_token = pal::pkg_config_val(key = "ncdb_token",
                                                                    pkg = this_pkg)) {
-  nrow(tbl_metadata) |>
+  
+  # NOTE: we exclude junction tbls since they are hidden in NocoDB and its API
+  metadata <- tbl_metadata |> dplyr::filter(!is.na(ncdb_display_col))
+  
+  nrow(metadata) |>
     pal::safe_seq_len() |>
     purrr::walk(\(i) {
       
-      name <- tbl_metadata$name[i]
-      icon <- tbl_metadata$ncdb_meta.icon[i]
+      name <- metadata$name[i]
+      icon <- metadata$ncdb_meta.icon[i]
       id <- ncdb_tbl_id(base_id = base_id,
                         tbl_name = name,
                         auth_token = auth_token)
@@ -1876,6 +1882,7 @@ pg_tbl_update <- function(tbl,
     dplyr::filter(is_pk) |>
     dplyr::pull(identity_generation) |>
     magrittr::equals("ALWAYS") |>
+    isTRUE() |>
     magrittr::not()
   
   if (is_pk_writable) {
@@ -2628,6 +2635,7 @@ ncdb_col_renames <- tibble::tribble(
   "LinkToAnotherRecord", "actors",               "actor",
   "LinkToAnotherRecord", "countries",            "country",
   "LinkToAnotherRecord", "languages",            "language",
+  "LinkToAnotherRecord", "municipalities",       "municipality",
   "LinkToAnotherRecord", "options",              "option",
   "LinkToAnotherRecord", "referendum_types",     "referendum_type",
   "LinkToAnotherRecord", "referendums",          "referendum",
@@ -2669,26 +2677,35 @@ NOTES:
     `rdb:::set_ncdb_tbl_metadata()`.
 
 -   `\ufe0f` is the (optional) [Unicode image variation selector](https://stackoverflow.com/a/38100803/7196903) that specifies the emoji should be presented as
-    an image; unclear whether this actually has any effect (but it doesn't harm anyways)
+    an image; unclear whether this actually has any effect (but it doesn't harm anyways).
+
+-   Viable alternative emojis for `ncdb_meta.icon` include:
+
+    -   `countries`: "\U0001F1FA\U0001F1F3"
+    -   `municipalities`: "\U0001F3D8"
+    -   `languages`: "\U0001F310"
 
 ```{r}
 tbl_metadata <-
   tibble::tribble(
-    ~name,                  ~ncdb_display_col,         ~ncdb_meta.icon, # alternative icon
-    "actors",               "label",                   "\U0001F3AD",
-    "options",              "label",                   "\u2611",
-    "legal_norms",          "title",                   "\U0001F4DC",
-    "referendum_types",     "title",                   "\U0001F3DB",
-    "referendums",          "id",                      "\U0001F5F3",
-    "referendum_titles",    "title",                   "\U0001F4D5",
-    "referendum_questions", "question",                "\u2753",
-    "referendum_positions", "option_id",               "\U0001F4E3",
-    "referendum_votes",     "option_id",               "\U0001F9FE",
-    "referendum_sub_votes", "subnational_entity_code", "\U0001F9FE",
-    "countries",            "name",                    "\U0001F512",    # "\U0001F1FA\U0001F1F3"
-    "subnational_entities", "name",                    "\U0001F512",
-    "municipalities",       "name",                    "\U0001F512",    # "\U0001F3D8"
-    "languages",            "name",                    "\U0001F512",    # "\U0001F310"
+    ~name,                          ~desc,                                                                ~dm_color, ~ncdb_display_col,         ~ncdb_meta.icon,
+    "actors",                       "entities acting in connection with the referendums",                 "#9900cc", "label",                   "\U0001F3AD",
+    "options",                      "",                                                                   "#9900cc", "label",                   "\u2611",
+    "legal_norms",                  "",                                                                   "#33cc33", "title",                   "\U0001F4DC",
+    "referendum_types",             "",                                                                   "#33cc33", "title",                   "\U0001F3DB",
+    "referendum_types_legal_norms", "",                                                                   "#85e085", NA_character_,             NA_character_,
+    "referendums",                  "",                                                                   "#3f4eff", "id",                      "\U0001F5F3",
+    "referendum_titles",            "",                                                                   "#6673ff", "title",                   "\U0001F4D5",
+    "referendum_questions",         "",                                                                   "#6673ff", "question",                "\u2753",
+    "referendum_positions",         "",                                                                   "#6673ff", "option_id",               "\U0001F4E3",
+    "referendum_votes",             "",                                                                   "#6673ff", "option_id",               "\U0001F9FE",
+    "referendum_sub_votes",         "",                                                                   "#6673ff", "subnational_entity_code", "\U0001F9FE",
+    "countries",                    paste0("ISO [3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)/",
+                                           "[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) ",
+                                           "country codes and names"),                                    "#ffdf80", "name",                    "\U0001F512",
+    "subnational_entities",         "",                                                                   "#ffdf80", "name",                    "\U0001F512",
+    "municipalities",               "",                                                                   "#ffdf80", "name",                    "\U0001F512",
+    "languages",                    "",                                                                   "#ffdf80", "name",                    "\U0001F512",
   ) |>
   # add Unicode image variation selector
   dplyr::mutate(ncdb_meta.icon = paste0(ncdb_meta.icon, "\ufe0f"))
@@ -5657,6 +5674,35 @@ connect <- function(host = pal::pkg_config_val(key = "pg_host",
 }
 ```
 
+### `dm`
+
+TODO:
+
+-   Once [cynkra/dm#1879](https://github.com/cynkra/dm/issues/1879) is fixed, we can use default R PG user to connect instead of tbl owner.
+
+```{r}
+#' Get RDB data model
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `r pkgsnip::return_lbl("dm")`
+#' @family admin
+#' @export
+#'
+#' @examples
+#' rdb::dm() |> dm::dm_draw(view_type = "all")
+dm <- function(connection = connect(user = Sys.getenv("R_RDB_PG_OWNER"),
+                                    password = Sys.getenv("R_RDB_PG_OWNER_PASSWORD"))) {
+  dm::dm_from_con(con = connection,
+                  learn_keys = TRUE,
+                  schema = pg_schema) |>
+    dm::dm_set_colors(!!!magrittr::set_names(x = tbl_metadata$name,
+                                             value = tbl_metadata$dm_color)) |>
+    dm::dm_set_table_description(!!!magrittr::set_names(x = tbl_metadata$name,
+                                                        value = pal::strip_md(tbl_metadata$desc)))
+}
+```
+
 ### `update_rfrnds`
 
 ```{r}
@@ -5773,11 +5819,12 @@ update_countries <- function(sweep = TRUE,
   data <-
     data_iso_3166_1 |>
     dplyr::select(code = alpha_2,
-                  code_long = alpha_3,
-                  code_numeric = numeric,
                   name = name_short,
-                  name_long)
-  
+                  name_long) |>
+    dplyr::bind_rows(dplyr::select(.data = data_iso_3166_3,
+                                   code = alpha_4,
+                                   name = name_short,
+                                   name_long))
   dplyr::tbl(src = connection,
              from = dbplyr::in_schema(schema = pg_schema,
                                       table = "countries")) |>
