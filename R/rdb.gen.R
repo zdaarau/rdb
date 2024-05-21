@@ -1570,9 +1570,9 @@ pg_tbl_keep <- function(tbl,
 #' @keywords internal
 pg_tbl_update <- function(tbl,
                           data,
-                          sweep = FALSE,
                           tbl_name,
                           schema = pg_schema,
+                          sweep = FALSE,
                           connection = connect()) {
   
   checkmate::assert_class(tbl,
@@ -1586,7 +1586,7 @@ pg_tbl_update <- function(tbl,
     col_metadata |>
     dplyr::filter(is_pk) |>
     dplyr::pull(column_name) |>
-    # we don't yet properly handle multi-col pks, so check for them
+    # we don't yet properly handle multi-col PKs, so check for them
     checkmate::assert_string(.var.name = "pk_col_name")
   
   # delete obsolete data if requested
@@ -2193,7 +2193,8 @@ date_backup_rdb <- pal::path_mod_time("data-raw/backups/rdb.rds") |> clock::as_d
 
 ncdb_col_metadata <- tibble::tribble(
   ~tbl_name,     ~col_name,     ~uidt,         ~meta.richMode,
-  "referendums", "attachments", "Attachment",  NA,             
+  "referendums", "attachments", "Attachment",  NA,
+  NA_character_, "url",         "URL",         NA,
   NA_character_, "description", NA_character_, TRUE,
   NA_character_, "label",       NA_character_, TRUE,
   NA_character_, "remarks",     NA_character_, TRUE
@@ -2457,7 +2458,8 @@ rfrnd_types <- function(connection = connect(),
 #' Fetches a table from the [RDB DBMS][connect]'s `r pal::wrap_chr(pg_schema, "\x60")` schema and returns it as a [tibble][tibble::tbl_df].
 #'
 #' @inheritParams rfrnds
-#' @param tbl_name Table name. One of `r pal::as_md_vals(tbl_metadata$name) |> pal::enum_str()`.
+#' @param tbl_name Table name. One of
+#'   `r pal::as_md_val_list(tbl_metadata$name)`.
 #'
 #' @return `r pkgsnip::param_lbl("tibble")`
 #' @family data
@@ -4927,7 +4929,7 @@ dm <- function(connection = connect(user = Sys.getenv("R_RDB_PG_OWNER"),
 #' @param data New or updated referendum data. A [tibble][tibble::tbl_df] that must contain a [`r pg_pk("referendums")`](`r url_codebook("id")`) column
 #'   identifying the referendums to be updated plus any additional columns containing the new values to update the corresponding database fields with.
 #'
-#' @return The updated `referendums` data as a tibble, invisibly.
+#' @return `data`, invisibly.
 #' @family admin
 #' @export
 update_rfrnds <- function(data,
@@ -4951,20 +4953,19 @@ update_rfrnds <- function(data,
                                                                        
                                                                        jsonlite::toJSON(x = x)
                                                                      })))
-  result <-
-    dplyr::tbl(src = connection,
-               from = dbplyr::in_schema(schema = pg_schema,
-                                        table = "referendums")) |>
+  dplyr::tbl(src = connection,
+             from = dbplyr::in_schema(schema = pg_schema,
+                                      table = "referendums")) |>
     pg_tbl_update(data = data,
-                  sweep = sweep,
                   tbl_name = "referendums",
+                  sweep = sweep,
                   connection = connection)
   
   if (disconnect) {
     DBI::dbDisconnect(conn = connection)
   }
   
-  invisible(result)
+  invisible(data)
 }
 
 #' Delete referendums from the RDB
@@ -4975,7 +4976,7 @@ update_rfrnds <- function(data,
 #' @param data Referendum data to be deleted. A [tibble][tibble::tbl_df] that at least must contain the column
 #'   `r pk("referendums") |> pal::wrap_chr("\x60")`.
 #'
-#' @return The updated `referendums` table data as a tibble, invisibly.
+#' @return The updated `referendums` table data as a [tibble][tibble::tbl_df], invisibly.
 #' @family admin
 #' @family data
 #' @export
@@ -5004,44 +5005,29 @@ delete_rfrnds <- function(data,
 
 #' Update RDB `countries` table
 #'
-#' Updates the RDB's `countries` table with the data from [`data_iso_3166_1`][data_iso_3166_1].
+#' Updates the RDB's `countries` table with the data from [`data_iso_3166_1`][data_iso_3166_1] and [`data_iso_3166_3`][data_iso_3166_3].
 #'
 #' @inheritParams update_rfrnds
 #'
-#' @return The updated `countries` table data as a tibble, invisibly.
+#' @return The newly written `countries` table data as a [tibble][tibble::tbl_df], invisibly.
 #' @family admin
 #' @export
 update_countries <- function(sweep = TRUE,
                              connection = connect(),
                              disconnect = TRUE) {
   
-  checkmate::assert_flag(disconnect)
-  
-  # necessary to avoid error on first run of `connect()`
-  force(connection)
-  
-  data <-
-    data_iso_3166_1 |>
+  data_iso_3166_1 |>
     dplyr::select(code = alpha_2,
                   name = name_short,
                   name_long) |>
     dplyr::bind_rows(dplyr::select(.data = data_iso_3166_3,
                                    code = alpha_4,
                                    name = name_short,
-                                   name_long))
-  dplyr::tbl(src = connection,
-             from = dbplyr::in_schema(schema = pg_schema,
-                                      table = "countries")) |>
-    pg_tbl_update(data = data,
-                  sweep = sweep,
-                  tbl_name = "countries",
-                  connection = connection)
-  
-  if (disconnect) {
-    DBI::dbDisconnect(conn = connection)
-  }
-  
-  invisible(data)
+                                   name_long)) |>
+    update_tbl(tbl_name = "countries",
+               sweep = sweep,
+               connection = connection,
+               disconnect = disconnect)
 }
 
 #' Update RDB `subnational_entities` table
@@ -5050,39 +5036,26 @@ update_countries <- function(sweep = TRUE,
 #'
 #' @inheritParams update_rfrnds
 #'
-#' @return The updated `subnational_entities` table data as a tibble, invisibly.
+#' @return [`data_iso_3166_2`][data_iso_3166_2], invisibly.
 #' @family admin
 #' @export
 update_subnational_entities <- function(sweep = TRUE,
                                         connection = connect(),
                                         disconnect = TRUE) {
-  checkmate::assert_flag(disconnect)
-  
-  # necessary to avoid error on first run of `connect()`
-  force(connection)
-  
-  dplyr::tbl(src = connection,
-             from = dbplyr::in_schema(schema = pg_schema,
-                                      table = "subnational_entities")) |>
-    pg_tbl_update(data = data_iso_3166_2,
-                  sweep = sweep,
-                  tbl_name = "subnational_entities",
-                  connection = connection)
-  
-  if (disconnect) {
-    DBI::dbDisconnect(conn = connection)
-  }
-  
-  invisible(data_iso_3166_2)
+  update_tbl(data = data_iso_3166_2,
+             tbl_name = "subnational_entities",
+             sweep = sweep,
+             connection = connection,
+             disconnect = disconnect)
 }
 
-#' Generate RDB `municipalities` table
+#' Update RDB `municipalities` table
 #'
 #' Updates the RDB's `municipalities` table with the data from [`data_municipalities`][data_municipalities].
 #'
 #' @inheritParams update_rfrnds
 #'
-#' @return The updated `municipalities` table data as a tibble, invisibly.
+#' @return [`data_municipalities`][data_municipalities], invisibly.
 #' @family admin
 #' @export
 update_municipalities <- function(sweep = TRUE,
@@ -5112,7 +5085,7 @@ update_municipalities <- function(sweep = TRUE,
   
   # update existing and add new data
   data_municipalities |>
-    # we can't write the PK column since it's `GENERATED ALWAYS`
+    # NOTE: we can't write the PK column since it's `GENERATED ALWAYS`
     dplyr::select(-!!pk_col_name) |>
     dplyr::rows_upsert(x = tbl,
                        y = _,
@@ -5126,19 +5099,43 @@ update_municipalities <- function(sweep = TRUE,
   invisible(data_municipalities)
 }
 
-#' Generate RDB `languages` table
+#' Update RDB `languages` table
 #'
 #' Updates the RDB's `languages` table with the data from [`data_iso_639_1`][data_iso_639_1].
 #'
 #' @inheritParams update_rfrnds
 #'
-#' @return The updated `languages` table data as a tibble, invisibly.
+#' @return [`data_iso_639_1`][data_iso_639_1], invisibly.
 #' @family admin
 #' @export
 update_langs <- function(sweep = TRUE,
                          connection = connect(),
                          disconnect = TRUE) {
   
+  update_tbl(data = data_iso_639_1,
+             tbl_name = "languages",
+             sweep = sweep,
+             connection = connection,
+             disconnect = disconnect)
+}
+
+#' Update RDB table
+#'
+#' Updates the specified RDB table with the provided data.
+#'
+#' @inheritParams pg_tbl_update
+#' @inheritParams rfrnds
+#'
+#' @return `data`, invisibly.
+#' @family admin
+#' @export
+update_tbl <- function(data,
+                       tbl_name = tbl_metadata$name,
+                       sweep = FALSE,
+                       connection = connect(),
+                       disconnect = TRUE) {
+  
+  tbl_name <- rlang::arg_match(tbl_name)
   checkmate::assert_flag(disconnect)
   
   # necessary to avoid error on first run of `connect()`
@@ -5146,17 +5143,17 @@ update_langs <- function(sweep = TRUE,
   
   dplyr::tbl(src = connection,
              from = dbplyr::in_schema(schema = pg_schema,
-                                      table = "languages")) |>
-    pg_tbl_update(data = data_iso_639_1,
+                                      table = tbl_name)) |>
+    pg_tbl_update(data = data,
+                  tbl_name = tbl_name,
                   sweep = sweep,
-                  tbl_name = "languages",
                   connection = connection)
   
   if (disconnect) {
     DBI::dbDisconnect(conn = connection)
   }
   
-  invisible(data_iso_639_1)
+  invisible(data)
 }
 
 #' Configure NocoDB

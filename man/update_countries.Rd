@@ -14,10 +14,10 @@ update_countries(sweep = TRUE, connection = connect(), disconnect = TRUE)
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
-The updated \code{countries} table data as a tibble, invisibly.
+The newly written \code{countries} table data as a \link[tibble:tbl_df-class]{tibble}, invisibly.
 }
 \description{
-Updates the RDB's \code{countries} table with the data from \code{\link{data_iso_3166_1}}.
+Updates the RDB's \code{countries} table with the data from \code{\link{data_iso_3166_1}} and \code{\link{data_iso_3166_3}}.
 }
 \seealso{
 Other administration functions:
@@ -28,6 +28,7 @@ Other administration functions:
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
 \code{\link{update_rfrnds}()},
-\code{\link{update_subnational_entities}()}
+\code{\link{update_subnational_entities}()},
+\code{\link{update_tbl}()}
 }
 \concept{admin}

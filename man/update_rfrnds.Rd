@@ -17,7 +17,7 @@ identifying the referendums to be updated plus any additional columns containing
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
-The updated \code{referendums} data as a tibble, invisibly.
+\code{data}, invisibly.
 }
 \description{
 Updates the RDB's \code{referendums} table with \code{data}. By default, rows not contained in \code{data} are kept.
@@ -31,6 +31,7 @@ Other administration functions:
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
-\code{\link{update_subnational_entities}()}
+\code{\link{update_subnational_entities}()},
+\code{\link{update_tbl}()}
 }
 \concept{admin}

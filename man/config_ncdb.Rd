@@ -53,7 +53,8 @@ Other administration functions:
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
 \code{\link{update_rfrnds}()},
-\code{\link{update_subnational_entities}()}
+\code{\link{update_subnational_entities}()},
+\code{\link{update_tbl}()}
 }
 \concept{admin}
 \concept{ncdb}

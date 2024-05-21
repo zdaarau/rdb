@@ -15,7 +15,7 @@ delete_rfrnds(data, connection = connect(), disconnect = TRUE)
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
-The updated \code{referendums} table data as a tibble, invisibly.
+The updated \code{referendums} table data as a \link[tibble:tbl_df-class]{tibble}, invisibly.
 }
 \description{
 Deletes \code{data} from the RDB's \code{referendums} table.
@@ -29,7 +29,8 @@ Other administration functions:
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
 \code{\link{update_rfrnds}()},
-\code{\link{update_subnational_entities}()}
+\code{\link{update_subnational_entities}()},
+\code{\link{update_tbl}()}
 
 Other data functions:
 \code{\link{assert_vars}()},

@@ -18,7 +18,7 @@ update_subnational_entities(
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
-The updated \code{subnational_entities} table data as a tibble, invisibly.
+\code{\link{data_iso_3166_2}}, invisibly.
 }
 \description{
 Updates the RDB's \code{subnational_entities} table with the data from \code{\link{data_iso_3166_2}}.
@@ -32,6 +32,7 @@ Other administration functions:
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
-\code{\link{update_rfrnds}()}
+\code{\link{update_rfrnds}()},
+\code{\link{update_tbl}()}
 }
 \concept{admin}

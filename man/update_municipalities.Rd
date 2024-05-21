@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{update_municipalities}
 \alias{update_municipalities}
-\title{Generate RDB \code{municipalities} table}
+\title{Update RDB \code{municipalities} table}
 \usage{
 update_municipalities(sweep = TRUE, connection = connect(), disconnect = TRUE)
 }
@@ -14,7 +14,7 @@ update_municipalities(sweep = TRUE, connection = connect(), disconnect = TRUE)
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
-The updated \code{municipalities} table data as a tibble, invisibly.
+\code{\link{data_municipalities}}, invisibly.
 }
 \description{
 Updates the RDB's \code{municipalities} table with the data from \code{\link{data_municipalities}}.
@@ -28,6 +28,7 @@ Other administration functions:
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_rfrnds}()},
-\code{\link{update_subnational_entities}()}
+\code{\link{update_subnational_entities}()},
+\code{\link{update_tbl}()}
 }
 \concept{admin}

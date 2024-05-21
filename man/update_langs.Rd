@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{update_langs}
 \alias{update_langs}
-\title{Generate RDB \code{languages} table}
+\title{Update RDB \code{languages} table}
 \usage{
 update_langs(sweep = TRUE, connection = connect(), disconnect = TRUE)
 }
@@ -14,7 +14,7 @@ update_langs(sweep = TRUE, connection = connect(), disconnect = TRUE)
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
-The updated \code{languages} table data as a tibble, invisibly.
+\code{\link{data_iso_639_1}}, invisibly.
 }
 \description{
 Updates the RDB's \code{languages} table with the data from \code{\link{data_iso_639_1}}.
@@ -28,6 +28,7 @@ Other administration functions:
 \code{\link{update_countries}()},
 \code{\link{update_municipalities}()},
 \code{\link{update_rfrnds}()},
-\code{\link{update_subnational_entities}()}
+\code{\link{update_subnational_entities}()},
+\code{\link{update_tbl}()}
 }
 \concept{admin}
