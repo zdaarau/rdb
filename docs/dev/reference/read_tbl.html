@@ -61,7 +61,22 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>tbl_name</dt>
-<dd><p>Table name. One of <code>"actors"</code>, <code>"options"</code>, <code>"legal_norms"</code>, <code>"referendum_types"</code>, <code>"referendums"</code>, <code>"referendum_titles"</code>, <code>"referendum_questions"</code>, <code>"referendum_positions"</code>, <code>"referendum_votes"</code>, <code>"referendum_sub_votes"</code>, <code>"countries"</code>, <code>"subnational_entities"</code>, <code>"municipalities"</code> and <code>"languages"</code>.</p></dd>
+<dd><p>Table name. One of</p><ul><li><p><code>"actors"</code></p></li>
+<li><p><code>"options"</code></p></li>
+<li><p><code>"legal_norms"</code></p></li>
+<li><p><code>"referendum_types"</code></p></li>
+<li><p><code>"referendum_types_legal_norms"</code></p></li>
+<li><p><code>"referendums"</code></p></li>
+<li><p><code>"referendum_titles"</code></p></li>
+<li><p><code>"referendum_questions"</code></p></li>
+<li><p><code>"referendum_positions"</code></p></li>
+<li><p><code>"referendum_votes"</code></p></li>
+<li><p><code>"referendum_sub_votes"</code></p></li>
+<li><p><code>"countries"</code></p></li>
+<li><p><code>"subnational_entities"</code></p></li>
+<li><p><code>"municipalities"</code></p></li>
+<li><p><code>"languages"</code> .</p></li>
+</ul></dd>
 
 
 <dt>connection</dt>
@@ -93,20 +108,20 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">read_tbl</span><span class="op">(</span><span class="st">"countries"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 250 × 7</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    code  code_long code_numeric name             name_long                       created_at          updated_at         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> BD    BGD       050          Bangladesh       People's Republic of Bangladesh 2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> BE    BEL       056          Belgium          Kingdom of Belgium              2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> BF    BFA       854          Burkina Faso     Burkina Faso                    2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> BG    BGR       100          Bulgaria         Republic of Bulgaria            2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> BH    BHR       048          Bahrain          Kingdom of Bahrain              2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> BI    BDI       108          Burundi          Republic of Burundi             2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> BJ    BEN       204          Benin            Republic of Benin               2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> BL    BLM       652          Saint Barthélemy Saint Barthélemy                2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> BM    BMU       060          Bermuda          Bermuda                         2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> BN    BRN       096          Brunei           Brunei Darussalam               2024-05-07 <span style="color: #949494;">11:35:27</span> 2024-05-07 <span style="color: #949494;">15:07:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 240 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 281 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    code  name                 name_long                       created_at          updated_at         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> AD    Andorra              Principality of Andorra         2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AE    United Arab Emirates United Arab Emirates            2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AF    Afghanistan          Islamic Republic of Afghanistan 2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AG    Antigua and Barbuda  Antigua and Barbuda             2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AI    Anguilla             Anguilla                        2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AL    Albania              Republic of Albania             2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AM    Armenia              Republic of Armenia             2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AO    Angola               Republic of Angola              2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AQ    Antarctica           Antarctica                      2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AR    Argentina            Argentine Republic              2024-05-26 <span style="color: #949494;">18:01:12</span> 2024-05-26 <span style="color: #949494;">18:01:12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 271 more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

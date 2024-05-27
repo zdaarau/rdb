@@ -61,6 +61,9 @@
     <loc>https://rdb.rpkg.dev/dev/reference/connect.html</loc>
   </url>
   <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/create_ncdb_base.html</loc>
+  </url>
+  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/create_ncdb_user.html</loc>
   </url>
   <url>
@@ -86,6 +89,9 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/delete_rfrnds.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/dm.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/download_file_attachment.html</loc>
@@ -122,6 +128,9 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/ncdb_api.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_base.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/ncdb_base_id.html</loc>
@@ -241,6 +250,9 @@
     <loc>https://rdb.rpkg.dev/dev/reference/update_municipalities.html</loc>
   </url>
   <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/update_ncdb_base.html</loc>
+  </url>
+  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/update_ncdb_tbl.html</loc>
   </url>
   <url>
@@ -251,6 +263,9 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/update_subnational_entities.html</loc>
+  </url>
+  <url>
+    <loc>https://rdb.rpkg.dev/dev/reference/update_tbl.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/upload_ncdb_attachments.html</loc>

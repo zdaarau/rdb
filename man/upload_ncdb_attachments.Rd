@@ -47,8 +47,10 @@ bucket \code{rdb-attachments}.
 \seealso{
 Other NocoDB API functions
 \code{\link{config_ncdb}()},
+\code{\link{create_ncdb_base}()},
 \code{\link{create_ncdb_user}()},
 \code{\link{ncdb_api}()},
+\code{\link{ncdb_base}()},
 \code{\link{ncdb_base_id}()},
 \code{\link{ncdb_bases}()},
 \code{\link{ncdb_tbl}()},
@@ -62,6 +64,7 @@ Other NocoDB API functions
 \code{\link{set_ncdb_display_val}()},
 \code{\link{set_ncdb_display_vals}()},
 \code{\link{set_ncdb_tbl_metadata}()},
+\code{\link{update_ncdb_base}()},
 \code{\link{update_ncdb_tbl}()},
 \code{\link{update_ncdb_tbl_col}()}
 }

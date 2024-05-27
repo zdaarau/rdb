@@ -29,6 +29,7 @@ utils::globalVariables(names = c(".",
                                  "alpha_4",
                                  "applicability_constraint",
                                  "archive",
+                                 "attachments",
                                  "children_tier_1",
                                  "children_tier_2",
                                  "children_tier_3",
@@ -104,8 +105,10 @@ utils::globalVariables(names = c(".",
                                  "month",
                                  "municipality_name",
                                  "n",
+                                 "name",
                                  "name_long",
                                  "name_short",
+                                 "ncdb_display_col",
                                  "number",
                                  "ordinal_position",
                                  "parent_topic",
@@ -757,6 +760,9 @@ url_website <- function(...) {
 #'   `r pal::enum_fn_param_defaults(param = "method", fn = "ncdb_api")`.
 #' @param body_json Data to include as JSON in the HTTP request body. Set to `NULL` for an empty body.
 #' @param auto_unbox Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
+#' @param simplify Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of
+#'   [jsonlite::fromJSON()].
+#' @param flatten Whether or not to automatically [flatten][jsonlite::flatten] nested data frames in the returned JSON into a single non-nested data frame.
 #' @param auth_token NocoDB API authentication token. A character scalar.
 #'
 #' @return A list.
@@ -766,6 +772,8 @@ ncdb_api <- function(path,
                      method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
                      body_json = NULL,
                      auto_unbox = TRUE,
+                     simplify = TRUE,
+                     flatten = TRUE,
                      auth_token = pal::pkg_config_val(key = "ncdb_token",
                                                       pkg = this_pkg),
                      max_tries = 3L,
@@ -793,13 +801,22 @@ ncdb_api <- function(path,
   resp <- httr2::req_perform(req = req,
                              verbosity = verbosity)
   
-  if (httr2::resp_content_type(resp) == "application/json") {
-    resp %<>% httr2::resp_body_json(simplifyVector = TRUE)
-  } else {
-    resp %<>% httr2::resp_body_string()
+  if (!httr2::resp_has_body(resp)) {
+    cli::cli_abort(paste0("API responded with HTTP status {.field ",
+                          paste(httr2::resp_status(resp), httr2::resp_status_desc(resp)),
+                          "} but an empty body, which likely means some component in the URL path {.path {paste0('/', path)}} is invalid."))
   }
   
-  resp
+  if (isTRUE(httr2::resp_content_type(resp) == "application/json")) {
+    
+    result <- httr2::resp_body_json(resp = resp,
+                                    simplifyVector = simplify,
+                                    flatten = flatten)
+  } else {
+    result <- httr2::resp_body_string(resp = resp)
+  }
+  
+  result
 }
 
 #' Get NocoDB base ID
@@ -812,7 +829,7 @@ ncdb_api <- function(path,
 #' @return A character scalar if a base titled `title` exists, otherwise a zero-length character vector.
 #' @family ncdb
 #' @keywords internal
-ncdb_base_id <- function(title = "Main",
+ncdb_base_id <- function(title = ncdb_base_name,
                          auth_token = pal::pkg_config_val(key = "ncdb_token",
                                                           pkg = this_pkg)) {
   checkmate::assert_string(title)
@@ -834,8 +851,29 @@ ncdb_base_id <- function(title = "Main",
 
 #' Get NocoDB bases metadata
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about bases on the RDB NocoDB server from its
-#' [`/api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
+#' Returns a [tibble][tibble::tbl_df] with metadata about the specified base on the RDB NocoDB server from the
+#' [GET `/api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-read) API endpoint.
+#'
+#' @inheritParams ncdb_tbls
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family ncdb
+#' @keywords internal
+ncdb_base <- function(base_id = ncdb_base_id(),
+                      auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                       pkg = this_pkg)) {
+  checkmate::assert_string(base_id)
+  
+  ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}"),
+           method = "GET",
+           auth_token = auth_token) |>
+    tidy_ncdb_base_metadata()
+}
+
+#' Get NocoDB bases metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about all bases on the RDB NocoDB server from the
+#' [GET `/api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
 #'
 #' @inheritParams ncdb_api
 #'
@@ -888,8 +926,8 @@ ncdb_tbl_id <- function(base_id = ncdb_base_id(),
 
 #' Get NocoDB table column metadata
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the specified column on the RDB NocoDB server from its
-#' [`/api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
+#' Returns a [tibble][tibble::tbl_df] with metadata about the specified column on the RDB NocoDB server from the
+#' [GET `/api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
 #'
 #' @inheritParams ncdb_api
 #' @param col_id NocoDB column identifier as returned by [ncdb_tbl_col_id()]. A character scalar.
@@ -959,8 +997,8 @@ ncdb_tbl_col_id <- function(tbl_id,
 
 #' Get NocoDB table columns metadata
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on the RDB NocoDB server from its
-#' [`/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on the RDB NocoDB server from the
+#' [GET `/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams ncdb_tbl
 #'
@@ -982,8 +1020,8 @@ ncdb_tbl_cols <- function(tbl_id = ncdb_tbl_id(),
 
 #' Get NocoDB table metadata
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the specified table on the RDB NocoDB server from its
-#' [`/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#' Returns a [tibble][tibble::tbl_df] with metadata about the specified table on the RDB NocoDB server from the
+#' [GET `/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams ncdb_api
 #' @param tbl_id NocoDB table identifier as returned by [ncdb_tbl_id()]. A character scalar.
@@ -1007,8 +1045,8 @@ ncdb_tbl <- function(tbl_id = ncdb_tbl_id(),
 
 #' Get NocoDB tables metadata
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified base on the RDB NocoDB server from its
-#' [`/api/v2/meta/bases/{base_id}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
+#' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified base on the RDB NocoDB server from the
+#' [GET `/api/v2/meta/bases/{base_id}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
 #'
 #' @inheritParams ncdb_api
 #' @param base_id NocoDB base identifier as returned by [ncdb_base_id()]. A character scalar.
@@ -1031,7 +1069,7 @@ ncdb_tbls <- function(base_id = ncdb_base_id(),
 
 #' Get NocoDB users metadata
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on the RDB NocoDB server from its
+#' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on the RDB NocoDB server from the
 #' [GET `/api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
 #'
 #' @inheritParams ncdb_tbls
@@ -1051,12 +1089,53 @@ ncdb_users <- function(base_id = ncdb_base_id(),
     tibble::as_tibble()
 }
 
+#' Create NocoDB base
+#'
+#' Adds a new base on the RDB NocoDB server via the
+#' [POST `/api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-create) API endpoint.
+#'
+#' @param title Title of the new base. A character scalar.
+#' @param description Description of the new base. A character scalar.
+#' @param color Color to use for the base icon. A hexadecimal color code like `r pal::as_md_vals(color_rdb_main)`.
+#' @param show_null_and_empty_in_filter Whether or not to distinguish `NULL`s from empty values in column filters. If `FALSE`, `NULL` and empty fields are
+#'   treated alike.
+#' @inheritParams ncdb_api
+#'
+#' @return A [tibble][tibble::tbl_df] containing metadata about the newly created NocoDB base.
+#' @family ncdb
+#' @keywords internal
+create_ncdb_base <- function(title = ncdb_base_name,
+                             description = NULL,
+                             color = color_rdb_main,
+                             show_null_and_empty_in_filter = TRUE,
+                             auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                              pkg = this_pkg)) {
+  checkmate::assert_string(title)
+  checkmate::assert_string(description,
+                           null.ok = TRUE)
+  checkmate::assert_string(color,
+                           n.chars = 7L,
+                           pattern = "^#")
+  checkmate::assert_flag(show_null_and_empty_in_filter)
+  
+  ncdb_api(path = "api/v2/meta/bases",
+           method = "POST",
+           body_json = purrr::compact(list(title = title,
+                                           description = description,
+                                           color = color,
+                                           meta = list(iconColor = paste0(color, "ff"),
+                                                       showNullAndEmptyInFilter = show_null_and_empty_in_filter))),
+           auth_token = auth_token) |>
+    tidy_ncdb_base_metadata() |> 
+    invisible()
+}
+
 #' Create NocoDB user
 #'
 #' Adds a new user account to the specified base on the RDB NocoDB server via the
 #' [POST `/api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
 #'
-#' @param email E-mail address of the new user.
+#' @param email E-mail address of the new user. A character scalar.
 #' @param role Base role to assign to the new user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "create_ncdb_user")`.
 #' @inheritParams ncdb_tbls
 #'
@@ -1219,12 +1298,84 @@ set_ncdb_tbl_metadata <- function(base_id = ncdb_base_id(),
   invisible(NULL)
 }
 
+tidy_ncdb_base_metadata <- function(x) {
+  
+  # flatten `meta`
+  for (i in seq_along(x$meta)) {
+    x[[paste0("meta.", names(x$meta[i]))]] <- x$meta[[i]]
+  }
+  
+  x$meta <- NULL
+  
+  x |>
+    # replace `NULL`s with `NA_character_` to harmonize field length
+    purrr::map(\(el) el %||% NA_character_) |>
+    # convert wrap nested fields in list
+    purrr::modify_if(.p = \(x) length(x) > 1L,
+                     .f = \(x) list(x)) |>
+    # convert result to tibble
+    tibble::as_tibble_row() |>
+    tidy_ncdb_date_time_cols()
+}
+
 tidy_ncdb_date_time_cols <- function(data) {
   
   data |> dplyr::mutate(dplyr::across(.cols = ends_with("_at"),
                                       .fns = \(x) clock::date_time_parse_RFC_3339(x = x,
                                                                                   separator = " ",
                                                                                   offset = "%Ez")))
+}
+
+#' Update NocoDB base
+#'
+#' Updates the specified base on the RDB NocoDB server via the
+#' [PATCH `/api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) API endpoint.
+#'
+#' @inheritParams create_ncdb_base
+#' @inheritParams ncdb_tbls
+#'
+#' @return `base_id`, invisibly.
+#' @family ncdb
+#' @keywords internal
+update_ncdb_base <- function(title = NULL,
+                             description = NULL,
+                             color = NULL,
+                             show_null_and_empty_in_filter = NULL,
+                             base_id = ncdb_base_id(),
+                             auth_token = pal::pkg_config_val(key = "ncdb_token",
+                                                              pkg = this_pkg)) {
+  checkmate::assert_string(title,
+                           null.ok = TRUE)
+  checkmate::assert_string(description,
+                           null.ok = TRUE)
+  checkmate::assert_string(color,
+                           n.chars = 7L,
+                           pattern = "^#",
+                           null.ok = TRUE)
+  checkmate::assert_flag(show_null_and_empty_in_filter,
+                         null.ok = TRUE)
+  checkmate::assert_string(base_id)
+  
+  if (length(c(title, description, color, show_null_and_empty_in_filter)) > 0L) {
+    
+    # NOTE: if `iconColor` isn't included in `meta`, the NocoDB server fails to parse it; hence we just add the current color if none was provided
+    if (is.null(color)) {
+      color <- ncdb_base(base_id = base_id)$color
+    }
+    
+    ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}"),
+             method = "PATCH",
+             body_json = purrr::compact(list(title = title,
+                                             description = description,
+                                             color = color,
+                                             # NOTE: we must send `meta` as a *string* of JSON, see TODO above
+                                             meta = jsonlite::toJSON(purrr::compact(list(iconColor = color,
+                                                                                         showNullAndEmptyInFilter = show_null_and_empty_in_filter)),
+                                                                     auto_unbox = TRUE))),
+             auth_token = auth_token)
+  }
+  
+  invisible(base_id)
 }
 
 #' Update NocoDB table metadata
@@ -2189,7 +2340,11 @@ codebook_fragments <- c("institution-level-variables",
                         "referendum-level-variables",
                         "topics")
 
+color_rdb_main <- "#3f4eff"
+
 date_backup_rdb <- pal::path_mod_time("data-raw/backups/rdb.rds") |> clock::as_date()
+
+ncdb_base_name <- "Main"
 
 ncdb_col_metadata <- tibble::tribble(
   ~tbl_name,     ~col_name,     ~uidt,         ~meta.richMode,
@@ -2230,27 +2385,26 @@ sudd_max_year <- pal::safe_max(sudd_years)
 sudd_min_year <- pal::safe_min(sudd_years)
 rm(sudd_years)
 
-tbl_metadata <-
-  tibble::tribble(
-    ~name,                          ~desc,                                                                ~dm_color, ~ncdb_display_col,         ~ncdb_meta.icon,
-    "actors",                       "entities acting in connection with the referendums",                 "#9900cc", "label",                   "\U0001F3AD",
-    "options",                      "",                                                                   "#9900cc", "label",                   "\u2611",
-    "legal_norms",                  "",                                                                   "#33cc33", "title",                   "\U0001F4DC",
-    "referendum_types",             "",                                                                   "#33cc33", "title",                   "\U0001F3DB",
-    "referendum_types_legal_norms", "",                                                                   "#85e085", NA_character_,             NA_character_,
-    "referendums",                  "",                                                                   "#3f4eff", "id",                      "\U0001F5F3",
-    "referendum_titles",            "",                                                                   "#6673ff", "title",                   "\U0001F4D5",
-    "referendum_questions",         "",                                                                   "#6673ff", "question",                "\u2753",
-    "referendum_positions",         "",                                                                   "#6673ff", "option_id",               "\U0001F4E3",
-    "referendum_votes",             "",                                                                   "#6673ff", "option_id",               "\U0001F9FE",
-    "referendum_sub_votes",         "",                                                                   "#6673ff", "subnational_entity_code", "\U0001F9FE",
-    "countries",                    paste0("ISO [3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)/",
-                                           "[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) ",
-                                           "country codes and names"),                                    "#ffdf80", "name",                    "\U0001F512",
-    "subnational_entities",         "",                                                                   "#ffdf80", "name",                    "\U0001F512",
-    "municipalities",               "",                                                                   "#ffdf80", "name",                    "\U0001F512",
-    "languages",                    "",                                                                   "#ffdf80", "name",                    "\U0001F512",
-  ) |>
+tbl_metadata <- tibble::tribble(
+  ~name,                          ~desc,                                                             ~dm_color,      ~ncdb_display_col,         ~ncdb_meta.icon,
+  "actors",                       "entities acting in connection with the referendums",              "#9900cc",      "label",                   "\U0001F3AD",
+  "options",                      "",                                                                "#9900cc",      "label",                   "\u2611",
+  "legal_norms",                  "",                                                                "#33cc33",      "title",                   "\U0001F4DC",
+  "referendum_types",             "",                                                                "#33cc33",      "title",                   "\U0001F3DB",
+  "referendum_types_legal_norms", "",                                                                "#85e085",      NA_character_,             NA_character_,
+  "referendums",                  "",                                                                color_rdb_main, "id",                      "\U0001F5F3",
+  "referendum_titles",            "",                                                                "#6673ff",      "title",                   "\U0001F4D5",
+  "referendum_questions",         "",                                                                "#6673ff",      "question",                "\u2753",
+  "referendum_positions",         "",                                                                "#6673ff",      "actor",                   "\U0001F4E3",
+  "referendum_votes",             "",                                                                "#6673ff",      "option",                  "\U0001F9FE",
+  "referendum_sub_votes",         "",                                                                "#6673ff",      "subnational_entity_code", "\U0001F9FE",
+  "countries",                    paste0("ISO [3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)/",
+                                         "[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) ",
+                                         "country codes and names"),                                 "#ffdf80",      "name",                    "\U0001F512",
+  "subnational_entities",         "",                                                                "#ffdf80",      "name",                    "\U0001F512",
+  "municipalities",               "",                                                                "#ffdf80",      "name",                    "\U0001F512",
+  "languages",                    "",                                                                "#ffdf80",      "name",                    "\U0001F512",
+) |>
   # add Unicode image variation selector
   dplyr::mutate(ncdb_meta.icon = paste0(ncdb_meta.icon, "\ufe0f"))
 

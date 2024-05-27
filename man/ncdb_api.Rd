@@ -10,6 +10,8 @@ ncdb_api(
     "TRACE"),
   body_json = NULL,
   auto_unbox = TRUE,
+  simplify = TRUE,
+  flatten = TRUE,
   auth_token = pal::pkg_config_val(key = "ncdb_token", pkg = this_pkg),
   max_tries = 3L,
   verbosity = NULL
@@ -24,6 +26,11 @@ ncdb_api(
 \item{body_json}{Data to include as JSON in the HTTP request body. Set to \code{NULL} for an empty body.}
 
 \item{auto_unbox}{Whether or not to automatically "unbox" length-1 vectors in \code{body_json} to JSON scalars.}
+
+\item{simplify}{Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all \verb{simplify*} arguments of
+\code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}}.}
+
+\item{flatten}{Whether or not to automatically \link[jsonlite:flatten]{flatten} nested data frames in the returned JSON into a single non-nested data frame.}
 
 \item{auth_token}{NocoDB API authentication token. A character scalar.}
 
@@ -50,7 +57,9 @@ Returns the response from an API call to the RDB NocoDB server as a list.
 \seealso{
 Other NocoDB API functions
 \code{\link{config_ncdb}()},
+\code{\link{create_ncdb_base}()},
 \code{\link{create_ncdb_user}()},
+\code{\link{ncdb_base}()},
 \code{\link{ncdb_base_id}()},
 \code{\link{ncdb_bases}()},
 \code{\link{ncdb_tbl}()},
@@ -64,6 +73,7 @@ Other NocoDB API functions
 \code{\link{set_ncdb_display_val}()},
 \code{\link{set_ncdb_display_vals}()},
 \code{\link{set_ncdb_tbl_metadata}()},
+\code{\link{update_ncdb_base}()},
 \code{\link{update_ncdb_tbl}()},
 \code{\link{update_ncdb_tbl_col}()},
 \code{\link{upload_ncdb_attachments}()}

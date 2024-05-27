@@ -57,6 +57,8 @@
 <span>    <span class="st">"TRACE"</span><span class="op">)</span>,</span>
 <span>  body_json <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  simplify <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  flatten <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  auth_token <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"ncdb_token"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  max_tries <span class="op">=</span> <span class="fl">3L</span>,</span>
 <span>  verbosity <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -80,6 +82,15 @@
 
 <dt>auto_unbox</dt>
 <dd><p>Whether or not to automatically "unbox" length-1 vectors in <code>body_json</code> to JSON scalars.</p></dd>
+
+
+<dt>simplify</dt>
+<dd><p>Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all <code>simplify*</code> arguments of
+<code><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">jsonlite::fromJSON()</a></code>.</p></dd>
+
+
+<dt>flatten</dt>
+<dd><p>Whether or not to automatically <a href="https://rdrr.io/pkg/jsonlite/man/flatten.html" class="external-link">flatten</a> nested data frames in the returned JSON into a single non-nested data frame.</p></dd>
 
 
 <dt>auth_token</dt>
@@ -110,7 +121,9 @@ you can't affect directly.</p></dd>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other NocoDB API functions
 <code><a href="config_ncdb.html">config_ncdb</a>()</code>,
+<code><a href="create_ncdb_base.html">create_ncdb_base</a>()</code>,
 <code><a href="create_ncdb_user.html">create_ncdb_user</a>()</code>,
+<code><a href="ncdb_base.html">ncdb_base</a>()</code>,
 <code><a href="ncdb_base_id.html">ncdb_base_id</a>()</code>,
 <code><a href="ncdb_bases.html">ncdb_bases</a>()</code>,
 <code><a href="ncdb_tbl.html">ncdb_tbl</a>()</code>,
@@ -124,6 +137,7 @@ you can't affect directly.</p></dd>
 <code><a href="set_ncdb_display_val.html">set_ncdb_display_val</a>()</code>,
 <code><a href="set_ncdb_display_vals.html">set_ncdb_display_vals</a>()</code>,
 <code><a href="set_ncdb_tbl_metadata.html">set_ncdb_tbl_metadata</a>()</code>,
+<code><a href="update_ncdb_base.html">update_ncdb_base</a>()</code>,
 <code><a href="update_ncdb_tbl.html">update_ncdb_tbl</a>()</code>,
 <code><a href="update_ncdb_tbl_col.html">update_ncdb_tbl_col</a>()</code>,
 <code><a href="upload_ncdb_attachments.html">upload_ncdb_attachments</a>()</code></p></div>
