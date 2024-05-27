@@ -1300,12 +1300,15 @@ set_ncdb_tbl_metadata <- function(base_id = ncdb_base_id(),
 
 tidy_ncdb_base_metadata <- function(x) {
   
-  # flatten `meta`
-  for (i in seq_along(x$meta)) {
-    x[[paste0("meta.", names(x$meta[i]))]] <- x$meta[[i]]
+  # flatten `meta` if non-scalar
+  if (purrr::pluck_depth(x$meta) > 1L) {
+    
+    for (i in seq_along(x$meta)) {
+      x[[paste0("meta.", names(x$meta[i]))]] <- x$meta[[i]]
+    }
+    
+    x$meta <- NULL
   }
-  
-  x$meta <- NULL
   
   x |>
     # replace `NULL`s with `NA_character_` to harmonize field length
