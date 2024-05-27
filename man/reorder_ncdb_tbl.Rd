@@ -20,7 +20,7 @@ reorder_ncdb_tbl(
 }
 \description{
 Sets the numeric order of the specified table on the RDB NocoDB server via the
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder}{POST \verb{/api/v2/meta/tables/\{tbl_id\}/reorder}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder}{\code{POST /api/v2/meta/tables/{tbl_id}/reorder}} API endpoint.
 }
 \details{
 Lower numbers place the table higher up in the UI and vice versa. The current order of all the tables in a base can be determined via \code{\link[=ncdb_tbls]{ncdb_tbls()}}.

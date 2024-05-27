@@ -4,7 +4,7 @@ pkgdown_sha: e407acece26815c3c776effba39bffde68382142
 articles:
   codebook: codebook.html
   rdb: rdb.html
-last_built: 2024-05-27T00:32Z
+last_built: 2024-05-27T13:49Z
 urls:
   reference: https://rdb.rpkg.dev/reference
   article: https://rdb.rpkg.dev/articles

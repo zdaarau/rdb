@@ -29,7 +29,7 @@ A \link[tibble:tbl_df-class]{tibble} containing metadata about the newly created
 }
 \description{
 Adds a new base on the RDB NocoDB server via the
-\href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-create}{POST \verb{/api/v2/meta/bases}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-create}{\code{POST /api/v2/meta/bases}} API endpoint.
 }
 \seealso{
 Other NocoDB API functions

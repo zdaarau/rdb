@@ -41,8 +41,9 @@ you can't affect directly.}
 A \link[tibble:tbl_df-class]{tibble} containing metadata about the uploaded attachments.
 }
 \description{
-Uploads one or more files to the RDB NocoDB server as \href{https://docs.nocodb.com/fields/field-types/custom-types/attachment/}{attachments} via the \href{https://meta-apis-v2.nocodb.com/#tag/Storage}{POST \verb{/api/v2/storage/upload}} API endpoint. Uploaded files are stored under \verb{/nc/uploads/} in the Backblaze B2
-bucket \code{rdb-attachments}.
+Uploads one or more files to the RDB NocoDB server as \href{https://docs.nocodb.com/fields/field-types/custom-types/attachment/}{attachments} via the
+\href{https://meta-apis-v2.nocodb.com/#tag/Storage}{\code{POST /api/v2/storage/upload}} API endpoint. Uploaded files are stored under \verb{/nc/uploads/} in the Backblaze
+B2 bucket \code{rdb-attachments}.
 }
 \seealso{
 Other NocoDB API functions

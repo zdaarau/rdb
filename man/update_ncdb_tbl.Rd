@@ -24,7 +24,7 @@ update_ncdb_tbl(
 }
 \description{
 Updates the metadata of the specified table on the RDB NocoDB server via the
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update}{PATCH \verb{/api/v2/meta/tables/\{tbl_id\}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update}{\code{PATCH /api/v2/meta/tables/{tbl_id}}} API endpoint.
 }
 \seealso{
 Other NocoDB API functions

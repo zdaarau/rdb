@@ -19,7 +19,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified column on the RDB NocoDB server from the
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get}{GET \verb{/api/v2/meta/columns/\{col_id\}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get}{\code{GET /api/v2/meta/columns/{col_id}}} API endpoint.
 }
 \seealso{
 Other NocoDB API functions

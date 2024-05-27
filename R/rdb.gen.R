@@ -852,7 +852,7 @@ ncdb_base_id <- function(title = ncdb_base_name,
 #' Get NocoDB bases metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified base on the RDB NocoDB server from the
-#' [GET `/api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-read) API endpoint.
+#' [`GET /api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-read) API endpoint.
 #'
 #' @inheritParams ncdb_tbls
 #'
@@ -873,7 +873,7 @@ ncdb_base <- function(base_id = ncdb_base_id(),
 #' Get NocoDB bases metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about all bases on the RDB NocoDB server from the
-#' [GET `/api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
+#' [`GET /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
 #'
 #' @inheritParams ncdb_api
 #'
@@ -927,7 +927,7 @@ ncdb_tbl_id <- function(base_id = ncdb_base_id(),
 #' Get NocoDB table column metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified column on the RDB NocoDB server from the
-#' [GET `/api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
+#' [`GET /api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
 #'
 #' @inheritParams ncdb_api
 #' @param col_id NocoDB column identifier as returned by [ncdb_tbl_col_id()]. A character scalar.
@@ -998,7 +998,7 @@ ncdb_tbl_col_id <- function(tbl_id,
 #' Get NocoDB table columns metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on the RDB NocoDB server from the
-#' [GET `/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#' [`GET /api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams ncdb_tbl
 #'
@@ -1021,7 +1021,7 @@ ncdb_tbl_cols <- function(tbl_id = ncdb_tbl_id(),
 #' Get NocoDB table metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified table on the RDB NocoDB server from the
-#' [GET `/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#' [`GET /api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams ncdb_api
 #' @param tbl_id NocoDB table identifier as returned by [ncdb_tbl_id()]. A character scalar.
@@ -1046,7 +1046,7 @@ ncdb_tbl <- function(tbl_id = ncdb_tbl_id(),
 #' Get NocoDB tables metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified base on the RDB NocoDB server from the
-#' [GET `/api/v2/meta/bases/{base_id}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
+#' [`GET /api/v2/meta/bases/{base_id}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
 #'
 #' @inheritParams ncdb_api
 #' @param base_id NocoDB base identifier as returned by [ncdb_base_id()]. A character scalar.
@@ -1070,7 +1070,7 @@ ncdb_tbls <- function(base_id = ncdb_base_id(),
 #' Get NocoDB users metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on the RDB NocoDB server from the
-#' [GET `/api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
+#' [`GET /api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
 #'
 #' @inheritParams ncdb_tbls
 #'
@@ -1092,7 +1092,7 @@ ncdb_users <- function(base_id = ncdb_base_id(),
 #' Create NocoDB base
 #'
 #' Adds a new base on the RDB NocoDB server via the
-#' [POST `/api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-create) API endpoint.
+#' [`POST /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-create) API endpoint.
 #'
 #' @param title Title of the new base. A character scalar.
 #' @param description Description of the new base. A character scalar.
@@ -1133,7 +1133,7 @@ create_ncdb_base <- function(title = ncdb_base_name,
 #' Create NocoDB user
 #'
 #' Adds a new user account to the specified base on the RDB NocoDB server via the
-#' [POST `/api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
+#' [`POST /api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
 #'
 #' @param email E-mail address of the new user. A character scalar.
 #' @param role Base role to assign to the new user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "create_ncdb_user")`.
@@ -1172,7 +1172,7 @@ create_ncdb_user <- function(email,
 #' Re-order NocoDB table
 #'
 #' Sets the numeric order of the specified table on the RDB NocoDB server via the
-#' [POST `/api/v2/meta/tables/{tbl_id}/reorder`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder) API endpoint.
+#' [`POST /api/v2/meta/tables/{tbl_id}/reorder`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder) API endpoint.
 #'
 #' Lower numbers place the table higher up in the UI and vice versa. The current order of all the tables in a base can be determined via [ncdb_tbls()].
 #'
@@ -1198,8 +1198,9 @@ reorder_ncdb_tbl <- function(tbl_id = ncdb_tbl_id(),
 
 #' Set column as NocoDB display value
 #'
-#' Sets a column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on the RDB NocoDB server via the [POST
-#' `/api/v2/meta/columns/{col_id}/primary`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set) API endpoint.
+#' Sets a column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on the RDB NocoDB server via the
+#' [`POST /api/v2/meta/columns/{col_id}/primary`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set) API
+#' endpoint.
 #'
 #' @inheritParams ncdb_tbl_col
 #'
@@ -1332,7 +1333,7 @@ tidy_ncdb_date_time_cols <- function(data) {
 #' Update NocoDB base
 #'
 #' Updates the specified base on the RDB NocoDB server via the
-#' [PATCH `/api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) API endpoint.
+#' [`PATCH /api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) API endpoint.
 #'
 #' @inheritParams create_ncdb_base
 #' @inheritParams ncdb_tbls
@@ -1384,7 +1385,7 @@ update_ncdb_base <- function(title = NULL,
 #' Update NocoDB table metadata
 #'
 #' Updates the metadata of the specified table on the RDB NocoDB server via the
-#' [PATCH `/api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
+#' [`PATCH /api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
 #'
 #' @inheritParams ncdb_tbl
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
@@ -1421,7 +1422,7 @@ update_ncdb_tbl <- function(tbl_id,
 #' Update NocoDB table column metadata
 #'
 #' Updates the metadata of the specified table column on the RDB NocoDB server via the
-#' [PATCH `/api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update) API endpoint.
+#' [`PATCH /api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update) API endpoint.
 #'
 #' @inheritParams ncdb_tbl_col
 #'
@@ -1445,9 +1446,9 @@ update_ncdb_tbl_col <- function(col_id,
 
 #' Upload NocoDB attachments
 #'
-#' Uploads one or more files to the RDB NocoDB server as [attachments](https://docs.nocodb.com/fields/field-types/custom-types/attachment/) via the [POST
-#' `/api/v2/storage/upload`](https://meta-apis-v2.nocodb.com/#tag/Storage) API endpoint. Uploaded files are stored under `/nc/uploads/` in the Backblaze B2
-#' bucket `rdb-attachments`.
+#' Uploads one or more files to the RDB NocoDB server as [attachments](https://docs.nocodb.com/fields/field-types/custom-types/attachment/) via the
+#' [`POST /api/v2/storage/upload`](https://meta-apis-v2.nocodb.com/#tag/Storage) API endpoint. Uploaded files are stored under `/nc/uploads/` in the Backblaze
+#' B2 bucket `rdb-attachments`.
 #'
 #' @inheritParams ncdb_api
 #' @param paths Path(s) to the file(s) to be uploaded. A character vector.

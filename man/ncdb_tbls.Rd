@@ -19,7 +19,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about tables in the specified base on the RDB NocoDB server from the
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list}{GET \verb{/api/v2/meta/bases/\{base_id\}/tables}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list}{\code{GET /api/v2/meta/bases/{base_id}/tables}} API endpoint.
 }
 \seealso{
 Other NocoDB API functions

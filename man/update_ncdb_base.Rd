@@ -32,7 +32,7 @@ treated alike.}
 }
 \description{
 Updates the specified base on the RDB NocoDB server via the
-\href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update}{PATCH \verb{/api/v2/meta/bases/\{base_id\}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update}{\code{PATCH /api/v2/meta/bases/{base_id}}} API endpoint.
 }
 \seealso{
 Other NocoDB API functions

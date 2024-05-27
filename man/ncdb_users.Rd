@@ -19,7 +19,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the users in the specified base on the RDB NocoDB server from the
-\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list}{GET \verb{/api/v2/meta/bases/\{base_id\}/users}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list}{\code{GET /api/v2/meta/bases/{base_id}/users}} API endpoint.
 }
 \seealso{
 Other NocoDB API functions

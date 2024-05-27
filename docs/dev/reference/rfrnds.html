@@ -79,7 +79,7 @@
 
 
 <dt>max_cache_age</dt>
-<dd><p>Duration after which cached results are refreshed (i.e. newly fetched). A valid <a href="https://rdrr.io/pkg/lubridate/man/as.duration.html" class="external-link">lubridate duration</a>. Use <code>Inf</code> to disable cache expiry. Only relevant if <code>use_cache = TRUE</code>.</p></dd>
+<dd><p>Duration after which cached results are refreshed (i.e. newly fetched). A valid <a href="https://lubridate.tidyverse.org/reference/as.duration.html" class="external-link">lubridate duration</a>. Use <code>Inf</code> to disable cache expiry. Only relevant if <code>use_cache = TRUE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -104,15 +104,9 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># get all referendums (excl. drafts)</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">rfrnds</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 14</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      id id_sudd id_official is_draft date       country_code level    subnational_entity_c…¹ legal_base_id attachments created_by updated_by created_at         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     5 <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>          FALSE    2024-01-28 CH           national <span style="color: #BB0000;">NA</span>                                 1 <span style="color: #949494;">&lt;tibble&gt;</span>    ussm73fxj… ussm73fxj… 2024-05-19 <span style="color: #949494;">12:49:27</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     6 <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>          FALSE    2024-01-28 CH           national <span style="color: #BB0000;">NA</span>                                 1 <span style="color: #949494;">&lt;tibble&gt;</span>    ussm73fxj… ussm73fxj… 2024-05-19 <span style="color: #949494;">12:49:27</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     7 <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>          FALSE    2024-01-28 CH           national <span style="color: #BB0000;">NA</span>                                 1 <span style="color: #949494;">&lt;tibble&gt;</span>    ussm73fxj… ussm73fxj… 2024-05-19 <span style="color: #949494;">12:49:27</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     8 <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>          FALSE    2024-01-28 CH           national <span style="color: #BB0000;">NA</span>                                 1 <span style="color: #949494;">&lt;tibble&gt;</span>    ussm73fxj… ussm73fxj… 2024-05-19 <span style="color: #949494;">12:49:27</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ abbreviated name: ¹​subnational_entity_code</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: updated_at &lt;dttm&gt;</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Failed to prepare query : ERROR:  relation "referendums" does not exist</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> LINE 1: SELECT * FROM  "referendums"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>                        ^</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
