@@ -1278,6 +1278,11 @@ ncdb_users <- function(base_id = ncdb_base_id(),
 
 #### `create_ncdb_base`
 
+NOTES:
+
+-   It is unclear what the top-level `color` key actually does ([API doc](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) says "Primary Theme
+    Color", whatever that means). We just set `color` and `meta.iconColor` to the same value.
+
 ```{r}
 #' Create NocoDB base
 #'
@@ -1546,6 +1551,11 @@ tidy_ncdb_date_time_cols <- function(data) {
 ```
 
 #### `update_ncdb_base`
+
+NOTES:
+
+-   It is unclear what the top-level `color` key actually does ([API doc](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) says "Primary Theme
+    Color", whatever that means). We just set `color` and `meta.iconColor` to the same value.
 
 TODO:
 
