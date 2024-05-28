@@ -29,7 +29,7 @@ pal::cat_lines(paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::
 ```
 
 ```{r}
-#| label: pkgdown
+#| label: documentation
 #| eval: !expr '!isTRUE(getOption("pal.build_readme.is_pkgdown"))'
 #| results: asis
 #| echo: false
