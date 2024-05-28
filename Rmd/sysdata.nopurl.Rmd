@@ -614,10 +614,16 @@ pkg_config <-
                  default_value = list(),
                  default_value_dynamic = character(),
                  description = character()) |>
-  tibble::add_row(key = "ncdb_token",
-                  description = paste0("NocoDB [API authentication token](https://docs.nocodb.com/account-settings/api-tokens/) for our ",
-                                       "[admin.rdb.vote](https://admin.rdb.vote/) instance. This is required for the `ncdb_*()` family of functions to ",
-                                       "authenticate.")) |>
+  tibble::add_row(key = "nocodb_hostname",
+                  description = paste0("Hostname of the [RDB NocoDB server](https://admin.rdb.vote/). Used as default for the `*nococdb*()` family of ",
+                                       "functions.")) |>
+  tibble::add_row(key = "nocodb_api_token",
+                  description = paste0("NocoDB [API authentication token](https://docs.nocodb.com/account-settings/api-tokens/) for the [RDB NocoDB ",
+                                       "server](https://admin.rdb.vote/). Used as default for the `*nococdb*()` family of functions.")) |>
+  tibble::add_row(key = "nocodb_base_title",
+                  default_value = list("Main"),
+                  description = paste0("Title (name) of the main base on the [RDB NocoDB server](https://admin.rdb.vote/). Used as default for the ",
+                                       "`*nococdb*()` family of functions.")) |>
   tibble::add_row(key = "pg_host",
                   default_value = list("ep-frosty-flower-a28keh10.eu-central-1.aws.neon.tech"),
                   description = paste0("RDB PostgreSQL (neon.tech) host address. Defaults to a [read ",

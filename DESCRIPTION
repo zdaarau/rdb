@@ -23,7 +23,6 @@ Imports:
     checkmate (>= 2.0.0),
     cli (>= 3.1.1),
     clock (>= 0.6.0),
-    curl (>= 5.2.1),
     DBI (>= 1.2.2),
     dbplyr (>= 2.5.0),
     dm (>= 1.0.10),
@@ -32,11 +31,11 @@ Imports:
     fs (>= 1.5.2),
     glue (>= 1.4.2),
     httr (>= 1.4.2),
-    httr2 (>= 1.0.1),
     jsonlite (>= 1.8.8),
     katex (>= 1.4.0),
     labelled (>= 2.8.0),
     magrittr (>= 2.0.1),
+    nocodb (>= 0.0.9000),
     pal (>= 0.0.9101),
     pkgpins (>= 0.8.0.9000),
     purrr (>= 1.0.0),
@@ -77,6 +76,7 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes:
+    gitlab::rpkg.dev/nocodb,
     gitlab::rpkg.dev/pal,
     gitlab::rpkg.dev/pkgpins,
     gitlab::rpkg.dev/pkgsnip,

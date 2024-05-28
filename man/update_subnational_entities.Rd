@@ -25,7 +25,7 @@ Updates the RDB's \code{subnational_entities} table with the data from \code{\li
 }
 \seealso{
 Other administration functions:
-\code{\link{config_ncdb}()},
+\code{\link{config_nocodb}()},
 \code{\link{connect}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},

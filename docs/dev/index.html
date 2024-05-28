@@ -99,10 +99,22 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API authentication token</a> for our <a href="https://admin.rdb.vote/" class="external-link">admin.rdb.vote</a> instance. This is required for the <code>ncdb_*()</code> family of functions to authenticate.</td>
-<td align="left"><code>rdb.ncdb_token</code></td>
-<td align="left"><code>R_RDB_NCDB_TOKEN</code></td>
+<td align="left">Hostname of the <a href="https://admin.rdb.vote/" class="external-link">RDB NocoDB server</a>. Used as default for the <code>*nococdb*()</code> family of functions.</td>
+<td align="left"><code>rdb.nocodb_hostname</code></td>
+<td align="left"><code>R_RDB_NOCODB_HOSTNAME</code></td>
 <td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API authentication token</a> for the <a href="https://admin.rdb.vote/" class="external-link">RDB NocoDB server</a>. Used as default for the <code>*nococdb*()</code> family of functions.</td>
+<td align="left"><code>rdb.nocodb_api_token</code></td>
+<td align="left"><code>R_RDB_NOCODB_API_TOKEN</code></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Title (name) of the main base on the <a href="https://admin.rdb.vote/" class="external-link">RDB NocoDB server</a>. Used as default for the <code>*nococdb*()</code> family of functions.</td>
+<td align="left"><code>rdb.nocodb_base_title</code></td>
+<td align="left"><code>R_RDB_NOCODB_BASE_TITLE</code></td>
+<td align="left"><code>"Main"</code></td>
 </tr>
 <tr class="even">
 <td align="left">RDB PostgreSQL (neon.tech) host address. Defaults to a <a href="https://neon.tech/docs/introduction/read-replicas" class="external-link">read replica</a> which has no write access to the database.</td>

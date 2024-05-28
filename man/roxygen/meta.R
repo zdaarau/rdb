@@ -4,7 +4,7 @@ list(
                          data         = "Other data functions:",
                          aux_data     = "Other auxiliary data:",
                          metadata     = "Other referendum metadata functions:",
-                         ncdb         = "Other NocoDB API functions",
+                         nocodb       = "Other NocoDB functions",
                          pg           = "Other PostgreSQL functions",
                          prettify     = "Other functions to prettify names:",
                          sudd         = "Other sudd.ch scraping functions:",

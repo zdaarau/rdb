@@ -24,7 +24,7 @@ Updates the RDB's \code{referendums} table with \code{data}. By default, rows no
 }
 \seealso{
 Other administration functions:
-\code{\link{config_ncdb}()},
+\code{\link{config_nocodb}()},
 \code{\link{connect}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},

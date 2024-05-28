@@ -23,7 +23,7 @@ rdb::dm() |> dm::dm_draw(view_type = "all")
 }
 \seealso{
 Other administration functions:
-\code{\link{config_ncdb}()},
+\code{\link{config_nocodb}()},
 \code{\link{connect}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{update_countries}()},

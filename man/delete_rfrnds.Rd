@@ -22,7 +22,7 @@ Deletes \code{data} from the RDB's \code{referendums} table.
 }
 \seealso{
 Other administration functions:
-\code{\link{config_ncdb}()},
+\code{\link{config_nocodb}()},
 \code{\link{connect}()},
 \code{\link{dm}()},
 \code{\link{update_countries}()},

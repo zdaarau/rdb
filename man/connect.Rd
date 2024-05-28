@@ -35,7 +35,7 @@ con |> DBI::dbListTables()
 }
 \seealso{
 Other administration functions:
-\code{\link{config_ncdb}()},
+\code{\link{config_nocodb}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
 \code{\link{update_countries}()},

@@ -21,7 +21,7 @@ Updates the RDB's \code{countries} table with the data from \code{\link{data_iso
 }
 \seealso{
 Other administration functions:
-\code{\link{config_ncdb}()},
+\code{\link{config_nocodb}()},
 \code{\link{connect}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},

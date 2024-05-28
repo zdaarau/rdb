@@ -55,16 +55,10 @@
     <loc>https://rdb.rpkg.dev/dev/reference/assert_vars.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/config_ncdb.html</loc>
+    <loc>https://rdb.rpkg.dev/dev/reference/config_nocodb.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/connect.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/create_ncdb_base.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/create_ncdb_user.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/data_codebook.html</loc>
@@ -127,39 +121,6 @@
     <loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds_per_period.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_api.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_base.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_base_id.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_bases.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl_col.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl_col_id.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl_cols.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbl_id.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_tbls.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/ncdb_users.html</loc>
-  </url>
-  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/pg_col_metadata.html</loc>
   </url>
   <url>
@@ -205,9 +166,6 @@
     <loc>https://rdb.rpkg.dev/dev/reference/read_tbl.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/reorder_ncdb_tbl.html</loc>
-  </url>
-  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/rfrnd_types.html</loc>
   </url>
   <url>
@@ -215,15 +173,6 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/rfrnds_old.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/set_ncdb_display_val.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/set_ncdb_display_vals.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/set_ncdb_tbl_metadata.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/sudd_rfrnds.html</loc>
@@ -250,15 +199,6 @@
     <loc>https://rdb.rpkg.dev/dev/reference/update_municipalities.html</loc>
   </url>
   <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/update_ncdb_base.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/update_ncdb_tbl.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/update_ncdb_tbl_col.html</loc>
-  </url>
-  <url>
     <loc>https://rdb.rpkg.dev/dev/reference/update_rfrnds.html</loc>
   </url>
   <url>
@@ -266,9 +206,6 @@
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/update_tbl.html</loc>
-  </url>
-  <url>
-    <loc>https://rdb.rpkg.dev/dev/reference/upload_ncdb_attachments.html</loc>
   </url>
   <url>
     <loc>https://rdb.rpkg.dev/dev/reference/url_admin_portal.html</loc>

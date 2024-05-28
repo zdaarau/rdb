@@ -50,13 +50,13 @@ utils::globalVariables(names = c(".",
                                  "updated_at",
                                  "date_withdrawn",
                                  "day",
+                                 "display_col",
                                  "electorate_abroad",
                                  "electorate_total",
                                  "files",
                                  "generated",
                                  "generation_expression",
                                  "has_default",
-                                 "id",
                                  "identity_generation",
                                  "id_official",
                                  "id_sudd",
@@ -105,10 +105,8 @@ utils::globalVariables(names = c(".",
                                  "month",
                                  "municipality_name",
                                  "n",
-                                 "name",
                                  "name_long",
                                  "name_short",
-                                 "ncdb_display_col",
                                  "number",
                                  "ordinal_position",
                                  "parent_topic",
@@ -128,7 +126,6 @@ utils::globalVariables(names = c(".",
                                  "subterritories_no",
                                  "subterritories_yes",
                                  "sudd_prefix",
-                                 "table_name",
                                  "tags",
                                  "topic",
                                  "topic_tier_1",
@@ -746,760 +743,6 @@ url_website <- function(...) {
   
   fs::path("c2d.ch", ...) %>%
     paste0("https://", .)
-}
-
-#' Call NocoDB API
-#'
-#' Returns the response from an API call to the RDB NocoDB server as a list.
-#'
-#' @inheritParams pal::req_cached
-#' @inheritParams httr2::req_perform
-#' @inheritParams httr2::req_body_json
-#' @param path NocoDB API endpoint path. A character scalar.
-#' @param method [HTTP request method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). One of
-#'   `r pal::enum_fn_param_defaults(param = "method", fn = "ncdb_api")`.
-#' @param body_json Data to include as JSON in the HTTP request body. Set to `NULL` for an empty body.
-#' @param auto_unbox Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
-#' @param simplify Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of
-#'   [jsonlite::fromJSON()].
-#' @param flatten Whether or not to automatically [flatten][jsonlite::flatten] nested data frames in the returned JSON into a single non-nested data frame.
-#' @param auth_token NocoDB API authentication token. A character scalar.
-#'
-#' @return A list.
-#' @family ncdb
-#' @keywords internal
-ncdb_api <- function(path,
-                     method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
-                     body_json = NULL,
-                     auto_unbox = TRUE,
-                     simplify = TRUE,
-                     flatten = TRUE,
-                     auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                      pkg = this_pkg),
-                     max_tries = 3L,
-                     verbosity = NULL) {
-  
-  checkmate::assert_string(path)
-  method <- rlang::arg_match(method)
-  checkmate::assert_flag(auto_unbox)
-  checkmate::assert_string(auth_token)
-  
-  req <-
-    httr2::request(base_url = url_ncdb(path)) |>
-    httr2::req_method(method = method) |>
-    httr2::req_headers(`xc-token` = auth_token,
-                       .redact = "xc-token") |>
-    httr2::req_user_agent(string = "rdb R package (https://rdb.rpkg.dev)") |>
-    httr2::req_retry(max_tries = max_tries) |>
-    httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg)
-  
-  if (!is.null(body_json)) {
-    req %<>% httr2::req_body_json(data = body_json,
-                                  auto_unbox = auto_unbox)
-  }
-  
-  resp <- httr2::req_perform(req = req,
-                             verbosity = verbosity)
-  
-  if (!httr2::resp_has_body(resp)) {
-    cli::cli_abort(paste0("API responded with HTTP status {.field ",
-                          paste(httr2::resp_status(resp), httr2::resp_status_desc(resp)),
-                          "} but an empty body, which likely means some component in the URL path {.path {paste0('/', path)}} is invalid."))
-  }
-  
-  if (isTRUE(httr2::resp_content_type(resp) == "application/json")) {
-    
-    result <- httr2::resp_body_json(resp = resp,
-                                    simplifyVector = simplify,
-                                    flatten = flatten)
-  } else {
-    result <- httr2::resp_body_string(resp = resp)
-  }
-  
-  result
-}
-
-#' Get NocoDB base ID
-#'
-#' Returns the identifier of the base with the specified title on the RDB NocoDB server.
-#'
-#' @inheritParams ncdb_api
-#' @param title NocoDB base title. A character scalar.
-#'
-#' @return A character scalar if a base titled `title` exists, otherwise a zero-length character vector.
-#' @family ncdb
-#' @keywords internal
-ncdb_base_id <- function(title = ncdb_base_name,
-                         auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                          pkg = this_pkg)) {
-  checkmate::assert_string(title)
-  
-  result <-
-    ncdb_bases(auth_token = auth_token) |>
-    dplyr::filter(title == !!title) |>
-    dplyr::pull(id)
-  
-  n_result <- length(result)
-  
-  if (n_result > 1L) {
-    result <- result[1L]
-    cli::cli_warn("{.val {n_result}} bases with title {.val {title}} present. The identifier of the first one listed in the API response is returned.")
-  }
-  
-  result
-}
-
-#' Get NocoDB bases metadata
-#'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the specified base on the RDB NocoDB server from the
-#' [`GET /api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-read) API endpoint.
-#'
-#' @inheritParams ncdb_tbls
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family ncdb
-#' @keywords internal
-ncdb_base <- function(base_id = ncdb_base_id(),
-                      auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                       pkg = this_pkg)) {
-  checkmate::assert_string(base_id)
-  
-  ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}"),
-           method = "GET",
-           auth_token = auth_token) |>
-    tidy_ncdb_base_metadata()
-}
-
-#' Get NocoDB bases metadata
-#'
-#' Returns a [tibble][tibble::tbl_df] with metadata about all bases on the RDB NocoDB server from the
-#' [`GET /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
-#'
-#' @inheritParams ncdb_api
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family ncdb
-#' @keywords internal
-ncdb_bases <- function(auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                        pkg = this_pkg)) {
-  ncdb_api(path = "api/v2/meta/bases",
-           method = "GET",
-           auth_token = auth_token) |>
-    _$list |>
-    tibble::as_tibble() |>
-    tidy_ncdb_date_time_cols()
-}
-
-#' Get NocoDB table ID
-#'
-#' Returns the identifier of the table with the specified name in the base with specified ID on the RDB NocoDB server.
-#'
-#' @inheritParams ncdb_tbls
-#' @inheritParams pg_pk
-#'
-#' @return A character scalar.
-#' @family ncdb
-#' @keywords internal
-ncdb_tbl_id <- function(base_id = ncdb_base_id(),
-                        tbl_name = tbl_metadata$name,
-                        auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                         pkg = this_pkg)) {
-  tbl_name <- rlang::arg_match(tbl_name)
-  
-  result <-
-    ncdb_tbls(base_id = base_id,
-              auth_token = auth_token) |>
-    dplyr::filter(table_name == !!tbl_name) |>
-    dplyr::pull(id)
-  
-  n_result <- length(result)
-  
-  if (n_result > 1L) {
-    result <- result[1L]
-    cli::cli_warn("{.val {n_result}} tables with name {.val {tbl_name}} present. The identifier of the first one listed in the API response is returned.")
-  } else if (n_result == 0L) {
-    cli::cli_abort("No table with name {.val {tbl_name}} present in base with ID {}.")
-  }
-  
-  result
-}
-
-#' Get NocoDB table column metadata
-#'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the specified column on the RDB NocoDB server from the
-#' [`GET /api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
-#'
-#' @inheritParams ncdb_api
-#' @param col_id NocoDB column identifier as returned by [ncdb_tbl_col_id()]. A character scalar.
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family ncdb
-#' @keywords internal
-ncdb_tbl_col <- function(col_id,
-                         auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                          pkg = this_pkg)) {
-  checkmate::assert_string(col_id)
-  
-  ncdb_api(path = glue::glue("api/v2/meta/columns/{col_id}"),
-           method = "GET",
-           auth_token = auth_token) |>
-    purrr::compact() |>
-    tibble::as_tibble() |>
-    tidy_ncdb_date_time_cols()
-}
-
-#' Get NocoDB column ID
-#'
-#' Returns the identifier of the column with the specified `col_name` or `col_title` in the table with the specified `tbl_id` on the RDB NocoDB server.
-#'
-#' @inheritParams ncdb_tbl_cols
-#' @param col_name NocoDB column name. A character scalar.
-#' @param col_title NocoDB column title. A character scalar.
-#'
-#' @return A character scalar.
-#' @family ncdb
-#' @keywords internal
-ncdb_tbl_col_id <- function(tbl_id,
-                            col_name = NULL,
-                            col_title = NULL,
-                            auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                             pkg = this_pkg)) {
-  checkmate::assert_string(col_name,
-                           null.ok = TRUE)
-  checkmate::assert_string(col_title,
-                           null.ok = TRUE)
-  if (is.null(col_name) && is.null(col_title)) {
-    cli::cli_abort("At least one of {.or {.arg {c('col_name', 'col_title')}}} must be provided.")
-  }
-  
-  result <-
-    ncdb_tbl_cols(tbl_id = tbl_id,
-                  auth_token = auth_token) |>
-    pal::when(is.null(col_name) ~ .,
-              ~ dplyr::filter(., column_name == !!col_name)) |>
-    pal::when(is.null(col_title) ~ .,
-              ~ dplyr::filter(., title == !!col_title)) |>
-    dplyr::pull(id)
-  
-  n_result <- length(result)
-  
-  if (n_result > 1L) {
-    result <- result[1L]
-    cli::cli_warn(paste0("{.val {n_result}} columns with name {.val {col_name}} present in table with identifier {.val {tbl_id}}. The identifier of the ",
-                         "first column listed in the API response is returned."))
-    
-  } else if (n_result == 0L) {
-    cli::cli_abort("No column with name {.val {col_name}} present in table with identifier {.val {tbl_id}}.")
-  }
-  
-  result
-}
-
-#' Get NocoDB table columns metadata
-#'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on the RDB NocoDB server from the
-#' [`GET /api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
-#'
-#' @inheritParams ncdb_tbl
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family ncdb
-#' @keywords internal
-ncdb_tbl_cols <- function(tbl_id = ncdb_tbl_id(),
-                          auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                           pkg = this_pkg)) {
-  checkmate::assert_string(tbl_id)
-  
-  ncdb_api(path = glue::glue("api/v2/meta/tables/{tbl_id}"),
-           method = "GET",
-           auth_token = auth_token) |>
-    _$columns |>
-    tibble::as_tibble() |>
-    tidy_ncdb_date_time_cols()
-}
-
-#' Get NocoDB table metadata
-#'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the specified table on the RDB NocoDB server from the
-#' [`GET /api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
-#'
-#' @inheritParams ncdb_api
-#' @param tbl_id NocoDB table identifier as returned by [ncdb_tbl_id()]. A character scalar.
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family ncdb
-#' @keywords internal
-ncdb_tbl <- function(tbl_id = ncdb_tbl_id(),
-                     auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                      pkg = this_pkg)) {
-  checkmate::assert_string(tbl_id)
-  
-  ncdb_api(path = glue::glue("api/v2/meta/tables/{tbl_id}"),
-           method = "GET",
-           auth_token = auth_token) |>
-    purrr::discard_at(at = c("columns", "columnsById")) |>
-    purrr::compact() |>
-    tibble::as_tibble() |>
-    tidy_ncdb_date_time_cols()
-}
-
-#' Get NocoDB tables metadata
-#'
-#' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified base on the RDB NocoDB server from the
-#' [`GET /api/v2/meta/bases/{base_id}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
-#'
-#' @inheritParams ncdb_api
-#' @param base_id NocoDB base identifier as returned by [ncdb_base_id()]. A character scalar.
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family ncdb
-#' @keywords internal
-ncdb_tbls <- function(base_id = ncdb_base_id(),
-                      auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                       pkg = this_pkg)) {
-  checkmate::assert_string(base_id)
-  
-  ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}/tables"),
-           method = "GET",
-           auth_token = auth_token) |>
-    _$list |>
-    tibble::as_tibble() |>
-    tidy_ncdb_date_time_cols()
-}
-
-#' Get NocoDB users metadata
-#'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on the RDB NocoDB server from the
-#' [`GET /api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
-#'
-#' @inheritParams ncdb_tbls
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family ncdb
-#' @keywords internal
-ncdb_users <- function(base_id = ncdb_base_id(),
-                       auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                        pkg = this_pkg)) {
-  checkmate::assert_string(base_id)
-  
-  ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}/users"),
-           method = "GET",
-           auth_token = auth_token) |>
-    _$users$list |>
-    tibble::as_tibble()
-}
-
-#' Create NocoDB base
-#'
-#' Adds a new base on the RDB NocoDB server via the
-#' [`POST /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-create) API endpoint.
-#'
-#' @param title Title of the new base. A character scalar.
-#' @param description Description of the new base. A character scalar.
-#' @param color Color to use for the base icon. A hexadecimal color code like `r pal::as_md_vals(color_rdb_main)`.
-#' @param show_null_and_empty_in_filter Whether or not to distinguish `NULL`s from empty values in column filters. If `FALSE`, `NULL` and empty fields are
-#'   treated alike.
-#' @inheritParams ncdb_api
-#'
-#' @return A [tibble][tibble::tbl_df] containing metadata about the newly created NocoDB base.
-#' @family ncdb
-#' @keywords internal
-create_ncdb_base <- function(title = ncdb_base_name,
-                             description = NULL,
-                             color = color_rdb_main,
-                             show_null_and_empty_in_filter = TRUE,
-                             auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                              pkg = this_pkg)) {
-  checkmate::assert_string(title)
-  checkmate::assert_string(description,
-                           null.ok = TRUE)
-  checkmate::assert_string(color,
-                           n.chars = 7L,
-                           pattern = "^#")
-  checkmate::assert_flag(show_null_and_empty_in_filter)
-  
-  ncdb_api(path = "api/v2/meta/bases",
-           method = "POST",
-           body_json = purrr::compact(list(title = title,
-                                           description = description,
-                                           color = color,
-                                           meta = list(iconColor = paste0(color, "ff"),
-                                                       showNullAndEmptyInFilter = show_null_and_empty_in_filter))),
-           auth_token = auth_token) |>
-    tidy_ncdb_base_metadata() |> 
-    invisible()
-}
-
-#' Create NocoDB user
-#'
-#' Adds a new user account to the specified base on the RDB NocoDB server via the
-#' [`POST /api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
-#'
-#' @param email E-mail address of the new user. A character scalar.
-#' @param role Base role to assign to the new user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "create_ncdb_user")`.
-#' @inheritParams ncdb_tbls
-#'
-#' @return `email`, invisibly.
-#' @family ncdb
-#' @keywords internal
-create_ncdb_user <- function(email,
-                             role = c("no-access", "commenter", "editor", "guest", "owner", "viewer", "creator"),
-                             base_id = ncdb_base_id(),
-                             auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                              pkg = this_pkg),
-                             quiet = FALSE) {
-  
-  checkmate::assert_string(email)
-  role <- rlang::arg_match(role)
-  checkmate::assert_string(base_id)
-  
-  result <- ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}/users"),
-                     method = "POST",
-                     body_json = list(email = email,
-                                      roles = role),
-                     auth_token = auth_token)
-  if (!quiet) {
-    if (stringr::str_detect(result$msg, "invited successfully")) {
-      cli::cli_alert_success(result$msg)
-    } else {
-      cli::cli_alert_info(result$msg)
-    }
-  }
-  
-  invisible(email)
-}
-
-#' Re-order NocoDB table
-#'
-#' Sets the numeric order of the specified table on the RDB NocoDB server via the
-#' [`POST /api/v2/meta/tables/{tbl_id}/reorder`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder) API endpoint.
-#'
-#' Lower numbers place the table higher up in the UI and vice versa. The current order of all the tables in a base can be determined via [ncdb_tbls()].
-#'
-#' @inheritParams ncdb_tbl
-#'
-#' @return `tbl_id`, invisibly.
-#' @family ncdb
-#' @keywords internal
-reorder_ncdb_tbl <- function(tbl_id = ncdb_tbl_id(),
-                             order = 1L,
-                             auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                              pkg = this_pkg)) {
-  checkmate::assert_string(tbl_id)
-  checkmate::assert_number(order)
-  
-  ncdb_api(path = glue::glue("api/v2/meta/tables/{tbl_id}/reorder"),
-           method = "POST",
-           body_json = list(order = order),
-           auth_token = auth_token)
-  
-  invisible(tbl_id)
-}
-
-#' Set column as NocoDB display value
-#'
-#' Sets a column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on the RDB NocoDB server via the
-#' [`POST /api/v2/meta/columns/{col_id}/primary`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set) API
-#' endpoint.
-#'
-#' @inheritParams ncdb_tbl_col
-#'
-#' @return `TRUE`, invisibly.
-#' @family ncdb
-#' @keywords internal
-set_ncdb_display_val <- function(col_id,
-                                 auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                                  pkg = this_pkg)) {
-  checkmate::assert_string(col_id)
-  
-  ncdb_api(path = glue::glue("api/v2/meta/columns/{col_id}/primary"),
-           method = "POST",
-           auth_token = auth_token) |>
-    as.logical() |>
-    invisible()
-}
-
-#' Set all NocoDB display value columns
-#'
-#' Sets the proper column as the [display value](https://docs.nocodb.com/fields/display-value/) for all tables on the RDB NocoDB server.
-#'
-#' @inheritParams ncdb_tbls
-#'
-#' @return `NULL`, invisibly.
-#' @family ncdb
-#' @keywords internal
-set_ncdb_display_vals <- function(base_id = ncdb_base_id(),
-                                  auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                                   pkg = this_pkg)) {
-  tbl_metadata |>
-    dplyr::filter(!is.na(ncdb_display_col)) %$%
-    purrr::walk2(name,
-                 ncdb_display_col,
-                 \(tbl_name, col_name) {
-                   
-                   pal::cli_progress_step_quick(msg = "Setting NocoDB display column for table {.field {tbl_name}} to {.val {col_name}}")
-                   
-                   ncdb_tbl_id(base_id = base_id,
-                               tbl_name = tbl_name,
-                               auth_token = auth_token) |>
-                     ncdb_tbl_col_id(col_name = col_name,
-                                     auth_token = auth_token) |>
-                     set_ncdb_display_val(auth_token = auth_token)
-                 })
-  
-  invisible(NULL)
-}
-
-#' Set metadata for all NocoDB tables
-#'
-#' @description
-#' Sets the proper table metadata for all tables on the RDB NocoDB server. Currently, this includes:
-#' 
-#' - Setting the order of the tables in the base.
-#' - Setting our desired [table icons](https://docs.nocodb.com/tables/actions-on-table/#change-table-icon) (emojis).
-#'
-#' @inheritParams ncdb_tbls
-#'
-#' @return `NULL`, invisibly.
-#' @family ncdb
-#' @keywords internal
-set_ncdb_tbl_metadata <- function(base_id = ncdb_base_id(),
-                                  auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                                   pkg = this_pkg)) {
-  
-  # NOTE: we exclude junction tbls since they are hidden in NocoDB and its API
-  metadata <- tbl_metadata |> dplyr::filter(!is.na(ncdb_display_col))
-  
-  nrow(metadata) |>
-    pal::safe_seq_len() |>
-    purrr::walk(\(i) {
-      
-      name <- metadata$name[i]
-      icon <- metadata$ncdb_meta.icon[i]
-      id <- ncdb_tbl_id(base_id = base_id,
-                        tbl_name = name,
-                        auth_token = auth_token)
-      
-      pal::cli_progress_step_quick(msg = "Setting order for NocoDB table {.field {name}} to {.val {i}}")
-      
-      reorder_ncdb_tbl(tbl_id = id,
-                       order = i,
-                       auth_token = auth_token)
-      
-      pal::cli_progress_step_quick(msg = "Setting icon for NocoDB table {.field {name}} to {.val {icon}}")
-      
-      if (!is.na(icon)) {
-        update_ncdb_tbl(tbl_id = id,
-                        body_json = list(meta = list(icon = icon)),
-                        auth_token = auth_token,
-                        quiet = TRUE)
-      }
-    })
-  
-  invisible(NULL)
-}
-
-tidy_ncdb_base_metadata <- function(x) {
-  
-  # flatten `meta` if non-scalar
-  if (purrr::pluck_depth(x$meta) > 1L) {
-    
-    for (i in seq_along(x$meta)) {
-      x[[paste0("meta.", names(x$meta[i]))]] <- x$meta[[i]]
-    }
-    
-    x$meta <- NULL
-  }
-  
-  x |>
-    # replace `NULL`s with `NA_character_` to harmonize field length
-    purrr::map(\(el) el %||% NA_character_) |>
-    # convert wrap nested fields in list
-    purrr::modify_if(.p = \(x) length(x) > 1L,
-                     .f = \(x) list(x)) |>
-    # convert result to tibble
-    tibble::as_tibble_row() |>
-    tidy_ncdb_date_time_cols()
-}
-
-tidy_ncdb_date_time_cols <- function(data) {
-  
-  data |> dplyr::mutate(dplyr::across(.cols = ends_with("_at"),
-                                      .fns = \(x) clock::date_time_parse_RFC_3339(x = x,
-                                                                                  separator = " ",
-                                                                                  offset = "%Ez")))
-}
-
-#' Update NocoDB base
-#'
-#' Updates the specified base on the RDB NocoDB server via the
-#' [`PATCH /api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) API endpoint.
-#'
-#' @inheritParams create_ncdb_base
-#' @inheritParams ncdb_tbls
-#'
-#' @return `base_id`, invisibly.
-#' @family ncdb
-#' @keywords internal
-update_ncdb_base <- function(title = NULL,
-                             description = NULL,
-                             color = NULL,
-                             show_null_and_empty_in_filter = NULL,
-                             base_id = ncdb_base_id(),
-                             auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                              pkg = this_pkg)) {
-  checkmate::assert_string(title,
-                           null.ok = TRUE)
-  checkmate::assert_string(description,
-                           null.ok = TRUE)
-  checkmate::assert_string(color,
-                           n.chars = 7L,
-                           pattern = "^#",
-                           null.ok = TRUE)
-  checkmate::assert_flag(show_null_and_empty_in_filter,
-                         null.ok = TRUE)
-  checkmate::assert_string(base_id)
-  
-  if (length(c(title, description, color, show_null_and_empty_in_filter)) > 0L) {
-    
-    # NOTE: if `iconColor` isn't included in `meta`, the NocoDB server fails to parse it; hence we just add the current color if none was provided
-    if (is.null(color)) {
-      color <- ncdb_base(base_id = base_id)$color
-    }
-    
-    ncdb_api(path = glue::glue("api/v2/meta/bases/{base_id}"),
-             method = "PATCH",
-             body_json = purrr::compact(list(title = title,
-                                             description = description,
-                                             color = color,
-                                             # NOTE: we must send `meta` as a *string* of JSON, see TODO above
-                                             meta = jsonlite::toJSON(purrr::compact(list(iconColor = color,
-                                                                                         showNullAndEmptyInFilter = show_null_and_empty_in_filter)),
-                                                                     auto_unbox = TRUE))),
-             auth_token = auth_token)
-  }
-  
-  invisible(base_id)
-}
-
-#' Update NocoDB table metadata
-#'
-#' Updates the metadata of the specified table on the RDB NocoDB server via the
-#' [`PATCH /api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
-#'
-#' @inheritParams ncdb_tbl
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
-#'
-#' @return `tbl_id`, invisibly.
-#' @family ncdb
-#' @keywords internal
-update_ncdb_tbl <- function(tbl_id,
-                            body_json,
-                            auto_unbox = TRUE,
-                            auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                             pkg = this_pkg),
-                            quiet = FALSE) {
-  
-  checkmate::assert_string(tbl_id)
-  checkmate::assert_flag(quiet)
-  
-  result <- ncdb_api(path = glue::glue("api/v2/meta/tables/{tbl_id}"),
-                     method = "PATCH",
-                     body_json = body_json,
-                     auto_unbox = auto_unbox,
-                     auth_token = auth_token)
-  if (!quiet) {
-    if (stringr::str_detect(result$msg, "updated successfully")) {
-      cli::cli_alert_success(result$msg)
-    } else {
-      cli::cli_alert_info(result$msg)
-    }
-  }
-  
-  invisible(tbl_id)
-}
-
-#' Update NocoDB table column metadata
-#'
-#' Updates the metadata of the specified table column on the RDB NocoDB server via the
-#' [`PATCH /api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update) API endpoint.
-#'
-#' @inheritParams ncdb_tbl_col
-#'
-#' @return ?
-#' @family ncdb
-#' @keywords internal
-update_ncdb_tbl_col <- function(col_id,
-                                body_json,
-                                auto_unbox = TRUE,
-                                auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                                 pkg = this_pkg)) {
-  checkmate::assert_string(col_id)
-  
-  ncdb_api(path = glue::glue("api/v2/meta/columns/{col_id}"),
-           method = "PATCH",
-           body_json = body_json,
-           auto_unbox = auto_unbox,
-           auth_token = auth_token) |>
-    invisible()
-}
-
-#' Upload NocoDB attachments
-#'
-#' Uploads one or more files to the RDB NocoDB server as [attachments](https://docs.nocodb.com/fields/field-types/custom-types/attachment/) via the
-#' [`POST /api/v2/storage/upload`](https://meta-apis-v2.nocodb.com/#tag/Storage) API endpoint. Uploaded files are stored under `/nc/uploads/` in the Backblaze
-#' B2 bucket `rdb-attachments`.
-#'
-#' @inheritParams ncdb_api
-#' @param paths Path(s) to the file(s) to be uploaded. A character vector.
-#' @param names File name(s) to assign to the uploaded file(s). A character vector. Note that a random string like `_NnW3C` is always appended to the resulting
-#'   file name before its file type suffix, so `name = "some-pic.jpg"` will result in something like `some-pic_NnW3C.jpg`, for example.
-#' @param types [Media type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)(s) of the uploaded files. A character vector.
-#'
-#' @return A [tibble][tibble::tbl_df] containing metadata about the uploaded attachments.
-#' @family ncdb
-#' @keywords internal
-upload_ncdb_attachments <- function(paths,
-                                    names = fs::path_file(paths),
-                                    types = mime::guess_type(paths),
-                                    auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                                     pkg = this_pkg),
-                                    max_tries = 5L,
-                                    verbosity = NULL) {
-  rlang::check_installed("mime",
-                         reason = pal::reason_pkg_required())
-  purrr::walk(paths,
-              \(x) checkmate::assert_file_exists(x = x,
-                                                 access = "r",
-                                                 .var.name = "paths"))
-  checkmate::assert_character(names,
-                              any.missing = FALSE)
-  checkmate::assert_subset(types,
-                           choices = mime::mimemap)
-  
-  if (length(unique(c(length(paths), length(names), length(types)))) > 1L) {
-    cli::cli_abort("Arguments {.arg {c('paths', 'names', 'types')}} must all have the same length.")
-  }
-  
-  # assemble multipart req body
-  files <- purrr::pmap(list(paths, names, types),
-                       \(path, name, type) curl::form_file(path = path,
-                                                           name = name,
-                                                           type = type))
-  # NOTE: the object names don't matter; we just chose `file#` for clarity
-  names(files) <- paste0("file", seq_along(paths))
-  
-  httr2::request(base_url = url_ncdb("api/v2/storage/upload")) |>
-    httr2::req_method(method = "POST") |>
-    httr2::req_headers(`xc-token` = auth_token,
-                       .redact = "xc-token") |>
-    httr2::req_body_multipart(!!!files) |>
-    httr2::req_retry(max_tries = max_tries) |>
-    httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg) |>
-    httr2::req_perform(verbosity = verbosity) |>
-    httr2::resp_body_json() |>
-    purrr::map(tibble::as_tibble) |>
-    purrr::list_rbind()
 }
 
 #' Get PostreSQL column metadata
@@ -2348,9 +1591,9 @@ color_rdb_main <- "#3f4eff"
 
 date_backup_rdb <- pal::path_mod_time("data-raw/backups/rdb.rds") |> clock::as_date()
 
-ncdb_base_name <- "Main"
+nocodb_base_name <- "Main"
 
-ncdb_col_metadata <- tibble::tribble(
+nocodb_col_metadata <- tibble::tribble(
   ~tbl_name,     ~col_name,     ~uidt,         ~meta.richMode,
   "referendums", "attachments", "Attachment",  NA,
   NA_character_, "url",         "URL",         NA,
@@ -2361,7 +1604,7 @@ ncdb_col_metadata <- tibble::tribble(
 
 # the virtual columns NocoDB maintains for foreign keys not always have optimal default titles, so we have to tweak 'em
 # NOTE: columns of `uidt == "Links"` are automatically renamed if necessary
-ncdb_col_renames <- tibble::tribble(
+nocodb_col_renames <- tibble::tribble(
   ~uidt,                 ~col_title_old,         ~col_title_new,
   "LinkToAnotherRecord", "actors",               "actor",
   "LinkToAnotherRecord", "countries",            "country",
@@ -2390,7 +1633,7 @@ sudd_min_year <- pal::safe_min(sudd_years)
 rm(sudd_years)
 
 tbl_metadata <- tibble::tribble(
-  ~name,                          ~desc,                                                             ~dm_color,      ~ncdb_display_col,         ~ncdb_meta.icon,
+  ~name,                          ~desc,                                                             ~dm_color,      ~nocodb_display_col,     ~nocodb_meta.icon,
   "actors",                       "entities acting in connection with the referendums",              "#9900cc",      "label",                   "\U0001F3AD",
   "options",                      "",                                                                "#9900cc",      "label",                   "\u2611",
   "legal_norms",                  "",                                                                "#33cc33",      "title",                   "\U0001F4DC",
@@ -2410,7 +1653,7 @@ tbl_metadata <- tibble::tribble(
   "languages",                    "",                                                                "#ffdf80",      "name",                    "\U0001F512",
 ) |>
   # add Unicode image variation selector
-  dplyr::mutate(ncdb_meta.icon = paste0(ncdb_meta.icon, "\ufe0f"))
+  dplyr::mutate(nocodb_meta.icon = paste0(nocodb_meta.icon, "\ufe0f"))
 
 # for renaming between C2D Services API and RDB
 #                 old name                                               new name
@@ -5319,23 +4562,43 @@ update_tbl <- function(data,
 #' @description
 #' Configures the RDB NocoDB server according to our needs. Currently, this includes:
 #' 
-#' - [Setting the correct display value columm][set_ncdb_display_vals] for all tables.
-#' - [Setting the proper metadata][set_ncdb_tbl_metadata] for all tables..
+#' - Setting the correct display value columm for all tables via [nocodb::set_display_vals].
+#' - Setting the proper metadata for all tables via [nocodb::set_tbl_metadata].
 #'
-#' @inheritParams ncdb_tbls
+#' @inheritParams nocodb::set_tbl_metadata
 #'
 #' @return `NULL`, invisibly.
-#' @family ncdb
+#' @family nocodb
 #' @family admin
 #' @export
-config_ncdb <- function(base_id = ncdb_base_id(),
-                        auth_token = pal::pkg_config_val(key = "ncdb_token",
-                                                         pkg = this_pkg)) {
-  set_ncdb_display_vals(base_id = base_id,
-                        auth_token = auth_token)
+config_nocodb <- function(base_id = nocodb::base_id(title = pal::pkg_config_val(key = nocodb_base_name,
+                                                                                pkg = this_pkg),
+                                                    hostname = pal::pkg_config_val(key = "nocodb_hostname",
+                                                                                   pkg = this_pkg),
+                                                    auth_token = pal::pkg_config_val(key = "nocodb_api_token",
+                                                                                     pkg = this_pkg)),
+                          hostname = pal::pkg_config_val(key = "nocodb_hostname",
+                                                         pkg = this_pkg),
+                          auth_token = pal::pkg_config_val(key = "nocodb_api_token",
+                                                           pkg = this_pkg),
+                          quiet = FALSE) {
+  data <-
+    tbl_metadata |>
+    dplyr::rename_with(.cols = starts_with("nocodb_"),
+                       .fn = \(x) stringr::str_remove("^nocodb_"))
   
-  set_ncdb_tbl_metadata(base_id = base_id,
-                        auth_token = auth_token)
+  nocodb::set_display_vals(data = data,
+                           base_id = base_id,
+                           hostname = hostname,
+                           auth_token = auth_token,
+                           quiet = quiet)
+  data |>
+    # NOTE: we exclude junction tbls since they are hidden in NocoDB and its API
+    dplyr::filter(!is.na(display_col)) |>
+    nocodb::set_tbl_metadata(base_id = base_id,
+                             hostname = hostname,
+                             auth_token = auth_token,
+                             quiet = quiet)
   invisible(NULL)
 }
 

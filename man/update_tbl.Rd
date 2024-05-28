@@ -49,7 +49,7 @@ Updates the specified RDB table with the provided data.
 }
 \seealso{
 Other administration functions:
-\code{\link{config_ncdb}()},
+\code{\link{config_nocodb}()},
 \code{\link{connect}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
