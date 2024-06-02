@@ -60,6 +60,7 @@ Suggests:
     ISOcodes (>= 2024.02.12),
     knitr (>= 1.40),
     mime (>= 0.12),
+    pkgdown.tpl (>= 0.0.9000),
     pkgsnip (>= 0.0.9037),
     plotlee (>= 0.0.9000),
     plotly (>= 4.10.0),
@@ -78,6 +79,7 @@ VignetteBuilder:
 Remotes:
     gitlab::rpkg.dev/nocodb,
     gitlab::rpkg.dev/pal,
+    gitlab::rpkg.dev/pkgdown.tpl,
     gitlab::rpkg.dev/pkgpins,
     gitlab::rpkg.dev/pkgsnip,
     gitlab::rpkg.dev/plotlee,
