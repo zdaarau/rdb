@@ -1,10 +1,10 @@
 pandoc: '3.2'
 pkgdown: 2.0.9.9000
-pkgdown_sha: e407acece26815c3c776effba39bffde68382142
+pkgdown_sha: 11e1a8fe0fff6b1981721f50f18a958635177919
 articles:
   codebook: codebook.html
   rdb: rdb.html
-last_built: 2024-05-28T00:53Z
+last_built: 2024-06-04T00:34Z
 urls:
   reference: https://rdb.rpkg.dev/reference
   article: https://rdb.rpkg.dev/articles

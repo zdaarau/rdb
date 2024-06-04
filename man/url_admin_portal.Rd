@@ -22,7 +22,6 @@ rdb:::url_admin_portal("referendum/5bbbfd7b92a21351232e46b5")
 Other URL assembly functions:
 \code{\link{url_api_old}()},
 \code{\link{url_codebook}()},
-\code{\link{url_ncdb}()},
 \code{\link{url_website}()}
 }
 \concept{url_assembly}

@@ -4,21 +4,10 @@
 \alias{config_nocodb}
 \title{Configure NocoDB}
 \usage{
-config_nocodb(
-  base_id = nocodb::base_id(title = pal::pkg_config_val(key = nocodb_base_name, pkg =
-    this_pkg), hostname = pal::pkg_config_val(key = "nocodb_hostname", pkg = this_pkg),
-    auth_token = pal::pkg_config_val(key = "nocodb_api_token", pkg = this_pkg)),
-  hostname = pal::pkg_config_val(key = "nocodb_hostname", pkg = this_pkg),
-  auth_token = pal::pkg_config_val(key = "nocodb_api_token", pkg = this_pkg),
-  quiet = FALSE
-)
+config_nocodb(hostname = nocodb_hostname, quiet = FALSE)
 }
 \arguments{
-\item{base_id}{NocoDB base identifier as returned by \code{\link[nocodb:base_id]{base_id()}}. A character scalar.}
-
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
-
-\item{auth_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API authentication token}. A character scalar.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }

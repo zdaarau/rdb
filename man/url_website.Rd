@@ -22,8 +22,7 @@ rdb:::url_website("referendum/CH/5bbc04f692a21351232e5a01")
 Other URL assembly functions:
 \code{\link{url_admin_portal}()},
 \code{\link{url_api_old}()},
-\code{\link{url_codebook}()},
-\code{\link{url_ncdb}()}
+\code{\link{url_codebook}()}
 }
 \concept{url_assembly}
 \keyword{internal}

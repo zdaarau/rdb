@@ -22,7 +22,6 @@ rdb:::url_api_old("health")
 Other URL assembly functions:
 \code{\link{url_admin_portal}()},
 \code{\link{url_codebook}()},
-\code{\link{url_ncdb}()},
 \code{\link{url_website}()}
 }
 \concept{url_assembly}

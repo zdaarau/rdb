@@ -25,7 +25,6 @@ rdb:::url_codebook("topics")
 Other URL assembly functions:
 \code{\link{url_admin_portal}()},
 \code{\link{url_api_old}()},
-\code{\link{url_ncdb}()},
 \code{\link{url_website}()}
 }
 \concept{url_assembly}
