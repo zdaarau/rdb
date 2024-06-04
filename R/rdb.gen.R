@@ -1575,7 +1575,8 @@ color_rdb_main <- "#3f4eff"
 
 date_backup_rdb <- pal::path_mod_time("data-raw/backups/rdb.rds") |> clock::as_date()
 
-nocodb_base_name <- "Main"
+nocodb_hostname <- "admin.rdb.vote"
+nocodb_base_title <- "Main"
 
 nocodb_col_metadata <- tibble::tribble(
   ~tbl_name,     ~col_name,     ~uidt,         ~meta.richMode,
@@ -4555,36 +4556,36 @@ update_tbl <- function(data,
 #' @family nocodb
 #' @family admin
 #' @export
-config_nocodb <- function(base_id = nocodb::base_id(title = pal::pkg_config_val(key = nocodb_base_name,
-                                                                                pkg = this_pkg),
-                                                    hostname = pal::pkg_config_val(key = "nocodb_hostname",
-                                                                                   pkg = this_pkg),
-                                                    auth_token = pal::pkg_config_val(key = "nocodb_api_token",
-                                                                                     pkg = this_pkg)),
-                          hostname = pal::pkg_config_val(key = "nocodb_hostname",
-                                                         pkg = this_pkg),
-                          auth_token = pal::pkg_config_val(key = "nocodb_api_token",
-                                                           pkg = this_pkg),
+config_nocodb <- function(hostname = nocodb_hostname,
                           quiet = FALSE) {
+  
+  id_base <- nocodb::base_id(title = nocodb_base_title,
+                             hostname = hostname,
+                             api_token = pal::pkg_config_val(key = "nocodb_api_token",
+                                                             pkg = this_pkg))
+  api_token <- pal::pkg_config_val(key = "nocodb_api_token",
+                                   pkg = this_pkg)
   data <-
     tbl_metadata |>
     dplyr::rename_with(.cols = starts_with("nocodb_"),
                        .fn = \(x) stringr::str_remove("^nocodb_"))
   
   nocodb::set_display_vals(data = data,
-                           base_id = base_id,
+                           id_base = id_base,
                            hostname = hostname,
-                           auth_token = auth_token,
+                           api_token = api_token,
                            quiet = quiet)
   data |>
     # NOTE: we exclude junction tbls since they are hidden in NocoDB and its API
     dplyr::filter(!is.na(display_col)) |>
-    nocodb::set_tbl_metadata(base_id = base_id,
+    nocodb::set_tbl_metadata(id_base = id_base,
                              hostname = hostname,
-                             auth_token = auth_token,
+                             api_token = api_token,
                              quiet = quiet)
   invisible(NULL)
 }
+
+
 
 #' List referendum territories from [sudd.ch](https://sudd.ch/)
 #'
