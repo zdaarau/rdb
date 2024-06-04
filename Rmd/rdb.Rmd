@@ -820,34 +820,14 @@ url_codebook <- function(var_name = NULL) {
 }
 ```
 
-### `url_ncdb`
-
-```{r}
-#' Assemble NocoDB URL
-#'
-#' @param ... Optional path components added to the base URL.
-#'
-#' @return A character scalar.
-#' @family url_assembly
-#' @keywords internal
-#'
-#' @examples
-#' rdb:::url_ncdb("api/v2/meta/bases/")
-url_ncdb <- function(...) {
-  
-  fs::path("admin.rdb.vote", ...) %>%
-    paste0("https://", .)
-}
-```
-
 ### `url_website`
 
 ```{r}
 #' Assemble website URL
 #'
-#' @inheritParams url_ncdb
+#' @param ... Optional path components added to the base URL.
 #'
-#' @inherit url_ncdb return
+#' @return A character scalar.
 #' @family url_assembly
 #' @keywords internal
 #'
