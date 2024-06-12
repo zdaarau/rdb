@@ -56,6 +56,7 @@ utils::globalVariables(names = c(".",
                                  "files",
                                  "generated",
                                  "generation_expression",
+                                 "has_by_cols",
                                  "has_default",
                                  "identity_generation",
                                  "id_official",
@@ -90,6 +91,7 @@ utils::globalVariables(names = c(".",
                                  "is_former_country",
                                  "is_generated",
                                  "is_identity",
+                                 "is_meta",
                                  "is_multi_valued",
                                  "is_nullable",
                                  "is_opt",
@@ -110,6 +112,7 @@ utils::globalVariables(names = c(".",
                                  "number",
                                  "ordinal_position",
                                  "parent_topic",
+                                 "password",
                                  "position_government",
                                  "ptype",
                                  "question",
@@ -119,6 +122,7 @@ utils::globalVariables(names = c(".",
                                  "req",
                                  "resp",
                                  "result",
+                                 "role",
                                  "rowid",
                                  "sources",
                                  "subnational_entity_code",
@@ -814,6 +818,87 @@ pg_has_tbl <- function(tbl_name,
   !is.na(data$tbl)
 }
 
+#' Initialize RDB PostgreSQL database
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `NULL`, invisibly.
+#' @family pg
+#' @keywords internal
+pg_init_db <- function(connection = connect(user = "rdb_admin",
+                                            password = pg_role_pw("rdb_admin"))) {
+  vars <-
+    pal::pkg_config_val(key = "pg_roles_csv_file",
+                        pkg = this_pkg) |>
+    readr::read_csv(col_types = "c") %$%
+    structure(.Data = password,
+              names = paste0("pw_", role))
+  
+  DBI::dbWithTransaction(conn = connection,
+                         code = {
+                           
+                           path_sql <- fs::path_package("sql/init_db.sql",
+                                                        package = this_pkg)
+                           
+                           rlang::inject(expr = read_sql_file(path = path_sql,
+                                                              connection = connection,
+                                                              !!!vars)) |>
+                             purrr::walk(\(statement) {
+                               DBI::dbClearResult(DBI::dbSendStatement(statement = statement,
+                                                                       conn = connection))
+                             })
+                         })
+  invisible(NULL)
+}
+
+#' Initialize auxiliary RDB PostgreSQL tables
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `NULL`, invisibly.
+#' @family pg
+#' @keywords internal
+pg_init_aux_tbls <- function(connection = connect(user = "rdb_admin",
+                                                  password = pg_role_pw("rdb_admin"))) {
+  DBI::dbWithTransaction(conn = connection,
+                         code = {
+                           
+                           fs::path_package("sql/init_aux_tbls.sql",
+                                            package = this_pkg) |>
+                             read_sql_file(connection = connection) |>
+                             purrr::walk(\(statement) {
+                               DBI::dbSendStatement(statement = statement,
+                                                    conn = connection) |>
+                                 DBI::dbClearResult()
+                             })
+                         })
+  invisible(NULL)
+}
+
+#' Initialize main RDB PostgreSQL tables
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `NULL`, invisibly.
+#' @family pg
+#' @keywords internal
+pg_init_main_tbls <- function(connection = connect(user = "rdb_admin",
+                                                   password = pg_role_pw("rdb_admin"))) {
+  DBI::dbWithTransaction(conn = connection,
+                         code = {
+                           
+                           fs::path_package("sql/init_main_tbls.sql",
+                                            package = this_pkg) |>
+                             read_sql_file(connection = connection) |>
+                             purrr::walk(\(statement) {
+                               DBI::dbSendStatement(statement = statement,
+                                                    conn = connection) |>
+                                 DBI::dbClearResult()
+                             })
+                         })
+  invisible(NULL)
+}
+
 #' Get primary key column names(s) from PostgreSQL
 #'
 #' Returns the primary key column names(s) from RDB's DBMS, a PostgreSQL server.
@@ -861,6 +946,25 @@ pg_pk <- function(tbl_name,
   }
   
   data$column_name
+}
+
+pg_role_pw <- function(role) {
+  
+  roles <-
+    pal::pkg_config_val(key = "pg_roles_csv_file",
+                        pkg = this_pkg) |>
+    readr::read_csv(col_types = "c")
+  
+  checkmate::assert_names(colnames(roles),
+                          what = "colnames",
+                          must.include = c("role", "password"),
+                          .var.name = "pg_roles_csv_file")
+  
+  role <- rlang::arg_match0(arg = role,
+                            values = roles$role)
+  roles |>
+    dplyr::filter(role == !!role) |>
+    dplyr::pull("password")
 }
 
 #' Delete specified data from PostgreSQL table
@@ -949,6 +1053,7 @@ pg_tbl_keep <- function(tbl,
 #'
 #' @return The updated table data as a [tibble][tibble::tbl_df], invisibly. Note that newly inserted rows aren't included if the table's primary key column is
 #'   `GENERATED ALWAYS`.
+#' @family pg
 #' @keywords internal
 pg_tbl_update <- function(tbl,
                           data,
@@ -1028,6 +1133,100 @@ pg_tbl_update <- function(tbl,
   }
   
   result
+}
+
+read_sql_file <- function(path,
+                          connection = connect(),
+                          ...) {
+  
+  rlang::check_installed("brio",
+                         reason = pal::reason_pkg_required())
+  path |>
+    brio::read_file() |>
+    split_sql_str(.connection = connection,
+                  ...)
+}
+
+#' Split SQL string into statements
+#'
+#' Splits a string of SQL into individual SQL statements and interpolates them using [DBI::sqlInterpolate()]. Useful to prepare the contents of an `.sql` script
+#' to be able to feed it to [DBI::dbSendStatement()] (which only accepts an atomic statement).
+#'
+#' @param .text SQL statements to split as a character scalar.
+#' @param .connection Database connection as returned by [connect()]. `r pkgsnip::param_lbl("dbi_connection")`
+#' @param ... Further (named) arguments used as temporary variables available for substitution while interpolating `.text` via [DBI::sqlInterpolate()].
+#'
+#' @return A list of [`DBI::SQL`][DBI::SQL] objects.
+#' @family pg
+#' @keywords internal
+split_sql_str <- function(.text,
+                          .connection = connect(),
+                          ...) {
+  parts <-
+    .text |>
+    # remove comments
+    stringr::str_remove_all(pattern = "/\\*(.|\n)*?(\\*/)") |>
+    stringr::str_remove_all(pattern = "(?<=(^|\n))--.*?\n") |>
+    # split by dollar-quoted string constants
+    stringr::str_split_1(pattern = "\\$([[:alpha:]_]\\w+)?\\$") |>
+    as.list() |>
+    purrr::imap(\(x, i) {
+      
+      if ((i %% 2L) > 0L) {
+        x %<>% stringr::str_split_1(pattern = ";(\\s|\\n)*")
+      }
+      
+      x
+    })
+  
+  n_parts <- floor((length(parts) - 1L) / 2L)
+  result <- character()
+  
+  for (i in pal::safe_seq_len(n_parts)) {
+    
+    i_middle <- i*2L
+    n_subparts_before <- length(parts[[i_middle - 1L]])
+    n_subparts_after <- length(parts[[i_middle + 1L]])
+    
+    if (i == 1L && n_subparts_before > 1L) {
+      result %<>% c(parts[[i_middle - 1L]][-n_subparts_before])
+    }
+    
+    middle <- paste0(dplyr::last(parts[[i_middle - 1L]]) %|% "", "$$", parts[[i_middle]], "$$")
+    
+    if (n_subparts_after > 1L || i == n_parts) {
+      middle %<>% paste0(dplyr::first(parts[[i_middle + 1L]]))
+    }
+    
+    result %<>% c(middle,
+                  parts[[i_middle + 1L]][-c(1L, n_subparts_after)])
+    
+    if (i == n_parts && n_subparts_after > 1L) {
+      result %<>% c(parts[[i_middle + 1L]][n_subparts_after])
+    }
+  }
+  
+  # remove empty els
+  result %<>% magrittr::extract(. != "")
+  
+  vars <- rlang::list2(...)
+  
+  purrr::map(result,
+             # NOTE: `DBI::sqlInterpolate()` errors when surplus vars are provided
+             \(x) {
+               
+               vars_present <-
+                 x |>
+                 stringr::str_extract_all(pattern = "(?<=\\?)[[:alpha:]_]\\w+") |>
+                 unlist() |>
+                 intersect(names(vars)) |>
+                 purrr::keep_at(x = vars,
+                                at = _)
+               
+               DBI::sqlInterpolate(sql = x,
+                                   conn = .connection,
+                                   .dots = vars_present)
+             })
 }
 
 derive_country_vars <- function(country_code,
@@ -1618,25 +1817,49 @@ sudd_min_year <- pal::safe_min(sudd_years)
 rm(sudd_years)
 
 tbl_metadata <- tibble::tribble(
-  ~name,                          ~desc,                                                             ~dm_color,      ~nocodb_display_col,     ~nocodb_meta.icon,
-  "actors",                       "entities acting in connection with the referendums",              "#9900cc",      "label",                   "\U0001F3AD",
-  "options",                      "",                                                                "#9900cc",      "label",                   "\u2611",
-  "legal_norms",                  "",                                                                "#33cc33",      "title",                   "\U0001F4DC",
-  "referendum_types",             "",                                                                "#33cc33",      "title",                   "\U0001F3DB",
-  "referendum_types_legal_norms", "",                                                                "#85e085",      NA_character_,             NA_character_,
-  "referendums",                  "",                                                                color_rdb_main, "id",                      "\U0001F5F3",
-  "referendum_titles",            "",                                                                "#6673ff",      "title",                   "\U0001F4D5",
-  "referendum_questions",         "",                                                                "#6673ff",      "question",                "\u2753",
-  "referendum_positions",         "",                                                                "#6673ff",      "actor",                   "\U0001F4E3",
-  "referendum_votes",             "",                                                                "#6673ff",      "option",                  "\U0001F9FE",
-  "referendum_sub_votes",         "",                                                                "#6673ff",      "subnational_entity_code", "\U0001F9FE",
-  "countries",                    paste0("ISO [3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)/",
-                                         "[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) ",
-                                         "country codes and names"),                                 "#ffdf80",      "name",                    "\U0001F512",
-  "subnational_entities",         "",                                                                "#ffdf80",      "name",                    "\U0001F512",
-  "municipalities",               "",                                                                "#ffdf80",      "name",                    "\U0001F512",
-  "languages",                    "",                                                                "#ffdf80",      "name",                    "\U0001F512",
+  ~name,                          ~has_by_cols, ~dm_color,      ~nocodb_display_col,       ~nocodb_meta.icon,
+  "actors",                       TRUE,         "#9900cc",      "label",                   "\U0001F3AD",
+  "options",                      TRUE,         "#9900cc",      "label",                   "\u2611",
+  "legal_norms",                  TRUE,         "#33cc33",      "title",                   "\U0001F4DC",
+  "referendum_types",             TRUE,         "#33cc33",      "title",                   "\U0001F3DB",
+  "referendum_types_legal_norms", TRUE,         "#85e085",      NA_character_,             NA_character_,
+  "referendums",                  TRUE,         color_rdb_main, "id",                      "\U0001F5F3",
+  "referendum_titles",            TRUE,         "#6673ff",      "title",                   "\U0001F4D5",
+  "referendum_questions",         TRUE,         "#6673ff",      "question",                "\u2753",
+  "referendum_positions",         TRUE,         "#6673ff",      "actor",                   "\U0001F4E3",
+  "referendum_votes",             TRUE,         "#6673ff",      "option",                  "\U0001F9FE",
+  "referendum_sub_votes",         TRUE,         "#6673ff",      "subnational_entity_code", "\U0001F9FE",
+  "countries",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512",
+  "subnational_entities",         FALSE,        "#ffdf80",      "name",                    "\U0001F512",
+  "municipalities",               FALSE,        "#ffdf80",      "name",                    "\U0001F512",
+  "languages",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512"
 ) |>
+  # add `desc` col separately (otherwise col vals exceed screen width to easily)
+  dplyr::left_join(
+    by = "name",
+    y = tibble::tribble(
+      ~name,                          ~desc,
+      "actors",                       "entities acting in connection with the referendums",
+      "options",                      "referendum answer options",
+      "legal_norms",                  "legal norms enabling referendums",
+      "referendum_types",             "referendum types",
+      "referendum_types_legal_norms", "*junction table*",
+      "referendums",                  "*main table*",
+      "referendum_titles",            "referendum titles",
+      "referendum_questions",         "referendum questions",
+      "referendum_positions",         "actor positions on referendums",
+      "referendum_votes",             "votes cast in referendums",
+      "referendum_sub_votes",         "votes cast in referendums by subnational entity",
+      "countries",                    paste0("ISO [3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)/[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) ",
+                                             "country codes and names"),
+      "subnational_entities",         "[ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) subnational entity codes and names",
+      "municipalities",               "municipalities",
+      "languages",                    "[ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1) language codes and names"
+    )) |>
+  assertr::assert(predicate = assertr::not_na,
+                  name, desc) |>
+  dplyr::relocate(desc,
+                  .after = name) |>
   # add Unicode image variation selector
   dplyr::mutate(nocodb_meta.icon = paste0(nocodb_meta.icon, "\ufe0f"))
 
@@ -4251,9 +4474,9 @@ tbl_n_rfrnds_per_period <- function(data,
 #'
 #' Connects to RDB's database management system, a PostgreSQL server managed by [neon.tech](https://neon.tech/).
 #'
-#' @param host `r pkg_config |> dplyr::filter(key == "pg_host") %$% description`
-#' @param user `r pkg_config |> dplyr::filter(key == "pg_user") %$% description`
-#' @param password `r pkg_config |> dplyr::filter(key == "pg_password") %$% description`
+#' @param host `r pkg_config |> dplyr::filter(key == "pg_host") |> dplyr::pull(description)`
+#' @param user `r pkg_config |> dplyr::filter(key == "pg_user") |> dplyr::pull(description)`
+#' @param password `r pkg_config |> dplyr::filter(key == "pg_password") |> dplyr::pull(description)`
 #' @param sslmode PostgreSQL connection parameter that determines whether or with what priority a secure TLS connection is negotiated with the server. See the
 #'   [official documentation](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE) for more information about the supported
 #'   keywords.
@@ -4295,8 +4518,8 @@ connect <- function(host = pal::pkg_config_val(key = "pg_host",
 #'
 #' @examples
 #' rdb::dm() |> dm::dm_draw(view_type = "all")
-dm <- function(connection = connect(user = Sys.getenv("R_RDB_PG_OWNER"),
-                                    password = Sys.getenv("R_RDB_PG_OWNER_PASSWORD"))) {
+dm <- function(connection = connect(user = "rdb_admin",
+                                    password = pg_role_pw("rdb_admin"))) {
   dm::dm_from_con(con = connection,
                   learn_keys = TRUE,
                   schema = pg_schema) |>
@@ -4542,29 +4765,179 @@ update_tbl <- function(data,
   invisible(data)
 }
 
-#' Configure NocoDB
+#' Reset RDB
+#'
+#' Resets the whole RDB PostgreSQL database including all RDB PostgreSQL tables and the RDB NocoDB server.
+#'
+#' @inheritParams nocodb::update_app_settings
+#' @inheritParams pg_init_db
+#' @param init_db Whether or not to first initialize the RDB PostgreSQL database using [pg_init_db()].
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `nocodb_hostname`, invisibly.
+#' @family admin
+#' @family nocodb
+#' @export
+reset_rdb <- function(hostname = nocodb_hostname,
+                      connection = connect(),
+                      init_db = FALSE,
+                      quiet = FALSE) {
+  
+  checkmate::assert_flag(init_db)
+  checkmate::assert_flag(quiet)
+  
+  if (init_db) {
+    if (!quiet) {
+      pal::cli_progress_step_quick("Initializing PostgreSQL database")
+    }
+    pg_init_db(connection = connection)
+  }
+  
+  if (!quiet) {
+    pal::cli_progress_step_quick("Resetting NocoDB base")
+  }
+  reset_nocodb(hostname = hostname,
+               quiet = TRUE)
+  
+  if (!quiet) {
+    pal::cli_progress_step_quick("Initializing auxiliary PostgreSQL tables")
+  }
+  pg_init_aux_tbls(connection = connection)
+  
+  if (!quiet) {
+    pal::cli_progress_step_quick("Temporarily creating tables with {.var created_by} and {.var updated_by} columns via NocoDB")
+  }
+  create_nocodb_tbls(hostname = hostname)
+  
+  if (!quiet) {
+    pal::cli_progress_step_quick("Initializing main PostgreSQL tables")
+  }
+  pg_init_main_tbls(connection = connection)
+  
+  if (!quiet) {
+    pal::cli_progress_step_quick("Configuring NocoDB tables")
+  }
+  config_nocodb_tbls(hostname = hostname,
+                     quiet = TRUE)
+  
+  if (!quiet) {
+    pal::cli_progress_step_quick("Notify PostgREST server about schema changes")
+  }
+  notify_postgrest(connection = connection)
+  
+  invisible(nocodb_hostname)
+}
+
+#' Notify RDB PostgREST about schema changes
+#'
+#' Sends a `reload schema` message on the `pgrst` PostgreSQL [notification channel](https://www.postgresql.org/docs/16/sql-notify.html), which triggers the RDB
+#' PostgREST server to [reload its schema cache](https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading).
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `NULL`, invisibly.
+#' @family admin
+#' @keywords internal
+notify_postgrest <- function(connection = connect()) {
+  
+  DBI::dbWithTransaction(conn = connection,
+                         code = DBI::dbClearResult(DBI::dbSendStatement(statement = DBI::SQL("NOTIFY pgrst, 'reload schema';"),
+                                                                        conn = connection)))
+  invisible(NULL)
+}
+
+#' Create NocoDB tables
+#'
+#' Creates all the PostgreSQL database tables that must be first created *once* in NocoDB after the PostgreSQL database has been added as external data source
+#' (e.g. via [reset_nocodb()]) to let NocoDB register the necessary metadata for the `created_by` and `updated_by` columns (so they are properly auto-filled by
+#' NocoDB later on). After running `create_nocodb_tbls()`, the created tables are supposed to be recreated outside of NocoDB via [pg_init_main_tbls()].
+#'
+#' @inheritParams nocodb::data_src_id
+#'
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created tables")`
+#' @family nocodb
+#' @family admin
+#' @keywords internal
+create_nocodb_tbls <- function(hostname = nocodb_hostname) {
+  
+  email <- pal::pkg_config_val(key = "nocodb_email",
+                               pkg = this_pkg)
+  password <- pal::pkg_config_val(key = "nocodb_password",
+                                  pkg = this_pkg)
+  id_base <- nocodb::base_id(title = nocodb_base_title,
+                             hostname = hostname,
+                             email = email,
+                             password = password)
+  id_data_src <- nocodb::data_src_id(alias = "RDB",
+                                     id_base = id_base,
+                                     hostname = hostname,
+                                     email = email,
+                                     password = password)
+  tbl_names <-
+    tbl_metadata |>
+    dplyr::filter(has_by_cols) |>
+    dplyr::pull("name")
+  
+  existing_tbl_names <-
+    nocodb::tbls(id_base = id_base,
+                 hostname = hostname,
+                 email = email,
+                 password = password) |>
+    dplyr::pull("table_name") |>
+    magrittr::is_in(x = tbl_names) |>
+    which()
+  
+  if (length(existing_tbl_names) > 0L) {
+    cli::cli_abort("The following tables to be created already exist: {.val {tbl_names[existing_tbl_names]}}")
+  }
+  
+  tbl_names |>
+    purrr::map(\(tbl_name) nocodb::create_data_src_tbl(id_data_src = id_data_src,
+                                                       name = tbl_name,
+                                                       title = tbl_name,
+                                                       cols = list(list(column_name = "foobar",
+                                                                        title = "foobar",
+                                                                        dt = "text",
+                                                                        dtx = "text",
+                                                                        nrqd = FALSE,
+                                                                        rqd = TRUE,
+                                                                        ck = FALSE,
+                                                                        pk = TRUE,
+                                                                        un = FALSE,
+                                                                        ai = FALSE,
+                                                                        uidt = "LongText")),
+                                                       id_base = id_base,
+                                                       hostname = hostname,
+                                                       email = email,
+                                                       password = password)) |>
+    purrr::list_rbind()
+}
+
+#' Configure NocoDB tables
 #'
 #' @description
-#' Configures the RDB NocoDB server according to our needs. Currently, this includes:
+#' Configures the RDB tables on the specified NocoDB server. Currently, this includes:
 #' 
 #' - Setting the correct display value columm for all tables via [nocodb::set_display_vals].
 #' - Setting the proper metadata for all tables via [nocodb::set_tbl_metadata].
 #'
 #' @inheritParams nocodb::set_tbl_metadata
 #'
-#' @return `NULL`, invisibly.
+#' @return `nocodb_hostname`, invisibly.
 #' @family nocodb
 #' @family admin
-#' @export
-config_nocodb <- function(hostname = nocodb_hostname,
-                          quiet = FALSE) {
+#' @keywords internal
+config_nocodb_tbls <- function(hostname = nocodb_hostname,
+                               quiet = FALSE) {
   
+  email <- pal::pkg_config_val(key = "nocodb_email",
+                               pkg = this_pkg)
+  password <- pal::pkg_config_val(key = "nocodb_password",
+                                  pkg = this_pkg)
   id_base <- nocodb::base_id(title = nocodb_base_title,
                              hostname = hostname,
-                             api_token = pal::pkg_config_val(key = "nocodb_api_token",
-                                                             pkg = this_pkg))
-  api_token <- pal::pkg_config_val(key = "nocodb_api_token",
-                                   pkg = this_pkg)
+                             email = email,
+                             password = password)
   data <-
     tbl_metadata |>
     dplyr::rename_with(.cols = starts_with("nocodb_"),
@@ -4573,19 +4946,210 @@ config_nocodb <- function(hostname = nocodb_hostname,
   nocodb::set_display_vals(data = data,
                            id_base = id_base,
                            hostname = hostname,
-                           api_token = api_token,
+                           email = email,
+                           password = password,
                            quiet = quiet)
   data |>
     # NOTE: we exclude junction tbls since they are hidden in NocoDB and its API
     dplyr::filter(!is.na(display_col)) |>
     nocodb::set_tbl_metadata(id_base = id_base,
                              hostname = hostname,
-                             api_token = api_token,
+                             email = email,
+                             password = password,
                              quiet = quiet)
-  invisible(NULL)
+  invisible(nocodb_hostname)
 }
 
-
+#' Reset NocoDB
+#'
+#' Completely re-creates the `r nocodb_base_title` base and adds the RDB team's user accounts on the specified NocoDB server. Beware that this results in loss
+#' of all existing NocoDB-specific metadata ([comments](https://docs.nocodb.com/records/expand-record/#record-comment),
+#' [audit](https://docs.nocodb.com/records/expand-record/#record-audit) [logs](https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs) etc.).
+#'
+#' @inheritParams nocodb::update_app_settings
+#'
+#' @return `hostname`, invisibly.
+#' @family nocodb
+#' @family admin
+#' @keywords internal
+reset_nocodb <- function(hostname = nocodb_hostname,
+                         quiet = TRUE) {
+  
+  rlang::check_installed("yesno",
+                         reason = pal::reason_pkg_required())
+  
+  email <- pal::pkg_config_val(key = "nocodb_email",
+                               pkg = this_pkg)
+  password <- pal::pkg_config_val(key = "nocodb_password",
+                                  pkg = this_pkg)
+  
+  # delete possibly existing base
+  if (nocodb_base_title %in% nocodb::bases(hostname = hostname,
+                                           email = email,
+                                           password = password)$title) {
+    
+    # if run interactively, ask for confirmation before continuing
+    if (interactive()) {
+      cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely wipes the existing {.val {nocodb_base_title}} base on the NocoDB server ",
+                                    "{.field {hostname}}. This results in loss of all existing NocoDB-specific metadata (comments, audit logs etc.).\n\n"))
+      if (!yesno::yesno2("Are you sure you want to continue?")) {
+        return(invisible(hostname))
+      }
+    }
+    
+    nocodb::delete_base(id_base = nocodb::base_id(title = nocodb_base_title,
+                                                  hostname = hostname,
+                                                  email = email,
+                                                  password = password),
+                        hostname = hostname,
+                        email = email,
+                        password = password)
+  }
+  
+  # create new base
+  base_id <-
+    nocodb::create_base(title = nocodb_base_title,
+                        color = color_rdb_main,
+                        show_null_and_empty_in_filter = TRUE,
+                        hostname = hostname,
+                        email = email,
+                        password = password) |>
+    purrr::chuck("id")
+  
+  # add PGSQL data source
+  nocodb::create_data_src(alias = "RDB",
+                          type = "pg",
+                          connection = list(sslmode = "verify-full",
+                                            user = "nocodb",
+                                            password = pg_role_pw("nocodb"),
+                                            database = pg_db,
+                                            host = pal::pkg_config_val(key = "pg_host",
+                                                                       pkg = this_pkg),
+                                            port = 5432L,
+                                            ssl = list(ca = "",
+                                                       cert = "",
+                                                       key = "")),
+                          inflection_column = "none",
+                          inflection_table = "none",
+                          enabled = TRUE,
+                          id_base = base_id,
+                          hostname = hostname,
+                          email = email,
+                          password = password)
+  
+  # disable default SQLite data source
+  nocodb::data_srcs(id_base = base_id,
+                    hostname = hostname,
+                    email = email,
+                    password = password) |>
+    dplyr::filter(type == "sqlite3" & is_meta) |>
+    purrr::chuck("id") |>
+    nocodb::update_data_src(enabled = FALSE,
+                            id_base = base_id,
+                            hostname = hostname,
+                            email = email,
+                            password = password)
+  
+  # add user accounts if necessary
+  path_users_ref <- pal::pkg_config_val(key = "nocodb_user_account_csv_file",
+                                        pkg = this_pkg)
+  
+  if (!is.null(path_users_ref) && fs::file_exists(path_users_ref)) {
+    
+    users_ref <- readr::read_csv(file = path_users_ref,
+                                 col_types = "c")
+    checkmate::assert_names(colnames(users_ref),
+                            must.include = c("name", "email", "password"),
+                            what = "colnames",
+                            .var.name = "users_ref")
+    base_users <- nocodb::base_users(id_base = base_id,
+                                     hostname = hostname,
+                                     email = email,
+                                     password = password)
+    users_to_create <- users_ref |> dplyr::filter(!(email %in% base_users$email))
+    
+    if (nrow(users_to_create) > 0L) {
+      
+      if (!quiet) {
+        cli::cli_h1("Adding missing NocoDB user accounts")
+      }
+      
+      # temporarily allow sign-up without invitation to avoid sending e-mails
+      nocodb::update_app_settings(invite_only_signup = FALSE,
+                                  hostname = hostname,
+                                  email = email,
+                                  password = password,
+                                  quiet = quiet)
+      users_to_create |>
+        dplyr::rename_with(.cols = everything(),
+                           .fn = \(x) paste0("user_", x)) |>
+        purrr::pwalk(\(user_name, user_email, user_password, user_role, ...) {
+          
+          nocodb::sign_up_user(user_email = user_email,
+                               user_password = user_password,
+                               hostname = hostname,
+                               email = email,
+                               password = password)
+          result <- nocodb::update_user(display_name = user_name,
+                                        hostname = hostname,
+                                        email = user_email,
+                                        password = user_password)
+          # user e-mail validation benefit is unclear, but we do it anyways
+          nocodb::validate_user_email(verification_token = result$email_verification_token,
+                                      hostname = hostname,
+                                      quiet = quiet)
+        })
+      
+      # trigger NocoDB internal state update
+      nocodb::users(hostname = hostname,
+                    email = email,
+                    password = password)
+    }
+  } else {
+    cli::cli_alert_warning(paste0("The package configuration option {.field nocodb_user_account_csv_file} is not set to a CSV file path, thus no user accounts",
+                                  " were created."))
+  }
+  
+  # update base user roles
+  if (exists("users_ref")) {
+    users_ref |>
+      dplyr::rename_with(.cols = everything(),
+                         .fn = \(x) paste0("user_", x)) |>
+      purrr::pwalk(\(user_email, user_role, ...) {
+        nocodb::update_base_user(user_email = user_email,
+                                 role = user_role,
+                                 id_base = base_id,
+                                 hostname = hostname,
+                                 email = email,
+                                 password = password,
+                                 quiet = quiet)
+      })
+  }
+  
+  # disable sign-up without invitation
+  nocodb::update_app_settings(invite_only_signup = TRUE,
+                              hostname = hostname,
+                              email = email,
+                              password = password,
+                              quiet = quiet)
+  
+  # add Backblaze B2 object storage provider
+  nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2",
+                                                      hostname = hostname,
+                                                      email = email,
+                                                      password = password),
+                        config = list(bucket = "rdb-attachments",
+                                      region = "eu-central-003",
+                                      access_key = pal::pkg_config_val(key = "nocodb_b2_access_key",
+                                                                       pkg = this_pkg),
+                                      access_secret = pal::pkg_config_val(key = "nocodb_b2_access_secret",
+                                                                          pkg = this_pkg)),
+                        activate = TRUE,
+                        hostname = hostname,
+                        email = email,
+                        password = password)
+  invisible(hostname)
+}
 
 #' List referendum territories from [sudd.ch](https://sudd.ch/)
 #'

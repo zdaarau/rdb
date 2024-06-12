@@ -13,7 +13,15 @@ function can be directly fed to sudd_rfrnds()."><meta name="twitter:card" conten
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/rdb.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/codebook.html">RDB codebook</a></li>
-      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="GitLab"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+      </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="GitLab"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul></li>
       </ul></div>
   </div>
 </nav><div class="container template-reference-topic">
@@ -41,7 +49,7 @@ function can be directly fed to <code><a href="sudd_rfrnds.html">sudd_rfrnds()</
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-mode">mode<a class="anchor" aria-label="anchor" href="#arg-mode"></a></dt>
+<dl><dt id="arg-mode">mode<a class="anchor" aria-label="anchor" href="#arg-mode"></a></dt>
 <dd><p>The listing mode. One of</p><ul><li><p><code>"by_date"</code>: Lists <a href="https://sudd.ch/list.php?mode=allrefs" class="external-link">all referendums in the sudd.ch database <strong>by <code>date</code></strong></a>, together with their <code>id_sudd</code>,
 <code>country_code</code>, <code>territory_name_de</code> and <code>title_de</code>. Specifying the sorting order of the results via the <code>order</code> parameter is supported.</p></li>
 <li><p><code>"by_mod_date"</code>: Lists <a href="https://sudd.ch/list.php?mode=moddate" class="external-link">all referendums in the sudd.ch database <strong>by <code>date_last_edited</code></strong></a>, together with their
@@ -67,7 +75,7 @@ results via the <code>order</code> parameter is supported.</p></li>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>A <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a> containing at least an <code>id_sudd</code> column.</p>
+    <p>A <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a> containing at least an <code>id_sudd</code> column.</p>
     </div>
     <div class="section level2">
     <h2 id="about-sudd-ch">About <a href="https://sudd.ch/" class="external-link">sudd.ch</a><a class="anchor" aria-label="anchor" href="#about-sudd-ch"></a></h2>
@@ -84,8 +92,8 @@ licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" clas
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># list all referendums by modification date (takes a while)</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">list_sudd_rfrnds</span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"by_mod_date"</span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">list_sudd_rfrnds</span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"by_mod_date"</span><span class="op">)</span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># list all referendums whose title matches "AHV"</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">list_sudd_rfrnds</span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"filter"</span>,</span></span>
@@ -141,17 +149,19 @@ licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" clas
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">list_sudd_rfrnds</span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"random"</span>,</span></span>
 <span class="r-in"><span>                      quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="sudd_rfrnds.html">sudd_rfrnds</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 32</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 39</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   id_sudd  country_code country_name     is_former_country subnational_entity_code territory_name_de     territory_type_de date        year month   day title_de</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> it011929 IT           Italy            FALSE             <span style="color: #BB0000;">NA</span>                      Italien               unabhängiger Sta… 1929-05-24  <span style="text-decoration: underline;">1</span>929     5    24 Faschis…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mh161995 MH           Marshall Islands FALSE             <span style="color: #BB0000;">NA</span>                      Marshall-Inseln       unabhängiger Sta… 1995-04-17  <span style="text-decoration: underline;">1</span>995     4    17 Verfass…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> cl032011 CL           Chile            FALSE             <span style="color: #BB0000;">NA</span>                      Chile                 unabhängiger Sta… 2011-10-08  <span style="text-decoration: underline;">2</span>011    10     8 Staatli…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> ch052020 CH           Switzerland      FALSE             <span style="color: #BB0000;">NA</span>                      Schweiz               unabhängiger Sta… 2020-09-27  <span style="text-decoration: underline;">2</span>020     9    27 Bundess…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> tw012022 TW           Taiwan           FALSE             <span style="color: #BB0000;">NA</span>                      Republik China (Taiw… unabhängiger Sta… 2022-11-26  <span style="text-decoration: underline;">2</span>022    11    26 Stimm- …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 20 more variables: question_type_de &lt;chr&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   electorate_abroad &lt;int&gt;, votes_total &lt;int&gt;, votes_empty &lt;int&gt;, votes_void &lt;int&gt;, votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   votes_option_1 &lt;int&gt;, votes_option_2 &lt;int&gt;, files &lt;list&gt;, remarks &lt;list&gt;, sources &lt;list&gt;, ids_sudd_simultaneous &lt;list&gt;, date_last_edited &lt;date&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> li011970 LI           Liechtenstein    FALSE             <span style="color: #BB0000;">NA</span>                      Liechtenstein         unabhängiger Sta… 1970-03-01  <span style="text-decoration: underline;">1</span>970     3     1 Erhöhun…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> rs041992 RS           Serbia           FALSE             <span style="color: #BB0000;">NA</span>                      Serbien (Jugoslawien) Staatsteil (Jugo… 1992-10-11  <span style="text-decoration: underline;">1</span>992    10    11 Vorzeit…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> by071996 BYAA         Byelorussian SSR TRUE              <span style="color: #BB0000;">NA</span>                      Weissrussland (Belar… unabhängiger Sta… 1996-11-24  <span style="text-decoration: underline;">1</span>996    11    24 Budgetk…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> ch042001 CH           Switzerland      FALSE             <span style="color: #BB0000;">NA</span>                      Schweiz               unabhängiger Sta… 2001-06-10  <span style="text-decoration: underline;">2</span>001     6    10 Militär…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> sm012014 SM           San Marino       FALSE             <span style="color: #BB0000;">NA</span>                      San Marino            unabhängiger Sta… 2014-05-25  <span style="text-decoration: underline;">2</span>014     5    25 Aufhebu…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 27 more variables: question_type_de &lt;chr&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   electorate_abroad &lt;int&gt;, polling_cards &lt;int&gt;, votes_total &lt;int&gt;, votes_empty &lt;int&gt;, votes_void &lt;int&gt;, votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   votes_yes &lt;int&gt;, votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;, votes_proposal_yes &lt;int&gt;, votes_proposal_no &lt;int&gt;, votes_proposal_invalid &lt;int&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   votes_counter_proposal_yes &lt;int&gt;, votes_counter_proposal_no &lt;int&gt;, votes_counter_proposal_invalid &lt;int&gt;, votes_option_2 &lt;int&gt;, files &lt;list&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   remarks &lt;list&gt;, sources &lt;list&gt;, ids_sudd_simultaneous &lt;list&gt;, date_last_edited &lt;date&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

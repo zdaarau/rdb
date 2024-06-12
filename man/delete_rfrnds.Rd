@@ -22,9 +22,13 @@ Deletes \code{data} from the RDB's \code{referendums} table.
 }
 \seealso{
 Other administration functions:
-\code{\link{config_nocodb}()},
+\code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
+\code{\link{create_nocodb_tbls}()},
 \code{\link{dm}()},
+\code{\link{notify_postgrest}()},
+\code{\link{reset_nocodb}()},
+\code{\link{reset_rdb}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},

@@ -39,6 +39,7 @@ Imports:
     pal (>= 0.0.9101),
     pkgpins (>= 0.8.0.9000),
     purrr (>= 1.0.0),
+    readr (>= 2.1.5),
     rlang (>= 1.0.1),
     RPostgres (>= 1.4.6),
     rvest (>= 1.0.1),
@@ -73,7 +74,8 @@ Suggests:
     viridisLite (>= 0.4.2),
     withr (>= 2.5.0),
     xfun (>= 0.23),
-    yay (>= 0.0.9013)
+    yay (>= 0.0.9013),
+    yesno (>= 0.1.2)
 VignetteBuilder: 
     knitr
 Remotes:

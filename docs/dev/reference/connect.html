@@ -11,7 +11,15 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/rdb.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/codebook.html">RDB codebook</a></li>
-      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="GitLab"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+      </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="GitLab"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul></li>
       </ul></div>
   </div>
 </nav><div class="container template-reference-topic">
@@ -35,12 +43,12 @@
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-host">host<a class="anchor" aria-label="anchor" href="#arg-host"></a></dt>
+<dl><dt id="arg-host">host<a class="anchor" aria-label="anchor" href="#arg-host"></a></dt>
 <dd><p>RDB PostgreSQL (neon.tech) host address. Defaults to a <a href="https://neon.tech/docs/introduction/read-replicas" class="external-link">read replica</a> which has no write access to the database.</p></dd>
 <dt id="arg-user">user<a class="anchor" aria-label="anchor" href="#arg-user"></a></dt>
-<dd><p>RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user <code>r_anon</code>.</p></dd>
+<dd><p>RDB PostgreSQL username for database operations performed via this package. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user <code>r_anon</code>.</p></dd>
 <dt id="arg-password">password<a class="anchor" aria-label="anchor" href="#arg-password"></a></dt>
-<dd><p>Password for the specified RDB PostgreSQL user. Defaults to the password for user <code>r_anon</code>.</p></dd>
+<dd><p>Password for <code>pg_user</code>. Defaults to the password for the read-only user <code>r_anon</code>.</p></dd>
 <dt id="arg-sslmode">sslmode<a class="anchor" aria-label="anchor" href="#arg-sslmode"></a></dt>
 <dd><p>PostgreSQL connection parameter that determines whether or with what priority a secure TLS connection is negotiated with the server. See the
 <a href="https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE" class="external-link">official documentation</a> for more information about the supported
@@ -48,14 +56,18 @@ keywords.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>. This object is used to communicate with the database engine.</p>
+    <p>An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>. This object is used to communicate with the database engine.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other administration functions:
-<code><a href="config_nocodb.html">config_nocodb</a>()</code>,
+<code><a href="config_nocodb_tbls.html">config_nocodb_tbls</a>()</code>,
+<code><a href="create_nocodb_tbls.html">create_nocodb_tbls</a>()</code>,
 <code><a href="delete_rfrnds.html">delete_rfrnds</a>()</code>,
 <code><a href="dm.html">dm</a>()</code>,
+<code><a href="notify_postgrest.html">notify_postgrest</a>()</code>,
+<code><a href="reset_nocodb.html">reset_nocodb</a>()</code>,
+<code><a href="reset_rdb.html">reset_rdb</a>()</code>,
 <code><a href="update_countries.html">update_countries</a>()</code>,
 <code><a href="update_langs.html">update_langs</a>()</code>,
 <code><a href="update_municipalities.html">update_municipalities</a>()</code>,

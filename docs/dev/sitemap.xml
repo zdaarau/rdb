@@ -17,8 +17,9 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/add_world_regions.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/as_ballot_dates.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/assert_vars.html</loc></url>
-<url><loc>https://rdb.rpkg.dev/dev/reference/config_nocodb.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/config_nocodb_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/connect.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/create_nocodb_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/data_codebook.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/data_iso_3166_1.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/data_iso_3166_2.html</loc></url>
@@ -39,8 +40,12 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/list_sudd_titles.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds_per_period.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/notify_postgrest.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_col_metadata.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_has_tbl.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/pg_init_aux_tbls.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/pg_init_db.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/pg_init_main_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_pk.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_del.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_keep.html</loc></url>
@@ -54,9 +59,12 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/prettify_var_names.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rdb-package.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/read_tbl.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/reset_nocodb.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/reset_rdb.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnd_types.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnds_old.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/split_sql_str.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/sudd_rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/tbl_n_rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/tbl_n_rfrnds_per_period.html</loc></url>

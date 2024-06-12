@@ -34,7 +34,18 @@
 <li class="nav-item"><a class="nav-link" href="articles/codebook.html">RDB codebook</a></li>
       </ul>
 <ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
+</form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="GitLab"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
   </div>
@@ -76,34 +87,58 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API authentication token</a> for the <a href="https://admin.rdb.vote/" class="external-link">RDB NocoDB server</a>. Used as default for the <code>*nococdb*()</code> family of functions.</td>
-<td align="left"><code>rdb.nocodb_api_token</code></td>
-<td align="left"><code>R_RDB_NOCODB_API_TOKEN</code></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left">File path to a UTF-8 encoded CSV file containing the columns <code>name</code>, <code>email</code> and <code>password</code> describing additional user accounts to create on the <a href="https://admin.rdb.vote/" class="external-link">RDB NocoDB server</a> via <code>rdb::reset_nocodb()</code>.</td>
-<td align="left"><code>rdb.nocodb_user_account_csv_file</code></td>
-<td align="left"><code>R_RDB_NOCODB_USER_ACCOUNT_CSV_FILE</code></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
 <td align="left">RDB PostgreSQL (neon.tech) host address. Defaults to a <a href="https://neon.tech/docs/introduction/read-replicas" class="external-link">read replica</a> which has no write access to the database.</td>
 <td align="left"><code>rdb.pg_host</code></td>
 <td align="left"><code>R_RDB_PG_HOST</code></td>
 <td align="left"><code>"ep-frosty-flower-a28keh10.eu-central-1.aws.neon.tech"</code></td>
 </tr>
 <tr class="even">
-<td align="left">RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user <code>r_anon</code>.</td>
+<td align="left">RDB PostgreSQL username for database operations performed via this package. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user <code>r_anon</code>.</td>
 <td align="left"><code>rdb.pg_user</code></td>
 <td align="left"><code>R_RDB_PG_USER</code></td>
 <td align="left"><code>"r_anon"</code></td>
 </tr>
 <tr class="odd">
-<td align="left">Password for the specified RDB PostgreSQL user. Defaults to the password for user <code>r_anon</code>.</td>
+<td align="left">Password for <code>pg_user</code>. Defaults to the password for the read-only user <code>r_anon</code>.</td>
 <td align="left"><code>rdb.pg_password</code></td>
 <td align="left"><code>R_RDB_PG_PASSWORD</code></td>
 <td align="left"><code>"WTYUeDtTm0UV4nXzTZ7morHSdM0wQh0p"</code></td>
+</tr>
+<tr class="even">
+<td align="left">File path to a UTF-8 encoded CSV file containing the columns <code>role</code> and <code>password</code> describing additional roles on the RDB PostgreSQL server. Required for <a href="https://rdb.rpkg.dev/reference/pg_init_db.html"><code>rdb::pg_init_db()</code></a> and others.</td>
+<td align="left"><code>rdb.pg_roles_csv_file</code></td>
+<td align="left"><code>R_RDB_PG_ROLES_CSV_FILE</code></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">E-mail address of the <a href="https://admin.rdb.vote/" class="external-link">RDB NocoDB server</a>’s super admin user. Required for <a href="https://rdb.rpkg.dev/reference/reset_nocodb.html"><code>rdb::reset_nocodb()</code></a>.</td>
+<td align="left"><code>rdb.nocodb_email</code></td>
+<td align="left"><code>R_RDB_NOCODB_EMAIL</code></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Password of the <a href="https://admin.rdb.vote/" class="external-link">RDB NocoDB server</a>’s super admin user Required for <a href="https://rdb.rpkg.dev/reference/reset_nocodb.html"><code>rdb::reset_nocodb()</code></a>.</td>
+<td align="left"><code>rdb.nocodb_password</code></td>
+<td align="left"><code>R_RDB_NOCODB_PASSWORD</code></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">File path to a UTF-8 encoded CSV file containing the columns <code>name</code>, <code>email</code> and <code>password</code> describing additional user accounts to create on the <a href="https://admin.rdb.vote/" class="external-link">RDB NocoDB server</a> via <a href="https://rdb.rpkg.dev/reference/reset_nocodb.html"><code>rdb::reset_nocodb()</code></a>.</td>
+<td align="left"><code>rdb.nocodb_user_account_csv_file</code></td>
+<td align="left"><code>R_RDB_NOCODB_USER_ACCOUNT_CSV_FILE</code></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Access key ID of the <code>rdb-attachments</code> Backblaze B2 bucket. Required for <a href="https://rdb.rpkg.dev/reference/reset_nocodb.html"><code>rdb::reset_nocodb()</code></a>.</td>
+<td align="left"><code>rdb.nocodb_b2_access_key</code></td>
+<td align="left"><code>R_RDB_NOCODB_B2_ACCESS_KEY</code></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Access secret of the <code>rdb-attachments</code> Backblaze B2 bucket. Required for <a href="https://rdb.rpkg.dev/reference/reset_nocodb.html"><code>rdb::reset_nocodb()</code></a>.</td>
+<td align="left"><code>rdb.nocodb_b2_access_secret</code></td>
+<td align="left"><code>R_RDB_NOCODB_B2_ACCESS_SECRET</code></td>
+<td align="left"></td>
 </tr>
 <tr class="even">
 <td align="left">Maximal timespan to preserve the package’s <a href="https://pkgpins.rpkg.dev/" class="external-link">pkgpins</a> cache. Cache entries older than this will be deleted upon package loading.</td>

@@ -24,8 +24,13 @@ Delete everything from PostgreSQL table except specified data
 Other PostgreSQL functions
 \code{\link{pg_col_metadata}()},
 \code{\link{pg_has_tbl}()},
+\code{\link{pg_init_aux_tbls}()},
+\code{\link{pg_init_db}()},
+\code{\link{pg_init_main_tbls}()},
 \code{\link{pg_pk}()},
-\code{\link{pg_tbl_del}()}
+\code{\link{pg_tbl_del}()},
+\code{\link{pg_tbl_update}()},
+\code{\link{split_sql_str}()}
 }
 \concept{pg}
 \keyword{internal}

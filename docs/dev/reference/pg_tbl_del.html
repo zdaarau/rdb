@@ -11,7 +11,15 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/rdb.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/codebook.html">RDB codebook</a></li>
-      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="GitLab"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+      </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="GitLab"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul></li>
       </ul></div>
   </div>
 </nav><div class="container template-reference-topic">
@@ -30,7 +38,7 @@
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-tbl">tbl<a class="anchor" aria-label="anchor" href="#arg-tbl"></a></dt>
+<dl><dt id="arg-tbl">tbl<a class="anchor" aria-label="anchor" href="#arg-tbl"></a></dt>
 <dd><p>PostgreSQL database table from which data is to be deleted. A <code><a href="https://dbplyr.tidyverse.org/reference/tbl.src_dbi.html" class="external-link">tbl.src_dbi</a></code> object.</p></dd>
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>Table data to delete. A data frame that must contain the table's primary key column. Additional columns are ignored.</p></dd>
@@ -39,7 +47,7 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>The updated table data as a <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a>, invisibly. Note that newly inserted rows aren't included if the table's primary key column is
+    <p>The updated table data as a <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a>, invisibly. Note that newly inserted rows aren't included if the table's primary key column is
 <code>GENERATED ALWAYS</code>.</p>
     </div>
     <div class="section level2">
@@ -47,8 +55,13 @@
     <div class="dont-index"><p>Other PostgreSQL functions
 <code><a href="pg_col_metadata.html">pg_col_metadata</a>()</code>,
 <code><a href="pg_has_tbl.html">pg_has_tbl</a>()</code>,
+<code><a href="pg_init_aux_tbls.html">pg_init_aux_tbls</a>()</code>,
+<code><a href="pg_init_db.html">pg_init_db</a>()</code>,
+<code><a href="pg_init_main_tbls.html">pg_init_main_tbls</a>()</code>,
 <code><a href="pg_pk.html">pg_pk</a>()</code>,
-<code><a href="pg_tbl_keep.html">pg_tbl_keep</a>()</code></p></div>
+<code><a href="pg_tbl_keep.html">pg_tbl_keep</a>()</code>,
+<code><a href="pg_tbl_update.html">pg_tbl_update</a>()</code>,
+<code><a href="split_sql_str.html">split_sql_str</a>()</code></p></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

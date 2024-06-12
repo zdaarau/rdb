@@ -11,7 +11,15 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/rdb.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/codebook.html">RDB codebook</a></li>
-      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="GitLab"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+      </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://gitlab.com/zdaarau/rpkgs/rdb/" aria-label="GitLab"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul></li>
       </ul></div>
   </div>
 </nav><div class="container template-reference-topic">
@@ -30,7 +38,7 @@
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-sweep">sweep<a class="anchor" aria-label="anchor" href="#arg-sweep"></a></dt>
+<dl><dt id="arg-sweep">sweep<a class="anchor" aria-label="anchor" href="#arg-sweep"></a></dt>
 <dd><p>Whether or not to also sweep the table, i.e. delete rows that are not contained in <code>data</code>.</p></dd>
 <dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
 <dd><p>Database connection to <a href="connect.html">RDB's PostgreSQL DBMS</a>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
@@ -39,15 +47,19 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p><code><a href="data_municipalities.html">data_municipalities</a></code>, invisibly.</p>
+    <p><code><a href="data_municipalities.html">data_municipalities</a></code>, invisibly.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other administration functions:
-<code><a href="config_nocodb.html">config_nocodb</a>()</code>,
+<code><a href="config_nocodb_tbls.html">config_nocodb_tbls</a>()</code>,
 <code><a href="connect.html">connect</a>()</code>,
+<code><a href="create_nocodb_tbls.html">create_nocodb_tbls</a>()</code>,
 <code><a href="delete_rfrnds.html">delete_rfrnds</a>()</code>,
 <code><a href="dm.html">dm</a>()</code>,
+<code><a href="notify_postgrest.html">notify_postgrest</a>()</code>,
+<code><a href="reset_nocodb.html">reset_nocodb</a>()</code>,
+<code><a href="reset_rdb.html">reset_rdb</a>()</code>,
 <code><a href="update_countries.html">update_countries</a>()</code>,
 <code><a href="update_langs.html">update_langs</a>()</code>,
 <code><a href="update_rfrnds.html">update_rfrnds</a>()</code>,

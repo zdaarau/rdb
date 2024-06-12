@@ -14,9 +14,9 @@ connect(
 \arguments{
 \item{host}{RDB PostgreSQL (neon.tech) host address. Defaults to a \href{https://neon.tech/docs/introduction/read-replicas}{read replica} which has no write access to the database.}
 
-\item{user}{RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user \code{r_anon}.}
+\item{user}{RDB PostgreSQL username for database operations performed via this package. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user \code{r_anon}.}
 
-\item{password}{Password for the specified RDB PostgreSQL user. Defaults to the password for user \code{r_anon}.}
+\item{password}{Password for \code{pg_user}. Defaults to the password for the read-only user \code{r_anon}.}
 
 \item{sslmode}{PostgreSQL connection parameter that determines whether or with what priority a secure TLS connection is negotiated with the server. See the
 \href{https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE}{official documentation} for more information about the supported
@@ -35,9 +35,13 @@ con |> DBI::dbListTables()
 }
 \seealso{
 Other administration functions:
-\code{\link{config_nocodb}()},
+\code{\link{config_nocodb_tbls}()},
+\code{\link{create_nocodb_tbls}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
+\code{\link{notify_postgrest}()},
+\code{\link{reset_nocodb}()},
+\code{\link{reset_rdb}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},

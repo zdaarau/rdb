@@ -5,7 +5,7 @@
 \alias{pkg_config}
 \title{rdb package configuration metadata}
 \format{
-A \link[tibble:tbl_df-class]{tibble} with the columns \code{key}, \code{default_value}, \code{default_value_dynamic}, and \code{description}.
+A \link[tibble:tbl_df-class]{tibble} with the columns \code{key}, \code{default_value}, \code{default_value_dynamic}, \code{require}, and \code{description}.
 }
 \usage{
 pkg_config

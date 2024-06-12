@@ -613,27 +613,47 @@ pkg_config <-
   tibble::tibble(key = character(),
                  default_value = list(),
                  default_value_dynamic = character(),
+                 require = logical(),
                  description = character()) |>
-  tibble::add_row(key = "nocodb_api_token",
-                  description = paste0("NocoDB [API authentication token](https://docs.nocodb.com/account-settings/api-tokens/) for the [RDB NocoDB ",
-                                       "server](https://admin.rdb.vote/). Used as default for the `*nococdb*()` family of functions.")) |>
-  tibble::add_row(key = "nocodb_user_account_csv_file",
-                  description = paste0("File path to a UTF-8 encoded CSV file containing the columns `name`, `email` and `password` describing additional user",
-                                       " accounts to create on the [RDB NocoDB server](https://admin.rdb.vote/) via `rdb::reset_nocodb()`.")) |>
   tibble::add_row(key = "pg_host",
                   default_value = list("ep-frosty-flower-a28keh10.eu-central-1.aws.neon.tech"),
                   description = paste0("RDB PostgreSQL (neon.tech) host address. Defaults to a [read ",
-                                       "replica](https://neon.tech/docs/introduction/read-replicas) which has no write access to the database.")) |>
+                                       "replica](https://neon.tech/docs/introduction/read-replicas) which has no write access to the database."),
+                  require = TRUE) |>
   tibble::add_row(key = "pg_user",
                   default_value = list("r_anon"),
-                  description = paste0("RDB PostgreSQL username. To be able to edit the database, the user must have sufficient privileges. Defaults to ",
-                                       "the read-only user `r_anon`.")) |>
+                  description = paste0("RDB PostgreSQL username for database operations performed via this package. To be able to edit the database, the user ",
+                                       "must have sufficient privileges. Defaults to the read-only user `r_anon`."),
+                  require = TRUE) |>
   tibble::add_row(key = "pg_password",
                   default_value = list("WTYUeDtTm0UV4nXzTZ7morHSdM0wQh0p"),
-                  description = "Password for the specified RDB PostgreSQL user. Defaults to the password for user `r_anon`.") |>
+                  description = "Password for `pg_user`. Defaults to the password for the read-only user `r_anon`.",
+                  require = TRUE) |>
+  tibble::add_row(key = "pg_roles_csv_file",
+                  description = paste0("File path to a UTF-8 encoded CSV file containing the columns `role` and `password` describing additional roles on the ",
+                                       "RDB PostgreSQL server. Required for [rdb::pg_init_db()] and others."),
+                  require = TRUE) |>
+  tibble::add_row(key = "nocodb_email",
+                  description = "E-mail address of the [RDB NocoDB server](https://admin.rdb.vote/)'s super admin user. Required for [rdb::reset_nocodb()].",
+                  require = TRUE) |>
+  tibble::add_row(key = "nocodb_password",
+                  description = "Password of the [RDB NocoDB server](https://admin.rdb.vote/)'s super admin user Required for [rdb::reset_nocodb()].",
+                  require = TRUE) |>
+  tibble::add_row(key = "nocodb_user_account_csv_file",
+                  description = paste0("File path to a UTF-8 encoded CSV file containing the columns `name`, `email` and `password` describing additional user",
+                                       " accounts to create on the [RDB NocoDB server](https://admin.rdb.vote/) via ",
+                                       "[rdb::reset_nocodb()]."),
+                  require = FALSE) |>
+  tibble::add_row(key = "nocodb_b2_access_key",
+                  description = "Access key ID of the `rdb-attachments` Backblaze B2 bucket. Required for [rdb::reset_nocodb()].",
+                  require = TRUE) |>
+  tibble::add_row(key = "nocodb_b2_access_secret",
+                  description = "Access secret of the `rdb-attachments` Backblaze B2 bucket. Required for [rdb::reset_nocodb()].",
+                  require = TRUE) |>
   tibble::add_row(key = "global_max_cache_age",
                   default_value = list("30 days"),
-                  description = pkgsnip::md_snip("opt_global_max_cache_age"))
+                  description = pkgsnip::md_snip("opt_global_max_cache_age"),
+                  require = TRUE)
 ```
 
 ## `rfrnd_cols_order`
