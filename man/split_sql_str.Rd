@@ -18,7 +18,7 @@ A list of \code{\link[DBI:SQL]{DBI::SQL}} objects.
 }
 \description{
 Splits a string of SQL into individual SQL statements and interpolates them using \code{\link[DBI:sqlInterpolate]{DBI::sqlInterpolate()}}. Useful to prepare the contents of an \code{.sql} script
-to be able to feed it to \code{\link[DBI:dbSendStatement]{DBI::dbSendStatement()}} (which only accepts an atomic statement).
+to be able to feed it to \code{\link[DBI:dbSendStatement]{DBI::dbSendStatement()}} (which only accepts a single statement per invocation).
 }
 \seealso{
 Other PostgreSQL functions

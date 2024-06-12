@@ -1334,7 +1334,7 @@ NOTES:
 #' Split SQL string into statements
 #'
 #' Splits a string of SQL into individual SQL statements and interpolates them using [DBI::sqlInterpolate()]. Useful to prepare the contents of an `.sql` script
-#' to be able to feed it to [DBI::dbSendStatement()] (which only accepts an atomic statement).
+#' to be able to feed it to [DBI::dbSendStatement()] (which only accepts a single statement per invocation).
 #'
 #' @param .text SQL statements to split as a character scalar.
 #' @param .connection Database connection as returned by [connect()]. `r pkgsnip::param_lbl("dbi_connection")`
@@ -1396,9 +1396,9 @@ split_sql_str <- function(.text,
   vars <- rlang::list2(...)
   
   purrr::map(result,
-             # NOTE: `DBI::sqlInterpolate()` errors when surplus vars are provided
              \(x) {
                
+               # NOTE: `DBI::sqlInterpolate()` errors when surplus vars are provided
                vars_present <-
                  x |>
                  stringr::str_extract_all(pattern = "(?<=\\?)[[:alpha:]_]\\w+") |>

@@ -1,25 +1,25 @@
 /*
 
-  Initialize auxiliary tables
+# Initialize auxiliary tables
 
-   # NOTES:
+## NOTES
 
-   - Column names equal to [reserved PostgreSQL keywords](https://www.postgresql.org/docs/current/sql-keywords-appendix.html) are preventively quoted.
+- Column names equal to [reserved PostgreSQL keywords](https://www.postgresql.org/docs/current/sql-keywords-appendix.html) are preventively quoted.
 
-   - The columns `created_at` and `updated_at` must come last for NocoDB to be hidden as "system fields" until
-     [nocodb/nocodb#6476](https://github.com/nocodb/nocodb/issues/6476) has been resolved.
+- The columns `created_at` and `updated_at` must come last for NocoDB to be hidden as "system fields" until
+  [nocodb/nocodb#6476](https://github.com/nocodb/nocodb/issues/6476) has been resolved.
 
-   - NocoDB by default takes the first non-numeric column name after the primary key as the [display value](https://docs.nocodb.com/fields/display-value), which
-     is used as label for foreign keys in other tables. We have to run our R function `rdb::set_ncdb_display_vals()` once after all tables are created to set
-     the proper display value columns via NocoDB's metadata API.
+- NocoDB by default takes the first non-numeric column name after the primary key as the [display value](https://docs.nocodb.com/fields/display-value), which
+  is used as label for foreign keys in other tables. We have to run our R function `rdb::set_ncdb_display_vals()` once after all tables are created to set
+  the proper display value columns via NocoDB's metadata API.
 
-   # Relevant doc:
+## Relevant doc
 
-   - [CREATE TABLE](https://www.postgresql.org/docs/current/sql-createtable.html)
-   - [Data Types](https://www.postgresql.org/docs/current/datatype.html)
-   - [Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)
-   - [Generated Columns](https://www.postgresql.org/docs/current/ddl-generated-columns.html)
-   - [Executing Dynamic Commands](https://www.postgresql.org/docs/current/plpgsql-statements.html#PLPGSQL-STATEMENTS-EXECUTING-DYN)
+- [CREATE TABLE](https://www.postgresql.org/docs/current/sql-createtable.html)
+- [Data Types](https://www.postgresql.org/docs/current/datatype.html)
+- [Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)
+- [Generated Columns](https://www.postgresql.org/docs/current/ddl-generated-columns.html)
+- [Executing Dynamic Commands](https://www.postgresql.org/docs/current/plpgsql-statements.html#PLPGSQL-STATEMENTS-EXECUTING-DYN)
 
 */
 

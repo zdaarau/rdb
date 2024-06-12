@@ -1,6 +1,11 @@
 /*
 
-# NOTES
+# Initialize database
+
+## NOTES
+
+- The file uses [`DBI::sqlInterpolate()`](https://dbi.r-dbi.org/reference/sqlInterpolate.html)-compatible named placeholders à la `?pw_r_anon` to refer to
+  sensitive information.
 
 - Since Neon offers a *managed* PostgreSQL server, we don't have full permissions when accessing it via `psql`, **regardless of the chosen role**. Certain
   privileges (TODO: what exactly?) do not behave as with a classic PostgreSQL installation.
@@ -23,26 +28,15 @@
   values or add new ones. Removing values is not possible – but we could work around this by converting existing columns of the custom type to type `text`,
   `DROP`ing the custom `ENUM` type, creating a new one and converting the columns back to the new `ENUM` type (I guess; untested!).
 
+- In principle, there's no point in setting a password for PostgreSQL roles that can't login like `readonly` and `readwrite`. But since Neon doesn't support
+  creating roles without a password set, we nevertheless have to define one, altough it will never be used.
 
-# Relevant doc
+## Relevant doc
 
 - [SQL Key Words](https://www.postgresql.org/docs/current/sql-keywords-appendix.html)
-
-
-# SQL Commands
-
-1. Initialize database and users
-
-   # NOTES
-
-   - In principle, there's no point in setting a password for PostgreSQL roles that can't login like `readonly` and `readwrite`. But since Neon doesn't support
-     creating roles without a password set, we nevertheless have to define one, altough it will never be used.
-
-   # Relevant doc:
-
-   - [CREATE ROLE](https://www.postgresql.org/docs/current/sql-createrole.html)
-   - [Database Roles](https://www.postgresql.org/docs/current/user-manag.html)
-   - [Privileges](https://www.postgresql.org/docs/current/ddl-priv.html)
+- [CREATE ROLE](https://www.postgresql.org/docs/current/sql-createrole.html)
+- [Database Roles](https://www.postgresql.org/docs/current/user-manag.html)
+- [Privileges](https://www.postgresql.org/docs/current/ddl-priv.html)
 
 */
 
