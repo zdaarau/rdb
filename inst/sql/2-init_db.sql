@@ -7,25 +7,23 @@
 - The file uses [`DBI::sqlInterpolate()`](https://dbi.r-dbi.org/reference/sqlInterpolate.html)-compatible named placeholders à la `?pw_r_anon` to refer to
   sensitive information.
 
-- Since Neon offers a *managed* PostgreSQL server, we don't have full permissions when accessing it via `psql`, **regardless of the chosen role**. Certain
-  privileges (TODO: what exactly?) do not behave as with a classic PostgreSQL installation.
-
-  Furthermore, the columns `created_by` and `updated_by` are only automatically updated by NocoDB when the corresponding table was created from NocoDB –
-  `created_at/by` und `updated_at/by` columns from self-created tables are handled differently internally (they are also not editable via NocoDB's UI). Since
+- The columns `created_by` and `updated_by` are only automatically updated by NocoDB when the corresponding table was created from NocoDB – `created_at/by` and
+  `updated_at/by` columns from self-created tables are handled differently internally (they are also not editable via NocoDB's UI). Since
   information (user names) only available to NocoDB is necessary to fill `created/updated_by`, we can't update them adequately via a PostgreSQL trigger function
-  alone. Instead, tables for which we want these columns included in, just have to be initially created from NocoDB.
-
-  In sum, we assume that
-
-  1. the user `rdb_admin` has alread been created from the Neon console, CLI or API.
-
-  2. the database (`rdb`) was freshly created from the Neon console, CLI or API with owner set to `rdb_admin`.
-
-  3. the SQL statements below are run from Neon console's *SQL Editor* on database `rdb` (which always uses the database owner role, i.e. `rdb_admin` in this
-     case).
+  alone. Instead, tables for which we want these columns included in, just have to be initially created from NocoDB, e.g. via `rdb::create_nocodb_tbls()`.
 
 - In principle, there's no point in setting a password for PostgreSQL roles that can't login like `readonly` and `readwrite`. But since Neon doesn't support
   creating roles without a password set, we nevertheless have to define one, altough it will never be used.
+
+## Requirements
+
+1. The user `rdb_admin` has alread been created from the Neon console, CLI or API.
+
+2. The database `rdb` was freshly created with owner set to `rdb_admin`, e.g. via `rdb::pg_reset_db()`.
+
+3. Tables for which we want `created_by` and `updated_by` columns included, were initially created from NocoDB, e.g. via `rdb::create_nocodb_tbls()`.
+
+4. The SQL statements below are run on database `rdb` with the owner role `rdb_admin`.
 
 ## Relevant doc
 
