@@ -30,6 +30,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/delete_rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/dm.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/download_file_attachment.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/exec_sql_file.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/ggplot_streamgraph.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/hierarchize_topics.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/hierarchize_topics_fast.html</loc></url>
@@ -42,11 +43,13 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds_per_period.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/notify_postgrest.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_col_metadata.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/pg_drop_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_has_tbl.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_init_aux_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_init_db.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_init_main_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_pk.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/pg_reset_db.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_del.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_keep.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_update.html</loc></url>
@@ -58,6 +61,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/prettify_col_names.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/prettify_var_names.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rdb-package.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/read_sql_file.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/read_tbl.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/reset_nocodb.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/reset_rdb.html</loc></url>

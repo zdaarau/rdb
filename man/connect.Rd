@@ -5,6 +5,7 @@
 \title{Connect to RDB DBMS}
 \usage{
 connect(
+  dbname = pg_db,
   host = pal::pkg_config_val(key = "pg_host", pkg = this_pkg),
   user = pal::pkg_config_val(key = "pg_user", pkg = this_pkg),
   password = pal::pkg_config_val(key = "pg_password", pkg = this_pkg),
@@ -12,6 +13,8 @@ connect(
 )
 }
 \arguments{
+\item{dbname}{Name of the RDB PostgreSQL database. Defaults to \code{"rdb"}.}
+
 \item{host}{RDB PostgreSQL (neon.tech) host address. Defaults to a \href{https://neon.tech/docs/introduction/read-replicas}{read replica} which has no write access to the database.}
 
 \item{user}{RDB PostgreSQL username for database operations performed via this package. To be able to edit the database, the user must have sufficient privileges. Defaults to the read-only user \code{r_anon}.}

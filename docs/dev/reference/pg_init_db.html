@@ -35,13 +35,16 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pg_init_db</span><span class="op">(</span></span>
-<span>  connection <span class="op">=</span> <span class="fu"><a href="connect.html">connect</a></span><span class="op">(</span>user <span class="op">=</span> <span class="st">"rdb_admin"</span>, password <span class="op">=</span> <span class="fu">pg_role_pw</span><span class="op">(</span><span class="st">"rdb_admin"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  connection <span class="op">=</span> <span class="fu"><a href="connect.html">connect</a></span><span class="op">(</span>user <span class="op">=</span> <span class="st">"rdb_admin"</span>, password <span class="op">=</span> <span class="fu">pg_role_pw</span><span class="op">(</span><span class="st">"rdb_admin"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  disconnect <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 <dl><dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
-<dd><p>Database connection to <a href="connect.html">RDB's PostgreSQL DBMS</a>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
+<dd><p>Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
+<dt id="arg-disconnect">disconnect<a class="anchor" aria-label="anchor" href="#arg-disconnect"></a></dt>
+<dd><p>Whether or not to <a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">terminate</a> the database connection when finished.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -50,14 +53,18 @@
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other PostgreSQL functions
+<code><a href="exec_sql_file.html">exec_sql_file</a>()</code>,
 <code><a href="pg_col_metadata.html">pg_col_metadata</a>()</code>,
+<code><a href="pg_drop_tbls.html">pg_drop_tbls</a>()</code>,
 <code><a href="pg_has_tbl.html">pg_has_tbl</a>()</code>,
 <code><a href="pg_init_aux_tbls.html">pg_init_aux_tbls</a>()</code>,
 <code><a href="pg_init_main_tbls.html">pg_init_main_tbls</a>()</code>,
 <code><a href="pg_pk.html">pg_pk</a>()</code>,
+<code><a href="pg_reset_db.html">pg_reset_db</a>()</code>,
 <code><a href="pg_tbl_del.html">pg_tbl_del</a>()</code>,
 <code><a href="pg_tbl_keep.html">pg_tbl_keep</a>()</code>,
 <code><a href="pg_tbl_update.html">pg_tbl_update</a>()</code>,
+<code><a href="read_sql_file.html">read_sql_file</a>()</code>,
 <code><a href="split_sql_str.html">split_sql_str</a>()</code></p></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

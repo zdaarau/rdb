@@ -257,7 +257,7 @@ NOTES:
 # TEMP
 data_iso_3166_2 <-
   rdb:::data_iso_3166_2 |>
-  dplyr::mutate(valid_from = clock::date_parse("0000-01-01"),
+  dplyr::mutate(valid_from = clock::date_parse("0001-01-01"),
                 valid_to = as.Date(NA))
 
 data_iso_3166_2 <-
@@ -476,7 +476,7 @@ derive_subnational_entity_code <- function(id) {
   result
 }
 
-data_municipalities <- swissmuni::snapshots(start_date = "0000-01-01",
+data_municipalities <- swissmuni::snapshots(start_date = "0001-01-01",
                                             end_date = clock::date_today(zone = "UTC"))
 data_municipalities %<>%
   # reduce to only municipalities

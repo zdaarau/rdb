@@ -24,10 +24,6 @@
   3. the SQL statements below are run from Neon console's *SQL Editor* on database `rdb` (which always uses the database owner role, i.e. `rdb_admin` in this
      case).
 
-- Custom `ENUM` types like `"level"` can be modified via [`ALTER TYPE`](https://www.postgresql.org/docs/current/sql-altertype.html), e.g. to add change existing
-  values or add new ones. Removing values is not possible – but we could work around this by converting existing columns of the custom type to type `text`,
-  `DROP`ing the custom `ENUM` type, creating a new one and converting the columns back to the new `ENUM` type (I guess; untested!).
-
 - In principle, there's no point in setting a password for PostgreSQL roles that can't login like `readonly` and `readwrite`. But since Neon doesn't support
   creating roles without a password set, we nevertheless have to define one, altough it will never be used.
 
@@ -212,7 +208,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO noco
 -- Create trigger to notify PostgREST on schema updates, cf. https://postgrest.org/en/stable/references/schema_cache.html#automatic-schema-cache-reloading
 /* COMMENTED OUT since we aren't allowed to create event triggers on Neon, cf. https://discord.com/channels/1176467419317940276/1216517379366846474
 --- watch `CREATE`, `ALTER` and `COMMENT`
-CREATE OR REPLACE FUNCTION pgrst_ddl_watch()
+CREATE OR REPLACE FUNCTION public.pgrst_ddl_watch()
   RETURNS event_trigger
   LANGUAGE plpgsql
   AS $$
@@ -243,7 +239,7 @@ CREATE OR REPLACE FUNCTION pgrst_ddl_watch()
   $$;
 
 --- watch `DROP`
-CREATE OR REPLACE FUNCTION pgrst_drop_watch()
+CREATE OR REPLACE FUNCTION public.pgrst_drop_watch()
   RETURNS event_trigger
   LANGUAGE plpgsql
   AS $$
@@ -273,8 +269,8 @@ CREATE OR REPLACE FUNCTION pgrst_drop_watch()
 
 CREATE EVENT TRIGGER pgrst_ddl_watch
   ON ddl_command_end
-  EXECUTE PROCEDURE pgrst_ddl_watch();
+  EXECUTE PROCEDURE public.pgrst_ddl_watch();
 
 CREATE EVENT TRIGGER pgrst_drop_watch
   ON sql_drop
-  EXECUTE PROCEDURE pgrst_drop_watch();*/
+  EXECUTE PROCEDURE public.pgrst_drop_watch();*/

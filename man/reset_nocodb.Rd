@@ -4,10 +4,12 @@
 \alias{reset_nocodb}
 \title{Reset NocoDB}
 \usage{
-reset_nocodb(hostname = nocodb_hostname, quiet = TRUE)
+reset_nocodb(hostname = nocodb_hostname, ask = TRUE, quiet = TRUE)
 }
 \arguments{
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+
+\item{ask}{Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run \link[=interactive]{interactively}.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }

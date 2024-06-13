@@ -60,7 +60,7 @@
 <li><p><code>"languages"</code> .</p></li>
 </ul></dd>
 <dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
-<dd><p>Database connection to <a href="connect.html">RDB's PostgreSQL DBMS</a>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
+<dd><p>Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
 <dt id="arg-disconnect">disconnect<a class="anchor" aria-label="anchor" href="#arg-disconnect"></a></dt>
 <dd><p>Whether or not to <a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">terminate</a> the database connection when finished.</p></dd>
 </dl></div>
@@ -82,8 +82,20 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">read_tbl</span><span class="op">(</span><span class="st">"countries"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 variables: code &lt;chr&gt;, name &lt;chr&gt;, name_long &lt;chr&gt;, created_at &lt;dttm&gt;, updated_at &lt;dttm&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 281 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    code  name                 name_long                       created_at          updated_at         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> AD    Andorra              Principality of Andorra         2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AE    United Arab Emirates United Arab Emirates            2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AF    Afghanistan          Islamic Republic of Afghanistan 2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AG    Antigua and Barbuda  Antigua and Barbuda             2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AI    Anguilla             Anguilla                        2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AL    Albania              Republic of Albania             2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AM    Armenia              Republic of Armenia             2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AO    Angola               Republic of Angola              2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AQ    Antarctica           Antarctica                      2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AR    Argentina            Argentine Republic              2024-06-13 <span style="color: #949494;">01:05:58</span> 2024-06-13 <span style="color: #949494;">01:05:58</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 271 more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

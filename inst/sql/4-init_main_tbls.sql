@@ -14,6 +14,11 @@
 
 - Column names equal to [reserved PostgreSQL keywords](https://www.postgresql.org/docs/current/sql-keywords-appendix.html) are preventively quoted.
 
+- For columns of type `date` which mustn't be `NULL`, we use `0001-01-01` as default value. This easily allows to distinguish the default value from explicitly
+  set ones (since `0001-01-01` should never actually occur in real data). Note that year 1 is the first AD year and [there is no year
+  0 in PostgreSQL](https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-EXTRACT), nor the [AD
+  calendar](https://en.wikipedia.org/wiki/Year_zero) (but there is [in ISO 8601](https://en.wikipedia.org/wiki/Year_zero#ISO_8601)).
+
 - The columns `created_by` and `updated_by` must be of type `varchar`, the original type assigned by NocoDB, and there mustn't be any column constraints in 
   order for them to keep working as supposed (but `DEFAULT`s are fine). If changed, NocoDB will detect a column type or attribute change during metadata sync
   and stop updating them automatically on insert/update.
@@ -24,6 +29,10 @@
 - NocoDB doesn't handle [PostgreSQL `ENUM` types](https://www.postgresql.org/docs/current/datatype-enum.html) as `SingleSelect` fields
   [yet](https://github.com/nocodb/nocodb/issues/4862), so we do not use them for now. Instead, we use `text` types and manually set the columns to NocoDB's
   virtual `SingleSelect` type and define the set of allowed values.
+
+- Custom `ENUM` types like `"level"` can be modified via [`ALTER TYPE`](https://www.postgresql.org/docs/current/sql-altertype.html), e.g. to change existing
+  values or add new ones. Removing values is not possible – but we could work around this by converting existing columns of the custom type to `text`, `DROP`ing
+  the custom `ENUM` type, creating a new one and converting the columns back to the new `ENUM` type (I guess; untested!).
 
 - NocoDB by default takes the first non-numeric column name after the primary key as the [display value](https://docs.nocodb.com/fields/display-value), which
   is used as label for foreign keys in other tables. We have to run our R function `rdb::set_ncdb_display_vals()` once after all tables are created to set
@@ -95,7 +104,7 @@ CREATE TABLE public.referendum_types (
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
   title                   text NOT NULL,
-  valid_from              date NOT NULL DEFAULT '0000-01-01',
+  valid_from              date NOT NULL DEFAULT '0001-01-01',
   valid_to                date,
   created_by              varchar DEFAULT CURRENT_USER,
   updated_by              varchar DEFAULT CURRENT_USER,
@@ -108,14 +117,14 @@ CREATE TABLE public.referendum_types (
 CREATE TABLE public.legal_norms (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   country_code            text NOT NULL REFERENCES public.countries ON UPDATE CASCADE,
-  "level"                 text NOT NULL,
+  "level"                 text NOT NULL CHECK ("level" IN ('national', 'subnational', 'municipal')),
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
   title                   text NOT NULL,
   hierarchy_level         text NOT NULL,
   legal_text              text NOT NULL,
   url                     text NOT NULL,
-  valid_from              date NOT NULL DEFAULT '0000-01-01',
+  valid_from              date NOT NULL DEFAULT '0001-01-01',
   valid_to                date,
   created_by              varchar DEFAULT CURRENT_USER,
   updated_by              varchar DEFAULT CURRENT_USER,
@@ -138,13 +147,13 @@ CREATE TABLE public.referendum_types_legal_norms (
 
 CREATE TABLE public.referendums (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  display                 text GENERATED ALWAYS AS ("id" || ': ' || COALESCE(municipality_id, subnational_entity_code, country_code) || ' (' || "level" || '), ' || to_char_immutable("date")) STORED,
+  display                 text GENERATED ALWAYS AS ("id" || ': ' || COALESCE(municipality_id, subnational_entity_code, country_code) || ' (' || "level" || ') ' || to_char_immutable("date")) STORED,
   id_sudd                 text,
   id_official             text,
   is_draft                boolean NOT NULL DEFAULT TRUE,
   "date"                  date NOT NULL,
   country_code            text NOT NULL REFERENCES public.countries ON UPDATE CASCADE,
-  "level"                 text NOT NULL,
+  "level"                 text NOT NULL CHECK ("level" IN ('national', 'subnational', 'municipal')),
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
   type                    integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE,

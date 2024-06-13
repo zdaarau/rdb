@@ -811,11 +811,102 @@ pg_has_tbl <- function(tbl_name,
   checkmate::assert_string(schema)
   
   # NOTE: `glue::glue_sql()` wraps interpolated strings in single quotes, which we don't want here
-  result <- glue::glue("SELECT to_regclass('{schema}.{tbl_name}') AS \"tbl\";") |> DBI::dbSendQuery(conn = connection)
-  data <- DBI::dbFetch(result)
-  DBI::dbClearResult(result)
+  glue::glue("SELECT to_regclass('{schema}.{tbl_name}') AS \"tbl\";") |>
+    DBI::dbGetQuery(conn = connection) |>
+    dplyr::pull("tbl") |>
+    is.na() |>
+    magrittr::not()
+}
+
+#' Drop PostgreSQL tables
+#'
+#' Deletes the specified `tbl_names` from a PostgreSQL database.
+#'
+#' @inheritParams rfrnds
+#' @param tbl_names Names of the tables to delete from the PostgreSQL database.
+#'
+#' @return `tbl_names`, invisibly.
+#' @family pg
+#' @keywords internal
+pg_drop_tbls <- function(tbl_names,
+                         connection = connect(user = "rdb_admin",
+                                              password = pg_role_pw("rdb_admin")),
+                         disconnect = TRUE) {
   
-  !is.na(data$tbl)
+  checkmate::assert_character(tbl_names,
+                              any.missing = FALSE)
+  checkmate::assert_flag(disconnect)
+  
+  DBI::dbWithTransaction(conn = connection,
+                         code = {
+                           
+                           DBI::sqlInterpolate(conn = connection,
+                                               sql = paste("DO LANGUAGE plpgsql",
+                                                           "  $$",
+                                                           "  DECLARE",
+                                                           "    t text;",
+                                                           "  BEGIN",
+                                                           "    FOREACH t IN ARRAY ARRAY[?tbl_names]",
+                                                           "    LOOP",
+                                                           "      EXECUTE format('DROP TABLE IF EXISTS %I CASCADE', t);",
+                                                           "    END LOOP;",
+                                                           "  END;",
+                                                           "  $$;",
+                                                           sep = "\n"),
+                                               tbl_names =
+                                                 tbl_names |>
+                                                 DBI::dbQuoteLiteral(conn = connection) |>
+                                                 cli::ansi_collapse(sep2 = ", ",
+                                                                    last = ", ") |>
+                                                 DBI::SQL()) |>
+                             DBI::dbSendStatement(conn = connection) |>
+                             DBI::dbClearResult()
+                         })
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(tbl_names)
+}
+
+#' Reset RDB PostgreSQL database
+#'
+#' Drops and recreates the RDB PostgreSQL database.
+#' 
+#' If the [following error](https://stackoverflow.com/a/71279781/7196903) occurs, try deleting the `rdb` database manually via [Neon
+#' console](https://console.neon.tech/):
+#' 
+#' ```
+#' permission denied to terminate process
+#' DETAIL: Only roles with privileges of the role whose process is being terminated or with privileges of the "pg_signal_backend" role may terminate this (...)
+#' ```
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `NULL`, invisibly.
+#' @family pg
+#' @keywords internal
+pg_reset_db <- function(connection = connect(dbname = "postgres",
+                                             user = "rdb_admin",
+                                             password = pg_role_pw("rdb_admin")),
+                        disconnect = TRUE) {
+  
+  checkmate::assert_flag(disconnect)
+  
+  "sql/1-reset_db.sql" |> 
+    fs::path_package(package = this_pkg) |>
+    read_sql_file(.connection = connection) |>
+    purrr::walk(\(statement) {
+      DBI::dbSendStatement(statement = statement,
+                           conn = connection) |>
+        DBI::dbClearResult()
+    })
+  
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(NULL)
 }
 
 #' Initialize RDB PostgreSQL database
@@ -826,7 +917,8 @@ pg_has_tbl <- function(tbl_name,
 #' @family pg
 #' @keywords internal
 pg_init_db <- function(connection = connect(user = "rdb_admin",
-                                            password = pg_role_pw("rdb_admin"))) {
+                                            password = pg_role_pw("rdb_admin")),
+                       disconnect = TRUE) {
   vars <-
     pal::pkg_config_val(key = "pg_roles_csv_file",
                         pkg = this_pkg) |>
@@ -834,20 +926,12 @@ pg_init_db <- function(connection = connect(user = "rdb_admin",
     structure(.Data = password,
               names = paste0("pw_", role))
   
-  DBI::dbWithTransaction(conn = connection,
-                         code = {
-                           
-                           path_sql <- fs::path_package("sql/init_db.sql",
-                                                        package = this_pkg)
-                           
-                           rlang::inject(expr = read_sql_file(path = path_sql,
-                                                              connection = connection,
-                                                              !!!vars)) |>
-                             purrr::walk(\(statement) {
-                               DBI::dbClearResult(DBI::dbSendStatement(statement = statement,
-                                                                       conn = connection))
-                             })
-                         })
+  "sql/2-init_db.sql" |> 
+    fs::path_package(package = this_pkg) |>
+    exec_sql_file(.connection = connection,
+                  .disconnect = disconnect,
+                  !!!vars)
+  
   invisible(NULL)
 }
 
@@ -859,19 +943,13 @@ pg_init_db <- function(connection = connect(user = "rdb_admin",
 #' @family pg
 #' @keywords internal
 pg_init_aux_tbls <- function(connection = connect(user = "rdb_admin",
-                                                  password = pg_role_pw("rdb_admin"))) {
-  DBI::dbWithTransaction(conn = connection,
-                         code = {
-                           
-                           fs::path_package("sql/init_aux_tbls.sql",
-                                            package = this_pkg) |>
-                             read_sql_file(connection = connection) |>
-                             purrr::walk(\(statement) {
-                               DBI::dbSendStatement(statement = statement,
-                                                    conn = connection) |>
-                                 DBI::dbClearResult()
-                             })
-                         })
+                                                  password = pg_role_pw("rdb_admin")),
+                             disconnect = TRUE) {
+  "sql/3-init_aux_tbls.sql" |>
+    fs::path_package(package = this_pkg) |>
+    exec_sql_file(.connection = connection,
+                  .disconnect = disconnect)
+  
   invisible(NULL)
 }
 
@@ -883,19 +961,13 @@ pg_init_aux_tbls <- function(connection = connect(user = "rdb_admin",
 #' @family pg
 #' @keywords internal
 pg_init_main_tbls <- function(connection = connect(user = "rdb_admin",
-                                                   password = pg_role_pw("rdb_admin"))) {
-  DBI::dbWithTransaction(conn = connection,
-                         code = {
-                           
-                           fs::path_package("sql/init_main_tbls.sql",
-                                            package = this_pkg) |>
-                             read_sql_file(connection = connection) |>
-                             purrr::walk(\(statement) {
-                               DBI::dbSendStatement(statement = statement,
-                                                    conn = connection) |>
-                                 DBI::dbClearResult()
-                             })
-                         })
+                                                   password = pg_role_pw("rdb_admin")),
+                              disconnect = TRUE) {
+  "sql/4-init_main_tbls.sql" |>
+    fs::path_package(package = this_pkg) |>
+    exec_sql_file(.connection = connection,
+                  .disconnect = disconnect)
+  
   invisible(NULL)
 }
 
@@ -1135,15 +1207,60 @@ pg_tbl_update <- function(tbl,
   result
 }
 
-read_sql_file <- function(path,
-                          connection = connect(),
+#' Executes SQL script
+#'
+#' Reads an SQL script using [read_sql_file()] and executes it as an atomic SQL transaction using [DBI::dbWithTransaction()].
+#'
+#' @inheritParams read_sql_file
+#'
+#' @return `path`, invisibly.
+#' @family pg
+#' @keywords internal
+exec_sql_file <- function(.path,
+                          .connection = connect(),
+                          .disconnect = TRUE,
+                          ...) {
+  
+  checkmate::assert_flag(.disconnect)
+  
+  DBI::dbWithTransaction(conn = .connection,
+                         code = {
+                           
+                           read_sql_file(.path = .path,
+                                         .connection = .connection,
+                                         ...) |>
+                             purrr::walk(\(statement) {
+                               DBI::dbSendStatement(statement = statement,
+                                                    conn = .connection) |>
+                                 DBI::dbClearResult()
+                             })
+                         })
+  if (.disconnect) {
+    DBI::dbDisconnect(conn = .connection)
+  }
+  
+  invisible(.path)
+}
+
+#' Read SQL script as statements
+#'
+#' Reads in an SQL script and returns it as individual interpolated SQL statements using [split_sql_str()].
+#'
+#' @inheritParams split_sql_str
+#' @param .path Path to a file containing SQL statements.
+#'
+#' @inherit split_sql_str return
+#' @family pg
+#' @keywords internal
+read_sql_file <- function(.path,
+                          .connection = connect(),
                           ...) {
   
   rlang::check_installed("brio",
                          reason = pal::reason_pkg_required())
-  path |>
-    brio::read_file() |>
-    split_sql_str(.connection = connection,
+  
+  brio::read_file(path = .path) |>
+    split_sql_str(.connection = .connection,
                   ...)
 }
 
@@ -1154,7 +1271,8 @@ read_sql_file <- function(path,
 #'
 #' @param .text SQL statements to split as a character scalar.
 #' @param .connection Database connection as returned by [connect()]. `r pkgsnip::param_lbl("dbi_connection")`
-#' @param ... Further (named) arguments used as temporary variables available for substitution while interpolating `.text` via [DBI::sqlInterpolate()].
+#' @param ... Further (named) arguments used as temporary variables available for substitution while interpolating the SQL statements via
+#'   [DBI::sqlInterpolate()].
 #'
 #' @return A list of [`DBI::SQL`][DBI::SQL] objects.
 #' @family pg
@@ -1206,6 +1324,12 @@ split_sql_str <- function(.text,
     }
   }
   
+  # handle single-part case (`n_parts = 0`, i.e. for loop above evaded)
+  if (n_parts == 0L) {
+    result <- unlist(parts)
+  }
+  
+  
   # remove empty els
   result %<>% magrittr::extract(. != "")
   
@@ -1219,7 +1343,8 @@ split_sql_str <- function(.text,
                  x |>
                  stringr::str_extract_all(pattern = "(?<=\\?)[[:alpha:]_]\\w+") |>
                  unlist() |>
-                 intersect(names(vars)) |>
+                 intersect(names(vars)) %||%
+                 character() |>
                  purrr::keep_at(x = vars,
                                 at = _)
                
@@ -1775,7 +1900,9 @@ color_rdb_main <- "#3f4eff"
 date_backup_rdb <- pal::path_mod_time("data-raw/backups/rdb.rds") |> clock::as_date()
 
 nocodb_hostname <- "admin.rdb.vote"
+nocodb_hostname_testing <- "admin-testing.rdb.vote"
 nocodb_base_title <- "Main"
+nocodb_data_src_alias <- "RDB"
 
 nocodb_col_metadata <- tibble::tribble(
   ~tbl_name,     ~col_name,     ~uidt,         ~meta.richMode,
@@ -1823,7 +1950,7 @@ tbl_metadata <- tibble::tribble(
   "legal_norms",                  TRUE,         "#33cc33",      "title",                   "\U0001F4DC",
   "referendum_types",             TRUE,         "#33cc33",      "title",                   "\U0001F3DB",
   "referendum_types_legal_norms", TRUE,         "#85e085",      NA_character_,             NA_character_,
-  "referendums",                  TRUE,         color_rdb_main, "id",                      "\U0001F5F3",
+  "referendums",                  TRUE,         color_rdb_main, "display",                 "\U0001F5F3",
   "referendum_titles",            TRUE,         "#6673ff",      "title",                   "\U0001F4D5",
   "referendum_questions",         TRUE,         "#6673ff",      "question",                "\u2753",
   "referendum_positions",         TRUE,         "#6673ff",      "actor",                   "\U0001F4E3",
@@ -1925,7 +2052,7 @@ sub_var_names_fms <- purrr::imap(sub_var_names,
 #'
 #' Downloads the referendum data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
 #'
-#' @param connection Database connection to [RDB's PostgreSQL DBMS][connect]. `r pkgsnip::param_lbl("dbi_connection")`
+#' @param connection Database connection to a PostgreSQL DBMS as returned by [connect()]. `r pkgsnip::param_lbl("dbi_connection")`
 #' @param disconnect Whether or not to [terminate][DBI::dbDisconnect] the database connection when finished.
 #' @param incl_drafts Whether or not to include database entries with _draft_ status.
 #' @param use_cache `r pkgsnip::param_lbl("use_cache")`
@@ -2193,10 +2320,7 @@ validate_rfrnds <- function(data,
   checkmate::assert_flag(check_id_sudd_prefix)
   
   # check columns
-  status_msg <- "Checking basic column validity..."
-  cli_progress_id <- cli::cli_progress_step(msg = status_msg,
-                                            msg_done = paste(status_msg, "done"),
-                                            msg_failed = paste(status_msg, "failed"))
+  cli_progress_id <- pal::cli_progress_step_quick(msg = "Checking basic column validity")
   
   assert_cols_valid(data = data,
                     type = "validate",
@@ -2206,10 +2330,7 @@ validate_rfrnds <- function(data,
   # check applicability constraints
   if (check_applicability_constraint) {
     
-    status_msg <- "Asserting applicability constraints..."
-    cli::cli_progress_step(msg = status_msg,
-                           msg_done = paste(status_msg, "done"),
-                           msg_failed = paste(status_msg, "failed"))
+    pal::cli_progress_step_quick(msg = "Asserting applicability constraints")
     
     var_names_violated <-
       data_codebook %>%
@@ -2268,10 +2389,7 @@ validate_rfrnds <- function(data,
   # check `id_sudd` prefix if requested
   if (check_id_sudd_prefix) {
     
-    status_msg <- "Validating `id_sudd` prefixes..."
-    cli::cli_progress_step(msg = status_msg,
-                           msg_done = paste(status_msg, "done"),
-                           msg_failed = paste(status_msg, "failed"))
+    pal::cli_progress_step_quick(msg = "Validating {.var id_sudd} prefixes")
     
     if (!all(c("country_code", "id_sudd") %in% colnames(data))) {
       cli::cli_progress_done(result = "failed")
@@ -4474,6 +4592,7 @@ tbl_n_rfrnds_per_period <- function(data,
 #'
 #' Connects to RDB's database management system, a PostgreSQL server managed by [neon.tech](https://neon.tech/).
 #'
+#' @param dbname Name of the RDB PostgreSQL database. Defaults to `r pal::as_md_vals(pg_db)`.
 #' @param host `r pkg_config |> dplyr::filter(key == "pg_host") |> dplyr::pull(description)`
 #' @param user `r pkg_config |> dplyr::filter(key == "pg_user") |> dplyr::pull(description)`
 #' @param password `r pkg_config |> dplyr::filter(key == "pg_password") |> dplyr::pull(description)`
@@ -4489,7 +4608,8 @@ tbl_n_rfrnds_per_period <- function(data,
 #' con <- rdb::connect()
 #' 
 #' con |> DBI::dbListTables()
-connect <- function(host = pal::pkg_config_val(key = "pg_host",
+connect <- function(dbname = pg_db,
+                    host = pal::pkg_config_val(key = "pg_host",
                                                pkg = this_pkg),
                     user = pal::pkg_config_val(key = "pg_user",
                                                pkg = this_pkg),
@@ -4498,13 +4618,13 @@ connect <- function(host = pal::pkg_config_val(key = "pg_host",
                     sslmode = "verify-full") {
   
   DBI::dbConnect(drv = RPostgres::Postgres(),
-                 dbname = pg_db,
+                 dbname = dbname,
                  host = host,
                  port = pg_port,
                  user = user,
                  password = password,
                  sslmode = sslmode,
-                 sslrootcert = fs::path_package(package = "rdb",
+                 sslrootcert = fs::path_package(package = this_pkg,
                                                 "certs/ISRG_Root_X1.crt"))
 }
 
@@ -4770,62 +4890,181 @@ update_tbl <- function(data,
 #' Resets the whole RDB PostgreSQL database including all RDB PostgreSQL tables and the RDB NocoDB server.
 #'
 #' @inheritParams nocodb::update_app_settings
-#' @inheritParams pg_init_db
-#' @param init_db Whether or not to first initialize the RDB PostgreSQL database using [pg_init_db()].
+#' @inheritParams rfrnds
+#' @param hostname_nocodb NocoDB server hostname. A character scalar.
+#' @param hostname_pg PostgreSQL server hostname. A character scalar.
+#' @param reset_db Whether or not to first fully recreate the RDB PostgreSQL database using [pg_reset_db()] and [pg_init_db()]. If `FALSE`, only the RDB
+#'   PostgreSQL tables are recreated.
+#' @param ask Whether or not to ask for confirmation before proceeding. Only relevant if run [interactively][interactive].
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `nocodb_hostname`, invisibly.
 #' @family admin
 #' @family nocodb
 #' @export
-reset_rdb <- function(hostname = nocodb_hostname,
-                      connection = connect(),
-                      init_db = FALSE,
+reset_rdb <- function(hostname_nocodb = nocodb_hostname,
+                      hostname_pg = pal::pkg_config_val(key = "pg_host",
+                                                        pkg = this_pkg),
+                      reset_db = FALSE,
+                      ask = TRUE,
+                      disconnect = TRUE,
                       quiet = FALSE) {
   
-  checkmate::assert_flag(init_db)
+  checkmate::assert_flag(reset_db)
+  checkmate::assert_flag(ask)
+  checkmate::assert_flag(disconnect)
   checkmate::assert_flag(quiet)
   
-  if (init_db) {
-    if (!quiet) {
-      pal::cli_progress_step_quick("Initializing PostgreSQL database")
+  # if run interactively, ask for confirmation before continuing
+  if (ask && interactive()) {
+    cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely resets the RDB PostgreSQL ",
+                                  ifelse(reset_db,
+                                         "database including all ",
+                                         ""),
+                                  "tables and the RDB NocoDB server {.field {hostname_nocodb}}. This results in loss of all existing PostgreSQL data as well ",
+                                  "as NocoDB-specific metadata (comments, audit logs etc.).\n\n"))
+    if (!yesno::yesno2("Are you sure you want to continue?")) {
+      return(invisible(hostname_nocodb))
     }
-    pg_init_db(connection = connection)
+  }
+  
+  email <- pal::pkg_config_val(key = "nocodb_email",
+                               pkg = this_pkg)
+  password <- pal::pkg_config_val(key = "nocodb_password",
+                                  pkg = this_pkg)
+  
+  # NOTE: we can only establish a reusable `connection` *after* possible DB deletion
+  if (reset_db) {
+    
+    if (!quiet) {
+      pal::cli_progress_step_quick("Recreating PostgreSQL database")
+    }
+    pg_reset_db(connection = connect(dbname = "postgres",
+                                     host = hostname_pg,
+                                     user = "rdb_admin",
+                                     password = pg_role_pw("rdb_admin")),
+                disconnect = TRUE)
+    connection <- connect(host = hostname_pg,
+                          user = "rdb_admin",
+                          password = pg_role_pw("rdb_admin"))
+    pg_init_db(connection = connection,
+               disconnect = FALSE)
+  } else {
+    
+    if (!quiet) {
+      pal::cli_progress_step_quick("Dropping existing PostgreSQL tables")
+    }
+    connection <- connect(host = hostname_pg,
+                          user = "rdb_admin",
+                          password = pg_role_pw("rdb_admin"))
+    pg_drop_tbls(tbl_names = tbl_metadata$name,
+                 connection = connection,
+                 disconnect = FALSE)
   }
   
   if (!quiet) {
     pal::cli_progress_step_quick("Resetting NocoDB base")
   }
-  reset_nocodb(hostname = hostname,
+  reset_nocodb(hostname = hostname_nocodb,
+               ask = FALSE,
                quiet = TRUE)
-  
-  if (!quiet) {
-    pal::cli_progress_step_quick("Initializing auxiliary PostgreSQL tables")
-  }
-  pg_init_aux_tbls(connection = connection)
   
   if (!quiet) {
     pal::cli_progress_step_quick("Temporarily creating tables with {.var created_by} and {.var updated_by} columns via NocoDB")
   }
-  create_nocodb_tbls(hostname = hostname)
+  Sys.sleep(1)
+  create_nocodb_tbls(hostname = hostname_nocodb)
+  
+  if (!quiet) {
+    pal::cli_progress_step_quick("Initializing auxiliary PostgreSQL tables")
+  }
+  pg_init_aux_tbls(connection = connection,
+                   disconnect = FALSE)
   
   if (!quiet) {
     pal::cli_progress_step_quick("Initializing main PostgreSQL tables")
   }
-  pg_init_main_tbls(connection = connection)
+  pg_init_main_tbls(connection = connection,
+                    disconnect = FALSE)
+  
+  if (!quiet) {
+    pal::cli_progress_step_quick("Synchronizing NocoDB data source with external PostgreSQL schema")
+  }
+  
+  Sys.sleep(1)
+  # NOTE: we can only reuse NocoDB IDs *after* base reset above
+  id_base <- nocodb::base_id(title = nocodb_base_title,
+                             hostname = hostname_nocodb,
+                             email = email,
+                             password = password)
+  id_data_src <- nocodb::data_src_id(alias = nocodb_data_src_alias,
+                                     id_base = id_base,
+                                     hostname = hostname_nocodb,
+                                     email = email,
+                                     password = password)
+  
+  nocodb::sync_data_src(id_data_src = id_data_src,
+                        id_base = id_base,
+                        hostname = hostname_nocodb,
+                        email = email,
+                        password = password)
+  
+  # wait up to `n_wait` seconds for schema sync to finish
+  n_wait <- 30L
+  
+  for (i in pal::safe_seq_len(n_wait)) {
+    # trigger resync every 7s
+    if (i %% 7L == 0L) {
+      nocodb::sync_data_src(id_data_src = id_data_src,
+                            id_base = id_base,
+                            hostname = hostname_nocodb,
+                            email = email,
+                            password = password)
+    }
+    Sys.sleep(1)
+    # continue if sync has finished
+    if (!nocodb::has_data_src_diff(id_data_src = id_data_src,
+                                   id_base = id_base,
+                                   hostname = hostname_nocodb,
+                                   email = email,
+                                   password = password)) {
+      break
+    }
+    # abort if not finished within max wait time
+    if (i == n_wait) {
+      cli::cli_abort("NocoDB data source schema sync hasn't finished/succeeded within {n_wait}s. Entering debugging.")
+    }
+  }
   
   if (!quiet) {
     pal::cli_progress_step_quick("Configuring NocoDB tables")
   }
-  config_nocodb_tbls(hostname = hostname,
-                     quiet = TRUE)
+  config_nocodb_tbls(hostname = hostname_nocodb,
+                     quiet = quiet)
   
   if (!quiet) {
-    pal::cli_progress_step_quick("Notify PostgREST server about schema changes")
+    pal::cli_progress_step_quick("Populating auxiliary PostgreSQL tables")
   }
-  notify_postgrest(connection = connection)
+  update_countries(connection = connection,
+                   disconnect = FALSE)
+  update_subnational_entities(connection = connection,
+                              disconnect = FALSE)
+  update_municipalities(connection = connection,
+                        disconnect = FALSE)
+  update_langs(connection = connection,
+               disconnect = FALSE)
   
-  invisible(nocodb_hostname)
+  if (!quiet) {
+    pal::cli_progress_step_quick("Notifying PostgREST server about schema changes")
+  }
+  notify_postgrest(connection = connection,
+                   disconnect = FALSE)
+  
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(hostname_nocodb)
 }
 
 #' Notify RDB PostgREST about schema changes
@@ -4838,11 +5077,18 @@ reset_rdb <- function(hostname = nocodb_hostname,
 #' @return `NULL`, invisibly.
 #' @family admin
 #' @keywords internal
-notify_postgrest <- function(connection = connect()) {
+notify_postgrest <- function(connection = connect(),
+                             disconnect = TRUE) {
+  
+  checkmate::assert_flag(disconnect)
   
   DBI::dbWithTransaction(conn = connection,
                          code = DBI::dbClearResult(DBI::dbSendStatement(statement = DBI::SQL("NOTIFY pgrst, 'reload schema';"),
                                                                         conn = connection)))
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
   invisible(NULL)
 }
 
@@ -4868,7 +5114,7 @@ create_nocodb_tbls <- function(hostname = nocodb_hostname) {
                              hostname = hostname,
                              email = email,
                              password = password)
-  id_data_src <- nocodb::data_src_id(alias = "RDB",
+  id_data_src <- nocodb::data_src_id(alias = nocodb_data_src_alias,
                                      id_base = id_base,
                                      hostname = hostname,
                                      email = email,
@@ -4878,17 +5124,16 @@ create_nocodb_tbls <- function(hostname = nocodb_hostname) {
     dplyr::filter(has_by_cols) |>
     dplyr::pull("name")
   
-  existing_tbl_names <-
+  i_existing_tbl_names <-
     nocodb::tbls(id_base = id_base,
                  hostname = hostname,
                  email = email,
                  password = password) |>
-    dplyr::pull("table_name") |>
-    magrittr::is_in(x = tbl_names) |>
-    which()
+    pal::when(nrow(.) == 0L ~ integer(),
+              ~ which(tbl_names %in% .$table_name))
   
-  if (length(existing_tbl_names) > 0L) {
-    cli::cli_abort("The following tables to be created already exist: {.val {tbl_names[existing_tbl_names]}}")
+  if (length(i_existing_tbl_names) > 0L) {
+    cli::cli_abort("The following tables to be created already exist: {.val {tbl_names[i_existing_tbl_names]}}")
   }
   
   tbl_names |>
@@ -4941,8 +5186,8 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
   data <-
     tbl_metadata |>
     dplyr::rename_with(.cols = starts_with("nocodb_"),
-                       .fn = \(x) stringr::str_remove("^nocodb_"))
-  
+                       .fn = \(x) stringr::str_remove(string = x,
+                                                      pattern = "^nocodb_"))
   nocodb::set_display_vals(data = data,
                            id_base = id_base,
                            hostname = hostname,
@@ -4967,14 +5212,18 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
 #' [audit](https://docs.nocodb.com/records/expand-record/#record-audit) [logs](https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs) etc.).
 #'
 #' @inheritParams nocodb::update_app_settings
+#' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
 #'
 #' @return `hostname`, invisibly.
 #' @family nocodb
 #' @family admin
 #' @keywords internal
 reset_nocodb <- function(hostname = nocodb_hostname,
+                         ask = TRUE,
                          quiet = TRUE) {
   
+  checkmate::assert_flag(ask)
+  checkmate::assert_flag(quiet)
   rlang::check_installed("yesno",
                          reason = pal::reason_pkg_required())
   
@@ -4989,7 +5238,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                                            password = password)$title) {
     
     # if run interactively, ask for confirmation before continuing
-    if (interactive()) {
+    if (ask && interactive()) {
       cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely wipes the existing {.val {nocodb_base_title}} base on the NocoDB server ",
                                     "{.field {hostname}}. This results in loss of all existing NocoDB-specific metadata (comments, audit logs etc.).\n\n"))
       if (!yesno::yesno2("Are you sure you want to continue?")) {
@@ -5016,8 +5265,10 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                         password = password) |>
     purrr::chuck("id")
   
+  Sys.sleep(1)
+  
   # add PGSQL data source
-  nocodb::create_data_src(alias = "RDB",
+  nocodb::create_data_src(alias = nocodb_data_src_alias,
                           type = "pg",
                           connection = list(sslmode = "verify-full",
                                             user = "nocodb",
@@ -5036,6 +5287,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                           hostname = hostname,
                           email = email,
                           password = password)
+  Sys.sleep(1)
   
   # disable default SQLite data source
   nocodb::data_srcs(id_base = base_id,
@@ -5380,25 +5632,21 @@ list_sudd_rfrnds <- function(mode = c("by_date",
                filter[mode == "filter"])
     
     # retrieve and parse data
+    url <- url_sudd("list.php")
+    
     if (!quiet) {
-      status_msg <- "Fetching raw HTML data from {.url sudd.ch}..."
-      cli::cli_progress_step(msg = status_msg,
-                             msg_done = paste(status_msg, "done"),
-                             msg_failed = paste(status_msg, "failed"))
+      pal::cli_progress_step_quick(msg = "Fetching raw HTML data from {.url {url}}")
     }
     
     html <-
       httr::RETRY(verb = "GET",
-                  url = url_sudd("list.php"),
+                  url = url,
                   query = query,
                   times = 3L) %>%
       xml2::read_html()
     
     if (!quiet) {
-      status_msg <- "Parsing and tidying raw HTML data..."
-      cli::cli_progress_step(msg = status_msg,
-                             msg_done = paste(status_msg, "done"),
-                             msg_failed = paste(status_msg, "failed"))
+      pal::cli_progress_step_quick(msg = "Parsing and tidying raw HTML data")
     }
     
     if (mode == "random") {

@@ -40,7 +40,7 @@ update the corresponding database fields with.}
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
 
-\item{connection}{Database connection to \link[=connect]{RDB's PostgreSQL DBMS}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 }
 \value{
 The updated table data as a \link[tibble:tbl_df-class]{tibble}, invisibly. Note that newly inserted rows aren't included if the table's primary key column is
@@ -55,14 +55,18 @@ restriction to avoid accidental insertions.
 }
 \seealso{
 Other PostgreSQL functions
+\code{\link{exec_sql_file}()},
 \code{\link{pg_col_metadata}()},
+\code{\link{pg_drop_tbls}()},
 \code{\link{pg_has_tbl}()},
 \code{\link{pg_init_aux_tbls}()},
 \code{\link{pg_init_db}()},
 \code{\link{pg_init_main_tbls}()},
 \code{\link{pg_pk}()},
+\code{\link{pg_reset_db}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
+\code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}
 }
 \concept{pg}

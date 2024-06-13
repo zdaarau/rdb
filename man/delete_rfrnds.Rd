@@ -8,9 +8,9 @@ delete_rfrnds(data, connection = connect(), disconnect = TRUE)
 }
 \arguments{
 \item{data}{Referendum data to be deleted. A \link[tibble:tbl_df-class]{tibble} that at least must contain the column
-``.}
+\code{id}.}
 
-\item{connection}{Database connection to \link[=connect]{RDB's PostgreSQL DBMS}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }

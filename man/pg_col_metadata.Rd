@@ -11,7 +11,7 @@ pg_col_metadata(tbl_name, schema = pg_schema, connection = connect())
 
 \item{schema}{Schema name. A character scalar.}
 
-\item{connection}{Database connection to \link[=connect]{RDB's PostgreSQL DBMS}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
@@ -21,14 +21,18 @@ Get PostreSQL column metadata
 }
 \seealso{
 Other PostgreSQL functions
+\code{\link{exec_sql_file}()},
+\code{\link{pg_drop_tbls}()},
 \code{\link{pg_has_tbl}()},
 \code{\link{pg_init_aux_tbls}()},
 \code{\link{pg_init_db}()},
 \code{\link{pg_init_main_tbls}()},
 \code{\link{pg_pk}()},
+\code{\link{pg_reset_db}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
 \code{\link{pg_tbl_update}()},
+\code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}
 }
 \concept{pg}

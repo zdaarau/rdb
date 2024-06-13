@@ -5,11 +5,14 @@
 \title{Initialize auxiliary RDB PostgreSQL tables}
 \usage{
 pg_init_aux_tbls(
-  connection = connect(user = "rdb_admin", password = pg_role_pw("rdb_admin"))
+  connection = connect(user = "rdb_admin", password = pg_role_pw("rdb_admin")),
+  disconnect = TRUE
 )
 }
 \arguments{
-\item{connection}{Database connection to \link[=connect]{RDB's PostgreSQL DBMS}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+
+\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
 \code{NULL}, invisibly.
@@ -19,14 +22,18 @@ Initialize auxiliary RDB PostgreSQL tables
 }
 \seealso{
 Other PostgreSQL functions
+\code{\link{exec_sql_file}()},
 \code{\link{pg_col_metadata}()},
+\code{\link{pg_drop_tbls}()},
 \code{\link{pg_has_tbl}()},
 \code{\link{pg_init_db}()},
 \code{\link{pg_init_main_tbls}()},
 \code{\link{pg_pk}()},
+\code{\link{pg_reset_db}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
 \code{\link{pg_tbl_update}()},
+\code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}
 }
 \concept{pg}

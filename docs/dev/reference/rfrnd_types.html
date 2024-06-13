@@ -44,7 +44,7 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 <dl><dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
-<dd><p>Database connection to <a href="connect.html">RDB's PostgreSQL DBMS</a>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
+<dd><p>Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
 <dt id="arg-disconnect">disconnect<a class="anchor" aria-label="anchor" href="#arg-disconnect"></a></dt>
 <dd><p>Whether or not to <a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">terminate</a> the database connection when finished.</p></dd>
 <dt id="arg-use-cache">use_cache<a class="anchor" aria-label="anchor" href="#arg-use-cache"></a></dt>
@@ -71,9 +71,9 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># get all legal bases</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">rfrnd_types</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Failed to prepare query : ERROR:  relation "referendum_types" does not exist</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> LINE 1: SELECT * FROM  "referendum_types"</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>                        ^</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 variables: id &lt;int&gt;, country_code &lt;chr&gt;, level &lt;chr&gt;, subnational_entity_code &lt;chr&gt;, municipality_id &lt;chr&gt;, title &lt;chr&gt;, valid_from &lt;date&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   valid_to &lt;date&gt;, created_by &lt;chr&gt;, updated_by &lt;chr&gt;, created_at &lt;dttm&gt;, updated_at &lt;dttm&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

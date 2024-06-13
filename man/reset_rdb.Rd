@@ -5,18 +5,25 @@
 \title{Reset RDB}
 \usage{
 reset_rdb(
-  hostname = nocodb_hostname,
-  connection = connect(),
-  init_db = FALSE,
+  hostname_nocodb = nocodb_hostname,
+  hostname_pg = pal::pkg_config_val(key = "pg_host", pkg = this_pkg),
+  reset_db = FALSE,
+  ask = TRUE,
+  disconnect = TRUE,
   quiet = FALSE
 )
 }
 \arguments{
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{hostname_nocodb}{NocoDB server hostname. A character scalar.}
 
-\item{connection}{Database connection to \link[=connect]{RDB's PostgreSQL DBMS}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{hostname_pg}{PostgreSQL server hostname. A character scalar.}
 
-\item{init_db}{Whether or not to first initialize the RDB PostgreSQL database using \code{\link[=pg_init_db]{pg_init_db()}}.}
+\item{reset_db}{Whether or not to first fully recreate the RDB PostgreSQL database using \code{\link[=pg_reset_db]{pg_reset_db()}} and \code{\link[=pg_init_db]{pg_init_db()}}. If \code{FALSE}, only the RDB
+PostgreSQL tables are recreated.}
+
+\item{ask}{Whether or not to ask for confirmation before proceeding. Only relevant if run \link[=interactive]{interactively}.}
+
+\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
