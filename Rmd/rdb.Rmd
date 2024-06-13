@@ -6041,7 +6041,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
   }
   
   # create new base
-  base_id <-
+  id_base <-
     nocodb::create_base(title = nocodb_base_title,
                         color = color_rdb_main,
                         show_null_and_empty_in_filter = TRUE,
@@ -6068,21 +6068,21 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                           inflection_column = "none",
                           inflection_table = "none",
                           enabled = TRUE,
-                          id_base = base_id,
+                          id_base = id_base,
                           hostname = hostname,
                           email = email,
                           password = password)
   Sys.sleep(1)
   
   # disable default SQLite data source
-  nocodb::data_srcs(id_base = base_id,
+  nocodb::data_srcs(id_base = id_base,
                     hostname = hostname,
                     email = email,
                     password = password) |>
     dplyr::filter(type == "sqlite3" & is_meta) |>
     purrr::chuck("id") |>
     nocodb::update_data_src(enabled = FALSE,
-                            id_base = base_id,
+                            id_base = id_base,
                             hostname = hostname,
                             email = email,
                             password = password)
@@ -6099,7 +6099,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                             must.include = c("name", "email", "password"),
                             what = "colnames",
                             .var.name = "users_ref")
-    base_users <- nocodb::base_users(id_base = base_id,
+    base_users <- nocodb::base_users(id_base = id_base,
                                      hostname = hostname,
                                      email = email,
                                      password = password)
@@ -6155,7 +6155,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
       purrr::pwalk(\(user_email, user_role, ...) {
         nocodb::update_base_user(user_email = user_email,
                                  role = user_role,
-                                 id_base = base_id,
+                                 id_base = id_base,
                                  hostname = hostname,
                                  email = email,
                                  password = password,
