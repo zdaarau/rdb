@@ -148,8 +148,8 @@ CREATE TABLE public.referendum_types_legal_norms (
 CREATE TABLE public.referendums (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   display                 text GENERATED ALWAYS AS ("id" || ': ' || COALESCE(municipality_id, subnational_entity_code, country_code) || ' (' || "level" || ') ' || to_char_immutable("date")) STORED,
-  id_sudd                 text,
   id_official             text,
+  id_sudd                 text,
   is_draft                boolean NOT NULL DEFAULT TRUE,
   "date"                  date NOT NULL,
   country_code            text NOT NULL REFERENCES public.countries ON UPDATE CASCADE,
