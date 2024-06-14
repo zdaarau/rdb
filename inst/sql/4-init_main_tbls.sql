@@ -162,7 +162,11 @@ CREATE TABLE public.referendums (
   updated_by              varchar DEFAULT CURRENT_USER,
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (updated_at >= created_at)
+  CONSTRAINT referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
+  CONSTRAINT referendums_check_level_and_codes_1 CHECK ("level" = 'national' OR subnational_entity_code IS NOT NULL),
+  CONSTRAINT referendums_check_level_and_codes_2 CHECK ("level" IN ('national', 'subnational') OR municipality_id IS NOT NULL),
+  CONSTRAINT referendums_check_level_and_codes_3 CHECK (subnational_entity_code IS NULL OR "level" IN ('subnational', 'municipal')),
+  CONSTRAINT referendums_check_level_and_codes_4 CHECK (municipality_id IS NULL OR "level" = 'municipal')
 );
 
 -- Create remaining auxiliary tables intended to be updated via NocoDB
