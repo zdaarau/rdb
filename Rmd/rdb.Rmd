@@ -877,16 +877,10 @@ pg_col_metadata <- function(tbl_name,
     glue::glue_sql(.con = connection,
                    "SELECT * FROM information_schema.columns",
                    "  WHERE table_schema = {schema} AND table_name = {tbl_name};") |>
-    DBI::dbSendQuery(conn = connection)
-  
-  data <-
-    result |>
-    DBI::dbFetch() |>
+    DBI::dbGetQuery(conn = connection) |>
     tibble::as_tibble()
   
-  DBI::dbClearResult(result)
-  
-  data |>
+  result |>
     dplyr::rename(generated = is_generated) |>
     dplyr::mutate(dplyr::across(.cols = any_of(c("is_nullable",
                                                  "is_self_referencing",
@@ -1167,16 +1161,13 @@ pg_pk <- function(tbl_name,
                    "    AND pg_attribute.attrelid = pg_class.oid",
                    "    AND pg_attribute.attnum = any(pg_index.indkey)",
                    "    AND indisprimary;") |>
-    DBI::dbSendQuery(conn = connection)
+    DBI::dbGetQuery(conn = connection)
   
-  data <- DBI::dbFetch(result)
-  DBI::dbClearResult(result)
-  
-  if (nrow(data) == 0L) {
+  if (nrow(result) == 0L) {
     cli::cli_abort("Table {.field {schema}.{tbl_name}} has no primary key set.")
   }
   
-  data$column_name
+  result$column_name
 }
 ```
 
