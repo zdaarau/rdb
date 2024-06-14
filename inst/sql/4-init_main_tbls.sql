@@ -111,7 +111,11 @@ CREATE TABLE public.referendum_types (
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT referendum_types_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from),
-  CONSTRAINT referendum_types_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+  CONSTRAINT referendum_types_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
+  CONSTRAINT referendum_types_check_level_and_codes_1 CHECK ("level" = 'national' OR subnational_entity_code IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_2 CHECK ("level" IN ('national', 'subnational') OR municipality_id IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_3 CHECK (subnational_entity_code IS NULL OR "level" IN ('subnational', 'municipal')),
+  CONSTRAINT referendum_types_check_level_and_codes_4 CHECK (municipality_id IS NULL OR "level" = 'municipal')
 );
 
 CREATE TABLE public.legal_norms (
@@ -131,7 +135,11 @@ CREATE TABLE public.legal_norms (
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT legal_norms_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from),
-  CONSTRAINT legal_norms_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+  CONSTRAINT legal_norms_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
+  CONSTRAINT legal_norms_check_level_and_codes_1 CHECK ("level" = 'national' OR subnational_entity_code IS NOT NULL),
+  CONSTRAINT legal_norms_check_level_and_codes_2 CHECK ("level" IN ('national', 'subnational') OR municipality_id IS NOT NULL),
+  CONSTRAINT legal_norms_check_level_and_codes_3 CHECK (subnational_entity_code IS NULL OR "level" IN ('subnational', 'municipal')),
+  CONSTRAINT legal_norms_check_level_and_codes_4 CHECK (municipality_id IS NULL OR "level" = 'municipal')
 );
 
 CREATE TABLE public.referendum_types_legal_norms (
