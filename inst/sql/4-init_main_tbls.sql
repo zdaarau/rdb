@@ -156,7 +156,7 @@ CREATE TABLE public.referendums (
   "level"                 text NOT NULL CHECK ("level" IN ('national', 'subnational', 'municipal')),
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
-  type                    integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE,
+  type_id                 integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE,
   attachments             text,
   created_by              varchar DEFAULT CURRENT_USER,
   updated_by              varchar DEFAULT CURRENT_USER,
@@ -202,8 +202,8 @@ CREATE TABLE public.referendum_questions (
 
 CREATE TABLE public.referendum_positions (
   referendum_id integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
-  actor         text NOT NULL REFERENCES public.actors ON UPDATE CASCADE,
-  "option"      text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
+  actor_label   text NOT NULL REFERENCES public.actors ON UPDATE CASCADE,
+  option_label  text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
   created_by    varchar DEFAULT CURRENT_USER,
   updated_by    varchar DEFAULT CURRENT_USER,
   created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
@@ -214,7 +214,7 @@ CREATE TABLE public.referendum_positions (
 
 CREATE TABLE public.referendum_votes (
   referendum_id integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
-  "option"      text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
+  option_label  text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
   "count"       bigint NOT NULL CHECK ("count" >= 0),
   "source"      text,
   remarks       text,
@@ -229,7 +229,7 @@ CREATE TABLE public.referendum_votes (
 CREATE TABLE public.referendum_sub_votes (
   referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   subnational_entity_code text NOT NULL REFERENCES public.subnational_entities ON UPDATE CASCADE,
-  "option"                text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
+  option_label            text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
   "count"                 bigint NOT NULL CHECK ("count" >= 0),
   "source"                text,
   remarks                 text,
