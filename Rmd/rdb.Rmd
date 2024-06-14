@@ -5679,7 +5679,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   password <- pal::pkg_config_val(key = "nocodb_password",
                                   pkg = this_pkg)
   
-  # NOTE: we can only establish a reusable `connection` *after* possible DB deletion
+  # init PGSQL DB/tbls ----
   if (reset_db) {
     
     if (!quiet) {
@@ -5690,6 +5690,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                                      user = "rdb_admin",
                                      password = pg_role_pw("rdb_admin")),
                 disconnect = TRUE)
+    # NOTE: we can only establish a reusable `connection` *after* possible DB deletion just above
     connection <- connect(host = hostname_pg,
                           user = "rdb_admin",
                           password = pg_role_pw("rdb_admin"))
@@ -5708,6 +5709,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                  disconnect = FALSE)
   }
   
+  # reset NocoDB base ----
   if (!quiet) {
     pal::cli_progress_step_quick("Resetting NocoDB base")
   }
@@ -5715,12 +5717,14 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                ask = FALSE,
                quiet = TRUE)
   
+  # create temp NocoDB tbls ----
   if (!quiet) {
     pal::cli_progress_step_quick("Temporarily creating tables with {.var created_by} and {.var updated_by} columns via NocoDB")
   }
   Sys.sleep(1)
   create_nocodb_tbls(hostname = hostname_nocodb)
   
+  # init PGSQL tbls ----
   if (!quiet) {
     pal::cli_progress_step_quick("Initializing auxiliary PostgreSQL tables")
   }
@@ -5738,6 +5742,8 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   }
   
   Sys.sleep(1)
+  
+  # sync NocoDB data src ----
   # NOTE: we can only reuse NocoDB IDs *after* base reset above
   id_base <- nocodb::base_id(title = nocodb_base_title,
                              hostname = hostname_nocodb,
@@ -5788,6 +5794,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   config_nocodb_tbls(hostname = hostname_nocodb,
                      quiet = quiet)
   
+  # populate PGSQL tbls ----
   if (!quiet) {
     pal::cli_progress_step_quick("Populating auxiliary PostgreSQL tables")
   }
@@ -5800,12 +5807,14 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   update_langs(connection = connection,
                disconnect = FALSE)
   
+  # notify PostgREST ----
   if (!quiet) {
     pal::cli_progress_step_quick("Notifying PostgREST server about schema changes")
   }
   notify_postgrest(connection = connection,
                    disconnect = FALSE)
   
+  # disconnect PGSQL ----
   if (disconnect) {
     DBI::dbDisconnect(conn = connection)
   }
