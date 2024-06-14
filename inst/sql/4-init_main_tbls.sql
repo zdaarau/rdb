@@ -83,7 +83,7 @@ CREATE TABLE public.actors (
   updated_by  varchar DEFAULT CURRENT_USER,
   created_at  timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at  timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (updated_at >= created_at)
+  CONSTRAINT actors_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.options (
@@ -93,7 +93,7 @@ CREATE TABLE public.options (
   updated_by    varchar DEFAULT CURRENT_USER,
   created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (updated_at >= created_at)
+  CONSTRAINT options_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 -- Create main tables intended to be updated via NocoDB
@@ -110,8 +110,8 @@ CREATE TABLE public.referendum_types (
   updated_by              varchar DEFAULT CURRENT_USER,
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (valid_to >= valid_from),
-  CHECK (updated_at >= created_at)
+  CONSTRAINT referendum_types_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from),
+  CONSTRAINT referendum_types_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.legal_norms (
@@ -130,8 +130,8 @@ CREATE TABLE public.legal_norms (
   updated_by              varchar DEFAULT CURRENT_USER,
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (valid_to >= valid_from),
-  CHECK (updated_at >= created_at)
+  CONSTRAINT legal_norms_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from),
+  CONSTRAINT legal_norms_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.referendum_types_legal_norms (
@@ -142,7 +142,7 @@ CREATE TABLE public.referendum_types_legal_norms (
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (referendum_type_id, legal_norm_id),
-  CHECK (updated_at >= created_at)
+  CONSTRAINT referendum_types_legal_norms_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.referendums (
@@ -178,7 +178,7 @@ CREATE TABLE public.referendum_titles (
   created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (referendum_id, language_code),
-  CHECK (updated_at >= created_at)
+  CONSTRAINT referendum_titles_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.referendum_questions (
@@ -193,7 +193,7 @@ CREATE TABLE public.referendum_questions (
   created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (referendum_id, language_code),
-  CHECK (updated_at >= created_at)
+  CONSTRAINT referendum_questions_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.referendum_positions (
@@ -205,7 +205,7 @@ CREATE TABLE public.referendum_positions (
   created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (referendum_id, actor, "option"),
-  CHECK (updated_at >= created_at)
+  CONSTRAINT referendum_positions_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.referendum_votes (
@@ -219,7 +219,7 @@ CREATE TABLE public.referendum_votes (
   created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (referendum_id, option),
-  CHECK (updated_at >= created_at)
+  CONSTRAINT referendum_votes_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.referendum_sub_votes (
@@ -234,7 +234,7 @@ CREATE TABLE public.referendum_sub_votes (
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (referendum_id, subnational_entity_code, option),
-  CHECK (updated_at >= created_at)
+  CONSTRAINT referendum_sub_votes_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 -- Create triggers for `updated_at` columns
