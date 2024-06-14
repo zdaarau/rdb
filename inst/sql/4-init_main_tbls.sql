@@ -48,10 +48,6 @@
 
 */
 
--- Create custom enumerated types
-/* COMMENTED OUT for now as NocoDB doesn't handle Postgres ENUMs gracefully
-CREATE TYPE level AS ENUM ('local', 'subnational', 'national'); */
-
 -- Delete possibly existing tables
 DO LANGUAGE plpgsql
   $$
@@ -74,6 +70,10 @@ DO LANGUAGE plpgsql
     END LOOP;
   END;
   $$;
+
+-- Recreate custom enumerated types
+DROP TYPE IF EXISTS "level" CASCADE;
+CREATE TYPE "level" AS ENUM ('municipal', 'subnational', 'national');
 
 -- Create auxiliary tables intended to be updated via NocoDB
 CREATE TABLE public.actors (
