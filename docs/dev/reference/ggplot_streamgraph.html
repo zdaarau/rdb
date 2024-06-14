@@ -86,27 +86,29 @@ compute the <a href="add_period.html">period column</a>), plus the one(s) specif
     </div>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data_rdb</span> <span class="op">&lt;-</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::rfrnds(quiet = TRUE):</span> unused argument (quiet = TRUE)</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data_rdb</span> <span class="op">&lt;-</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">ggplot_streamgraph</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rdb</span>,</span></span>
 <span class="r-in"><span>                        by <span class="op">=</span> <span class="va">topics_tier_1</span>,</span></span>
 <span class="r-in"><span>                        period <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'data_rdb' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::ggplot_streamgraph(data = data_rdb, by = topics_tier_1,     period = "year"):</span> Can't select columns that don't exist.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `topics_tier_1` doesn't exist.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># you can specify a different color palette</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">ggplot_streamgraph</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_rdb</span>,</span></span>
 <span class="r-in"><span>                        by <span class="op">=</span> <span class="va">topics_tier_1</span>,</span></span>
 <span class="r-in"><span>                        period <span class="op">=</span> <span class="st">"year"</span>,</span></span>
 <span class="r-in"><span>                        color_palette <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="va"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'data_rdb' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::ggplot_streamgraph(data = data_rdb, by = topics_tier_1,     period = "year", color_palette = viridisLite::viridis):</span> Can't select columns that don't exist.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `topics_tier_1` doesn't exist.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># by default, only factor levels which occur in data are included in the legend</span></span></span>
 <span class="r-in"><span><span class="va">data_rdb</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">country_code</span> <span class="op">==</span> <span class="st">"AT"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">ggplot_streamgraph</span><span class="op">(</span>by <span class="op">=</span> <span class="va">topics_tier_1</span>,</span></span>
 <span class="r-in"><span>                          period <span class="op">=</span> <span class="st">"decade"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'data_rdb' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::ggplot_streamgraph(dplyr::filter(data_rdb, country_code ==     "AT"), by = topics_tier_1, period = "decade"):</span> Can't select columns that don't exist.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `topics_tier_1` doesn't exist.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># but you can include *all* factor levels in the legend if you want to</span></span></span>
 <span class="r-in"><span><span class="va">data_rdb</span> <span class="op">|&gt;</span></span></span>
@@ -114,7 +116,8 @@ compute the <a href="add_period.html">period column</a>), plus the one(s) specif
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">ggplot_streamgraph</span><span class="op">(</span>by <span class="op">=</span> <span class="va">topics_tier_1</span>,</span></span>
 <span class="r-in"><span>                          period <span class="op">=</span> <span class="st">"decade"</span>,</span></span>
 <span class="r-in"><span>                          prune_legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'data_rdb' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::ggplot_streamgraph(dplyr::filter(data_rdb, country_code ==     "AT"), by = topics_tier_1, period = "decade", prune_legend = FALSE):</span> Can't select columns that don't exist.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `topics_tier_1` doesn't exist.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

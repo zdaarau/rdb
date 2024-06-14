@@ -99,27 +99,31 @@ at least one column is provided in <code>by</code>.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">tbl_n_rfrnds_per_period</span><span class="op">(</span>period <span class="op">=</span> <span class="st">"decade"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::rfrnds(quiet = TRUE):</span> unused argument (quiet = TRUE)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (side == "top") {    body_rows &lt;- c(grand_summary_section, body_rows)} else {    body_rows &lt;- c(body_rows, grand_summary_section)}:</span> argument is of length zero</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># grouped by a single additional column</span></span></span>
-<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">tbl_n_rfrnds_per_period</span><span class="op">(</span>by <span class="op">=</span> <span class="va">level</span>,</span></span>
 <span class="r-in"><span>                               period <span class="op">=</span> <span class="st">"decade"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::rfrnds(quiet = TRUE):</span> unused argument (quiet = TRUE)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (side == "top") {    body_rows &lt;- c(grand_summary_section, body_rows)} else {    body_rows &lt;- c(body_rows, grand_summary_section)}:</span> argument is of length zero</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># grouped by two addtional columns</span></span></span>
-<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">tbl_n_rfrnds_per_period</span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">level</span>, <span class="va">type</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                               period <span class="op">=</span> <span class="st">"decade"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::rfrnds(quiet = TRUE):</span> unused argument (quiet = TRUE)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (side == "top") {    body_rows &lt;- c(grand_summary_section, body_rows)} else {    body_rows &lt;- c(body_rows, grand_summary_section)}:</span> argument is of length zero</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># count ballot dates instead of referendums</span></span></span>
-<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="as_ballot_dates.html">as_ballot_dates</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">tbl_n_rfrnds_per_period</span><span class="op">(</span>period <span class="op">=</span> <span class="st">"decade"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rdb::rfrnds(quiet = TRUE):</span> unused argument (quiet = TRUE)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (side == "top") {    body_rows &lt;- c(grand_summary_section, body_rows)} else {    body_rows &lt;- c(body_rows, grand_summary_section)}:</span> argument is of length zero</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
