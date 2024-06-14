@@ -1038,6 +1038,34 @@ pg_role_pw <- function(role,
     dplyr::pull("password")
 }
 
+#' Get PostreSQL table constraints
+#'
+#' @inheritParams pg_pk
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family pg
+#' @keywords internal
+pg_tbl_constraints <- function(tbl_name,
+                               schema = pg_schema,
+                               connection = connect()) {
+  
+  checkmate::assert_string(tbl_name)
+  checkmate::assert_string(schema)
+  
+  glue::glue_sql(.con = connection,
+                   "SELECT con.*",               
+                   "  FROM pg_catalog.pg_constraint con",
+                   "    INNER JOIN pg_catalog.pg_class rel",
+                   "      ON rel.oid = con.conrelid",
+                   "    INNER JOIN pg_catalog.pg_namespace nsp",
+                   "      ON nsp.oid = connamespace",
+                   "    WHERE nsp.nspname = {schema}",
+                   "      AND rel.relname = {tbl_name};",
+                   "  ") |>
+    DBI::dbGetQuery(conn = connection) |>
+    tibble::as_tibble()
+}
+
 #' Delete specified data from PostgreSQL table
 #'
 #' @param tbl PostgreSQL database table from which data is to be deleted. A [`tbl.src_dbi`][dbplyr::tbl.src_dbi] object.
