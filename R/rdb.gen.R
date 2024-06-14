@@ -1011,12 +1011,20 @@ pg_pk <- function(tbl_name,
   result$column_name
 }
 
-pg_role_pw <- function(role) {
-  
-  roles <-
-    pal::pkg_config_val(key = "pg_roles_csv_file",
-                        pkg = this_pkg) |>
-    readr::read_csv(col_types = "c")
+#' Get PostgreSQL role password
+#'
+#' Extracts the specified `role`'s password from the CSV file under `path`.
+#'
+#' @param role Role name to return the password for.
+#'
+#' @return `role`'s password as a character scalar.
+#' @family pg
+#' @keywords internal
+pg_role_pw <- function(role,
+                       path = pal::pkg_config_val(key = "pg_roles_csv_file",
+                                                  pkg = this_pkg)) {
+  roles <- readr::read_csv(file = path,
+                           col_types = "c")
   
   checkmate::assert_names(colnames(roles),
                           what = "colnames",
