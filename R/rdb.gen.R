@@ -917,8 +917,8 @@ pg_init_db <- function(connection = connect(user = "rdb_admin",
     pal::pkg_config_val(key = "pg_roles_csv_file",
                         pkg = this_pkg) |>
     readr::read_csv(col_types = "c") %$%
-    structure(.Data = password,
-              names = paste0("pw_", role))
+    magrittr::set_names(x = password,
+                        value = paste0("pw_", role))
   
   "sql/2-init_db.sql" |> 
     fs::path_package(package = this_pkg) |>
@@ -1304,6 +1304,7 @@ read_sql_file <- function(.path,
 #' @return A list of [`DBI::SQL`][DBI::SQL] objects.
 #' @family pg
 #' @keywords internal
+# nolint start: cyclocomp_linter
 split_sql_str <- function(.text,
                           .connection = connect(),
                           ...) {
@@ -1329,7 +1330,7 @@ split_sql_str <- function(.text,
   
   for (i in pal::safe_seq_len(n_parts)) {
     
-    i_middle <- i*2L
+    i_middle <- i * 2L
     n_subparts_before <- length(parts[[i_middle - 1L]])
     n_subparts_after <- length(parts[[i_middle + 1L]])
     
@@ -1380,6 +1381,7 @@ split_sql_str <- function(.text,
                                    .dots = vars_present)
              })
 }
+# nolint end
 
 derive_country_vars <- function(country_code,
                                 date) {
@@ -1718,7 +1720,7 @@ sudd_rfrnd <- function(id_sudd) {
                                 unique = TRUE,
                                 .var.name = "field_names") %>%
     # referendum-option-specific recodings (sequentially numbered `votes_option_#` columns)
-    # TODO: adapt this once we can properly capture more than yes/no answer options, cf. https://gitlab.com/zdaarau/rpkgs/rdb/-/issues/5
+    # TODO: adapt this to new `referendums.option_label` variable that can capture more than yes/no answer options
     purrr::map_at(.at = which(startsWith(., "\u2517\u2501 ")),
                   .f = function(old_name, old_names) paste0("votes_option_", which(old_names == old_name)),
                   old_names = stringr::str_subset(string = .,
@@ -2483,7 +2485,7 @@ validate_rfrnds <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnd(id = "5bbbe26a92a21351232dd73f") |> rdb::assert_vars(vars = "country_code")
+#' rdb::rfrnds() |> rdb::assert_vars(vars = "country_code")
 #' 
 #' try(
 #'   tibble::tibble(country_code = "AN") |> rdb::assert_vars(vars = "country_code")
@@ -2837,7 +2839,7 @@ topics <- function(tiers = 1:3) {
 #' rdb::hierarchize_topics("territorial questions")
 #'
 #' # hierarchize the topics of all Austrian referendums
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   dplyr::filter(country_code == "AT") |>
 #'   dplyr::group_split(id) |>
 #'   purrr::map(rdb::hierarchize_topics)
@@ -2926,15 +2928,8 @@ hierarchize_topics <- function(x) {
 #' @export
 #'
 #' @examples
-#' library(magrittr)
-#'
-#' rdb::rfrnd(id = "5bbbe26a92a21351232dd73f") %$%
-#'   rdb::hierarchize_topics_fast(unlist(topics_tier_1),
-#'                                unlist(topics_tier_2),
-#'                                unlist(topics_tier_3))
-#'
 #' # hierarchize the topics of all Austrian referendums
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   dplyr::filter(country_code == "AT") |>
 #'   dplyr::group_split(id) |>
 #'   purrr::map(~ rdb::hierarchize_topics_fast(unlist(.x$topics_tier_1),
@@ -3052,7 +3047,7 @@ add_former_country_flag <- function(data) {
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::add_country_code_continual() |>
 #'   dplyr::select(id,
 #'                 starts_with("country_"))
@@ -3092,7 +3087,7 @@ add_country_code_continual <- function(data) {
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb:::add_country_code_long() |>
 #'   dplyr::select(id,
 #'                 starts_with("country_"))
@@ -3134,7 +3129,7 @@ add_country_code_long <- function(data) {
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb:::add_country_name() |>
 #'   dplyr::select(id,
 #'                 starts_with("country_"))
@@ -3176,7 +3171,7 @@ add_country_name <- function(data) {
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb:::add_country_name_long() |>
 #'   dplyr::select(id,
 #'                 starts_with("country_name"))
@@ -3224,11 +3219,11 @@ add_country_name_long <- function(data) {
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::add_period() |>
 #'   dplyr::select(id, date, week)
 #'
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::add_period("year") |>
 #'   dplyr::select(id, date, year)
 add_period <- function(data,
@@ -3287,7 +3282,7 @@ add_period <- function(data,
 #'
 #' @examples
 #' # rough turnout numbers
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::add_turnout() |>
 #'   dplyr::select(id,
 #'                 electorate_total,
@@ -3295,7 +3290,7 @@ add_period <- function(data,
 #'                 turnout)
 #'
 #' # strict turnout numbers
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::add_turnout(rough = FALSE) |>
 #'   dplyr::select(id,
 #'                 electorate_total,
@@ -3364,7 +3359,7 @@ add_turnout <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
+#' rdb::rfrnds() |>
 #'   rdb::add_world_regions() |>
 #'   dplyr::select(id,
 #'                 starts_with("country_"),
@@ -3423,7 +3418,7 @@ add_world_regions <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   dplyr::filter(country_code == "CH" & level == "national") |>
 #'   rdb::add_urls() |>
 #'   dplyr::select(id,
@@ -3478,12 +3473,12 @@ add_urls <- function(data,
 #'
 #' @examples
 #' # standard RDB columns are retained as far as possible
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::as_ballot_dates()
 #' 
 #' # non-standard columns must be explicitly specified in order to be retained
 #' data_rdb <-
-#'   rdb::rfrnds(quiet = TRUE) |>
+#'   rdb::rfrnds() |>
 #'     rdb::add_world_regions() |>
 #'     dplyr::mutate(region_custom =
 #'                     factor(x = dplyr::if_else(country_code == "CH",
@@ -3562,7 +3557,7 @@ as_ballot_dates <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::unnest_var(topics_tier_2)
 unnest_var <- function(data,
                        var) {
@@ -3611,11 +3606,11 @@ unnest_var <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::n_rfrnds(by = level)
 #'
 #' # count ballot dates instead of referendums
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::as_ballot_dates() |>
 #'   rdb::n_rfrnds(by = level)
 n_rfrnds <- function(data,
@@ -3670,24 +3665,24 @@ n_rfrnds <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::n_rfrnds_per_period()
 #'
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::n_rfrnds_per_period(by = level)
 #' 
 #' # without filling gaps
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::n_rfrnds_per_period(by = level,
 #'                            fill_gaps = FALSE)
 #'
 #' # per decade and by multiple columns
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::n_rfrnds_per_period(by = c(level, type),
 #'                            period = "decade")
 #'
 #' # count ballot dates instead of referendums
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::as_ballot_dates() |>
 #'   rdb::n_rfrnds_per_period()
 n_rfrnds_per_period <- function(data,
@@ -3777,7 +3772,7 @@ n_rfrnds_per_period <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::prettify_col_names()
 prettify_col_names <- function(data) {
   
@@ -3871,15 +3866,15 @@ plot_rfrnd_share_per_period <- function(data,
 #'
 #' @examples
 #' # count each referendum equally
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::plot_topic_segmentation(method = "per_rfrnd")
 #'
 #' # count each topic lineage equally
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::plot_topic_segmentation(method = "per_topic_lineage")
 #'
 #' # naive count (way faster, but with misleading proportions on tier 2 and 3)
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::plot_topic_segmentation(method = "naive")
 plot_topic_segmentation <- function(data,
                                     method = c("per_rfrnd", "per_topic_lineage", "naive")) {
@@ -4035,7 +4030,7 @@ plot_topic_segmentation <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::plot_topic_share_per_period(period = "decade")
 plot_topic_share_per_period <- function(data,
                                         tier = 1L,
@@ -4096,7 +4091,7 @@ plot_topic_share_per_period <- function(data,
 #' @export
 #'
 #' @examples
-#' data_rdb <- rdb::rfrnds(quiet = TRUE)
+#' data_rdb <- rdb::rfrnds()
 #'
 #' rdb::ggplot_streamgraph(data = data_rdb,
 #'                         by = topics_tier_1,
@@ -4255,29 +4250,30 @@ ggplot_streamgraph <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::tbl_n_rfrnds()
 #'
 #' # grouped by a single column
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::tbl_n_rfrnds(by = level)
 #'
 #' # grouped by two columns
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::tbl_n_rfrnds(by = c(type, level))
 #'
 #' # grouped by three columns
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::tbl_n_rfrnds(by = c(country_name, level, type),
 #'                     n_rows = 10L,
 #'                     order = "descending")
 #'
 #' # count ballot dates instead of referendums
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::as_ballot_dates() |>
 #'   rdb::tbl_n_rfrnds(by = c(country_name, level),
 #'                     n_rows = 10L,
 #'                     order = "descending")
+# nolint start: cyclocomp_linter
 tbl_n_rfrnds <- function(data,
                          by = NULL,
                          complete_fcts = TRUE,
@@ -4444,6 +4440,7 @@ tbl_n_rfrnds <- function(data,
                                              column_labels.hidden = TRUE),
               ~ .)
 }
+# nolint end
 
 #' Tabulate number of referendums per period
 #'
@@ -4464,21 +4461,21 @@ tbl_n_rfrnds <- function(data,
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::tbl_n_rfrnds_per_period(period = "decade")
 #'
 #' # grouped by a single additional column
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::tbl_n_rfrnds_per_period(by = level,
 #'                                period = "decade")
 #'
 #' # grouped by two addtional columns
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::tbl_n_rfrnds_per_period(by = c(level, type),
 #'                                period = "decade")
 #'
 #' # count ballot dates instead of referendums
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   rdb::as_ballot_dates() |>
 #'   rdb::tbl_n_rfrnds_per_period(period = "decade")
 tbl_n_rfrnds_per_period <- function(data,
@@ -4929,6 +4926,7 @@ update_tbl <- function(data,
 #' @family admin
 #' @family nocodb
 #' @export
+# nolint start: cyclocomp_linter
 reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                       hostname_pg = pal::pkg_config_val(key = "pg_host",
                                                         pkg = this_pkg),
@@ -4998,11 +4996,12 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                ask = FALSE,
                quiet = TRUE)
   
+  Sys.sleep(1L)
+  
   # create temp NocoDB tbls ----
   if (!quiet) {
     pal::cli_progress_step_quick("Temporarily creating tables with {.var created_by} and {.var updated_by} columns via NocoDB")
   }
-  Sys.sleep(1)
   create_nocodb_tbls(hostname = hostname_nocodb)
   
   # init PGSQL tbls ----
@@ -5022,7 +5021,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
     pal::cli_progress_step_quick("Synchronizing NocoDB data source with external PostgreSQL schema")
   }
   
-  Sys.sleep(1)
+  Sys.sleep(1L)
   
   # sync NocoDB data src ----
   # NOTE: we can only reuse NocoDB IDs *after* base reset above
@@ -5042,7 +5041,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                                 email = email,
                                 password = password,
                                 wait_max = 30L,
-                                wait_resync = 7)
+                                wait_resync = 7.0)
   # config NocoDB tbls ----
   if (!quiet) {
     pal::cli_progress_step_quick("Configuring NocoDB tables")
@@ -5077,6 +5076,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   
   invisible(hostname_nocodb)
 }
+# nolint end
 
 #' Notify RDB PostgREST about schema changes
 #'
@@ -5276,7 +5276,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                         password = password) |>
     purrr::chuck("id")
   
-  Sys.sleep(1)
+  Sys.sleep(1L)
   
   # add PGSQL data source
   nocodb::create_data_src(alias = nocodb_data_src_alias,
@@ -5298,7 +5298,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                           hostname = hostname,
                           email = email,
                           password = password)
-  Sys.sleep(1)
+  Sys.sleep(1L)
   
   # disable default SQLite data source
   nocodb::data_srcs(id_base = id_base,
@@ -5758,9 +5758,7 @@ list_sudd_rfrnds <- function(mode = c("by_date",
 #' @export
 #'
 #' @examples
-#' rdb::rfrnd(id = "5bbc045192a21351232e596f")$id_sudd |> rdb::sudd_rfrnds()
-#' 
-#' rdb::rfrnds(quiet = TRUE) |>
+#' rdb::rfrnds() |>
 #'   dplyr::filter(country_code == "AT") |>
 #'   rdb::sudd_rfrnds()
 sudd_rfrnds <- function(ids_sudd,
