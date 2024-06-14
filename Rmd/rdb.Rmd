@@ -5797,39 +5797,14 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                                      email = email,
                                      password = password)
   
-  nocodb::sync_data_src(id_data_src = id_data_src,
-                        id_base = id_base,
-                        hostname = hostname_nocodb,
-                        email = email,
-                        password = password)
-  
-  # wait up to `n_wait` seconds for schema sync to finish
-  n_wait <- 30L
-  
-  for (i in pal::safe_seq_len(n_wait)) {
-    # trigger resync every 7s
-    if (i %% 7L == 0L) {
-      nocodb::sync_data_src(id_data_src = id_data_src,
-                            id_base = id_base,
-                            hostname = hostname_nocodb,
-                            email = email,
-                            password = password)
-    }
-    Sys.sleep(1)
-    # continue if sync has finished
-    if (!nocodb::has_data_src_diff(id_data_src = id_data_src,
-                                   id_base = id_base,
-                                   hostname = hostname_nocodb,
-                                   email = email,
-                                   password = password)) {
-      break
-    }
-    # abort if not finished within max wait time
-    if (i == n_wait) {
-      cli::cli_abort("NocoDB data source schema sync hasn't finished/succeeded within {n_wait}s. Entering debugging.")
-    }
-  }
-  
+  nocodb::sync_data_src_eagerly(id_data_src = id_data_src,
+                                id_base = id_base,
+                                hostname = hostname_nocodb,
+                                email = email,
+                                password = password,
+                                wait_max = 30L,
+                                wait_resync = 7)
+  # config NocoDB tbls ----
   if (!quiet) {
     pal::cli_progress_step_quick("Configuring NocoDB tables")
   }
