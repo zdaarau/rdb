@@ -21,7 +21,7 @@ determine the parent topic(s) of any topic.
 rdb::hierarchize_topics("territorial questions")
 
 # hierarchize the topics of all Austrian referendums
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   dplyr::filter(country_code == "AT") |>
   dplyr::group_split(id) |>
   purrr::map(rdb::hierarchize_topics)

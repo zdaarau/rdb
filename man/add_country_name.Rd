@@ -16,7 +16,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 Augments \code{data} with an additional column holding the common English name of the country in which the referendum took place.
 }
 \examples{
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb:::add_country_name() |>
   dplyr::select(id,
                 starts_with("country_"))

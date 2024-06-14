@@ -64,6 +64,8 @@ Other PostgreSQL functions
 \code{\link{pg_init_main_tbls}()},
 \code{\link{pg_pk}()},
 \code{\link{pg_reset_db}()},
+\code{\link{pg_role_pw}()},
+\code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
 \code{\link{read_sql_file}()},

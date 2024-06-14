@@ -36,7 +36,7 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pg_reset_db</span><span class="op">(</span></span>
 <span>  connection <span class="op">=</span> <span class="fu"><a href="connect.html">connect</a></span><span class="op">(</span>dbname <span class="op">=</span> <span class="st">"postgres"</span>, user <span class="op">=</span> <span class="st">"rdb_admin"</span>, password <span class="op">=</span></span>
-<span>    <span class="fu">pg_role_pw</span><span class="op">(</span><span class="st">"rdb_admin"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="pg_role_pw.html">pg_role_pw</a></span><span class="op">(</span><span class="st">"rdb_admin"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  disconnect <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -68,6 +68,8 @@
 <code><a href="pg_init_db.html">pg_init_db</a>()</code>,
 <code><a href="pg_init_main_tbls.html">pg_init_main_tbls</a>()</code>,
 <code><a href="pg_pk.html">pg_pk</a>()</code>,
+<code><a href="pg_role_pw.html">pg_role_pw</a>()</code>,
+<code><a href="pg_tbl_constraints.html">pg_tbl_constraints</a>()</code>,
 <code><a href="pg_tbl_del.html">pg_tbl_del</a>()</code>,
 <code><a href="pg_tbl_keep.html">pg_tbl_keep</a>()</code>,
 <code><a href="pg_tbl_update.html">pg_tbl_update</a>()</code>,

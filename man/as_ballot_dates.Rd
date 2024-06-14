@@ -21,12 +21,12 @@ individual values of all the referendums on a specific ballot date in a specific
 }
 \examples{
 # standard RDB columns are retained as far as possible
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::as_ballot_dates()
 
 # non-standard columns must be explicitly specified in order to be retained
 data_rdb <-
-  rdb::rfrnds(quiet = TRUE) |>
+  rdb::rfrnds() |>
     rdb::add_world_regions() |>
     dplyr::mutate(region_custom =
                     factor(x = dplyr::if_else(country_code == "CH",

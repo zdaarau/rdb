@@ -26,15 +26,8 @@ Reconstructs the hierarchical relations between the three topic variables \code{
 are missing. This assumption is met by the data returned by \code{\link[=rfrnds]{rfrnds()}}.
 }
 \examples{
-library(magrittr)
-
-rdb::rfrnd(id = "5bbbe26a92a21351232dd73f") \%$\%
-  rdb::hierarchize_topics_fast(unlist(topics_tier_1),
-                               unlist(topics_tier_2),
-                               unlist(topics_tier_3))
-
 # hierarchize the topics of all Austrian referendums
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   dplyr::filter(country_code == "AT") |>
   dplyr::group_split(id) |>
   purrr::map(~ rdb::hierarchize_topics_fast(unlist(.x$topics_tier_1),

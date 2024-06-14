@@ -72,15 +72,16 @@ reference:
   - n_rfrnds_per_period
   - prettify_col_names
 - title: Visualization
-  desc: Functions to visualize the RDB referendum data (using [plotly](https://plotly-r.com/)).
+  desc: Functions to visualize the RDB referendum data using [plotly](https://plotly-r.com/)
+    and [ggplot2](https://ggplot2.tidyverse.org/).
 - contents:
   - plot_rfrnd_share_per_period
   - plot_topic_segmentation
   - plot_topic_share_per_period
   - ggplot_streamgraph
 - title: Tabulation
-  desc: Functions to create analyses in tabular form (using [gt](https://gt.rstudio.com/)
-    tables).
+  desc: Functions to create analyses in tabular form as [gt](https://gt.rstudio.com/)
+    tables.
 - contents:
   - tbl_n_rfrnds
   - tbl_n_rfrnds_per_period

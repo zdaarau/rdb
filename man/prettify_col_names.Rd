@@ -24,7 +24,7 @@ Note that
 }
 }
 \examples{
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::prettify_col_names()
 }
 \seealso{

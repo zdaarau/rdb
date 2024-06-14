@@ -48,7 +48,7 @@ Creates a ggplot2 \href{https://en.wikipedia.org/wiki/Streamgraph}{streamgraph} 
 resolution.
 }
 \examples{
-data_rdb <- rdb::rfrnds(quiet = TRUE)
+data_rdb <- rdb::rfrnds()
 
 rdb::ggplot_streamgraph(data = data_rdb,
                         by = topics_tier_1,

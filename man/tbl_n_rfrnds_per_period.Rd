@@ -62,21 +62,21 @@ Creates a ready-to-print \link[gt:gt]{gt} table with the number of referendums p
 Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
 }
 \examples{
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::tbl_n_rfrnds_per_period(period = "decade")
 
 # grouped by a single additional column
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::tbl_n_rfrnds_per_period(by = level,
                                period = "decade")
 
 # grouped by two addtional columns
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::tbl_n_rfrnds_per_period(by = c(level, type),
                                period = "decade")
 
 # count ballot dates instead of referendums
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::as_ballot_dates() |>
   rdb::tbl_n_rfrnds_per_period(period = "decade")
 }

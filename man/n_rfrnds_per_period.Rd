@@ -43,24 +43,24 @@ Counts the number of RDB referendums per desired period, optionally by additiona
 Note that the \code{period} types \code{"year"}, \code{"decade"} and \code{"century"} are \emph{unique} timespans, while \code{"week"}, \code{"month"} and \code{"quarter"} are \emph{recurring} timespans (e.g. every year has a week 1).
 }
 \examples{
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::n_rfrnds_per_period()
 
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::n_rfrnds_per_period(by = level)
 
 # without filling gaps
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::n_rfrnds_per_period(by = level,
                            fill_gaps = FALSE)
 
 # per decade and by multiple columns
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::n_rfrnds_per_period(by = c(level, type),
                            period = "decade")
 
 # count ballot dates instead of referendums
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::as_ballot_dates() |>
   rdb::n_rfrnds_per_period()
 }

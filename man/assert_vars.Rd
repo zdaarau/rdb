@@ -18,7 +18,7 @@ assert_vars(data, vars)
 Asserts the specified \code{vars} are present in the supplied referendum \code{data}. Depending on \code{vars}, additional integrity checks are performed.
 }
 \examples{
-rdb::rfrnd(id = "5bbbe26a92a21351232dd73f") |> rdb::assert_vars(vars = "country_code")
+rdb::rfrnds() |> rdb::assert_vars(vars = "country_code")
 
 try(
   tibble::tibble(country_code = "AN") |> rdb::assert_vars(vars = "country_code")

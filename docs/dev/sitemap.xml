@@ -50,6 +50,8 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_init_main_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_pk.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_reset_db.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/pg_role_pw.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_constraints.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_del.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_keep.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_update.html</loc></url>

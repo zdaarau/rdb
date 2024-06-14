@@ -30,7 +30,7 @@ Unnests a multi-value variable of type list to long format. Multi-value variable
 value per observation only, thereby increasing the number of observations (i.e. rows).
 }
 \examples{
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::unnest_var(topics_tier_2)
 }
 \seealso{

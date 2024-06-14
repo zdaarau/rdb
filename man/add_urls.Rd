@@ -21,7 +21,7 @@ Augments \code{data} with additional columns holding URLs of the specified \code
 \code{types = "sudd"} will add the column \code{url_sudd} etc.
 }
 \examples{
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   dplyr::filter(country_code == "CH" & level == "national") |>
   rdb::add_urls() |>
   dplyr::select(id,

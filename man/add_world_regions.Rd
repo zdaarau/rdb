@@ -38,7 +38,7 @@ doesn't belong to any UN tier-3 region, the corresponding \verb{un_region_tier_3
 this issue by providing a uniform combination of \code{un_region_tier_2_name} and \code{un_region_tier_3_name}.
 }
 \examples{
-rdb::rfrnd(id = "5bbbe26a92a21351232dd73f") |>
+rdb::rfrnds() |>
   rdb::add_world_regions() |>
   dplyr::select(id,
                 starts_with("country_"),
