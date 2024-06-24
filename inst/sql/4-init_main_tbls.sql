@@ -124,6 +124,7 @@ CREATE TABLE public.legal_norms (
   "level"                 text NOT NULL CHECK ("level" IN ('national', 'subnational', 'municipal')),
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
+  language_code           text NOT NULL REFERENCES public.languages ON UPDATE CASCADE,
   title                   text NOT NULL,
   hierarchy_level         text NOT NULL CHECK ("hierarchy_level" IN ('international treaty', 'treaty', 'constitution', 'law', 'decree', 'other')),
   legal_text              text NOT NULL,
