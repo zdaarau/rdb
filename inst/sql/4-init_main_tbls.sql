@@ -125,7 +125,7 @@ CREATE TABLE public.legal_norms (
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
   title                   text NOT NULL,
-  hierarchy_level         text NOT NULL,
+  hierarchy_level         text NOT NULL CHECK ("hierarchy_level" IN ('international treaty', 'treaty', 'constitution', 'law', 'decree', 'other')),
   legal_text              text NOT NULL,
   url                     text NOT NULL,
   valid_from              date NOT NULL DEFAULT '0001-01-01',
