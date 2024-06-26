@@ -25,8 +25,9 @@ update the corresponding database fields with.}
 \item \code{"options"}
 \item \code{"legal_norms"}
 \item \code{"referendum_types"}
-\item \code{"referendum_types_legal_norms"}
 \item \code{"referendums"}
+\item \code{"referendum_types_legal_norms"}
+\item \code{"referendum_types_referendums"}
 \item \code{"referendum_titles"}
 \item \code{"referendum_questions"}
 \item \code{"referendum_positions"}

@@ -2367,8 +2367,9 @@ tbl_metadata <- tibble::tribble(
   "options",                      TRUE,         "#9900cc",      "label",                   "\u2611",
   "legal_norms",                  TRUE,         "#33cc33",      "title",                   "\U0001F4DC",
   "referendum_types",             TRUE,         "#33cc33",      "title",                   "\U0001F3DB",
-  "referendum_types_legal_norms", TRUE,         "#85e085",      NA_character_,             NA_character_,
   "referendums",                  TRUE,         color_rdb_main, "display",                 "\U0001F5F3",
+  "referendum_types_legal_norms", TRUE,         "#85e085",      NA_character_,             NA_character_,
+  "referendum_types_referendums", TRUE,         "#85e085",      NA_character_,             NA_character_,
   "referendum_titles",            TRUE,         "#6673ff",      "title",                   "\U0001F4D5",
   "referendum_questions",         TRUE,         "#6673ff",      "question",                "\u2753",
   "referendum_positions",         TRUE,         "#6673ff",      "actor",                   "\U0001F4E3",
@@ -2388,8 +2389,9 @@ tbl_metadata <- tibble::tribble(
       "options",                      "referendum answer options",
       "legal_norms",                  "legal norms enabling referendums",
       "referendum_types",             "referendum types",
-      "referendum_types_legal_norms", "*junction table*",
       "referendums",                  "*main table*",
+      "referendum_types_legal_norms", "*junction table*",
+      "referendum_types_referendums", "*junction table*",
       "referendum_titles",            "referendum titles",
       "referendum_questions",         "referendum questions",
       "referendum_positions",         "actor positions on referendums",
@@ -5880,9 +5882,12 @@ Function to administrate the [RDB NocoDB server](https://admin.rdb.vote/).
 ```{r}
 #' Create NocoDB tables
 #'
+#' @description
 #' Creates all the PostgreSQL database tables that must be first created *once* in NocoDB after the PostgreSQL database has been added as external data source
 #' (e.g. via [reset_nocodb()]) to let NocoDB register the necessary metadata for the `created_by` and `updated_by` columns (so they are properly auto-filled by
-#' NocoDB later on). After running `create_nocodb_tbls()`, the created tables are supposed to be recreated outside of NocoDB via [pg_init_main_tbls()].
+#' NocoDB later on).
+#'
+#' After running `create_nocodb_tbls()`, the created tables are supposed to be recreated outside of NocoDB via [pg_init_main_tbls()].
 #'
 #' @inheritParams nocodb::data_src_id
 #'

@@ -143,17 +143,6 @@ CREATE TABLE public.legal_norms (
   CONSTRAINT legal_norms_check_level_and_codes_4 CHECK (municipality_id IS NULL OR "level" = 'municipal')
 );
 
-CREATE TABLE public.referendum_types_legal_norms (
-  referendum_type_id      integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE ON DELETE CASCADE,
-  legal_norm_id           integer NOT NULL REFERENCES public.legal_norms ON UPDATE CASCADE ON DELETE CASCADE,
-  created_by              varchar DEFAULT CURRENT_USER,
-  updated_by              varchar DEFAULT CURRENT_USER,
-  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (referendum_type_id, legal_norm_id),
-  CONSTRAINT referendum_types_legal_norms_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
-);
-
 CREATE TABLE public.referendums (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   display                 text GENERATED ALWAYS AS (to_char_immutable("date") || " " || "level" || " " || COALESCE(municipality_id, subnational_entity_code, country_code) || " (" || "id" || ")") STORED,
@@ -165,7 +154,6 @@ CREATE TABLE public.referendums (
   "level"                 text NOT NULL CHECK ("level" IN ('national', 'subnational', 'municipal')),
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
-  type_id                 integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE,
   attachments             text,
   created_by              varchar DEFAULT CURRENT_USER,
   updated_by              varchar DEFAULT CURRENT_USER,
@@ -176,6 +164,28 @@ CREATE TABLE public.referendums (
   CONSTRAINT referendums_check_level_and_codes_2 CHECK ("level" IN ('national', 'subnational') OR municipality_id IS NOT NULL),
   CONSTRAINT referendums_check_level_and_codes_3 CHECK (subnational_entity_code IS NULL OR "level" IN ('subnational', 'municipal')),
   CONSTRAINT referendums_check_level_and_codes_4 CHECK (municipality_id IS NULL OR "level" = 'municipal')
+);
+
+CREATE TABLE public.referendum_types_legal_norms (
+  referendum_type_id      integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE ON DELETE CASCADE,
+  legal_norm_id           integer NOT NULL REFERENCES public.legal_norms ON UPDATE CASCADE ON DELETE CASCADE,
+  created_by              varchar DEFAULT CURRENT_USER,
+  updated_by              varchar DEFAULT CURRENT_USER,
+  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (referendum_type_id, legal_norm_id),
+  CONSTRAINT referendum_types_legal_norms_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+);
+
+CREATE TABLE public.referendum_types_referendums (
+  referendum_type_id      integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE ON DELETE CASCADE,
+  referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+  created_by              varchar DEFAULT CURRENT_USER,
+  updated_by              varchar DEFAULT CURRENT_USER,
+  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (referendum_type_id, referendum_id),
+  CONSTRAINT referendum_types_referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 -- Create remaining auxiliary tables intended to be updated via NocoDB

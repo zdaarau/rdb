@@ -15,7 +15,9 @@ A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created table
 \description{
 Creates all the PostgreSQL database tables that must be first created \emph{once} in NocoDB after the PostgreSQL database has been added as external data source
 (e.g. via \code{\link[=reset_nocodb]{reset_nocodb()}}) to let NocoDB register the necessary metadata for the \code{created_by} and \code{updated_by} columns (so they are properly auto-filled by
-NocoDB later on). After running \code{create_nocodb_tbls()}, the created tables are supposed to be recreated outside of NocoDB via \code{\link[=pg_init_main_tbls]{pg_init_main_tbls()}}.
+NocoDB later on).
+
+After running \code{create_nocodb_tbls()}, the created tables are supposed to be recreated outside of NocoDB via \code{\link[=pg_init_main_tbls]{pg_init_main_tbls()}}.
 }
 \seealso{
 Other NocoDB functions
