@@ -30,6 +30,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/delete_rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/dm.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/download_file_attachment.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/download_file_attachments.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/exec_sql_file.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/ggplot_streamgraph.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/hierarchize_topics.html</loc></url>
@@ -67,6 +68,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/read_tbl.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/reset_nocodb.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/reset_rdb.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/restart_postgrest.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnd_types.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnds_old.html</loc></url>
