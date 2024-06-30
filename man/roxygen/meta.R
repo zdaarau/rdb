@@ -6,6 +6,7 @@ list(
                          metadata     = "Other referendum metadata functions:",
                          nocodb       = "Other NocoDB functions",
                          pg           = "Other PostgreSQL functions",
+                         postgrest    = "Other PostgrREST functions",
                          prettify     = "Other functions to prettify names:",
                          sudd         = "Other sudd.ch scraping functions:",
                          tabulate     = "Other tabulation functions:",

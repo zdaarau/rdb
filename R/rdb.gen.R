@@ -5076,12 +5076,17 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
 
 #' Notify RDB PostgREST about schema changes
 #'
+#' @description
 #' Sends a `reload schema` message on the `pgrst` PostgreSQL [notification channel](https://www.postgresql.org/docs/16/sql-notify.html), which triggers the RDB
 #' PostgREST server to [reload its schema cache](https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading).
+#' 
+#' Note that this only works if the PostgREST server is actively `LISTEN`ing on the `pgrst` channel, [which requires a connection to a read-write PostgreSQL
+#' instance](https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas).
 #'
 #' @inheritParams rfrnds
 #'
 #' @return `NULL`, invisibly.
+#' @family postgrest
 #' @family admin
 #' @keywords internal
 notify_postgrest <- function(connection = connect(),
@@ -5095,6 +5100,33 @@ notify_postgrest <- function(connection = connect(),
   if (disconnect) {
     DBI::dbDisconnect(conn = connection)
   }
+  
+  invisible(NULL)
+}
+
+#' Restart RDB PostgREST server
+#'
+#' Restarts the RDB PostgREST server VM (a [Fly.io]() app).
+#'
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `NULL`, invisibly
+#' @family postgrest
+#' @family admin
+#' @keywords internal
+restart_postgrest <- function(quiet = FALSE) {
+  
+  checkmate::assert_flag(quiet)
+  pal::assert_cli("flyctl")
+  
+  out <- ifelse(quiet,
+                FALSE,
+                "")
+  
+  system2(command = "flyctl",
+          args = c("apps", "restart", "rdb-postgrest"),
+          stdout = out,
+          stderr = out)
   
   invisible(NULL)
 }

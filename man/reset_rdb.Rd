@@ -42,6 +42,7 @@ Other administration functions:
 \code{\link{dm}()},
 \code{\link{notify_postgrest}()},
 \code{\link{reset_nocodb}()},
+\code{\link{restart_postgrest}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
