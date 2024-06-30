@@ -60,7 +60,6 @@ Suggests:
     htmlwidgets (>= 1.6.2),
     ISOcodes (>= 2024.02.12),
     knitr (>= 1.40),
-    mime (>= 0.12),
     pkgdown.tpl (>= 0.0.9000),
     pkgsnip (>= 0.0.9037),
     plotlee (>= 0.0.9000),
