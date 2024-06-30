@@ -38,7 +38,7 @@ Other administration functions:
 
 Other data functions:
 \code{\link{assert_vars}()},
-\code{\link{download_file_attachment}()},
+\code{\link{download_file_attachments}()},
 \code{\link{read_tbl}()},
 \code{\link{rfrnd_types}()},
 \code{\link{rfrnds}()},

@@ -27,7 +27,7 @@ Performs various data validation steps to ensure there are no errors in the supp
 Other data functions:
 \code{\link{assert_vars}()},
 \code{\link{delete_rfrnds}()},
-\code{\link{download_file_attachment}()},
+\code{\link{download_file_attachments}()},
 \code{\link{read_tbl}()},
 \code{\link{rfrnd_types}()},
 \code{\link{rfrnds}()},

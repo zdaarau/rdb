@@ -2684,79 +2684,73 @@ read_tbl <- function(tbl_name = tbl_metadata$name,
 }
 ```
 
-### `download_file_attachment`
+### `download_file_attachments`
 
 ```{r}
-#' Download file attachment
+#' Download file attachments
 #'
-#' Downloads a file attachment from the Referendum Database (RDB). The necessary `s3_object_key`s identifying individual files are found in the `files` list
-#' column returned by [rfrnds()].
+#' Downloads file attachments from the Referendum Database (RDB). ... the `attachments` list column returned by [rfrnds()].
 #'
-#' @param s3_object_key Key uniquely identifying the file in the RDB [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design). A character scalar.
-#' @param path Path where the downloaded file is written to.
-#' @param use_original_filename Whether to save the file attachment using its original filename as uploaded. Note that original filenames are **not unique**,
-#'   i.e. there are multiple file attachments with the same original filename (but differing content, of course). If `FALSE`, `s3_object_key` is used as
-#'   filename. Only relevant if `path` is a directory.
+#' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns `id` and `attachments`.
+#' @param path Path to the directory where the downloaded file(s) are to be written to.
+#' @param filename_from_title Whether to use an attachment's `title` field value as the filename. Note that attachment titles are **not guaranteed to be
+#'   unique**, i.e. there can be multiple file attachments with the same title (but differing content, of course). If `FALSE`, the referendum identifier plus a
+#'   sequential number is used as an attachment's filename.
+#' @param fileext_from_mimetype Whether to add a file extension suffix to the filename which is determined from the attachment's `mimetype` field.
 #'
-#' @return A [response object][httr::response], invisibly.
+#' @return `data`, invisibly.
 #' @family data
 #' @export
 #'
 #' @examples
-#' # get object keys
-#' obj_keys <- ""
+#' # get the first three referendums which contain attachments
+#' d <-
+#'   rdb::rfrnds() |>
+#'   dplyr::filter(purrr::map_lgl(attachments, \(x) !is.null(x))) |>
+#'   dplyr::filter(dplyr::row_number() %in% 1:3)
 #'
-#' # download them to the current working dir
-#' purrr::walk(obj_keys,
-#'             rdb::download_file_attachment)
+#' # download the attachments to the current directory
+#' d |> rdb::download_file_attachments()
 #' 
 #' # and delete them again
-#' fs::file_delete(obj_keys)
-download_file_attachment <- function(s3_object_key,
-                                     path = ".",
-                                     use_original_filename = FALSE) {
+#' d$attachments |>
+#'   purrr::map(\(x) x$title) |>
+#'   unlist() |>
+#'   fs::file_delete()
+download_file_attachments <- function(data,
+                                      path = ".",
+                                      filename_from_title = FALSE,
+                                      fileext_from_mimetype = !filename_from_title) {
+  checkmate::assert_data_frame(data)
+  assert_vars(data = data,
+              vars = c("id", "attachments"))
+  checkmate::assert_directory_exists(path,
+                                     access = "rw")
+  checkmate::assert_flag(filename_from_title)
+  checkmate::assert_flag(fileext_from_mimetype)
   
-  checkmate::assert_string(s3_object_key)
-  checkmate::assert_atomic(path)
-  checkmate::assert_flag(use_original_filename)
-  
-  is_dir <- fs::is_dir(path)
-  
-  if (is_dir) {
-    checkmate::assert_directory_exists(path,
-                                       access = "rw")
-  } else {
-    checkmate::assert_path_for_output(path,
-                                      overwrite = TRUE)
-  }
-  
-  temp_path <- fs::file_temp()
-  
-  # TODO
-  
-  if (is_dir) {
-    
-    if (use_original_filename) {
+  data |>
+    dplyr::select("id", "attachments") |>
+    purrr::pwalk(\(id, attachments) {
       
-      final_path <-
-        resp %>%
-        httr::headers() %$%
-        `content-disposition` %>%
-        stringr::str_extract(pattern = "(?<=filename=\").+?(?=\")") %>%
-        fs::path(path, .)
-      
-    } else {
-      final_path <- fs::path(path, s3_object_key)
-    }
-    
-  } else {
-    final_path <- path
-  }
+      assert_vars(data = attachments,
+                  vars = c("url", "title", "mimetype")) |>
+        tibble::rowid_to_column() |>
+        dplyr::select("url", "rowid", "title", "mimetype") |>
+        purrr::pwalk(\(url, rowid, title, mimetype) download.file(url = url,
+                                                                  destfile = fs::path(path,
+                                                                                      ifelse(filename_from_title,
+                                                                                             title,
+                                                                                             paste(id, rowid, sep = "_")),
+                                                                                      ext = ifelse(fileext_from_mimetype,
+                                                                                                   pal::mime_to_ext(mime_type = mimetype,
+                                                                                                                    quiet = TRUE) %|% "",
+                                                                                                   "")),
+                                                                  mode = "wb",
+                                                                  quiet = TRUE))
+    })
   
-  fs::file_move(path = temp_path,
-                new_path = final_path)
-  
-  invisible(resp)
+  invisible(data)
 }
 ```
 
