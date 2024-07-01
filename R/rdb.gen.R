@@ -5114,7 +5114,9 @@ notify_postgrest <- function(connection = connect(),
 #' @family postgrest
 #' @family admin
 #' @keywords internal
-restart_postgrest <- function(quiet = FALSE) {
+restart_postgrest <- function(api_token = pal::pkg_config_val(key = "fly_io_api_token",
+                                                              pkg = this_pkg),
+                              quiet = FALSE) {
   
   checkmate::assert_flag(quiet)
   pal::assert_cli("flyctl")
@@ -5124,7 +5126,7 @@ restart_postgrest <- function(quiet = FALSE) {
                 "")
   
   system2(command = "flyctl",
-          args = c("apps", "restart", "rdb-postgrest"),
+          args = c("apps", "restart", "rdb-postgrest", "--access-token", pal::wrap_chr(api_token, wrap = "'")),
           stdout = out,
           stderr = out)
   

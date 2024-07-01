@@ -650,6 +650,10 @@ pkg_config <-
   tibble::add_row(key = "nocodb_b2_access_secret",
                   description = "Access secret of the `rdb-attachments` Backblaze B2 bucket. Required for [rdb::reset_nocodb()].",
                   require = TRUE) |>
+  tibble::add_row(key = "fly_io_api_token",
+                  description = paste0("Fly.io [API token](https://fly.io/docs/flyctl/tokens/) granting access to the RDB organization. Required for ",
+                                       "[rdb::restart_postgrest()]."),
+                  require = TRUE) |>
   tibble::add_row(key = "global_max_cache_age",
                   default_value = list("30 days"),
                   description = pkgsnip::md_snip("opt_global_max_cache_age"),

@@ -4,7 +4,10 @@
 \alias{restart_postgrest}
 \title{Restart RDB PostgREST server}
 \usage{
-restart_postgrest(quiet = FALSE)
+restart_postgrest(
+  api_token = pal::pkg_config_val(key = "fly_io_api_token", pkg = this_pkg),
+  quiet = FALSE
+)
 }
 \arguments{
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
