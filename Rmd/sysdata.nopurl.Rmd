@@ -248,18 +248,13 @@ NOTES:
 -   By design, we don't have any codes for subnational entities that ceased to exist before [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) was first
     published in 1998. In such cases, we assign `CUSTOM-` codes.
 
--   Due to lack of official revocation information in ISO 3166-2, we construct our own (delayed) `valid_from` and `valid_to` date columns based on detected
-    changes in `ISOcodes::ISO_3166_2`. Ideally, these dates would be added to the
+-   Due to lack of official revocation information in ISO 3166-2, we construct our own (delayed) `valid_to` date column based on detected changes in
+    `ISOcodes::ISO_3166_2` and just set `valid_from` to the dummy value `0001-01-01`. Ideally, the actual dates would be added to the
     [`iso_3166-2.json`](https://salsa.debian.org/iso-codes-team/iso-codes/-/blob/main/data/iso_3166-2.json) source file gathered from officially anounced
     [changes](https://en.wikipedia.org/wiki/ISO_3166-2#Changes).
 
 ```{r}
 # TEMP
-data_iso_3166_2 <-
-  rdb:::data_iso_3166_2 |>
-  dplyr::mutate(valid_from = clock::date_parse("0001-01-01"),
-                valid_to = as.Date(NA))
-
 data_iso_3166_2 <-
   rdb:::data_iso_3166_2 |>
   dplyr::filter(!(code %in% ISOcodes::ISO_3166_2$Code)) |>
@@ -271,7 +266,7 @@ data_iso_3166_2 <-
   # convert column names to snake_case
   dplyr::rename_with(.cols = everything(),
                      .fn = snakecase::to_snake_case) |>
-  dplyr::mutate(valid_from = clock::date_today(zone = "UTC") - 1L,
+  dplyr::mutate(valid_from = clock::date_parse("0001-01-01"),
                 valid_to = as.Date(NA)) |>
   dplyr::relocate(code_parent = parent,
                   .after = code) |>
