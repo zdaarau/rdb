@@ -22,6 +22,7 @@ Some of rdb's functionality is controlled via package-specific global configurat
    File path to a UTF-8 encoded CSV file containing the columns \code{name}, \code{email} and \code{password} describing additional user accounts to create on the \href{https://admin.rdb.vote/}{RDB NocoDB server} via \code{\link[=reset_nocodb]{reset_nocodb()}}. \tab \code{rdb.nocodb_user_account_csv_file} \tab \code{R_RDB_NOCODB_USER_ACCOUNT_CSV_FILE} \tab  \cr
    Access key ID of the \code{rdb-attachments} Backblaze B2 bucket. Required for \code{\link[=reset_nocodb]{reset_nocodb()}}. \tab \code{rdb.nocodb_b2_access_key} \tab \code{R_RDB_NOCODB_B2_ACCESS_KEY} \tab  \cr
    Access secret of the \code{rdb-attachments} Backblaze B2 bucket. Required for \code{\link[=reset_nocodb]{reset_nocodb()}}. \tab \code{rdb.nocodb_b2_access_secret} \tab \code{R_RDB_NOCODB_B2_ACCESS_SECRET} \tab  \cr
+   Fly.io \href{https://fly.io/docs/flyctl/tokens/}{API token} granting access to the RDB organization. Required for \code{\link[=restart_postgrest]{restart_postgrest()}}. \tab \code{rdb.fly_io_api_token} \tab \code{R_RDB_FLY_IO_API_TOKEN} \tab  \cr
    Maximal timespan to preserve the package's \href{https://pkgpins.rpkg.dev/}{pkgpins} cache. Cache entries older than this will be deleted upon package loading. \tab \code{rdb.global_max_cache_age} \tab \code{R_RDB_GLOBAL_MAX_CACHE_AGE} \tab \code{"30 days"} \cr
 }
 }

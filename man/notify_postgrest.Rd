@@ -17,11 +17,12 @@ notify_postgrest(connection = connect(), disconnect = TRUE)
 \description{
 Sends a \verb{reload schema} message on the \code{pgrst} PostgreSQL \href{https://www.postgresql.org/docs/16/sql-notify.html}{notification channel}, which triggers the RDB
 PostgREST server to \href{https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading}{reload its schema cache}.
-
-Note that this only works if the PostgREST server is actively \code{LISTEN}ing on the \code{pgrst} channel, \href{https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas}{which requires a connection to a read-write PostgreSQL instance}.
+}
+\details{
+Note that \code{notify_postgrest()} only works if the PostgREST server is actively \code{LISTEN}ing on the \code{pgrst} channel, which \href{https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas}{requires a connection to a read-write PostgreSQL instance}.
 }
 \seealso{
-Other PostgrREST functions
+Other PostgREST functions
 \code{\link{restart_postgrest}()}
 
 Other administration functions:

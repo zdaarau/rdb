@@ -64,14 +64,10 @@ rdb::list_sudd_rfrnds(mode = "filter",
                       filter = list(title_de = "AHV"),
                       quiet = TRUE)
 
-# get sudd.ch referendum data from all referendums from 2020 onwards
+# get sudd.ch referendum data from all referendums in 2020
 rdb::list_sudd_rfrnds(mode = "filter",
-                      filter = list(year_min = 2020),
-                      quiet = TRUE) |>
-  rdb::sudd_rfrnds(quiet = TRUE)
-
-# get sudd.ch referendum data from five randomly picked referendums
-rdb::list_sudd_rfrnds(mode = "random",
+                      filter = list(year_min = 2020,
+                                    year_max = 2020),
                       quiet = TRUE) |>
   rdb::sudd_rfrnds(quiet = TRUE)
 }

@@ -16,10 +16,14 @@ restart_postgrest(
 \code{NULL}, invisibly
 }
 \description{
-Restarts the RDB PostgREST server VM (a \url{Fly.io} app).
+Restarts the RDB PostgREST server VM (a \href{https://fly.io/docs/}{Fly.io} app), which causes a \href{https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading}{schema cache reload}.
+}
+\details{
+\code{restart_postgrest()} serves as an alternative to \code{\link[=notify_postgrest]{notify_postgrest()}} when the PostgREST server is not \code{LISTEN}ing on the \code{pgrst} channel (e.g. because it
+is not \href{https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas}{connected to a read-write PostgreSQL instance}).
 }
 \seealso{
-Other PostgrREST functions
+Other PostgREST functions
 \code{\link{notify_postgrest}()}
 
 Other administration functions:
