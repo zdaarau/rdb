@@ -2737,17 +2737,17 @@ download_file_attachments <- function(data,
                   vars = c("url", "title", "mimetype")) |>
         tibble::rowid_to_column() |>
         dplyr::select("url", "rowid", "title", "mimetype") |>
-        purrr::pwalk(\(url, rowid, title, mimetype) download.file(url = url,
-                                                                  destfile = fs::path(path,
-                                                                                      ifelse(filename_from_title,
-                                                                                             title,
-                                                                                             paste(id, rowid, sep = "_")),
-                                                                                      ext = ifelse(fileext_from_mimetype,
-                                                                                                   pal::mime_to_ext(mime_type = mimetype,
-                                                                                                                    quiet = TRUE) %|% "",
-                                                                                                   "")),
-                                                                  mode = "wb",
-                                                                  quiet = TRUE))
+        purrr::pwalk(\(url, rowid, title, mimetype) utils::download.file(url = url,
+                                                                         destfile = fs::path(path,
+                                                                                             ifelse(filename_from_title,
+                                                                                                    title,
+                                                                                                    paste(id, rowid, sep = "_")),
+                                                                                             ext = ifelse(fileext_from_mimetype,
+                                                                                                          pal::mime_to_ext(mime_type = mimetype,
+                                                                                                                           quiet = TRUE) %|% "",
+                                                                                                          "")),
+                                                                         mode = "wb",
+                                                                         quiet = TRUE))
     })
   
   invisible(data)
