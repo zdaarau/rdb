@@ -5849,12 +5849,11 @@ Function to administrate the [RDB PostgREST server](https://api.rdb.vote/).
 ```{r}
 #' Notify RDB PostgREST about schema changes
 #'
-#' @description
 #' Sends a `reload schema` message on the `pgrst` PostgreSQL [notification channel](https://www.postgresql.org/docs/16/sql-notify.html), which triggers the RDB
 #' PostgREST server to [reload its schema cache](https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading).
 #' 
-#' Note that this only works if the PostgREST server is actively `LISTEN`ing on the `pgrst` channel, [which requires a connection to a read-write PostgreSQL
-#' instance](https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas).
+#' Note that `notify_postgrest()` only works if the PostgREST server is actively `LISTEN`ing on the `pgrst` channel, which [requires a connection to a
+#' read-write PostgreSQL instance](https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas).
 #'
 #' @inheritParams rfrnds
 #'
@@ -5883,7 +5882,11 @@ notify_postgrest <- function(connection = connect(),
 ```{r}
 #' Restart RDB PostgREST server
 #'
-#' Restarts the RDB PostgREST server VM (a [Fly.io]() app).
+#' Restarts the RDB PostgREST server VM (a [Fly.io](https://fly.io/docs/) app), which causes a [schema cache
+#' reload](https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading).
+#'
+#' `restart_postgrest()` serves as an alternative to [notify_postgrest()] when the PostgREST server is not `LISTEN`ing on the `pgrst` channel (e.g. because it
+#' is not [connected to a read-write PostgreSQL instance](https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas)).
 #'
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
