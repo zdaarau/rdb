@@ -5819,12 +5819,14 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   update_langs(connection = connection,
                disconnect = FALSE)
   
-  # notify PostgREST ----
+  # trigger PostgREST schema cache reload ----
   if (!quiet) {
-    pal::cli_progress_step_quick("Notifying PostgREST server about schema changes")
+    # pal::cli_progress_step_quick("Notifying PostgREST server about schema changes")
+    pal::cli_progress_step_quick("Restarting PostgREST server to cause schema cache reload")
   }
-  notify_postgrest(connection = connection,
-                   disconnect = FALSE)
+  # notify_postgrest(connection = connection,
+  #                  disconnect = FALSE)
+  restart_postgrest(quiet = TRUE)
   
   # disconnect PGSQL ----
   if (disconnect) {
