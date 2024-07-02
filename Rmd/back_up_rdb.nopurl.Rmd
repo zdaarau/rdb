@@ -58,6 +58,8 @@ readr::read_rds(path_backup_rdb) |>
 
 # Back up RDB file attachments
 
+NOTE: Make sure to first commit pending changes to `data-raw/backups/rdb.rds` to ensure file attachments from recently added referendums are backed up, too.
+
 ```{r}
 path_backup_s3 <- "~/Arbeit/ZDA/Lokal/Projekte/RDB/s3_backup"
 
