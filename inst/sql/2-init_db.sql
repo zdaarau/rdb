@@ -34,7 +34,7 @@
 
 */
 
--- Switch to `rdb_admin` role (just to be explicit; has no effect on the Neon console)
+-- Switch to `rdb_admin` role (errors if not authorized)
 SET ROLE rdb_admin;
 
 -- Install necessary PostgreSQL extensions

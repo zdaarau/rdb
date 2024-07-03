@@ -48,6 +48,9 @@
 
 */
 
+-- Switch to `rdb_admin` role (errors if not authorized)
+SET ROLE rdb_admin;
+
 -- Delete possibly existing tables
 DO LANGUAGE plpgsql
   $$
