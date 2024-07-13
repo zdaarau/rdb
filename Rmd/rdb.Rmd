@@ -5030,10 +5030,7 @@ tbl_n_rfrnds <- function(data,
                                      na.rm = TRUE),
                   dplyr::across(everything(),
                                 ~ tidyr::replace_na(data = .x,
-                                                    replace = 0L)),
-                  # TODO: remove type conversion below once [issue #1305](https://github.com/rstudio/gt/issues/1305) is fixed
-                  dplyr::across(any_of(by_colname_1st),
-                                as.character)) |>
+                                                    replace = 0L))) |>
     pal::when(isTRUE(order == "descending") ~ dplyr::arrange(.data = .,
                                                              -`:total`),
               isTRUE(order == "ascending") ~ dplyr::arrange(.data = .,
@@ -5234,10 +5231,7 @@ tbl_n_rfrnds_per_period <- function(data,
               ~ .) %>%
     dplyr::mutate(dplyr::across(everything(),
                                 ~ tidyr::replace_na(data = .x,
-                                                    replace = 0L)),
-                  # TODO: remove type conversion below once [issue #1305](https://github.com/rstudio/gt/issues/1305) is fixed
-                  dplyr::across(all_of(period),
-                                as.character))
+                                                    replace = 0L)))
   
   # squeeze consecutive all-0 rows into single row if requested
   ix <- integer()
