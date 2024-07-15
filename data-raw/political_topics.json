@@ -1,0 +1,426 @@
+[
+    {
+        "name": "state organisation",
+        "children": [
+            {
+                "name": "national identity",
+                "children": []
+            },
+            {
+                "name": "political system",
+                "children": [
+                    "constitution",
+                    "procedure for constitutional reform",
+                    "legislative procedure",
+                    "electoral system"
+                ]
+            },
+            {
+                "name": "institutions",
+                "children": [
+                    "government, administration",
+                    "parliament",
+                    "courts",
+                    "national bank"
+                ]
+            },
+            {
+                "name": "citizens' rights",
+                "children": [
+                    "citizens' initiatives",
+                    "referendum",
+                    "voting rights"
+                ]
+            },
+            {
+                "name": "federalism",
+                "children": [
+                    "territorial questions",
+                    "intergovernmental relations",
+                    "division of tasks"
+                ]
+            },
+            {
+                "name": "legal system",
+                "children": [
+                    "international law",
+                    "fundamental rights",
+                    "citizenship",
+                    "private law",
+                    "criminal law",
+                    "data protection"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "foreign policy",
+        "children": [
+            {
+                "name": "position on foreign policy",
+                "children": [
+                    "neutrality",
+                    "independence",
+                    "good offices"
+                ]
+            },
+            {
+                "name": "European policy",
+                "children": [
+                    "EFTA",
+                    "EU",
+                    "EEA",
+                    "other European organisations"
+                ]
+            },
+            {
+                "name": "international organisations",
+                "children": [
+                    "UN",
+                    "other international organisations"
+                ]
+            },
+            {
+                "name": "development cooperation",
+                "children": []
+            },
+            {
+                "name": "bilateral treaties",
+                "children": []
+            },
+            {
+                "name": "foreign trade policy",
+                "children": [
+                    "export promotion",
+                    "customs"
+                ]
+            },
+            {
+                "name": "diplomacy",
+                "children": []
+            },
+            {
+                "name": "Swiss abroad",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "security policy",
+        "children": [
+            {
+                "name": "public security",
+                "children": [
+                    "civil protection",
+                    "state security",
+                    "police"
+                ]
+            },
+            {
+                "name": "army",
+                "children": [
+                    "armed forces in general",
+                    "military organisation",
+                    "arms",
+                    "military facilities",
+                    "conscientious objection, civilian service",
+                    "abolition of the armed forces",
+                    "military training",
+                    "international deployment"
+                ]
+            },
+            {
+                "name": "national economic supply",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "economy",
+        "children": [
+            {
+                "name": "economic policy",
+                "children": [
+                    "short-term economic policy",
+                    "competition policy",
+                    "structural policy",
+                    "pricing policy",
+                    "consumer protection"
+                ]
+            },
+            {
+                "name": "employment",
+                "children": [
+                    "employment conditions",
+                    "working hours",
+                    "industrial relations",
+                    "employment policy"
+                ]
+            },
+            {
+                "name": "finance",
+                "children": [
+                    "monetary policy",
+                    "banks, stock exchange, insurance"
+                ]
+            },
+            {
+                "name": "tourism and leisure",
+                "children": [
+                    "tourism",
+                    "hospitality",
+                    "lottery and gambling"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "agriculture",
+        "children": [
+            {
+                "name": "agricultural policy",
+                "children": []
+            },
+            {
+                "name": "livestock",
+                "children": []
+            },
+            {
+                "name": "crop production",
+                "children": []
+            },
+            {
+                "name": "forestry",
+                "children": []
+            },
+            {
+                "name": "fishing, hunting and pets",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "public finance",
+        "children": [
+            {
+                "name": "taxation",
+                "children": [
+                    "tax policy",
+                    "tax system",
+                    "direct taxation",
+                    "indirect taxation"
+                ]
+            },
+            {
+                "name": "financial system",
+                "children": []
+            },
+            {
+                "name": "public expenditure",
+                "children": []
+            },
+            {
+                "name": "budget cuts and remediation measures",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "energy",
+        "children": [
+            {
+                "name": "energy policy",
+                "children": []
+            },
+            {
+                "name": "nuclear energy",
+                "children": []
+            },
+            {
+                "name": "hydro-electric power",
+                "children": []
+            },
+            {
+                "name": "alternative energy",
+                "children": []
+            },
+            {
+                "name": "oil and gas",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "transport and infrastructure",
+        "children": [
+            {
+                "name": "transport policy",
+                "children": [
+                    "urban transport",
+                    "transit traffic"
+                ]
+            },
+            {
+                "name": "road transport",
+                "children": [
+                    "road construction",
+                    "heavy traffic"
+                ]
+            },
+            {
+                "name": "rail transport",
+                "children": [
+                    "goods traffic",
+                    "passenger traffic"
+                ]
+            },
+            {
+                "name": "air transport",
+                "children": []
+            },
+            {
+                "name": "shipping",
+                "children": []
+            },
+            {
+                "name": "post",
+                "children": []
+            },
+            {
+                "name": "telecommunications",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "environment and living space",
+        "children": [
+            {
+                "name": "soil",
+                "children": [
+                    "spatial planning",
+                    "land law"
+                ]
+            },
+            {
+                "name": "housing",
+                "children": [
+                    "tenancy issues",
+                    "building of residential housing, property ownership"
+                ]
+            },
+            {
+                "name": "environment",
+                "children": [
+                    "environmental policy",
+                    "noise protection",
+                    "air quality control",
+                    "water pollution control",
+                    "soil protection",
+                    "waste",
+                    "protection of nature and cultural heritage",
+                    "animal protection"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "social policy",
+        "children": [
+            {
+                "name": "health",
+                "children": [
+                    "health policy",
+                    "medical research and technology",
+                    "medicines",
+                    "addictive substances",
+                    "reproductive medicine"
+                ]
+            },
+            {
+                "name": "social security",
+                "children": [
+                    "pension insurance",
+                    "disability insurance",
+                    "occupational benefits provision",
+                    "health and accident insurance",
+                    "maternity insurance",
+                    "unemployment insurance",
+                    "compensation for loss of earnings for persons on military service or civil protection duty",
+                    "welfare"
+                ]
+            },
+            {
+                "name": "social groups",
+                "children": [
+                    "immigration policy",
+                    "refugees",
+                    "status of women",
+                    "family policy",
+                    "children and young people",
+                    "senior citizens",
+                    "persons with disabilities",
+                    "homosexuals"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "education and research",
+        "children": [
+            {
+                "name": "education policy",
+                "children": []
+            },
+            {
+                "name": "schools",
+                "children": []
+            },
+            {
+                "name": "universities",
+                "children": []
+            },
+            {
+                "name": "research",
+                "children": [
+                    "genetic engineering",
+                    "animal testing"
+                ]
+            },
+            {
+                "name": "professional and vocational education",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "culture, religion and media",
+        "children": [
+            {
+                "name": "cultural policy",
+                "children": []
+            },
+            {
+                "name": "language policy",
+                "children": []
+            },
+            {
+                "name": "religion, churches",
+                "children": []
+            },
+            {
+                "name": "sport",
+                "children": []
+            },
+            {
+                "name": "media and communication",
+                "children": [
+                    "media policy",
+                    "press",
+                    "radio, television and electronic media",
+                    "freedom of the media"
+                ]
+            }
+        ]
+    }
+]

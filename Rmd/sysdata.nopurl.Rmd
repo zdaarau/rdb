@@ -558,14 +558,22 @@ if (any(country_codes_sudd_invalid %in% c(data_iso_3166_1$alpha_2,
 
 ## `data_topics`
 
+NOTES:
+
+-   `data-raw/political_topics.json` was sourced from private CCM Design repo via:
+
+    ``` r
+    yay::gh_text_file(owner = "zdaarau",
+                      name = "c2d-app",
+                      rev = "master",
+                      path = "ch.c2d/web/themes.json") |>
+      brio::write_file(path = "data-raw/political_topics.json")
+    ```
+
 ```{r}
 data_topics <-
-  # download file from private CCM Design repo
-  yay::gh_text_file(owner = "zdaarau",
-                    name = "c2d-app",
-                    rev = "master",
-                    path = "ch.c2d/web/themes.json") |>
-  jsonlite::fromJSON(flatten = FALSE) |>
+  jsonlite::fromJSON(txt = "data-raw/political_topics.json",
+                     flatten = FALSE) |>
   tibble::as_tibble() |>
   # create tidy data version
   dplyr::rename(topic_tier_1 = name,
