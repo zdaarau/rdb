@@ -1327,7 +1327,7 @@ The set of variables that constitute the \emph{geographical} component of the ju
    \code{level} \tab Geographical jurisdiction is given by \cr
    \code{national} \tab \code{country_code} \cr
    \code{subnational} \tab \code{country_code} + \code{subnational_entity_name} \cr
-   \code{local} \tab \code{country_code} + \code{subnational_entity_name} + \code{municipality} \cr
+   \code{municipal} \tab \code{country_code} + \code{subnational_entity_name} + \code{municipality} \cr
 }
 
 

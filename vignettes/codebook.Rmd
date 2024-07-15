@@ -248,7 +248,7 @@ The set of variables that constitute the *geographical* component of the jurisdi
 |:--------------|:--------------------------------------------------------------------------------------------------------------------------|
 | `national`    | [`country_code`](#country_code)                                                                                           |
 | `subnational` | [`country_code`](#country_code) + [`subnational_entity_name`](#subnational_entity_name)                                   |
-| `local`       | [`country_code`](#country_code) + [`subnational_entity_name`](#subnational_entity_name) + [`municipality`](#municipality) |
+| `municipal`   | [`country_code`](#country_code) + [`subnational_entity_name`](#subnational_entity_name) + [`municipality`](#municipality) |
 
 The actual jurisdiction is also dependent on a *temporal* component since the legal setting in a geographical jurisdiction can vary over time. Thus, the actual
 jurisdicion is dependent on the geographical jurisdiction plus the [`date`](#date) a referendum took place (more specifically the date *range* in between a

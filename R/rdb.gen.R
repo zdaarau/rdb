@@ -322,18 +322,18 @@ assert_cols_valid <- function(data,
   }
   
   ## check `municipality_name`
-  if (any(data[["level"]] == "local")) {
+  if (any(data[["level"]] == "municipal")) {
     
     if (!("municipality_name" %in% colnames(data))) {
       cli::cli_progress_done(id = cli_progress_id,
                              result = "failed")
-      action(paste0("Referendums of {.var level = \"local\"} present in {.arg data} but column {.var municipality_name} is missing."))
+      action(paste0("Referendums of {.var level = \"municipal\"} present in {.arg data} but column {.var municipality_name} is missing."))
     }
     
     ix_missing_municipalities <-
       data %>%
       tibble::rowid_to_column() %>%
-      dplyr::filter(level == "local" & is.na(municipality_name)) %$%
+      dplyr::filter(level == "municipal" & is.na(municipality_name)) %$%
       rowid
     
     n_missing_municipalities <- length(ix_missing_municipalities)
@@ -350,7 +350,7 @@ assert_cols_valid <- function(data,
     ix_illegal_municipalities <-
       data %>%
       tibble::rowid_to_column() %>%
-      dplyr::filter(level != "local" & !is.na(municipality_name)) %$%
+      dplyr::filter(level != "municipal" & !is.na(municipality_name)) %$%
       rowid
     
     n_illegal_municipalities <- length(ix_illegal_municipalities)
@@ -358,8 +358,8 @@ assert_cols_valid <- function(data,
     if (n_illegal_municipalities) {
       cli::cli_progress_done(id = cli_progress_id,
                              result = "failed")
-      action(paste0("{n_illegal_municipalities} row{?s} in {.arg data} {?has/have} a {.var municipality_name} set although they are not on the local level. ",
-                    "Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal_municipalities}}."))
+      action(paste0("{n_illegal_municipalities} row{?s} in {.arg data} {?has/have} a {.var municipality_name} set although they are not on the municipal ",
+                    "level. Affected {?is/are} the row{?s} with ind{?ex/ices} {.val {ix_illegal_municipalities}}."))
     }
   }
   
