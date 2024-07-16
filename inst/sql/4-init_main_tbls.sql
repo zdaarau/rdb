@@ -278,6 +278,12 @@ CREATE TABLE public.referendum_sub_votes (
   CONSTRAINT referendum_sub_votes_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
+-- Enable RLS and create policies
+ALTER TABLE public.referendums ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.referendums FORCE  ROW LEVEL SECURITY;
+CREATE POLICY default_allow          ON public.referendums AS PERMISSIVE  FOR ALL    TO PUBLIC USING (TRUE);
+CREATE POLICY nocodb_restrict_delete ON public.referendums AS RESTRICTIVE FOR DELETE TO nocodb USING (is_draft);
+
 -- Create triggers for `updated_at` columns
 DO LANGUAGE plpgsql
   $$
