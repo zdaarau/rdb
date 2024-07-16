@@ -17,14 +17,13 @@ reset_nocodb(hostname = nocodb_hostname, ask = TRUE, quiet = TRUE)
 \code{hostname}, invisibly.
 }
 \description{
-Completely re-creates the Main base and adds the RDB team's user accounts on the specified NocoDB server. Beware that this results in loss
-of all existing NocoDB-specific metadata (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments},
-\href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
+Completely re-creates the Main base and adds the RDB team's user accounts on the specified NocoDB server. Beware that this results in \strong{loss of all existing NocoDB-specific metadata} (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments}, \href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
 }
 \seealso{
 Other NocoDB functions
 \code{\link{config_nocodb_tbls}()},
 \code{\link{create_nocodb_tbls}()},
+\code{\link{purge_nocodb}()},
 \code{\link{reset_rdb}()}
 
 Other administration functions:
@@ -34,6 +33,7 @@ Other administration functions:
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
 \code{\link{notify_postgrest}()},
+\code{\link{purge_nocodb}()},
 \code{\link{reset_rdb}()},
 \code{\link{restart_postgrest}()},
 \code{\link{update_countries}()},

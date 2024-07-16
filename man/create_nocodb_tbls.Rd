@@ -22,6 +22,7 @@ After running \code{create_nocodb_tbls()}, the created tables are supposed to be
 \seealso{
 Other NocoDB functions
 \code{\link{config_nocodb_tbls}()},
+\code{\link{purge_nocodb}()},
 \code{\link{reset_nocodb}()},
 \code{\link{reset_rdb}()}
 
@@ -31,6 +32,7 @@ Other administration functions:
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
 \code{\link{notify_postgrest}()},
+\code{\link{purge_nocodb}()},
 \code{\link{reset_nocodb}()},
 \code{\link{reset_rdb}()},
 \code{\link{restart_postgrest}()},

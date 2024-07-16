@@ -2317,6 +2317,11 @@ nocodb_col_renames <- tibble::tribble(
   "LinkToAnotherRecord", "subnational_entities",   "subnational_entity",
   "LinkToAnotherRecord", "supranational_entities", "supranational_entity"
 )
+
+nocodb_reset_caution <- paste0("Beware that this results in **loss of all existing NocoDB-specific metadata** ",
+                               "([comments](https://docs.nocodb.com/records/expand-record/#record-comment), ",
+                               "[audit](https://docs.nocodb.com/records/expand-record/#record-audit) ",
+                               "[logs](https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs) etc.).")
 ```
 
 ### `pg_*`
@@ -6058,9 +6063,7 @@ NOTES:
 ```{r}
 #' Reset NocoDB
 #'
-#' Completely re-creates the `r nocodb_base_title` base and adds the RDB team's user accounts on the specified NocoDB server. Beware that this results in loss
-#' of all existing NocoDB-specific metadata ([comments](https://docs.nocodb.com/records/expand-record/#record-comment),
-#' [audit](https://docs.nocodb.com/records/expand-record/#record-audit) [logs](https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs) etc.).
+#' Completely re-creates the `r nocodb_base_title` base and adds the RDB team's user accounts on the specified NocoDB server. `r nocodb_reset_caution`
 #'
 #' @inheritParams nocodb::update_app_settings
 #' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
@@ -6252,6 +6255,130 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                         email = email,
                         password = password)
   invisible(hostname)
+}
+```
+
+#### !`purge_nocodb`
+
+TODO:
+
+-   Use Fly.io and Backblaze B2 RESTful APIs instead of CLIs.
+
+NOTES:
+
+-   We assume only a single NocoDB instance (Fly machine).
+
+```{r}
+#' Purge NocoDB
+#'
+#' Stops the `fly_app_name` NocoDB instance, purges NocoDB's internal database (the Litestream replication data on the `b2_bucket_name/nocodb` folder) and
+#' then restarts the NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
+#'
+#' @param fly_app_name Fly.io app name.
+#' @param b2_bucket_name Backblaze B2 bucket name.
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `NULL`, invisibly.
+#' @family nocodb
+#' @family admin
+#' @keywords internal
+purge_nocodb <- function(fly_app_name = "rdb-nocodb",
+                         b2_bucket_name = fly_app_name,
+                         quiet = FALSE) {
+  
+  checkmate::assert_string(fly_app_name)
+  checkmate::assert_string(b2_bucket_name)
+  checkmate::assert_flag(quiet)
+  pal::assert_cli(cmd = "flyctl")
+  pal::assert_cli(cmd = "b2")
+  
+  app_flag <- glue::glue("--app={fly_app_name}")
+  b2_uri <- glue::glue("b2://{b2_bucket_name}/nocodb")
+  out <- ifelse(quiet,
+                FALSE,
+                "")
+  
+  # get Fly app status
+  fly_app_status <- function() {
+    system2(command = "flyctl",
+            args = c("status", "--json", app_flag),
+            stdout = TRUE) |>
+    jsonlite::fromJSON()
+  }
+  
+  data_app_status <- fly_app_status()
+  
+  # extract 1st machine ID
+  machine_id <- data_app_status$Machines$id[1L]
+  
+  # get Fly machine config
+  data_machine_config <-
+    system2(command = "flyctl",
+            args = c("machine", "status", "--display-config", app_flag, machine_id),
+            stdout = TRUE) |>
+    # extract JSON data
+    paste0(collapse = " ") |>
+    stringr::str_extract(pattern = "\\{.+\\}") |>
+    cli::ansi_strip() |>
+    jsonlite::fromJSON()
+  
+  machine_autostart <- data_machine_config$services$autostart[1L]
+  
+  # temporarily disable machine autostart if necessary
+  if (machine_autostart) {
+    system2(command = "flyctl",
+            args = c("machine", "update", "--autostart=false", "--yes", app_flag, machine_id),
+            stdout = out,
+            stderr = out)
+  }
+  
+  # stop running machine
+  if (data_app_status$Machines$state[1L] != "stopped") {
+    system2(command = "flyctl",
+            args = c("machine", "stop", app_flag, machine_id),
+            stdout = out,
+            stderr = out)
+  }
+  
+  # delete NocoDB Litestream data from Backblaze B2 bucket
+  system2(command = "b2",
+          args = c("rm", "--recursive", b2_uri),
+          stdout = out,
+          stderr = out)
+  
+  # wait until deletion has fully propagated
+  while (TRUE) {
+    
+    b2_files <- system2(command = "b2",
+                        args = c("ls", "--recursive", b2_uri),
+                        stdout = TRUE)
+    
+    if (length(b2_files) == 0L) {
+      break;
+    }
+    
+    Sys.sleep(2.0)
+  }
+  
+  # reenable machine autostart (implicitly restarts machine)
+  if (machine_autostart) {
+    system2(command = "flyctl",
+            args = c("machine", "update", "--autostart=true", "--yes", app_flag, machine_id),
+            stdout = out,
+            stderr = out)
+  }
+  
+  # restart Fly app if necessary
+  data_app_status <- fly_app_status()
+  
+  if (data_app_status$Status != "deployed") {
+    system2(command = "flyctl",
+            args = c("apps", "restart", fly_app_name),
+            stdout = out,
+            stderr = out)
+  }
+  
+  invisible(NULL)
 }
 ```
 

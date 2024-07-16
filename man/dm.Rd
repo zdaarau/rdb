@@ -27,6 +27,7 @@ Other administration functions:
 \code{\link{create_nocodb_tbls}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{notify_postgrest}()},
+\code{\link{purge_nocodb}()},
 \code{\link{reset_nocodb}()},
 \code{\link{reset_rdb}()},
 \code{\link{restart_postgrest}()},

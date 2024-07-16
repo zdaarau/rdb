@@ -41,6 +41,7 @@ Other administration functions:
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
 \code{\link{notify_postgrest}()},
+\code{\link{purge_nocodb}()},
 \code{\link{reset_nocodb}()},
 \code{\link{restart_postgrest}()},
 \code{\link{update_countries}()},
@@ -53,6 +54,7 @@ Other administration functions:
 Other NocoDB functions
 \code{\link{config_nocodb_tbls}()},
 \code{\link{create_nocodb_tbls}()},
+\code{\link{purge_nocodb}()},
 \code{\link{reset_nocodb}()}
 }
 \concept{admin}
