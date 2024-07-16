@@ -76,7 +76,7 @@ DO LANGUAGE plpgsql
 
 -- Recreate custom enumerated types
 DROP TYPE IF EXISTS "level" CASCADE;
-CREATE TYPE "level" AS ENUM ('municipal', 'subnational', 'national');
+CREATE TYPE "level" AS ENUM ('municipal', 'subnational', 'national', 'supranational');
 
 -- Create auxiliary tables intended to be updated via NocoDB
 CREATE TABLE public.actors (
@@ -102,8 +102,9 @@ CREATE TABLE public.options (
 -- Create main tables intended to be updated via NocoDB
 CREATE TABLE public.referendum_types (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  country_code            text NOT NULL REFERENCES public.countries ON UPDATE CASCADE,
-  "level"                 text NOT NULL CHECK ("level" IN ('national', 'subnational', 'municipal')),
+  "level"                 text NOT NULL CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
+  supranational_entity_id text REFERENCES public.supranational_entities ON UPDATE CASCADE,
+  country_code            text REFERENCES public.countries ON UPDATE CASCADE,
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
   title                   text NOT NULL,
@@ -115,16 +116,21 @@ CREATE TABLE public.referendum_types (
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT referendum_types_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from),
   CONSTRAINT referendum_types_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
-  CONSTRAINT referendum_types_check_level_and_codes_1 CHECK ("level" = 'national' OR subnational_entity_code IS NOT NULL),
-  CONSTRAINT referendum_types_check_level_and_codes_2 CHECK ("level" IN ('national', 'subnational') OR municipality_id IS NOT NULL),
-  CONSTRAINT referendum_types_check_level_and_codes_3 CHECK (subnational_entity_code IS NULL OR "level" IN ('subnational', 'municipal')),
-  CONSTRAINT referendum_types_check_level_and_codes_4 CHECK (municipality_id IS NULL OR "level" = 'municipal')
+  CONSTRAINT referendum_types_check_level_and_codes_1 CHECK ("level" != 'supranational'                              OR supranational_entity_id IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_2 CHECK ("level" = 'supranational'                               OR country_code IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_3 CHECK ("level" IN ('supranational', 'national')                OR subnational_entity_code IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_4 CHECK ("level" IN ('supranational', 'national', 'subnational') OR municipality_id IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_5 CHECK ("level" = 'supranational'                               OR supranational_entity_id IS NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_6 CHECK ("level" != 'supranational'                              OR country_code IS NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_7 CHECK ("level" IN ('subnational', 'municipal')                 OR subnational_entity_code IS NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_8 CHECK ("level" = 'municipal'                                   OR municipality_id IS NULL)
 );
 
 CREATE TABLE public.legal_norms (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  country_code            text NOT NULL REFERENCES public.countries ON UPDATE CASCADE,
-  "level"                 text NOT NULL CHECK ("level" IN ('national', 'subnational', 'municipal')),
+  "level"                 text NOT NULL CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
+  supranational_entity_id text REFERENCES public.supranational_entities ON UPDATE CASCADE,
+  country_code            text REFERENCES public.countries ON UPDATE CASCADE,
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
   language_code           text NOT NULL REFERENCES public.languages ON UPDATE CASCADE,
@@ -140,21 +146,26 @@ CREATE TABLE public.legal_norms (
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT legal_norms_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from),
   CONSTRAINT legal_norms_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
-  CONSTRAINT legal_norms_check_level_and_codes_1 CHECK ("level" = 'national' OR subnational_entity_code IS NOT NULL),
-  CONSTRAINT legal_norms_check_level_and_codes_2 CHECK ("level" IN ('national', 'subnational') OR municipality_id IS NOT NULL),
-  CONSTRAINT legal_norms_check_level_and_codes_3 CHECK (subnational_entity_code IS NULL OR "level" IN ('subnational', 'municipal')),
-  CONSTRAINT legal_norms_check_level_and_codes_4 CHECK (municipality_id IS NULL OR "level" = 'municipal')
+  CONSTRAINT legal_norms_check_level_and_codes_1 CHECK ("level" != 'supranational'                              OR supranational_entity_id IS NOT NULL),
+  CONSTRAINT legal_norms_check_level_and_codes_2 CHECK ("level" = 'supranational'                               OR country_code IS NOT NULL),
+  CONSTRAINT legal_norms_check_level_and_codes_3 CHECK ("level" IN ('supranational', 'national')                OR subnational_entity_code IS NOT NULL),
+  CONSTRAINT legal_norms_check_level_and_codes_4 CHECK ("level" IN ('supranational', 'national', 'subnational') OR municipality_id IS NOT NULL),
+  CONSTRAINT legal_norms_check_level_and_codes_5 CHECK ("level" = 'supranational'                               OR supranational_entity_id IS NULL),
+  CONSTRAINT legal_norms_check_level_and_codes_6 CHECK ("level" != 'supranational'                              OR country_code IS NULL),
+  CONSTRAINT legal_norms_check_level_and_codes_7 CHECK ("level" IN ('subnational', 'municipal')                 OR subnational_entity_code IS NULL),
+  CONSTRAINT legal_norms_check_level_and_codes_8 CHECK ("level" = 'municipal'                                   OR municipality_id IS NULL)
 );
 
 CREATE TABLE public.referendums (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  display                 text GENERATED ALWAYS AS (to_char_immutable("date") || " " || "level" || " " || COALESCE(municipality_id, subnational_entity_code, country_code) || " (" || "id" || ")") STORED,
+  display                 text GENERATED ALWAYS AS (to_char_immutable("date") || " " || "level" || " " || COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || " (" || "id" || ")") STORED,
   id_official             text,
   id_sudd                 text,
   is_draft                boolean NOT NULL DEFAULT TRUE,
   "date"                  date NOT NULL,
-  country_code            text NOT NULL REFERENCES public.countries ON UPDATE CASCADE,
-  "level"                 text NOT NULL CHECK ("level" IN ('national', 'subnational', 'municipal')),
+  "level"                 text NOT NULL CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
+  supranational_entity_id text REFERENCES public.supranational_entities ON UPDATE CASCADE,
+  country_code            text REFERENCES public.countries ON UPDATE CASCADE,
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
   attachments             text,
@@ -163,10 +174,14 @@ CREATE TABLE public.referendums (
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
-  CONSTRAINT referendums_check_level_and_codes_1 CHECK ("level" = 'national' OR subnational_entity_code IS NOT NULL),
-  CONSTRAINT referendums_check_level_and_codes_2 CHECK ("level" IN ('national', 'subnational') OR municipality_id IS NOT NULL),
-  CONSTRAINT referendums_check_level_and_codes_3 CHECK (subnational_entity_code IS NULL OR "level" IN ('subnational', 'municipal')),
-  CONSTRAINT referendums_check_level_and_codes_4 CHECK (municipality_id IS NULL OR "level" = 'municipal')
+  CONSTRAINT referendums_check_level_and_codes_1 CHECK ("level" != 'supranational'                              OR supranational_entity_id IS NOT NULL),
+  CONSTRAINT referendums_check_level_and_codes_2 CHECK ("level" = 'supranational'                               OR country_code IS NOT NULL),
+  CONSTRAINT referendums_check_level_and_codes_3 CHECK ("level" IN ('supranational', 'national')                OR subnational_entity_code IS NOT NULL),
+  CONSTRAINT referendums_check_level_and_codes_4 CHECK ("level" IN ('supranational', 'national', 'subnational') OR municipality_id IS NOT NULL),
+  CONSTRAINT referendums_check_level_and_codes_5 CHECK ("level" = 'supranational'                               OR supranational_entity_id IS NULL),
+  CONSTRAINT referendums_check_level_and_codes_6 CHECK ("level" != 'supranational'                              OR country_code IS NULL),
+  CONSTRAINT referendums_check_level_and_codes_7 CHECK ("level" IN ('subnational', 'municipal')                 OR subnational_entity_code IS NULL),
+  CONSTRAINT referendums_check_level_and_codes_8 CHECK ("level" = 'municipal'                                   OR municipality_id IS NULL)
 );
 
 CREATE TABLE public.referendum_types_legal_norms (
@@ -365,7 +380,8 @@ DO LANGUAGE plpgsql
     DECLARE
       t text;
     BEGIN
-      FOREACH t IN ARRAY ARRAY['countries',
+      FOREACH t IN ARRAY ARRAY['supranational_entities',
+                               'countries',
                                'subnational_entities',
                                'municipalities',
                                'languages']

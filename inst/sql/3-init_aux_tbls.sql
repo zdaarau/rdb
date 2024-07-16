@@ -32,7 +32,8 @@ DO LANGUAGE plpgsql
   DECLARE
     t text;
   BEGIN
-    FOREACH t IN ARRAY ARRAY['countries',
+    FOREACH t IN ARRAY ARRAY['supranational_entities',
+                             'countries',
                              'subnational_entities',
                              'municipalities',
                              'languages']
@@ -43,6 +44,14 @@ DO LANGUAGE plpgsql
   $$;
 
 -- Create tables *not* intended to be updated via NocoDB
+CREATE TABLE public.supranational_entities (
+  "id"         text PRIMARY KEY,
+  "name"       text NOT NULL,
+  created_at   timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at   timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  CHECK (updated_at >= created_at)
+);
+
 CREATE TABLE public.countries (
   code         text PRIMARY KEY,
   "name"       text NOT NULL,

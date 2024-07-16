@@ -25,6 +25,7 @@ read_tbl(
 \item \code{"referendum_positions"}
 \item \code{"referendum_votes"}
 \item \code{"referendum_sub_votes"}
+\item \code{"supranational_entities"}
 \item \code{"countries"}
 \item \code{"subnational_entities"}
 \item \code{"municipalities"}

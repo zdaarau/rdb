@@ -245,7 +245,6 @@ assert_cols_valid <- function(data,
   type <- rlang::arg_match(type)
   
   non_na_col_names <- c("id",
-                        "country_code",
                         "date",
                         "level")
   na_col_names <-
@@ -2221,7 +2220,8 @@ this_pkg <- utils::packageName()
 Mainly used in `as_ballot_dates()`.
 
 ```{r}
-ballot_date_colnames <- c("country_code",
+ballot_date_colnames <- c("supranational_entity_id",
+                          "country_code",
                           "country_code_long",
                           "country_code_continual",
                           "country_name",
@@ -2306,15 +2306,16 @@ nocodb_col_metadata <- tibble::tribble(
 # the virtual columns NocoDB maintains for foreign keys not always have optimal default titles, so we have to tweak 'em
 # NOTE: columns of `uidt == "Links"` are automatically renamed if necessary
 nocodb_col_renames <- tibble::tribble(
-  ~uidt,                 ~col_title_old,         ~col_title_new,
-  "LinkToAnotherRecord", "actors",               "actor",
-  "LinkToAnotherRecord", "countries",            "country",
-  "LinkToAnotherRecord", "languages",            "language",
-  "LinkToAnotherRecord", "municipalities",       "municipality",
-  "LinkToAnotherRecord", "options",              "option",
-  "LinkToAnotherRecord", "referendum_types",     "referendum_type",
-  "LinkToAnotherRecord", "referendums",          "referendum",
-  "LinkToAnotherRecord", "subnational_entities", "subnational_entity"
+  ~uidt,                 ~col_title_old,           ~col_title_new,
+  "LinkToAnotherRecord", "actors",                 "actor",
+  "LinkToAnotherRecord", "countries",              "country",
+  "LinkToAnotherRecord", "languages",              "language",
+  "LinkToAnotherRecord", "municipalities",         "municipality",
+  "LinkToAnotherRecord", "options",                "option",
+  "LinkToAnotherRecord", "referendum_types",       "referendum_type",
+  "LinkToAnotherRecord", "referendums",            "referendum",
+  "LinkToAnotherRecord", "subnational_entities",   "subnational_entity",
+  "LinkToAnotherRecord", "supranational_entities", "supranational_entity"
 )
 ```
 
@@ -2375,6 +2376,7 @@ tbl_metadata <- tibble::tribble(
   "referendum_positions",         TRUE,         "#6673ff",      "actor",                   "\U0001F4E3",
   "referendum_votes",             TRUE,         "#6673ff",      "option",                  "\U0001F9FE",
   "referendum_sub_votes",         TRUE,         "#6673ff",      "subnational_entity_code", "\U0001F9FE",
+  "supranational_entities",       FALSE,        "#ffdf80",      "name",                    "\U0001F512",
   "countries",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512",
   "subnational_entities",         FALSE,        "#ffdf80",      "name",                    "\U0001F512",
   "municipalities",               FALSE,        "#ffdf80",      "name",                    "\U0001F512",
@@ -2397,11 +2399,12 @@ tbl_metadata <- tibble::tribble(
       "referendum_positions",         "actor positions on referendums",
       "referendum_votes",             "votes cast in referendums",
       "referendum_sub_votes",         "votes cast in referendums by subnational entity",
-      "countries",                    paste0("ISO [3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)/[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) ",
-                                             "country codes and names"),
-      "subnational_entities",         "[ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) subnational entity codes and names",
+      "supranational_entities",       "supranational entities",
+      "countries",                    paste0("countries (ISO [3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)/",
+                                             "[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3)-compliant) "),
+      "subnational_entities",         "subnational entities ([ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)-compliant)",
       "municipalities",               "municipalities",
-      "languages",                    "[ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1) language codes and names"
+      "languages",                    "languages ([ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1))"
     )) |>
   assertr::assert(predicate = assertr::not_na,
                   name, desc) |>
