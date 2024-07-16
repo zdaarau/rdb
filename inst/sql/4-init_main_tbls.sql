@@ -159,7 +159,7 @@ CREATE TABLE public.legal_norms (
 
 CREATE TABLE public.referendums (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  display                 text GENERATED ALWAYS AS (to_char_immutable("date") || " " || "level" || " " || COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || " (" || "id" || ")") STORED,
+  display                 text GENERATED ALWAYS AS (to_char_immutable("date") || ' ' || "level" || ' ' || COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || ' (' || "id" || ')') STORED,
   id_official             text,
   id_sudd                 text,
   is_draft                boolean NOT NULL DEFAULT TRUE,
