@@ -25,7 +25,6 @@ reference:
   - rfrnd_types
   - read_tbl
   - download_file_attachments
-  - validate_rfrnds
   - assert_vars
 - subtitle: Auxiliary data
 - contents:

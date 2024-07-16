@@ -34,3 +34,4 @@ Other data functions:
 \code{\link{rfrnds_old}()}
 }
 \concept{data}
+\keyword{internal}

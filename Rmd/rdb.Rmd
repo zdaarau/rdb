@@ -2757,7 +2757,11 @@ download_file_attachments <- function(data,
 }
 ```
 
-### `validate_rfrnds`
+### !`validate_rfrnds`
+
+TODO:
+
+-   Either update this fn for PGSQL data schema or just remove it.
 
 ```{r}
 #' Validate referendum data
@@ -2770,7 +2774,7 @@ download_file_attachments <- function(data,
 #'
 #' @return `data`, invisibly.
 #' @family data
-#' @export
+#' @keywords internal
 validate_rfrnds <- function(data,
                             check_applicability_constraint = TRUE,
                             check_id_sudd_prefix = TRUE) {

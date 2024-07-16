@@ -2335,7 +2335,7 @@ download_file_attachments <- function(data,
 #'
 #' @return `data`, invisibly.
 #' @family data
-#' @export
+#' @keywords internal
 validate_rfrnds <- function(data,
                             check_applicability_constraint = TRUE,
                             check_id_sudd_prefix = TRUE) {
