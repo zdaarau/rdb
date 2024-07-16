@@ -61,8 +61,9 @@ DO LANGUAGE plpgsql
                              'options',
                              'referendum_types',
                              'legal_norms',
-                             'referendum_types_legal_norms',
                              'referendums',
+                             'referendum_types_legal_norms',
+                             'referendum_types_referendums',
                              'referendum_titles',
                              'referendum_questions',
                              'referendum_positions',
@@ -245,7 +246,7 @@ CREATE TABLE public.referendum_positions (
   updated_by    varchar DEFAULT CURRENT_USER,
   created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (referendum_id, actor, "option"),
+  PRIMARY KEY (referendum_id, actor_label, option_label),
   CONSTRAINT referendum_positions_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
@@ -259,7 +260,7 @@ CREATE TABLE public.referendum_votes (
   updated_by    varchar DEFAULT CURRENT_USER,
   created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (referendum_id, option),
+  PRIMARY KEY (referendum_id, option_label),
   CONSTRAINT referendum_votes_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
@@ -274,7 +275,7 @@ CREATE TABLE public.referendum_sub_votes (
   updated_by              varchar DEFAULT CURRENT_USER,
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (referendum_id, subnational_entity_code, option),
+  PRIMARY KEY (referendum_id, subnational_entity_code, option_label),
   CONSTRAINT referendum_sub_votes_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
