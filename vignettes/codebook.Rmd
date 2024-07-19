@@ -24,8 +24,10 @@ For the following variables, the [unit of observation](https://en.wikipedia.org/
 #| message: false
 
 # setup
-library(rlang)
-library(magrittr)
+library(rlang,
+        include.only = "%|%")
+library(magrittr,
+        include.only = c("%>%", "%<>%", "%T>%", "%!>%", "%$%"))
 
 rlang::check_installed("salim")
 
