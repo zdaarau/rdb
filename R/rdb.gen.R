@@ -21,7 +21,6 @@ utils::globalVariables(names = c(".",
                                  "matches",
                                  "starts_with",
                                  "where",
-                                 ".x",
                                  # other
                                  "alpha_2",
                                  "alpha_2_old",
@@ -190,9 +189,9 @@ has_katex <- function() {
 as_fm_list <- function(x) {
   
   purrr::imap(x,
-              ~ rlang::new_formula(lhs = .y,
-                                   rhs = .x,
-                                   env = emptyenv()))
+              \(val, key) rlang::new_formula(lhs = key,
+                                             rhs = val,
+                                             env = emptyenv()))
 }
 
 assert_cols_valid <- function(data,
@@ -210,7 +209,7 @@ assert_cols_valid <- function(data,
     dplyr::select(any_of(non_na_col_names)) %>%
     dplyr::filter(dplyr::if_any(.cols = everything(),
                                 .fns = is.na)) %>%
-    dplyr::select(where(~ anyNA(.x))) %>%
+    dplyr::select(where(\(x) anyNA(x))) %>%
     colnames()
   n_na_col_names <- length(na_col_names)
   
@@ -457,20 +456,20 @@ country_code_to_name <- function(country_code) {
   
   purrr::map2_chr(.x = country_code,
                   .y = nchar(as.character(country_code)) > 2L,
-                  .f = ~ {
+                  .f = \(x, y) {
                     
-                    if (isTRUE(.y)) {
+                    if (isTRUE(y)) {
                       
                       result <-
                         data_iso_3166_3 %>%
-                        dplyr::filter(alpha_4 == !!.x) %$%
+                        dplyr::filter(alpha_4 == !!x) %$%
                         name_short
                       
                     } else {
                       
                       result <-
                         data_iso_3166_1 %>%
-                        dplyr::filter(alpha_2 == !!.x) %$%
+                        dplyr::filter(alpha_2 == !!x) %$%
                         name_short
                     }
                     
@@ -582,14 +581,14 @@ plot_share_per_period <- function(data_freq,
                    # draw custom grid
                    shapes =
                      grid_x %>%
-                     purrr::map(~ list(type = "line",
-                                       y0 = 0L,
-                                       y1 = 1L,
-                                       yref = "paper",
-                                       x0 = .x,
-                                       x1 = .x,
-                                       line = list(color = "#fff",
-                                                   width = 0.2))))
+                     purrr::map(\(x) list(type = "line",
+                                          y0 = 0L,
+                                          y1 = 1L,
+                                          yref = "paper",
+                                          x0 = x,
+                                          x1 = x,
+                                          line = list(color = "#fff",
+                                                      width = 0.2))))
 }
 
 restore_topics <- function(topics_tier_1,
@@ -1508,17 +1507,19 @@ sudd_rfrnd <- function(id_sudd) {
   checkmate::assert_string(id_sudd)
   
   html <-
-    httr::RETRY(verb = "GET",
-                url = url_sudd("event.php"),
-                query = list(id = id_sudd),
-                times = 3L) %>%
-    xml2::read_html() %>%
-    rvest::html_element(css = "main table") %>%
+    httr2::request(base_url = url_sudd("event.php")) |>
+    httr2::req_method(method = "GET") |>
+    httr2::req_url_query(id = id_sudd) |>
+    httr2::req_retry(max_tries = 3L) |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    xml2::read_html() |>
+    rvest::html_element(css = "main table") |>
     rvest::html_children()
   
   field_names <-
-    html %>%
-    rvest::html_elements(css = "td.feld") %>%
+    html |>
+    rvest::html_elements(css = "td.feld") |>
     rvest::html_text()
   
   # handle fields with duplicated/ambiguous names
@@ -1536,8 +1537,8 @@ sudd_rfrnd <- function(id_sudd) {
     } else {
       
       option_names <-
-        html %>%
-        rvest::html_elements(css = "td.feld strong") %>%
+        html |>
+        rvest::html_elements(css = "td.feld strong") |>
         rvest::html_text()
       
       if (length(option_names) < 2L) {
@@ -1551,13 +1552,13 @@ sudd_rfrnd <- function(id_sudd) {
       option_names_special <- c(option_names_counter, option_names_tie_breaker)
       has_counter_proposal <- any(option_names_counter %in% option_names)
       n_proposals_original <-
-        option_names %>%
-        setdiff(option_names_special) %>%
+        option_names |>
+        setdiff(option_names_special) |>
         length()
       
       ix_option_field_names <-
-        ix_option_names[-length(ix_option_names)] %>%
-        purrr::imap(~ (.x + 1L):(ix_option_names[.y + 1L] - 1L)) %>%
+        ix_option_names[-length(ix_option_names)] |>
+        purrr::imap(\(x, i) (x + 1L):(ix_option_names[i + 1L] - 1L)) |>
         c(list((dplyr::last(ix_option_names) + 1L):(min(length(field_names), which(field_names %in% c("Medien",
                                                                                                       "Bemerkungen",
                                                                                                       "Gleichzeitig mit",
@@ -1566,19 +1567,21 @@ sudd_rfrnd <- function(id_sudd) {
                                                                                                       "Letzte \u00c4nderung"))) - 1L)))
       # rename field names
       option_suffixes <-
-        option_names %>%
-        purrr::imap_chr(~ .x %>% pal::when(. %in% option_names_counter                        ~ "counter_proposal",
-                                           . %in% option_names_tie_breaker                    ~ "tie_breaker",
-                                           has_counter_proposal && n_proposals_original == 1L ~ "proposal",
-                                           ~ glue::glue("option_{.y}")))
+        option_names |>
+        purrr::imap_chr(\(x, i) {
+          x |> pal::when(. %in% option_names_counter                        ~ "counter_proposal",
+                         . %in% option_names_tie_breaker                    ~ "tie_breaker",
+                         has_counter_proposal && n_proposals_original == 1L ~ "proposal",
+                         ~ glue::glue("option_{i}"))
+        })
       renamings <-
         purrr::map2(.x = setdiff(option_names,
                                  option_names_tie_breaker),
                     .y = setdiff(option_suffixes,
                                  "tie_breaker"),
-                    .f = ~ rlang::list2(!!paste("\u2517\u2501", .x) := glue::glue("votes_tie_breaker_{.y}"),
-                                        !!paste("\u2517\u2501 St\u00e4nde", .x) := glue::glue("subterritories_{.y}_tie_breaker"))) %>%
-        purrr::list_flatten() %>%
+                    .f = \(x, y) rlang::list2(!!paste("\u2517\u2501", x) := glue::glue("votes_tie_breaker_{y}"),
+                                              !!paste("\u2517\u2501 St\u00e4nde", x) := glue::glue("subterritories_{y}_tie_breaker"))) |>
+        purrr::list_flatten() |>
         as_fm_list()
       
       for (i in seq_along(option_names)) {
@@ -1619,30 +1622,32 @@ sudd_rfrnd <- function(id_sudd) {
   
   ## move content of exotic fields to `remarks`
   remarks_field <-
-    html[field_names == "Bemerkungen"] %>%
+    html[field_names == "Bemerkungen"] |>
     pal::when(length(.) > 0L ~ rvest::html_elements(x = ., css = "td")[[2L]],
               ~ .)
   
   remarks_list_col <- list(list(text = rvest::html_text2(remarks_field),
                                 urls =
-                                  remarks_field %>%
-                                  rvest::html_elements(css = "a") %>%
-                                  purrr::map_chr(~ .x %>%
-                                                   rvest::html_attr(name = "href") %>%
-                                                   url_sudd()),
+                                  remarks_field |>
+                                  rvest::html_elements(css = "a") |>
+                                  purrr::map_chr(\(x) {
+                                    x |>
+                                      rvest::html_attr(name = "href") |>
+                                      url_sudd()
+                                  }),
                                 html =
-                                  remarks_field %>%
-                                  xml2::xml_contents() %>%
-                                  as.character() %>%
+                                  remarks_field |>
+                                  xml2::xml_contents() |>
+                                  as.character() |>
                                   paste0(collapse = "")))
   ix_fields_to_remarks <-
-    field_names %>%
+    field_names |>
     stringr::str_detect(pattern = paste0("^",
                                          pal::fuse_regex("\u2517\u2501\u2501\u2501 .+Stimmen( .+)?",
                                                          "Unklare Stimmen",
                                                          "Unstimmigkeiten",
                                                          "G\u00fcltig stimmende Personen"),
-                                         "$")) %>%
+                                         "$")) |>
     which()
   
   if (length(ix_fields_to_remarks) > 0L) {
@@ -1654,10 +1659,10 @@ sudd_rfrnd <- function(id_sudd) {
       addendum %<>%
         stringr::str_extract("\\w.*") %>%
         paste0(": ",
-               html[ix_fields_to_remarks] %>%
-                 rvest::html_elements(css = "td") %>%
-                 magrittr::extract2(2L) %>%
-                 rvest::html_elements(css = "data") %>%
+               html[ix_fields_to_remarks] |>
+                 rvest::html_elements(css = "td") |>
+                 magrittr::extract2(2L) |>
+                 rvest::html_elements(css = "data") |>
                  rvest::html_attr("value"),
                collapse = "\n\n")
     }
@@ -1747,15 +1752,15 @@ sudd_rfrnd <- function(id_sudd) {
     # referendum-option-specific recodings (sequentially numbered `votes_option_#` columns)
     # TODO: adapt this to new `referendums.option_label` variable that can capture more than yes/no answer options
     purrr::map_at(.at = which(startsWith(., "\u2517\u2501 ")),
-                  .f = function(old_name, old_names) paste0("votes_option_", which(old_names == old_name)),
+                  .f = \(old_name, old_names) paste0("votes_option_", which(old_names == old_name)),
                   old_names = stringr::str_subset(string = .,
                                                   pattern = "^\u2517\u2501 ")) %>%
     purrr::list_c(ptype = character())
 
   # assert no original uppercase field names are left over
   ix_field_names_unknown <-
-    field_names %>%
-    stringr::str_detect(pattern = "[:upper:]") %>%
+    field_names |>
+    stringr::str_detect(pattern = "[:upper:]") |>
     which()
   
   if (length(ix_field_names_unknown)) {
@@ -1766,9 +1771,9 @@ sudd_rfrnd <- function(id_sudd) {
   
   purrr::map2_dfc(.x = html,
                   .y = field_names,
-                  .f = function(html, col_name) {
+                  .f = \(html, col_name) {
                     
-                    cells <- html %>% rvest::html_elements(css = "td")
+                    cells <- html |> rvest::html_elements(css = "td")
                     col_text <- rvest::html_text2(cells[[2L]])
                     
                     # extract hyperlinks if necessary
@@ -1776,15 +1781,17 @@ sudd_rfrnd <- function(id_sudd) {
                                         "ids_sudd_simultaneous",
                                         "sources")) {
                       urls <-
-                        cells[[2L]] %>%
-                        rvest::html_elements(css = "a") %>%
-                        purrr::map_chr(~ .x %>%
-                                         rvest::html_attr(name = "href") %>%
-                                         url_sudd())
+                        cells[[2L]] |>
+                        rvest::html_elements(css = "a") |>
+                        purrr::map_chr(\(x) {
+                          x |>
+                            rvest::html_attr(name = "href") |>
+                            url_sudd()
+                        })
                     }
                     
                     tibble::tibble(!!col_name :=
-                                     col_name %>%
+                                     col_name |>
                                      pal::when(
                                        # character scalars
                                        . %in% c("territory_name_de",
@@ -1827,33 +1834,33 @@ sudd_rfrnd <- function(id_sudd) {
                                                                            "no"),
                                                            ")?"))),
                                            "$")) ~
-                                         cells[[2L]] %>%
-                                         rvest::html_elements(css = "data") %>%
-                                         rvest::html_attr("value") %>%
+                                         cells[[2L]] |>
+                                         rvest::html_elements(css = "data") |>
+                                         rvest::html_attr("value") |>
                                          # fall back to parsing text if no semantic data could be extracted
-                                         pal::when(length(.) == 0L ~ col_text %>% stringr::str_remove_all(pattern = "[^\\d]"),
-                                                   ~ .) %>%
+                                         pal::when(length(.) == 0L ~ col_text |> stringr::str_remove_all(pattern = "[^\\d]"),
+                                                   ~ .) |>
                                          as.integer(),
                                        
                                        startsWith(., "subterritories") ~
-                                         cells[[2L]] %>%
-                                         rvest::html_elements(css = "data") %>%
-                                         rvest::html_attr("value") %>%
+                                         cells[[2L]] |>
+                                         rvest::html_elements(css = "data") |>
+                                         rvest::html_attr("value") |>
                                          # fall back to parsing text if no semantic data could be extracted
-                                         pal::when(length(.) == 0L ~ col_text %>% stringr::str_remove_all(pattern = "[^\\d]"),
-                                                   ~ .) %>%
+                                         pal::when(length(.) == 0L ~ col_text |> stringr::str_remove_all(pattern = "[^\\d]"),
+                                                   ~ .) |>
                                          as.numeric(),
                                        
                                        # date scalars
                                        . == "date" ~
-                                         cells[[2L]] %>%
-                                         rvest::html_element(css = "time") %>%
+                                         cells[[2L]] |>
+                                         rvest::html_element(css = "time") |>
                                          rvest::html_attr(name = "datetime"),
                                        
                                        . == "date_last_edited" ~
-                                         cells[[2L]] %>%
-                                         rvest::html_element(css = "time") %>%
-                                         rvest::html_attr(name = "datetime") %>%
+                                         cells[[2L]] |>
+                                         rvest::html_element(css = "time") |>
+                                         rvest::html_attr(name = "datetime") |>
                                          clock::date_parse(),
                                        
                                        # lists (multi-value cols)
@@ -1864,27 +1871,29 @@ sudd_rfrnd <- function(id_sudd) {
                                          list(list(text = col_text,
                                                    urls = urls,
                                                    html =
-                                                     cells[[2L]] %>%
-                                                     xml2::xml_contents() %>%
-                                                     as.character() %>%
+                                                     cells[[2L]] |>
+                                                     xml2::xml_contents() |>
+                                                     as.character() |>
                                                      paste0(collapse = ""))),
                                        . == "types" ~
-                                         col_text %>% stringr::str_split(pattern = "\\s*\u2192\\s*"),
+                                         col_text |> stringr::str_split(pattern = "\\s*\u2192\\s*"),
                                        . == "adoption_requirements_de" ~
-                                         col_text %>% stringr::str_split(pattern = ",\\s*"),
+                                         col_text |> stringr::str_split(pattern = ",\\s*"),
                                        . == "files" ~
-                                         cells[[2L]] %>%
-                                         rvest::html_elements(css = "a") %>%
-                                         purrr::map(~ .x %>%
-                                                      rvest::html_attr(name = "href") %>%
-                                                      url_sudd() %>%
-                                                      tibble::tibble(description = rvest::html_text(.x),
-                                                                     url = .)) %>%
-                                         purrr::list_rbind() %>%
+                                         cells[[2L]] |>
+                                         rvest::html_elements(css = "a") |>
+                                         purrr::map(\(x) {
+                                           x |>
+                                             rvest::html_attr(name = "href") |>
+                                             url_sudd() |>
+                                             tibble::tibble(description = rvest::html_text(x),
+                                                            url = _)
+                                         }) |>
+                                         purrr::list_rbind() |>
                                          list(),
                                        . == "ids_sudd_simultaneous" ~
-                                         urls %>%
-                                         stringr::str_extract(pattern = "(?<=[\\?&]id=)[\\w\\d]+") %>%
+                                         urls |>
+                                         stringr::str_extract(pattern = "(?<=[\\?&]id=)[\\w\\d]+") |>
                                          list(),
                                        
                                        ~ "PARSING ERROR; PLEASE DEBUG"
@@ -1900,9 +1909,9 @@ url_sudd <- function(x = "") {
                    if (!is.na(x) && stringr::str_detect(x, "https?:")) {
                      x
                    } else {
-                     httr::modify_url(url = x %|% "",
-                                      scheme = "https",
-                                      hostname = "sudd.ch")
+                     httr2::url_build(list(scheme = "https",
+                                           hostname = "sudd.ch",
+                                           path = x %|% ""))
                    }
                  })
 }
@@ -1939,7 +1948,7 @@ ballot_date_colnames <- c("supranational_entity_id",
                           "un_subregion")
 
 cli_theme <-
-  cli::builtin_theme() %>%
+  cli::builtin_theme() |>
   purrr::list_modify(span.err = list(color = "red",
                                      `font-weight` = "bold"),
                      span.warn = list(color = "orange",
@@ -2116,8 +2125,8 @@ sub_var_names <- list(files = list(date       = "date_time_attached",
 
 # create additional formula-lists (mainly to be fed to `dplyr::case_match()`)
 var_names_fms <- as_fm_list(var_names)
-sub_var_names_fms <- purrr::imap(sub_var_names,
-                                 ~ as_fm_list(.x))
+sub_var_names_fms <- purrr::map(sub_var_names,
+                                \(x) as_fm_list(x))
 
 #' Get referendum data
 #'
@@ -2404,16 +2413,16 @@ validate_rfrnds <- function(data,
       purrr::map2_lgl(.x = magrittr::set_names(x = variable_name,
                                                value = variable_name),
                       .y = applicability_constraint,
-                      .f = ~ {
+                      .f = \(x, y) {
                         
                         data %>%
-                          dplyr::filter(!eval(parse(text = .y))) %$%
-                          eval(as.symbol(.x)) %>%
+                          dplyr::filter(!eval(parse(text = y))) %$%
+                          eval(as.symbol(x)) %>%
                           { is.na(.) | purrr::map_lgl(., is.null) } %>%
                           all()
                       }) %>%
-    magrittr::extract(!.) %>%
-    names()
+      magrittr::extract(!.) %>%
+      names()
     
     n_var_names_violated <- length(var_names_violated)
     
@@ -2486,7 +2495,7 @@ validate_rfrnds <- function(data,
       
       ix_country_codes <-
         country_codes %>%
-        purrr::map_lgl(~ country_code %in% .x) %>%
+        purrr::map_lgl(\(x) country_code %in% x) %>%
         which()
       
       for (i in ix_country_codes) {
@@ -2501,7 +2510,9 @@ validate_rfrnds <- function(data,
       stringr::str_extract(pattern = "^..") %>%
       stringr::str_to_upper() %>%
       purrr::map2_lgl(.y = country_codes,
-                      .f = ~ .x %in% .y)
+                      .f = \(x, y) {
+                        x %in% y
+                      })
     
     data$matches_id_sudd_prefix[is.na(data$id_sudd)] <- NA
   }
@@ -2529,27 +2540,27 @@ validate_rfrnds <- function(data,
 assert_vars <- function(data,
                         vars) {
   
-  vars %>% purrr::walk(~ {
+  vars %>% purrr::walk(\(x) {
     
-    msg_suffix <- switch(EXPR         = .x,
+    msg_suffix <- switch(EXPR         = x,
                          country_code = " with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.",
                          "")
     
-    if (!(.x %in% colnames(data))) {
-      cli::cli_abort(paste0("{.arg data} must contain a column {.var {.x}}", msg_suffix))
+    if (!(x %in% colnames(data))) {
+      cli::cli_abort(paste0("{.arg data} must contain a column {.var {x}}", msg_suffix))
     }
     
     # run additional content check
-    assert_content <- switch(EXPR         = .x,
-                             country_code = \(x) {
+    assert_content <- switch(EXPR         = x,
+                             country_code = \(x2) {
                                
-                               checkmate::assert_vector(x = x,
+                               checkmate::assert_vector(x = x2,
                                                         .var.name = "data$country_code")
-                               check <- checkmate::check_subset(x = as.character(x),
+                               check <- checkmate::check_subset(x = as.character(x2),
                                                                 choices = val_set$country_code)
                                if (!isTRUE(check)) {
                                  
-                                 expired_codes <- intersect(as.character(x),
+                                 expired_codes <- intersect(as.character(x2),
                                                             data_iso_3166_3$alpha_2_old)
                                  cli::cli_abort(paste0(
                                    "Assertion on {.var data$country_code} failed: ",
@@ -2562,9 +2573,9 @@ assert_vars <- function(data,
                                                                                        replacement = "\\1\\1"))))
                                }
                              },
-                             \(x) TRUE)
+                             \(x2) TRUE)
     
-    assert_content(data[[.x]])
+    assert_content(data[[x]])
   })
   
   invisible(data)
@@ -2922,21 +2933,21 @@ hierarchize_topics <- function(x) {
   # 1. add third-tier topics
   result <-
     topics_tier_3 %>%
-    purrr::map(~ tibble::tibble(topic_tier_1 = infer_topics(topics = .x,
-                                                            tier = 1L),
-                                topic_tier_2 = infer_topics(topics = .x,
-                                                            tier = 2L),
-                                topic_tier_3 = .x)) %>%
+    purrr::map(\(x) tibble::tibble(topic_tier_1 = infer_topics(topics = x,
+                                                               tier = 1L),
+                                   topic_tier_2 = infer_topics(topics = x,
+                                                               tier = 2L),
+                                   topic_tier_3 = x)) %>%
     purrr::list_rbind() %>%
     dplyr::bind_rows(result)
   
   # 2. add remaining second-tier topics
   result <-
     non_parent_topics_tier_2 %>%
-    purrr::map(~ tibble::tibble(topic_tier_1 = infer_topics(topics = .x,
-                                                            tier = 1L),
-                                topic_tier_2 = .x,
-                                topic_tier_3 = NA_character_)) %>%
+    purrr::map(\(x) tibble::tibble(topic_tier_1 = infer_topics(topics = x,
+                                                               tier = 1L),
+                                   topic_tier_2 = x,
+                                   topic_tier_3 = NA_character_)) %>%
     purrr::list_rbind() %>%
     dplyr::bind_rows(result)
   
@@ -2968,9 +2979,9 @@ hierarchize_topics <- function(x) {
 #' rdb::rfrnds() |>
 #'   dplyr::filter(country_code == "AT") |>
 #'   dplyr::group_split(id) |>
-#'   purrr::map(~ rdb::hierarchize_topics_fast(unlist(.x$topics_tier_1),
-#'                                             unlist(.x$topics_tier_2),
-#'                                             unlist(.x$topics_tier_3)))
+#'   purrr::map(\(x) rdb::hierarchize_topics_fast(unlist(x$topics_tier_1),
+#'                                                unlist(x$topics_tier_2),
+#'                                                unlist(x$topics_tier_3)))
 hierarchize_topics_fast <- function(topics_tier_1 = character(),
                                     topics_tier_2 = character(),
                                     topics_tier_3 = character()) {
@@ -3097,12 +3108,11 @@ add_country_code_continual <- function(data) {
   data %>%
     dplyr::mutate(country_code_continual = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                                       .y = add_former_country_flag(data)$is_former_country,
-                                                                      .f = ~ {
-                                                                        if (.y) {
-                                                                          data_iso_3166_3$alpha_2_new_main[data_iso_3166_3$alpha_4 == .x]
-                                                                          
+                                                                      .f = \(x, y) {
+                                                                        if (y) {
+                                                                          data_iso_3166_3$alpha_2_new_main[data_iso_3166_3$alpha_4 == x]
                                                                         } else {
-                                                                          .x
+                                                                          x
                                                                         }
                                                                       }),
                                                   levels = val_set$country_code_continual,
@@ -3139,10 +3149,12 @@ add_country_code_long <- function(data) {
     # add long country code
     dplyr::mutate(country_code_long = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                                  .y = add_former_country_flag(data)$is_former_country,
-                                                                 .f = ~ if (.y) {
-                                                                   data_iso_3166_3$alpha_3[data_iso_3166_3$alpha_4 == .x]
-                                                                 } else {
-                                                                   data_iso_3166_1$alpha_3[data_iso_3166_1$alpha_2 == .x]
+                                                                 .f = \(x, y) {
+                                                                   if (y) {
+                                                                     data_iso_3166_3$alpha_3[data_iso_3166_3$alpha_4 == x]
+                                                                   } else {
+                                                                     data_iso_3166_1$alpha_3[data_iso_3166_1$alpha_2 == x]
+                                                                   }
                                                                  }),
                                              levels = val_set$country_code_long,
                                              ordered = FALSE)) %>%
@@ -3181,10 +3193,12 @@ add_country_name <- function(data) {
     # add country name
     dplyr::mutate(country_name = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                             .y = add_former_country_flag(data)$is_former_country,
-                                                            .f = ~ if (.y) {
-                                                              data_iso_3166_3$name_short[data_iso_3166_3$alpha_4 == .x]
-                                                            } else {
-                                                              data_iso_3166_1$name_short[data_iso_3166_1$alpha_2 == .x]
+                                                            .f = \(x, y) {
+                                                              if (y) {
+                                                                data_iso_3166_3$name_short[data_iso_3166_3$alpha_4 == x]
+                                                              } else {
+                                                                data_iso_3166_1$name_short[data_iso_3166_1$alpha_2 == x]
+                                                              }
                                                             }),
                                         levels = val_set$country_name,
                                         ordered = FALSE)) %>%
@@ -3223,10 +3237,12 @@ add_country_name_long <- function(data) {
     # add long country name
     dplyr::mutate(country_name_long = factor(x = purrr::map2_chr(.x = as.character(country_code),
                                                                  .y = add_former_country_flag(data)$is_former_country,
-                                                                 .f = ~ if (.y) {
-                                                                   data_iso_3166_3$name_long[data_iso_3166_3$alpha_4 == .x]
-                                                                 } else {
-                                                                   data_iso_3166_1$name_long[data_iso_3166_1$alpha_2 == .x]
+                                                                 .f = \(x, y) {
+                                                                   if (y) {
+                                                                     data_iso_3166_3$name_long[data_iso_3166_3$alpha_4 == x]
+                                                                   } else {
+                                                                     data_iso_3166_1$name_long[data_iso_3166_1$alpha_2 == x]
+                                                                   }
                                                                  }),
                                              levels = val_set$country_name_long,
                                              ordered = FALSE)) %>%
@@ -3932,13 +3948,13 @@ plot_topic_segmentation <- function(data,
         data$topics_tier_2 %>%
           topic_frequency(tier = 2L) %>%
           dplyr::mutate(parent_topic = purrr::map_chr(.x = as.character(topic),
-                                                      .f = infer_topics,
-                                                      tier = 1L)),
+                                                      .f = \(x) infer_topics(x,
+                                                                             tier = 1L))),
         data$topics_tier_3 %>%
           topic_frequency(tier = 3L) %>%
           dplyr::mutate(parent_topic = purrr::map_chr(.x = as.character(topic),
-                                                      .f = infer_topics,
-                                                      tier = 2L))
+                                                      .f = \(x) infer_topics(x,
+                                                                             tier = 2L)))
       ) %>%
       dplyr::rename(value = n)
     
@@ -3983,11 +3999,11 @@ plot_topic_segmentation <- function(data,
           dplyr::mutate(topic = topic_tier_2,
                         parent_topic =
                           topic %>%
-                          purrr::map_chr(~ {
-                            if (is.na(.x)) {
+                          purrr::map_chr(\(x) {
+                            if (is.na(x)) {
                               NA_character_
                             } else {
-                              infer_topics(topics = .x,
+                              infer_topics(topics = x,
                                            tier = 1L)
                             }}),
                         value,
@@ -3998,11 +4014,11 @@ plot_topic_segmentation <- function(data,
           dplyr::mutate(topic = topic_tier_3,
                         parent_topic =
                           topic %>%
-                          purrr::map_chr(~ {
-                            if (is.na(.x)) {
+                          purrr::map_chr(\(x) {
+                            if (is.na(x)) {
                               NA_character_
                             } else {
-                              infer_topics(topics = .x,
+                              infer_topics(topics = x,
                                            tier = 2L)
                             }}),
                         value,
@@ -4019,12 +4035,13 @@ plot_topic_segmentation <- function(data,
       dplyr::mutate(topic = "<i>not defined</i>",
                     value = purrr::map2_dbl(.x = value_total,
                                             .y = parent_topic,
-                                            .f = ~
+                                            .f = \(x, y) {
                                               data_plot %>%
-                                              dplyr::filter(topic == .y) %$%
-                                              value %>%
-                                              checkmate::assert_number() %>%
-                                              magrittr::subtract(.x)),
+                                                dplyr::filter(topic == y) %$%
+                                                value %>%
+                                                checkmate::assert_number() %>%
+                                                magrittr::subtract(x)
+                                            }),
                     parent_topic,
                     .keep = "none") %>%
       dplyr::bind_rows(data_plot, .) %>%
@@ -4368,8 +4385,8 @@ tbl_n_rfrnds <- function(data,
     n_rfrnds(by = {{ by }},
              complete_fcts = complete_fcts) |>
     dplyr::mutate(dplyr::across(where(is.factor),
-                                ~ forcats::fct_na_value_to_level(f = .x,
-                                                                 level = "N/A"))) |>
+                                \(x) forcats::fct_na_value_to_level(f = x,
+                                                                    level = "N/A"))) |>
     pal::when(has_by_rest ~ tidyr::pivot_wider(data = .,
                                                names_from = by_colnames_rest,
                                                names_sort = TRUE,
@@ -4378,8 +4395,8 @@ tbl_n_rfrnds <- function(data,
     dplyr::mutate(`:total` = rowSums(x = dplyr::pick(-any_of(by_colname_1st)),
                                      na.rm = TRUE),
                   dplyr::across(everything(),
-                                ~ tidyr::replace_na(data = .x,
-                                                    replace = 0L))) |>
+                                \(x) tidyr::replace_na(data = x,
+                                                       replace = 0L))) |>
     pal::when(isTRUE(order == "descending") ~ dplyr::arrange(.data = .,
                                                              -`:total`),
               isTRUE(order == "ascending") ~ dplyr::arrange(.data = .,
@@ -4563,8 +4580,8 @@ tbl_n_rfrnds_per_period <- function(data,
                         period_ceiling = period_ceiling,
                         descending = descending) %>%
     dplyr::mutate(dplyr::across(where(is.factor),
-                                ~ forcats::fct_na_value_to_level(f = .x,
-                                                                 level = "N/A"))) %>%
+                                \(x) forcats::fct_na_value_to_level(f = x,
+                                                                    level = "N/A"))) %>%
     pal::when(has_by ~ tidyr::pivot_wider(data = .,
                                           names_from = {{ by }},
                                           names_sort = TRUE,
@@ -4575,8 +4592,8 @@ tbl_n_rfrnds_per_period <- function(data,
                                                                na.rm = TRUE)),
               ~ .) %>%
     dplyr::mutate(dplyr::across(everything(),
-                                ~ tidyr::replace_na(data = .x,
-                                                    replace = 0L)))
+                                \(x) tidyr::replace_na(data = x,
+                                                       replace = 0L)))
   
   # squeeze consecutive all-0 rows into single row if requested
   ix <- integer()
@@ -5682,39 +5699,41 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
 list_sudd_territories <- function() {
   
   rows <-
-    httr::RETRY(verb = "GET",
-                url = url_sudd("list.php"),
-                query = list(mode = "allareas"),
-                times = 3L) %>%
-    xml2::read_html() %>%
-    rvest::html_elements(css = "main table tr") %>%
-    purrr::map(rvest::html_elements,
-               css = "td")
+    httr2::request(base_url = url_sudd("list.php")) |>
+    httr2::req_method(method = "GET") |>
+    httr2::req_url_query(mode = "allareas") |>
+    httr2::req_retry(max_tries = 3L) |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    xml2::read_html() |>
+    rvest::html_elements(css = "main table tr") |>
+    purrr::map(\(x) rvest::html_elements(x,
+                                         css = "td"))
   
-  col_1 <- rows %>% purrr::map(magrittr::extract2, 1L)
-  col_2 <- rows %>% purrr::map(\(x) if (length(x) > 1L) x[[2L]] else xml2::as_xml_document(list()))
-  col_3 <- rows %>% purrr::map(\(x) if (length(x) > 2L) x[[3L]] else xml2::as_xml_document(list()))
+  col_1 <- rows |> purrr::map(\(x) magrittr::extract2(x, 1L))
+  col_2 <- rows |> purrr::map(\(x) if (length(x) > 1L) x[[2L]] else xml2::as_xml_document(list()))
+  col_3 <- rows |> purrr::map(\(x) if (length(x) > 2L) x[[3L]] else xml2::as_xml_document(list()))
   
   tibble::tibble(country_name_de = purrr::map_chr(col_1, rvest::html_text),
                  territory_name_de = purrr::map_chr(col_2, rvest::html_text),
                  filter_url = purrr::map_chr(col_2,
-                                             ~ {
-                                               if (length(.x) > 0L) {
-                                                 .x %>%
-                                                   rvest::html_element(css = "a") %>%
-                                                   rvest::html_attr(name = "href") %>%
+                                             \(x) {
+                                               if (length(x) > 0L) {
+                                                 x |>
+                                                   rvest::html_element(css = "a") |>
+                                                   rvest::html_attr(name = "href") |>
                                                    url_sudd()
                                                } else {
                                                  NA_character_
                                                }
                                              }),
-                 n = purrr::map_chr(col_3, rvest::html_text)) %>%
+                 n = purrr::map_chr(col_3, rvest::html_text)) |>
     dplyr::mutate(country_name_de = dplyr::if_else(stringr::str_detect(string = country_name_de,
                                                                        pattern = "^\\s*$"),
                                                    NA_character_,
-                                                   country_name_de)) %>%
+                                                   country_name_de)) |>
     tidyr::fill(country_name_de,
-                .direction = "down") %>%
+                .direction = "down") |>
     dplyr::filter(!dplyr::if_all(c(territory_name_de, n),
                                  is.na))
 }
@@ -5733,24 +5752,28 @@ list_sudd_territories <- function() {
 list_sudd_titles <- function() {
   
   rows <-
-    httr::RETRY(verb = "GET",
-                url = url_sudd("list.php"),
-                query = list(mode = "alltopics"),
-                times = 3L) %>%
-    xml2::read_html() %>%
-    rvest::html_elements(css = "main table tr") %>%
-    purrr::map(rvest::html_elements,
-               css = "td")
+    httr2::request(base_url = url_sudd("list.php")) |>
+    httr2::req_method(method = "GET") |>
+    httr2::req_url_query(mode = "alltopics") |>
+    httr2::req_retry(max_tries = 3L) |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    xml2::read_html() |>
+    rvest::html_elements(css = "main table tr") |>
+    purrr::map(\(x) rvest::html_elements(x,
+                                         css = "td"))
   
-  col_1 <- rows %>% purrr::map(magrittr::extract2, 1L)
-  col_2 <- rows %>% purrr::map(magrittr::extract2, 2L)
+  col_1 <- rows |> purrr::map(\(x) magrittr::extract2(x, 1L))
+  col_2 <- rows |> purrr::map(\(x) magrittr::extract2(x, 2L))
   
-  tibble::tibble(title_de = col_1 %>% purrr::map_chr(rvest::html_text),
-                 filter_url = col_1 %>% purrr::map_chr(~ .x %>%
-                                                         rvest::html_element(css = "a") %>%
-                                                         rvest::html_attr(name = "href") %>%
-                                                         url_sudd()),
-                 n = col_2 %>% purrr::map_chr(rvest::html_text))
+  tibble::tibble(title_de = col_1 |> purrr::map_chr(rvest::html_text),
+                 filter_url = col_1 |> purrr::map_chr(\(x) {
+                   x |>
+                     rvest::html_element(css = "a") |>
+                     rvest::html_attr(name = "href") |>
+                     url_sudd()
+                 }),
+                 n = col_2 |> purrr::map_chr(rvest::html_text))
 }
 
 #' List referendum data from [sudd.ch](https://sudd.ch/)
@@ -5895,10 +5918,12 @@ list_sudd_rfrnds <- function(mode = c("by_date",
     }
     
     html <-
-      httr::RETRY(verb = "GET",
-                  url = url,
-                  query = query,
-                  times = 3L) %>%
+      httr2::request(base_url = url) |>
+      httr2::req_method(method = "GET") |>
+      httr2::req_url_query(!!!query) |>
+      httr2::req_retry(max_tries = 3L) |>
+      httr2::req_perform() |>
+      httr2::resp_body_string() |>
       xml2::read_html()
     
     if (!quiet) {
@@ -5952,9 +5977,11 @@ list_sudd_rfrnds <- function(mode = c("by_date",
         result %<>%
           tibble::add_column(date_last_edited =
                                col_1 %>%
-                               purrr::map_chr(~ .x %>%
-                                                rvest::html_element(css = "time") %>%
-                                                rvest::html_attr(name = "datetime")) %>%
+                               purrr::map_chr(\(x) {
+                                 x %>%
+                                   rvest::html_element(css = "time") %>%
+                                   rvest::html_attr(name = "datetime")
+                               }) %>%
                                clock::date_parse()) %>%
           tidyr::fill(date_last_edited,
                       .direction = "down")

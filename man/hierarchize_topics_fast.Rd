@@ -30,9 +30,9 @@ are missing. This assumption is met by the data returned by \code{\link[=rfrnds]
 rdb::rfrnds() |>
   dplyr::filter(country_code == "AT") |>
   dplyr::group_split(id) |>
-  purrr::map(~ rdb::hierarchize_topics_fast(unlist(.x$topics_tier_1),
-                                            unlist(.x$topics_tier_2),
-                                            unlist(.x$topics_tier_3)))
+  purrr::map(\(x) rdb::hierarchize_topics_fast(unlist(x$topics_tier_1),
+                                               unlist(x$topics_tier_2),
+                                               unlist(x$topics_tier_3)))
 }
 \seealso{
 Other referendum topic functions:
