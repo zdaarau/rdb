@@ -96,8 +96,7 @@
 </ul></div>
 <div class="section level2">
 <h2 id="rdb-r-package">rdb R package<a class="anchor" aria-label="anchor" href="#rdb-r-package"></a></h2>
-<ul><li><p>Implement <code>rm_obsolete_nocodb_attachments()</code> for removal of “dead” attachments from <code>rdb_attachments</code> B2 bucket since <a href="https://github.com/nocodb/nocodb/issues/7895" class="external-link">this won’t be implemented in NocoDB anytime soon it appears</a>.</p></li>
-<li><p>Prefix all Plotly fns with <code>plotly_</code> instead of <code>plot_</code> to avoid misconceptions.</p></li>
+<ul><li><p>Prefix all Plotly fns with <code>plotly_</code> instead of <code>plot_</code> to avoid misconceptions.</p></li>
 <li><p>Consider explicitly starting the Neon rw/ compute instance <a href="https://api-docs.neon.tech/reference/startprojectendpoint" class="external-link">via a REST API call</a> to avoid connection timeouts due to startup delay when instance was suspended before (not necessary for public access since R/O instance doesn’t suspend)</p></li>
 <li><p>Add support to read sensitive pkg config vals from system keystore via <a href="https://keyring.r-lib.org/" class="external-link">keyring</a> pkg (add support for this in <code>pal::*pkg_config_val*()</code> fns via an additional param <code>sensitive</code> (default <code>FALSE</code>) which makes them first try the system keystore before the other srcs)</p></li>
 <li><p>Check out the <a href="https://www.geonames.org/about.html" class="external-link">GeoNames</a> database and figure out whether it’d be worth to incorporate a suitable subset of it into our <code>countries</code>, <code>subnational_entites</code> and <code>municipalities</code> tables. Note that there’s a dedicated R package <a href="https://docs.ropensci.org/geonames/" class="external-link">geonames</a>.</p></li>

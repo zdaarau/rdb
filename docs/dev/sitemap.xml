@@ -17,6 +17,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/add_world_regions.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/as_ballot_dates.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/assert_vars.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/clean_rfrnd_attachments.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/config_nocodb_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/connect.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/create_nocodb_tbls.html</loc></url>
@@ -72,6 +73,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnd_types.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnds_old.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/s3_auth.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/split_sql_str.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/sudd_rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/tbl_n_rfrnds.html</loc></url>
