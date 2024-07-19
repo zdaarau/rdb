@@ -21,6 +21,7 @@ Updates the RDB's \code{municipalities} table with the data from \code{\link{dat
 }
 \seealso{
 Other administration functions:
+\code{\link{clean_rfrnd_attachments}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbls}()},

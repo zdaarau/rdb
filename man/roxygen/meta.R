@@ -1,6 +1,7 @@
 list(
   rd_family_title = list(admin        = "Other administration functions:",
                          augment      = "Other referendum data augmentation functions:",
+                         s3           = "Other AWS S3-compatible object storage functions:",
                          data         = "Other data functions:",
                          aux_data     = "Other auxiliary data:",
                          metadata     = "Other referendum metadata functions:",

@@ -27,6 +27,7 @@ Other NocoDB functions
 \code{\link{reset_rdb}()}
 
 Other administration functions:
+\code{\link{clean_rfrnd_attachments}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{delete_rfrnds}()},

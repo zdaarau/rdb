@@ -38,6 +38,7 @@ con |> DBI::dbListTables()
 }
 \seealso{
 Other administration functions:
+\code{\link{clean_rfrnd_attachments}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{delete_rfrnds}()},

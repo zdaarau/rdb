@@ -4,7 +4,15 @@
 \alias{reset_nocodb}
 \title{Reset NocoDB}
 \usage{
-reset_nocodb(hostname = nocodb_hostname, ask = TRUE, quiet = TRUE)
+reset_nocodb(
+  hostname = nocodb_hostname,
+  b2_bucket = s3_bucket_attachments,
+  b2_region = s3_region,
+  b2_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key", pkg = this_pkg),
+  b2_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret", pkg = this_pkg),
+  ask = TRUE,
+  quiet = TRUE
+)
 }
 \arguments{
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
@@ -27,6 +35,7 @@ Other NocoDB functions
 \code{\link{reset_rdb}()}
 
 Other administration functions:
+\code{\link{clean_rfrnd_attachments}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbls}()},

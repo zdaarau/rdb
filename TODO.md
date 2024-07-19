@@ -74,9 +74,6 @@
 
 ## rdb R package
 
--   Implement `rm_obsolete_nocodb_attachments()` for removal of "dead" attachments from `rdb_attachments` B2 bucket since [this won't be implemented in NocoDB
-    anytime soon it appears](https://github.com/nocodb/nocodb/issues/7895).
-
 -   Prefix all Plotly fns with `plotly_` instead of `plot_` to avoid misconceptions.
 
 -   Consider explicitly starting the Neon rw/ compute instance [via a REST API call](https://api-docs.neon.tech/reference/startprojectendpoint) to avoid

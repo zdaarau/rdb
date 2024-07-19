@@ -647,11 +647,13 @@ pkg_config <-
                                        " accounts to create on the [RDB NocoDB server](https://admin.rdb.vote/) via ",
                                        "[rdb::reset_nocodb()]."),
                   require = FALSE) |>
-  tibble::add_row(key = "nocodb_b2_access_key",
-                  description = "Access key ID of the `rdb-attachments` Backblaze B2 bucket. Required for [rdb::reset_nocodb()].",
+  tibble::add_row(key = "nocodb_s3_access_key",
+                  description = paste0("ID of an access key granting read/write access to the S3-compatible object store holding the `rdb-attachments` bucket.",
+                                       " Required for various [administration functions](https://rdb.rpkg.dev/reference/#administration)."),
                   require = TRUE) |>
-  tibble::add_row(key = "nocodb_b2_access_secret",
-                  description = "Access secret of the `rdb-attachments` Backblaze B2 bucket. Required for [rdb::reset_nocodb()].",
+  tibble::add_row(key = "nocodb_s3_access_secret",
+                  description = paste0("Secret of an access key granting read/write access to the S3-compatible object store holding the `rdb-attachments` ",
+                                       "bucket. Required for various [administration functions](https://rdb.rpkg.dev/reference/#administration)."),
                   require = TRUE) |>
   tibble::add_row(key = "fly_io_api_token",
                   description = paste0("Fly.io [API token](https://fly.io/docs/flyctl/tokens/) granting access to the RDB organization. Required for ",

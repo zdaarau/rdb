@@ -1382,6 +1382,32 @@ split_sql_str <- function(.text,
 }
 # nolint end
 
+#' Authenticate S3-compatible object store
+#'
+#' Executes [s3fs::s3_file_system()] to authenticate against RDB's S3-compatible object storage provider used to store file attachments.
+#'
+#' @param s3_endpoint S3-compatible endpoint URL where RDB's object storage bucket `r pal::wrap_chr(s3_bucket_attachments, "\x60")` resides.
+#' @param s3_access_key S3-compatible access key ID with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
+#' @param s3_access_secret S3-compatible access secret with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
+#'
+#' @return An object of class [`s3fs::S3FileSystem`][s3fs::S3FileSystem], invisibly.
+#' @family s3
+#' @keywords internal
+s3_auth <- function(s3_endpoint = s3_endpoint_url,
+                    s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
+                                                        pkg = this_pkg),
+                    s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
+                                                           pkg = this_pkg)) {
+  checkmate::assert_string(s3_endpoint)
+  checkmate::assert_string(s3_access_key)
+  checkmate::assert_string(s3_access_secret)
+  
+  s3fs::s3_file_system(aws_access_key_id = s3_access_key,
+                       aws_secret_access_key = s3_access_secret,
+                       endpoint = s3_endpoint,
+                       refresh = TRUE)
+}
+
 derive_country_vars <- function(country_code,
                                 date) {
   
@@ -1965,6 +1991,12 @@ nocodb_reset_caution <- paste0("Beware that this results in **loss of all existi
 pg_db <- "rdb"
 pg_port <- 5432L
 pg_schema <- "public"
+
+s3_bucket_attachments <- "rdb-attachments"
+s3_endpoint_url <- "https://s3.eu-central-003.backblazeb2.com"
+s3_region <- stringr::str_extract(string = s3_endpoint_url,
+                                  pattern = "^https://s3\\.(.*?)\\.",
+                                  group = 1L)
 
 sudd_years <-
   url_sudd("index.php") %>%
@@ -5078,6 +5110,65 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
 }
 # nolint end
 
+#' Clean referendum attachments
+#'
+#' Deletes obsolete attachment files from the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` object storage bucket. An attachment is considered obsolete if it
+#' isn't linked to any referendum in the RDB.
+#'
+#' @inheritParams s3_auth
+#' @param run_dry Whether or not to display the files to be deleted on the console instead of actually deleting any file.
+#'
+#' @return A character vector of deleted file attachment URLs.
+#' @family admin
+#' @export
+clean_rfrnd_attachments <- function(s3_endpoint = s3_endpoint_url,
+                                    s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
+                                                                        pkg = this_pkg),
+                                    s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
+                                                                           pkg = this_pkg),
+                                    run_dry = TRUE) {
+  checkmate::assert_flag(run_dry)
+  
+  s3_auth(s3_endpoint = s3_endpoint,
+          s3_access_key = s3_access_key,
+          s3_access_secret = s3_access_secret)
+  
+  s3_prefix <- paste0("s3://", s3_bucket_attachments, "/")
+  url_prefix <- paste0("https://", s3_bucket_attachments, ".", httr2::url_parse(s3_endpoint_url)$hostname, "/")
+  
+  all_attachments <-
+    s3fs::s3_dir_ls(fs::path(s3_bucket_attachments, "nc/uploads"),
+                    recurse = TRUE) |>
+    fs::path_rel(start = s3_prefix)
+  
+  valid_attachments <-
+    rfrnds(use_cache = FALSE,
+           incl_drafts = TRUE) |>
+    dplyr::pull(attachments) |>
+    purrr::map(\(x) x$url) |>
+    purrr::list_c(ptype = character()) |>
+    xml2::url_unescape() |>
+    fs::path_rel(start = url_prefix)
+  
+  invalid_attachments <- setdiff(x = all_attachments,
+                                 y = valid_attachments)
+  invalid_attachment_urls <- paste0(url_prefix, fs::path(fs::path_dir(invalid_attachments), xml2::url_escape(fs::path_file(invalid_attachments))),
+                                    recycle0 = TRUE)
+  
+  if (length(invalid_attachments) > 0L) {
+    if (run_dry) {
+      cli::cli_alert_info("Files that would be deleted with {.code run_dry = FALSE}:")
+      cli::cli_li(items = purrr::map_chr(invalid_attachment_urls,
+                                         \(x) cli::format_inline("{.url {x}}")))
+    } else {
+      s3fs::s3_file_delete(path = paste0(s3_prefix, invalid_attachments,
+                                         recycle0 = TRUE))
+    }
+  }
+  
+  invisible(invalid_attachment_urls)
+}
+
 #' Notify RDB PostgREST about schema changes
 #'
 #' Sends a `reload schema` message on the `pgrst` PostgreSQL [notification channel](https://www.postgresql.org/docs/16/sql-notify.html), which triggers the RDB
@@ -5268,11 +5359,21 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
 #' @family admin
 #' @keywords internal
 reset_nocodb <- function(hostname = nocodb_hostname,
+                         b2_bucket = s3_bucket_attachments,
+                         b2_region = s3_region,
+                         b2_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
+                                                             pkg = this_pkg),
+                         b2_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
+                                                                pkg = this_pkg),
                          ask = TRUE,
                          quiet = TRUE) {
   
   checkmate::assert_flag(ask)
   checkmate::assert_flag(quiet)
+  checkmate::assert_string(b2_bucket)
+  checkmate::assert_string(b2_region)
+  checkmate::assert_string(b2_access_key)
+  checkmate::assert_string(b2_access_secret)
   rlang::check_installed("yesno",
                          reason = pal::reason_pkg_required())
   
@@ -5439,12 +5540,10 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                                                       hostname = hostname,
                                                       email = email,
                                                       password = password),
-                        config = list(bucket = "rdb-attachments",
-                                      region = "eu-central-003",
-                                      access_key = pal::pkg_config_val(key = "nocodb_b2_access_key",
-                                                                       pkg = this_pkg),
-                                      access_secret = pal::pkg_config_val(key = "nocodb_b2_access_secret",
-                                                                          pkg = this_pkg)),
+                        config = list(bucket = b2_bucket,
+                                      region = b2_region,
+                                      access_key = b2_access_key,
+                                      access_secret = b2_access_secret),
                         activate = TRUE,
                         hostname = hostname,
                         email = email,

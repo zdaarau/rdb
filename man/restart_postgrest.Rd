@@ -27,6 +27,7 @@ Other PostgREST functions
 \code{\link{notify_postgrest}()}
 
 Other administration functions:
+\code{\link{clean_rfrnd_attachments}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbls}()},

@@ -96,6 +96,7 @@ reference:
   - update_langs
   - update_tbl
   - reset_rdb
+  - clean_rfrnd_attachments
 - title: sudd.ch scraping
   desc: Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database.
 - contents:
