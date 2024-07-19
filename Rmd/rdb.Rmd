@@ -6493,14 +6493,14 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
           stderr = out)
   
   # wait until deletion has fully propagated
-  while (TRUE) {
+  repeat {
     
     b2_files <- system2(command = "b2",
                         args = c("ls", "--recursive", b2_uri),
                         stdout = TRUE)
     
     if (length(b2_files) == 0L) {
-      break;
+      break
     }
     
     Sys.sleep(2.0)
