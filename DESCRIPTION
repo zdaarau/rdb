@@ -30,7 +30,7 @@ Imports:
     forcats (>= 1.0.0),
     fs (>= 1.5.2),
     glue (>= 1.4.2),
-    httr2 (>= 1.0.1),
+    httr2 (>= 1.0.2),
     jsonlite (>= 1.8.8),
     katex (>= 1.4.0),
     labelled (>= 2.8.0),
