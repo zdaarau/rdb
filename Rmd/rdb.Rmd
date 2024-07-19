@@ -1804,22 +1804,24 @@ sudd_rfrnd_field_names <- function(id_sudd) {
   checkmate::assert_string(id_sudd)
   
   html <-
-    httr::RETRY(verb = "GET",
-                url = url_sudd("event.php"),
-                query = list(id = id_sudd),
-                times = 3L) %>%
-    xml2::read_html() %>%
-    rvest::html_element(css = "main table") %>%
+    httr2::request(base_url = url_sudd("event.php")) |>
+    httr2::req_method(method = "GET") |>
+    httr2::req_url_query(id = id_sudd) |>
+    httr2::req_retry(max_tries = 3L) |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    xml2::read_html() |>
+    rvest::html_element(css = "main table") |>
     rvest::html_children()
   
   field_names <-
-    html %>%
-    rvest::html_elements(css = "td.feld") %>%
+    html |>
+    rvest::html_elements(css = "td.feld") |>
     rvest::html_text()
   
   field_names_duplicated <-
-    field_names[field_names %in% field_names[duplicated(field_names)]] %>%
-    table(exclude = NULL) %>%
+    field_names[field_names %in% field_names[duplicated(field_names)]] |>
+    table(exclude = NULL) |>
     tibble::enframe(name = "field_name",
                     value = "n")
   
@@ -1840,17 +1842,19 @@ sudd_rfrnd <- function(id_sudd) {
   checkmate::assert_string(id_sudd)
   
   html <-
-    httr::RETRY(verb = "GET",
-                url = url_sudd("event.php"),
-                query = list(id = id_sudd),
-                times = 3L) %>%
-    xml2::read_html() %>%
-    rvest::html_element(css = "main table") %>%
+    httr2::request(base_url = url_sudd("event.php")) |>
+    httr2::req_method(method = "GET") |>
+    httr2::req_url_query(id = id_sudd) |>
+    httr2::req_retry(max_tries = 3L) |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    xml2::read_html() |>
+    rvest::html_element(css = "main table") |>
     rvest::html_children()
   
   field_names <-
-    html %>%
-    rvest::html_elements(css = "td.feld") %>%
+    html |>
+    rvest::html_elements(css = "td.feld") |>
     rvest::html_text()
   
   # handle fields with duplicated/ambiguous names
@@ -2238,9 +2242,9 @@ url_sudd <- function(x = "") {
                    if (!is.na(x) && stringr::str_detect(x, "https?:")) {
                      x
                    } else {
-                     httr::modify_url(url = x %|% "",
-                                      scheme = "https",
-                                      hostname = "sudd.ch")
+                     httr2::url_build(list(scheme = "https",
+                                           hostname = "sudd.ch",
+                                           path = x %|% ""))
                    }
                  })
 }
@@ -6560,39 +6564,41 @@ NOTES:
 list_sudd_territories <- function() {
   
   rows <-
-    httr::RETRY(verb = "GET",
-                url = url_sudd("list.php"),
-                query = list(mode = "allareas"),
-                times = 3L) %>%
-    xml2::read_html() %>%
-    rvest::html_elements(css = "main table tr") %>%
-    purrr::map(rvest::html_elements,
-               css = "td")
+    httr2::request(base_url = url_sudd("list.php")) |>
+    httr2::req_method(method = "GET") |>
+    httr2::req_url_query(mode = "allareas") |>
+    httr2::req_retry(max_tries = 3L) |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    xml2::read_html() |>
+    rvest::html_elements(css = "main table tr") |>
+    purrr::map(\(x) rvest::html_elements(x,
+                                         css = "td"))
   
-  col_1 <- rows %>% purrr::map(magrittr::extract2, 1L)
-  col_2 <- rows %>% purrr::map(\(x) if (length(x) > 1L) x[[2L]] else xml2::as_xml_document(list()))
-  col_3 <- rows %>% purrr::map(\(x) if (length(x) > 2L) x[[3L]] else xml2::as_xml_document(list()))
+  col_1 <- rows |> purrr::map(\(x) magrittr::extract2(x, 1L))
+  col_2 <- rows |> purrr::map(\(x) if (length(x) > 1L) x[[2L]] else xml2::as_xml_document(list()))
+  col_3 <- rows |> purrr::map(\(x) if (length(x) > 2L) x[[3L]] else xml2::as_xml_document(list()))
   
   tibble::tibble(country_name_de = purrr::map_chr(col_1, rvest::html_text),
                  territory_name_de = purrr::map_chr(col_2, rvest::html_text),
                  filter_url = purrr::map_chr(col_2,
-                                             ~ {
-                                               if (length(.x) > 0L) {
-                                                 .x %>%
-                                                   rvest::html_element(css = "a") %>%
-                                                   rvest::html_attr(name = "href") %>%
+                                             \(x) {
+                                               if (length(x) > 0L) {
+                                                 x |>
+                                                   rvest::html_element(css = "a") |>
+                                                   rvest::html_attr(name = "href") |>
                                                    url_sudd()
                                                } else {
                                                  NA_character_
                                                }
                                              }),
-                 n = purrr::map_chr(col_3, rvest::html_text)) %>%
+                 n = purrr::map_chr(col_3, rvest::html_text)) |>
     dplyr::mutate(country_name_de = dplyr::if_else(stringr::str_detect(string = country_name_de,
                                                                        pattern = "^\\s*$"),
                                                    NA_character_,
-                                                   country_name_de)) %>%
+                                                   country_name_de)) |>
     tidyr::fill(country_name_de,
-                .direction = "down") %>%
+                .direction = "down") |>
     dplyr::filter(!dplyr::if_all(c(territory_name_de, n),
                                  is.na))
 }
@@ -6615,24 +6621,28 @@ list_sudd_territories <- function() {
 list_sudd_titles <- function() {
   
   rows <-
-    httr::RETRY(verb = "GET",
-                url = url_sudd("list.php"),
-                query = list(mode = "alltopics"),
-                times = 3L) %>%
-    xml2::read_html() %>%
-    rvest::html_elements(css = "main table tr") %>%
-    purrr::map(rvest::html_elements,
-               css = "td")
+    httr2::request(base_url = url_sudd("list.php")) |>
+    httr2::req_method(method = "GET") |>
+    httr2::req_url_query(mode = "alltopics") |>
+    httr2::req_retry(max_tries = 3L) |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    xml2::read_html() |>
+    rvest::html_elements(css = "main table tr") |>
+    purrr::map(\(x) rvest::html_elements(x,
+                                         css = "td"))
   
-  col_1 <- rows %>% purrr::map(magrittr::extract2, 1L)
-  col_2 <- rows %>% purrr::map(magrittr::extract2, 2L)
+  col_1 <- rows |> purrr::map(\(x) magrittr::extract2(x, 1L))
+  col_2 <- rows |> purrr::map(\(x) magrittr::extract2(x, 2L))
   
-  tibble::tibble(title_de = col_1 %>% purrr::map_chr(rvest::html_text),
-                 filter_url = col_1 %>% purrr::map_chr(~ .x %>%
-                                                         rvest::html_element(css = "a") %>%
-                                                         rvest::html_attr(name = "href") %>%
-                                                         url_sudd()),
-                 n = col_2 %>% purrr::map_chr(rvest::html_text))
+  tibble::tibble(title_de = col_1 |> purrr::map_chr(rvest::html_text),
+                 filter_url = col_1 |> purrr::map_chr(\(x) {
+                   x |>
+                     rvest::html_element(css = "a") |>
+                     rvest::html_attr(name = "href") |>
+                     url_sudd()
+                 }),
+                 n = col_2 |> purrr::map_chr(rvest::html_text))
 }
 ```
 
@@ -6781,10 +6791,12 @@ list_sudd_rfrnds <- function(mode = c("by_date",
     }
     
     html <-
-      httr::RETRY(verb = "GET",
-                  url = url,
-                  query = query,
-                  times = 3L) %>%
+      httr2::request(base_url = url) |>
+      httr2::req_method(method = "GET") |>
+      httr2::req_url_query(!!!query) |>
+      httr2::req_retry(max_tries = 3L) |>
+      httr2::req_perform() |>
+      httr2::resp_body_string() |>
       xml2::read_html()
     
     if (!quiet) {
