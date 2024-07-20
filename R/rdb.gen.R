@@ -3052,6 +3052,41 @@ infer_topics <- function(topics,
   unique(result)
 }
 
+#' Nest topics hierarchically
+#'
+#' Takes a data frame with the three columns `r paste0("topic_tier_", 1:3) |> pal::enum_str(wrap = "\x60")` and transforms it into a nested data frame with the
+#' two columns `topic` and `parent_topic`.
+#'
+#' @param data Political topics like [`data_topics`][data_topics].
+#'
+#' @return `r pkgsnip::return_lbl("tibble_cols", cols = c("topic", "parent_topic"))`
+#' @family topics
+#' @export
+#'
+#' @examples
+#' rdb::data_topics |> rdb::nest_topics()
+nest_topics <- function(data) {
+  
+  assert_vars(data = data,
+              vars = paste0("topic_tier_", 1:3))
+  
+  # add tier-3 topics
+  data |>
+    dplyr::filter(!is.na(topic_tier_3)) |>
+    dplyr::transmute(topic = topic_tier_3,
+                     parent_topic = topic_tier_2) |>
+    dplyr::bind_rows(
+      # add tier-2 topics
+      data |>
+        dplyr::filter(!is.na(topic_tier_2)) |>
+        dplyr::transmute(topic = topic_tier_2,
+                         parent_topic = topic_tier_1) |>
+        unique(),
+      # add tier-1 topics
+      tibble::tibble(topic = unique(data$topic_tier_1),
+                     parent_topic = NA_character_))
+}
+
 #' Add `is_former_country` flag to referendum data
 #'
 #' Augments `data` with an additional column `is_former_country` indicating whether or not the column `country_code` holds an [ISO 3166-3
@@ -4908,6 +4943,27 @@ update_langs <- function(sweep = TRUE,
   
   update_tbl(data = data_iso_639_1,
              tbl_name = "languages",
+             sweep = sweep,
+             connection = connection,
+             disconnect = disconnect)
+}
+
+#' Update RDB `topics` table
+#'
+#' Updates the RDB's `languages` table with the data from [`nest_topics(data_topics)`][nest_topics].
+#'
+#' @inheritParams update_rfrnds
+#'
+#' @return [`nest_topics(data_topics)`][nest_topics], invisibly.
+#' @family admin
+#' @family topics
+#' @export
+update_topics <- function(sweep = TRUE,
+                          connection = connect(),
+                          disconnect = TRUE) {
+  
+  update_tbl(data = nest_topics(data_topics),
+             tbl_name = "topics",
              sweep = sweep,
              connection = connection,
              disconnect = disconnect)

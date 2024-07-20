@@ -40,6 +40,7 @@ Other administration functions:
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
 \code{\link{update_rfrnds}()},
-\code{\link{update_tbl}()}
+\code{\link{update_tbl}()},
+\code{\link{update_topics}()}
 }
 \concept{admin}

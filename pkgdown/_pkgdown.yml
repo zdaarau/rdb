@@ -49,6 +49,7 @@ reference:
   - hierarchize_topics
   - hierarchize_topics_fast
   - infer_topics
+  - nest_topics
 - title: Augmentation
   desc: Functions to augment the RDB referendum data by additional information (columns).
 - contents:
@@ -94,6 +95,7 @@ reference:
   - update_subnational_entities
   - update_municipalities
   - update_langs
+  - update_topics
   - update_tbl
   - reset_rdb
   - clean_rfrnd_attachments

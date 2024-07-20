@@ -21,7 +21,9 @@ Other referendum topic functions:
 \code{\link{hierarchize_topics}()},
 \code{\link{hierarchize_topics_fast}()},
 \code{\link{infer_topics}()},
-\code{\link{topics}()}
+\code{\link{nest_topics}()},
+\code{\link{topics}()},
+\code{\link{update_topics}()}
 }
 \concept{topics}
 \keyword{datasets}

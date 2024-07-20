@@ -37,7 +37,8 @@ Other administration functions:
 \code{\link{update_municipalities}()},
 \code{\link{update_rfrnds}()},
 \code{\link{update_subnational_entities}()},
-\code{\link{update_tbl}()}
+\code{\link{update_tbl}()},
+\code{\link{update_topics}()}
 
 Other data functions:
 \code{\link{assert_vars}()},

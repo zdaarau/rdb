@@ -37,6 +37,8 @@ Other referendum topic functions:
 \code{\link{data_topics}},
 \code{\link{hierarchize_topics}()},
 \code{\link{hierarchize_topics_fast}()},
-\code{\link{topics}()}
+\code{\link{nest_topics}()},
+\code{\link{topics}()},
+\code{\link{update_topics}()}
 }
 \concept{topics}
