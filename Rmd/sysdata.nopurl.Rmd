@@ -205,7 +205,7 @@ data_iso_3166_1 <-
   tibble::as_tibble() |>
   # convert column names to snake_case
   dplyr::rename_with(.cols = everything(),
-                     .fn = snakecase::to_snake_case) |>
+                     .fn = heck::to_snake_case) |>
   # add `common_name` where it's currently missing
   # TODO: consider submitting PRs once [upstream issue #44](https://salsa.debian.org/iso-codes-team/iso-codes/-/issues/44) is answered
   dplyr::mutate(common_name = dplyr::case_when(alpha_2 == "BN" ~ "Brunei",
@@ -265,7 +265,7 @@ data_iso_3166_2 <-
   tibble::as_tibble() |>
   # convert column names to snake_case
   dplyr::rename_with(.cols = everything(),
-                     .fn = snakecase::to_snake_case) |>
+                     .fn = heck::to_snake_case) |>
   dplyr::mutate(valid_from = clock::date_parse("0001-01-01"),
                 valid_to = as.Date(NA)) |>
   dplyr::relocate(code_parent = parent,
@@ -286,7 +286,7 @@ data_iso_3166_3 <-
   tibble::as_tibble() |>
   # convert column names to snake_case
   dplyr::rename_with(.cols = everything(),
-                     .fn = snakecase::to_snake_case) |>
+                     .fn = heck::to_snake_case) |>
   dplyr::mutate(alpha_2_old = stringr::str_sub(string = alpha_4,
                                                end = 2L),
                 alpha_2_new = stringr::str_sub(string = alpha_4,
@@ -354,7 +354,7 @@ data_iso_639_1 <-
   tibble::as_tibble() |>
   # convert column names to snake_case
   dplyr::rename_with(.cols = everything(),
-                     .fn = snakecase::to_snake_case) |>
+                     .fn = heck::to_snake_case) |>
   dplyr::filter(!is.na(alpha_2)) |>
   dplyr::select(code = alpha_2,
                 name) |>
@@ -497,7 +497,7 @@ data_un_locode <-
   readr::read_csv(file = "https://raw.githubusercontent.com/datasets/un-locode/main/data/code-list.csv",
                   col_types = "c") |>
   dplyr::rename_with(.cols = everything(),
-                     .fn = snakecase::to_snake_case) |>
+                     .fn = heck::to_snake_case) |>
   dplyr::mutate(country_code = country,
                 subnational_entity_code = dplyr::if_else(is.na(country_code) | is.na(subdivision),
                                                          NA_character_,
