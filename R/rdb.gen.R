@@ -2880,7 +2880,7 @@ topics <- function(tiers = 1:3) {
 #' @param x The topics to hierarchize. Either a character vector of topics or a single-row data frame containing at least the columns `topics_tier_1`,
 #'   `topics_tier_2` and `topics_tier_3`.
 #'
-#' @return A [tibble][tibble::tbl_df] with the columns `topic_tier_1`, `topic_tier_2` and `topic_tier_3`.
+#' @return `r pkgsnip::return_lbl("tibble_cols", cols = paste0("topic_tier_", 1:3))`
 #' @family topics
 #' @export
 #'

@@ -11,7 +11,7 @@ hierarchize_topics(x)
 \code{topics_tier_2} and \code{topics_tier_3}.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble} with the columns \code{topic_tier_1}, \code{topic_tier_2} and \code{topic_tier_3}.
+A \link[tibble:tbl_df-class]{tibble} with the columns \code{topic_tier_1}, \code{topic_tier_2}, and \code{topic_tier_3}.
 }
 \description{
 Reconstructs the hierarchical relations between the three topic variables \code{topics_tier_1}, \code{topics_tier_2} and \code{topics_tier_3}. Can also be used to simply

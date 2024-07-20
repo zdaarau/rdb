@@ -18,7 +18,7 @@ hierarchize_topics_fast(
 \item{topics_tier_3}{Third-tier topics. A character vector.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble} with the columns \code{topic_tier_1}, \code{topic_tier_2} and \code{topic_tier_3}.
+A \link[tibble:tbl_df-class]{tibble} with the columns \code{topic_tier_1}, \code{topic_tier_2}, and \code{topic_tier_3}.
 }
 \description{
 Reconstructs the hierarchical relations between the three topic variables \code{topics_tier_1}, \code{topics_tier_2} and \code{topics_tier_3}. Other than
