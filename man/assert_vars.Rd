@@ -15,7 +15,8 @@ assert_vars(data, vars)
 \code{data}, invisibly.
 }
 \description{
-Asserts the specified \code{vars} are present in the supplied referendum \code{data}. Depending on \code{vars}, additional integrity checks are performed.
+Asserts that the supplied \code{data} \link[checkmate:checkDataFrame]{is a data frame} and that the specified \code{vars} are present. Depending on \code{vars}, further
+integrity checks are performed.
 }
 \examples{
 rdb::rfrnds() |> rdb::assert_vars(vars = "country_code")
