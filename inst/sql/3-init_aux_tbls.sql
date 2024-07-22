@@ -64,7 +64,7 @@ CREATE TABLE public.countries (
 
 CREATE TABLE public.subnational_entities (
   code        text PRIMARY KEY,
-  code_parent text REFERENCES public.subnational_entities,
+  parent_code text REFERENCES public.subnational_entities,
   "name"      text NOT NULL,
   "type"      text NOT NULL,
   valid_from  date NOT NULL,

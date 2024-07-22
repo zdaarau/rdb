@@ -268,7 +268,7 @@ data_iso_3166_2 <-
                      .fn = heck::to_snake_case) |>
   dplyr::mutate(valid_from = clock::date_parse("0001-01-01"),
                 valid_to = as.Date(NA)) |>
-  dplyr::relocate(code_parent = parent,
+  dplyr::relocate(parent_code = parent,
                   .after = code) |>
   # add expired codes
   dplyr::bind_rows(data_iso_3166_2) |>
