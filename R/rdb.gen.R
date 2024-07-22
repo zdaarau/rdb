@@ -1979,6 +1979,7 @@ nocodb_col_metadata <- tibble::tribble(
 
 # the virtual columns NocoDB maintains for foreign keys not always have optimal default titles, so we have to tweak 'em
 # NOTE: columns of `uidt == "Links"` are automatically renamed if necessary
+# TODO: we don't really need this tbl but instead should be able to singularize col display titles purely programmatically (`ies` -> `y` otherwise del `s`)
 nocodb_col_renames <- tibble::tribble(
   ~uidt,                 ~col_title_old,           ~col_title_new,
   "LinkToAnotherRecord", "actors",                 "actor",
@@ -1986,7 +1987,6 @@ nocodb_col_renames <- tibble::tribble(
   "LinkToAnotherRecord", "languages",              "language",
   "LinkToAnotherRecord", "municipalities",         "municipality",
   "LinkToAnotherRecord", "options",                "option",
-  "LinkToAnotherRecord", "referendum_types",       "referendum_type",
   "LinkToAnotherRecord", "referendums",            "referendum",
   "LinkToAnotherRecord", "subnational_entities",   "subnational_entity",
   "LinkToAnotherRecord", "supranational_entities", "supranational_entity"
