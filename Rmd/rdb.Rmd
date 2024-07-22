@@ -6265,7 +6265,8 @@ NOTES:
 ```{r}
 #' Reset NocoDB
 #'
-#' Completely re-creates the `r nocodb_base_title` base and adds the RDB team's user accounts on the specified NocoDB server. `r nocodb_reset_caution`
+#' Completely re-creates the `r pal::wrap_chr(nocodb_base_title, "\x60")` base and adds the RDB team's user accounts on the specified NocoDB server.
+#' `r nocodb_reset_caution`
 #'
 #' @inheritParams nocodb::update_app_settings
 #' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
@@ -6452,6 +6453,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                               quiet = quiet)
   
   # add Backblaze B2 object storage provider
+  # TODO: switch to S3 plugin once [nocodb/nocodb#8886](https://github.com/nocodb/nocodb/pull/8886) is released!
   nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2",
                                                       hostname = hostname,
                                                       email = email,
