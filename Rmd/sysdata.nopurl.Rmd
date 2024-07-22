@@ -637,8 +637,9 @@ pkg_config <-
                                        "RDB PostgreSQL server. Required for [rdb::pg_init_db()] and others."),
                   require = TRUE) |>
   tibble::add_row(key = "neon_api_key",
-                  description = paste0("[API key](https://neon.tech/docs/manage/api-keys) for the RDB neon.tech project `r pal::wrap_chr(rdb:::neon_project, ",
-                                       "'\x60')`. Required for [rdb::restart_neon_instance()]."),
+                  description = paste0("[API key](https://neon.tech/docs/manage/api-keys) for the RDB neon.tech project ",
+                                       pal::wrap_chr(rdb:::neon_project, "\x60"),
+                                       ". Required for [rdb::restart_neon_ep()]."),
                   require = TRUE) |>
   tibble::add_row(key = "nocodb_email",
                   description = "E-mail address of the [RDB NocoDB server](https://admin.rdb.vote/)'s super admin user. Required for [rdb::reset_nocodb()].",
