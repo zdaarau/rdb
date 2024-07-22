@@ -36,7 +36,8 @@ DO LANGUAGE plpgsql
                              'countries',
                              'subnational_entities',
                              'municipalities',
-                             'languages']
+                             'languages',
+                             'topics']
     LOOP
       EXECUTE format('DROP TABLE IF EXISTS %I CASCADE', t);
     END LOOP;
@@ -94,6 +95,14 @@ CREATE TABLE public.municipalities (
 CREATE TABLE public.languages (
   code       text PRIMARY KEY,
   "name"     text NOT NULL,
+  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  CHECK (updated_at >= created_at)
+);
+
+CREATE TABLE public.topics (
+  name        text PRIMARY KEY,
+  parent_name text REFERENCES public.topics,
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   CHECK (updated_at >= created_at)

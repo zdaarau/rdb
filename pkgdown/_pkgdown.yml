@@ -33,6 +33,7 @@ reference:
   - data_iso_3166_3
   - data_iso_639_1
   - data_municipalities
+  - data_topics
 - title: Metadata
 - contents:
   - data_codebook
@@ -44,7 +45,6 @@ reference:
 - title: Political topics
   desc: Functions to work with referendum [topics](https://rdb.rpkg.dev/articles/codebook.html#topics).
 - contents:
-  - data_topics
   - topics
   - hierarchize_topics
   - hierarchize_topics_fast

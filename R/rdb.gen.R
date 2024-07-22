@@ -2028,6 +2028,7 @@ tbl_metadata <- tibble::tribble(
   "referendums",                  TRUE,         color_rdb_main, "display",                 "\U0001F5F3",
   "referendum_types_legal_norms", TRUE,         "#85e085",      NA_character_,             NA_character_,
   "referendum_types_referendums", TRUE,         "#85e085",      NA_character_,             NA_character_,
+  "topics_referendums",           TRUE,         "#6673ff",      NA_character_,             NA_character_,
   "referendum_titles",            TRUE,         "#6673ff",      "title",                   "\U0001F4D5",
   "referendum_questions",         TRUE,         "#6673ff",      "question",                "\u2753",
   "referendum_positions",         TRUE,         "#6673ff",      "actor_label",             "\U0001F4E3",
@@ -2037,7 +2038,8 @@ tbl_metadata <- tibble::tribble(
   "countries",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512",
   "subnational_entities",         FALSE,        "#ffdf80",      "name",                    "\U0001F512",
   "municipalities",               FALSE,        "#ffdf80",      "name",                    "\U0001F512",
-  "languages",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512"
+  "languages",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512",
+  "topics",                       FALSE,        "#ffdf80",      "name",                    "\U0001F512",
 ) |>
   # add `desc` col separately (otherwise col vals exceed screen width to easily)
   dplyr::left_join(
@@ -2051,6 +2053,7 @@ tbl_metadata <- tibble::tribble(
       "referendums",                  "*main table*",
       "referendum_types_legal_norms", "*junction table*",
       "referendum_types_referendums", "*junction table*",
+      "topics_referendums",           "*junction table*",
       "referendum_titles",            "referendum titles",
       "referendum_questions",         "referendum questions",
       "referendum_positions",         "actor positions on referendums",
@@ -2061,7 +2064,8 @@ tbl_metadata <- tibble::tribble(
                                              "[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3)-compliant) "),
       "subnational_entities",         "subnational entities ([ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)-compliant)",
       "municipalities",               "municipalities",
-      "languages",                    "languages ([ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1))"
+      "languages",                    "languages ([ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1))",
+      "topics",                       "political topics to classify referendums"
     )) |>
   assertr::assert(predicate = assertr::not_na,
                   name, desc) |>
@@ -2658,6 +2662,19 @@ assert_vars <- function(data,
 #' rdb::data_municipalities
 "data_municipalities"
 
+#' Topic hierarchy
+#'
+#' A tibble reflecting the complete [referendum topics hierarchy](`r url_codebook("topics")`).
+#'
+#' @format `r pkgsnip::return_lbl("tibble")`
+#' @family aux_data
+#' @family topics
+#' @export
+#'
+#' @examples
+#' rdb::data_topics
+"data_topics"
+
 #' RDB Codebook
 #'
 #' A tibble containing the complete metadata of all [rfrnds()] variables. The codebook below is also available [online](`r url_codebook()`).
@@ -2821,18 +2838,6 @@ prettify_var_names <- function(var_names) {
                                                       table = c(data_codebook$variable_name,
                                                                 data_codebook$variable_name_unnested))] %|% var_names
 }
-
-#' Topic hierarchy
-#'
-#' A tibble reflecting the complete [referendum topics hierarchy](`r url_codebook("topics")`).
-#'
-#' @format `r pkgsnip::return_lbl("tibble")`
-#' @family topics
-#' @export
-#'
-#' @examples
-#' rdb::data_topics
-"data_topics"
 
 #' List available topics
 #'
@@ -3073,18 +3078,18 @@ nest_topics <- function(data) {
   # add tier-3 topics
   data |>
     dplyr::filter(!is.na(topic_tier_3)) |>
-    dplyr::transmute(topic = topic_tier_3,
-                     parent_topic = topic_tier_2) |>
+    dplyr::transmute(name = topic_tier_3,
+                     parent_name = topic_tier_2) |>
     dplyr::bind_rows(
       # add tier-2 topics
       data |>
         dplyr::filter(!is.na(topic_tier_2)) |>
-        dplyr::transmute(topic = topic_tier_2,
-                         parent_topic = topic_tier_1) |>
+        dplyr::transmute(name = topic_tier_2,
+                         parent_name = topic_tier_1) |>
         unique(),
       # add tier-1 topics
-      tibble::tibble(topic = unique(data$topic_tier_1),
-                     parent_topic = NA_character_))
+      tibble::tibble(name = unique(data$topic_tier_1),
+                     parent_name = NA_character_))
 }
 
 #' Add `is_former_country` flag to referendum data
@@ -5158,6 +5163,8 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                         disconnect = FALSE)
   update_langs(connection = connection,
                disconnect = FALSE)
+  update_topics(connection = connection,
+                disconnect = FALSE)
   
   # trigger PostgREST schema cache reload ----
   if (!quiet) {

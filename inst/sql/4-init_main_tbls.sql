@@ -64,6 +64,7 @@ DO LANGUAGE plpgsql
                              'referendums',
                              'referendum_types_legal_norms',
                              'referendum_types_referendums',
+                             'topics_referendums',
                              'referendum_titles',
                              'referendum_questions',
                              'referendum_positions',
@@ -186,6 +187,7 @@ CREATE TABLE public.referendums (
   CONSTRAINT referendums_check_level_and_codes_8 CHECK ("level" = 'municipal'                                   OR municipality_id IS NULL)
 );
 
+-- Create junction tables intended to be updated via NocoDB
 CREATE TABLE public.referendum_types_legal_norms (
   referendum_type_id      integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE ON DELETE CASCADE,
   legal_norm_id           integer NOT NULL REFERENCES public.legal_norms ON UPDATE CASCADE ON DELETE CASCADE,
@@ -206,6 +208,17 @@ CREATE TABLE public.referendum_types_referendums (
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (referendum_type_id, referendum_id),
   CONSTRAINT referendum_types_referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+);
+
+CREATE TABLE public.topics_referendums (
+  topic_name              text NOT NULL REFERENCES public.topics ON UPDATE CASCADE ON DELETE CASCADE,
+  referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+  created_by              varchar DEFAULT CURRENT_USER,
+  updated_by              varchar DEFAULT CURRENT_USER,
+  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (topic_name, referendum_id),
+  CONSTRAINT topics_referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 -- Create remaining auxiliary tables intended to be updated via NocoDB
