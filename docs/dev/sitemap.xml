@@ -42,6 +42,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/list_sudd_titles.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/n_rfrnds_per_period.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/nest_topics.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/notify_postgrest.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_col_metadata.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_drop_tbls.html</loc></url>
@@ -69,6 +70,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/read_tbl.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/reset_nocodb.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/reset_rdb.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/restart_neon_ep.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/restart_postgrest.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnd_types.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/rfrnds.html</loc></url>
@@ -86,6 +88,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/update_rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/update_subnational_entities.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/update_tbl.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/update_topics.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/url_admin_portal.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/url_api_old.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/url_codebook.html</loc></url>

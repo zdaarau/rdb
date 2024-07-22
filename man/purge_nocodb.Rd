@@ -7,6 +7,7 @@
 purge_nocodb(
   fly_app_name = "rdb-nocodb",
   b2_bucket_name = fly_app_name,
+  ask = TRUE,
   quiet = FALSE
 )
 }
@@ -18,11 +19,11 @@ purge_nocodb(
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-\code{NULL}, invisibly.
+\code{fly_app_name}, invisibly.
 }
 \description{
-Stops the \code{fly_app_name} NocoDB instance, purges NocoDB's internal database (the Litestream replication data on the \code{b2_bucket_name/nocodb} folder) and
-then restarts the NocoDB instance, thereby resetting it to factory settings. Beware that this results in \strong{loss of all existing NocoDB-specific metadata} (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments}, \href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
+Stops the \code{fly_app_name} NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under \code{{b2_bucket_name}/nocodb}) and then
+restarts the NocoDB instance, thereby resetting it to factory settings. Beware that this results in \strong{loss of all existing NocoDB-specific metadata} (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments}, \href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
 }
 \seealso{
 Other NocoDB functions
@@ -41,6 +42,7 @@ Other administration functions:
 \code{\link{notify_postgrest}()},
 \code{\link{reset_nocodb}()},
 \code{\link{reset_rdb}()},
+\code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},

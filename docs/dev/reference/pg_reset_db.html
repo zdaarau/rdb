@@ -71,7 +71,9 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If the <a href="https://stackoverflow.com/a/71279781/7196903" class="external-link">following error</a> occurs, try deleting the <code>rdb</code> database manually via <a href="https://console.neon.tech/" class="external-link">Neon console</a>:</p>
+    <p>Remember to restart the corresponding read-only Neon.tech compute endpoint (e.g. via <code><a href="restart_neon_ep.html">restart_neon_ep()</a></code>) after runnning <code>pg_reset_db()</code> to render it
+accessible again.</p>
+<p>If the <a href="https://stackoverflow.com/a/71279781/7196903" class="external-link">following error</a> occurs, try deleting the <code>rdb</code> database manually via <a href="https://console.neon.tech/" class="external-link">Neon console</a>:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>permission denied to terminate process</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>DETAIL<span class="sc">:</span> Only roles with privileges of the role whose process is being terminated or with privileges of the <span class="st">"pg_signal_backend"</span> role may terminate <span class="fu">this</span> (...)</span></code></pre><p></p></div>
     </div>

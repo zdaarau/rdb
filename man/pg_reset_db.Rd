@@ -22,6 +22,9 @@ pg_reset_db(
 Drops and recreates the RDB PostgreSQL database.
 }
 \details{
+Remember to restart the corresponding read-only Neon.tech compute endpoint (e.g. via \code{\link[=restart_neon_ep]{restart_neon_ep()}}) after runnning \code{pg_reset_db()} to render it
+accessible again.
+
 If the \href{https://stackoverflow.com/a/71279781/7196903}{following error} occurs, try deleting the \code{rdb} database manually via \href{https://console.neon.tech/}{Neon console}:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{permission denied to terminate process

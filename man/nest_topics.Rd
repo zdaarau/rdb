@@ -10,11 +10,11 @@ nest_topics(data)
 \item{data}{Political topics like \code{\link{data_topics}}.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble} with the columns \code{topic} and \code{parent_topic}.
+A \link[tibble:tbl_df-class]{tibble} with the columns \code{name} and \code{parent_name}.
 }
 \description{
 Takes a data frame with the three columns \code{topic_tier_1}, \code{topic_tier_2} and \code{topic_tier_3} and transforms it into a nested data frame with the
-two columns \code{topic} and \code{parent_topic}.
+two columns \code{name} and \code{parent_name}.
 }
 \examples{
 rdb::data_topics |> rdb::nest_topics()

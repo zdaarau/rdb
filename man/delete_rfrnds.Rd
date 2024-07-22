@@ -31,6 +31,7 @@ Other administration functions:
 \code{\link{purge_nocodb}()},
 \code{\link{reset_nocodb}()},
 \code{\link{reset_rdb}()},
+\code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},

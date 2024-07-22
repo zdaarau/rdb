@@ -27,7 +27,8 @@ Other auxiliary data:
 \code{\link{data_iso_3166_1}},
 \code{\link{data_iso_3166_2}},
 \code{\link{data_iso_3166_3}},
-\code{\link{data_iso_639_1}}
+\code{\link{data_iso_639_1}},
+\code{\link{data_topics}}
 }
 \concept{aux_data}
 \keyword{datasets}

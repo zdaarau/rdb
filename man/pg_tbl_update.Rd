@@ -28,6 +28,7 @@ update the corresponding database fields with.}
 \item \code{"referendums"}
 \item \code{"referendum_types_legal_norms"}
 \item \code{"referendum_types_referendums"}
+\item \code{"topics_referendums"}
 \item \code{"referendum_titles"}
 \item \code{"referendum_questions"}
 \item \code{"referendum_positions"}
@@ -37,7 +38,8 @@ update the corresponding database fields with.}
 \item \code{"countries"}
 \item \code{"subnational_entities"}
 \item \code{"municipalities"}
-\item \code{"languages"} .
+\item \code{"languages"}
+\item \code{"topics"} .
 }}
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}

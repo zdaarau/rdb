@@ -493,6 +493,13 @@ fct_flip <- function(x) {
   x %>% forcats::fct_recode(!!!flip_map)
 }
 
+hostname_to_ep <- function(x) {
+  
+  x |>
+    stringr::str_split_1(pattern = stringr::fixed(".")) |>
+    dplyr::first()
+}
+
 md_link_codebook <- function(var_names) {
   
   purrr::map_chr(var_names,
@@ -864,6 +871,9 @@ pg_drop_tbls <- function(tbl_names,
 #' Reset RDB PostgreSQL database
 #'
 #' Drops and recreates the RDB PostgreSQL database.
+#' 
+#' Remember to restart the corresponding read-only Neon.tech compute endpoint (e.g. via [restart_neon_ep()]) after runnning `pg_reset_db()` to render it
+#' accessible again.
 #' 
 #' If the [following error](https://stackoverflow.com/a/71279781/7196903) occurs, try deleting the `rdb` database manually via [Neon
 #' console](https://console.neon.tech/):
@@ -1963,6 +1973,9 @@ color_rdb_main <- "#3f4eff"
 
 date_backup_rdb <- pal::path_mod_time("data-raw/backups/rdb.rds") |> clock::as_date()
 
+neon_project <- "neon_rdb"
+neon_project_id <- "curly-rain-52896163"
+
 nocodb_hostname <- "admin.rdb.vote"
 nocodb_hostname_testing <- "admin-testing.rdb.vote"
 nocodb_base_title <- "Main"
@@ -3060,11 +3073,11 @@ infer_topics <- function(topics,
 #' Nest topics hierarchically
 #'
 #' Takes a data frame with the three columns `r paste0("topic_tier_", 1:3) |> pal::enum_str(wrap = "\x60")` and transforms it into a nested data frame with the
-#' two columns `topic` and `parent_topic`.
+#' two columns `name` and `parent_name`.
 #'
 #' @param data Political topics like [`data_topics`][data_topics].
 #'
-#' @return `r pkgsnip::return_lbl("tibble_cols", cols = c("topic", "parent_topic"))`
+#' @return `r pkgsnip::return_lbl("tibble_cols", cols = c("name", "parent_name"))`
 #' @family topics
 #' @export
 #'
@@ -5071,6 +5084,11 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                                      user = "rdb_admin",
                                      password = pg_role_pw("rdb_admin")),
                 disconnect = TRUE)
+    
+    # restart Neon read-only compute endpoint (to render it accessible again)
+    restart_neon_ep(project_id = neon_project_id,
+                    endpoint_id = hostname_to_ep(hostname_pg))
+    
     # NOTE: we can only establish a reusable `connection` *after* possible DB deletion just above
     connection <- connect(host = hostname_pg,
                           user = "rdb_admin",
@@ -5243,66 +5261,42 @@ clean_rfrnd_attachments <- function(s3_endpoint = s3_endpoint_url,
   invisible(invalid_attachment_urls)
 }
 
-#' Notify RDB PostgREST about schema changes
+#' Restart Neon.tech PostgreSQL endpoint
 #'
-#' Sends a `reload schema` message on the `pgrst` PostgreSQL [notification channel](https://www.postgresql.org/docs/16/sql-notify.html), which triggers the RDB
-#' PostgREST server to [reload its schema cache](https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading).
-#' 
-#' Note that `notify_postgrest()` only works if the PostgREST server is actively `LISTEN`ing on the `pgrst` channel, which [requires a connection to a
-#' read-write PostgreSQL instance](https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas).
+#' Restarts the Neon.tech PostgreSQL [compute endpoint](https://neon.tech/docs/reference/glossary#compute-endpoint) via the
+#' [`/projects/{project_id}/endpoints/{endpoint_id}/restart` API endpoint](https://api-docs.neon.tech/reference/restartprojectendpoint).
 #'
-#' @inheritParams rfrnds
+#' @inheritParams pal::req_cached
+#' @param project_id Neon.tech project identifier. A character scalar.
+#' @param endpoint_id Neon.tech compute endpoint identifier. A character scalar.
+#' @param api_key [API key](https://neon.tech/docs/manage/api-keys) with sufficient access to the Neon.tech `project_id`.
 #'
-#' @return `NULL`, invisibly.
-#' @family postgrest
+#' @return The HTTP response body as a list.
+#' @family neon
 #' @family admin
 #' @keywords internal
-notify_postgrest <- function(connection = connect(),
-                             disconnect = TRUE) {
+restart_neon_ep <- function(project_id = neon_project_id,
+                            endpoint_id = hostname_to_ep(pal::pkg_config_val(key = "pg_host",
+                                                                             pkg = this_pkg)),
+                            api_key = pal::pkg_config_val(key = "neon_api_key",
+                                                          pkg = this_pkg),
+                            max_tries = 3L) {
   
-  checkmate::assert_flag(disconnect)
+  checkmate::assert_string(project_id)
+  checkmate::assert_string(endpoint_id)
+  checkmate::assert_string(api_key)
+  checkmate::assert_count(max_tries,
+                          positive = TRUE)
   
-  DBI::dbWithTransaction(conn = connection,
-                         code = DBI::dbClearResult(DBI::dbSendStatement(statement = DBI::SQL("NOTIFY pgrst, 'reload schema';"),
-                                                                        conn = connection)))
-  if (disconnect) {
-    DBI::dbDisconnect(conn = connection)
-  }
-  
-  invisible(NULL)
-}
-
-#' Restart RDB PostgREST server
-#'
-#' Restarts the RDB PostgREST server VM (a [Fly.io](https://fly.io/docs/) app), which causes a [schema cache
-#' reload](https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading).
-#'
-#' `restart_postgrest()` serves as an alternative to [notify_postgrest()] when the PostgREST server is not `LISTEN`ing on the `pgrst` channel (e.g. because it
-#' is not [connected to a read-write PostgreSQL instance](https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas)).
-#'
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
-#'
-#' @return `NULL`, invisibly
-#' @family postgrest
-#' @family admin
-#' @keywords internal
-restart_postgrest <- function(api_token = pal::pkg_config_val(key = "fly_io_api_token",
-                                                              pkg = this_pkg),
-                              quiet = FALSE) {
-  
-  checkmate::assert_flag(quiet)
-  pal::assert_cli("flyctl")
-  
-  out <- ifelse(quiet,
-                FALSE,
-                "")
-  
-  system2(command = "flyctl",
-          args = c("apps", "restart", "rdb-postgrest", "--access-token", pal::wrap_chr(api_token, wrap = "'")),
-          stdout = out,
-          stderr = out)
-  
-  invisible(NULL)
+  httr2::request(base_url = glue::glue("https://console.neon.tech/api/v2/projects/{project_id}/endpoints/{endpoint_id}/restart")) |>
+    httr2::req_method(method = "POST") |>
+    httr2::req_user_agent(string = "rdb R package (https://rdb.rpkg.dev)") |>
+    httr2::req_headers(authorization = paste("Bearer", api_key)) |>
+    httr2::req_retry(max_tries = max_tries) |>
+    httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$message) |>
+    httr2::req_perform() |>
+    httr2::resp_body_json() |>
+    invisible()
 }
 
 #' Create NocoDB tables
@@ -5423,7 +5417,8 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
 
 #' Reset NocoDB
 #'
-#' Completely re-creates the `r nocodb_base_title` base and adds the RDB team's user accounts on the specified NocoDB server. `r nocodb_reset_caution`
+#' Completely re-creates the `r pal::wrap_chr(nocodb_base_title, "\x60")` base and adds the RDB team's user accounts on the specified NocoDB server.
+#' `r nocodb_reset_caution`
 #'
 #' @inheritParams nocodb::update_app_settings
 #' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
@@ -5610,6 +5605,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                               quiet = quiet)
   
   # add Backblaze B2 object storage provider
+  # TODO: switch to S3 plugin once [nocodb/nocodb#8886](https://github.com/nocodb/nocodb/pull/8886) is released!
   nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2",
                                                       hostname = hostname,
                                                       email = email,
@@ -5627,23 +5623,25 @@ reset_nocodb <- function(hostname = nocodb_hostname,
 
 #' Purge NocoDB
 #'
-#' Stops the `fly_app_name` NocoDB instance, purges NocoDB's internal database (the Litestream replication data on the `b2_bucket_name/nocodb` folder) and
-#' then restarts the NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
+#' Stops the `fly_app_name` NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under `{b2_bucket_name}/nocodb`) and then
+#' restarts the NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
 #'
 #' @param fly_app_name Fly.io app name.
 #' @param b2_bucket_name Backblaze B2 bucket name.
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
-#' @return `NULL`, invisibly.
+#' @return `fly_app_name`, invisibly.
 #' @family nocodb
 #' @family admin
 #' @keywords internal
 purge_nocodb <- function(fly_app_name = "rdb-nocodb",
                          b2_bucket_name = fly_app_name,
+                         ask = TRUE,
                          quiet = FALSE) {
   
   checkmate::assert_string(fly_app_name)
   checkmate::assert_string(b2_bucket_name)
+  checkmate::assert_flag(ask)
   checkmate::assert_flag(quiet)
   pal::assert_cli(cmd = "flyctl")
   pal::assert_cli(cmd = "b2")
@@ -5653,6 +5651,15 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
   out <- ifelse(quiet,
                 FALSE,
                 "")
+  
+  # if run interactively, ask for confirmation before continuing
+  if (ask && interactive()) {
+    cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely resets the NocoDB server running as Fly app {.field {fly_app_name}}. This results",
+                                  " in loss of all existing NocoDB-specific metadata (comments, audit logs etc.).\n\n"))
+    if (!yesno::yesno2("Are you sure you want to continue?")) {
+      return(invisible(fly_app_name))
+    }
+  }
   
   # get Fly app status
   fly_app_status <- function() {
@@ -5733,6 +5740,68 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
             stdout = out,
             stderr = out)
   }
+  
+  invisible(fly_app_name)
+}
+
+#' Notify RDB PostgREST about schema changes
+#'
+#' Sends a `reload schema` message on the `pgrst` PostgreSQL [notification channel](https://www.postgresql.org/docs/16/sql-notify.html), which triggers the RDB
+#' PostgREST server to [reload its schema cache](https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading).
+#' 
+#' Note that `notify_postgrest()` only works if the PostgREST server is actively `LISTEN`ing on the `pgrst` channel, which [requires a connection to a
+#' read-write PostgreSQL instance](https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas).
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `NULL`, invisibly.
+#' @family postgrest
+#' @family admin
+#' @keywords internal
+notify_postgrest <- function(connection = connect(),
+                             disconnect = TRUE) {
+  
+  checkmate::assert_flag(disconnect)
+  
+  DBI::dbWithTransaction(conn = connection,
+                         code = DBI::dbClearResult(DBI::dbSendStatement(statement = DBI::SQL("NOTIFY pgrst, 'reload schema';"),
+                                                                        conn = connection)))
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(NULL)
+}
+
+#' Restart RDB PostgREST server
+#'
+#' Restarts the RDB PostgREST server VM (a [Fly.io](https://fly.io/docs/) app), which causes a [schema cache
+#' reload](https://postgrest.org/en/latest/references/schema_cache.html#schema-cache-reloading).
+#'
+#' `restart_postgrest()` serves as an alternative to [notify_postgrest()] when the PostgREST server is not `LISTEN`ing on the `pgrst` channel (e.g. because it
+#' is not [connected to a read-write PostgreSQL instance](https://postgrest.org/en/v12/references/listener.html#listener-on-read-replicas)).
+#'
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `NULL`, invisibly
+#' @family postgrest
+#' @family admin
+#' @keywords internal
+restart_postgrest <- function(api_token = pal::pkg_config_val(key = "fly_io_api_token",
+                                                              pkg = this_pkg),
+                              quiet = FALSE) {
+  
+  checkmate::assert_flag(quiet)
+  pal::assert_cli("flyctl")
+  
+  out <- ifelse(quiet,
+                FALSE,
+                "")
+  
+  system2(command = "flyctl",
+          args = c("apps", "restart", "rdb-postgrest", "--access-token", pal::wrap_chr(api_token, wrap = "'")),
+          stdout = out,
+          stderr = out)
   
   invisible(NULL)
 }

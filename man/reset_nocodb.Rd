@@ -25,7 +25,8 @@ reset_nocodb(
 \code{hostname}, invisibly.
 }
 \description{
-Completely re-creates the Main base and adds the RDB team's user accounts on the specified NocoDB server. Beware that this results in \strong{loss of all existing NocoDB-specific metadata} (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments}, \href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
+Completely re-creates the \code{Main} base and adds the RDB team's user accounts on the specified NocoDB server.
+Beware that this results in \strong{loss of all existing NocoDB-specific metadata} (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments}, \href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
 }
 \seealso{
 Other NocoDB functions
@@ -44,6 +45,7 @@ Other administration functions:
 \code{\link{notify_postgrest}()},
 \code{\link{purge_nocodb}()},
 \code{\link{reset_rdb}()},
+\code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},

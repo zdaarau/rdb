@@ -17,6 +17,13 @@ A tibble reflecting the complete \href{https://rdb.rpkg.dev/articles/codebook.ht
 rdb::data_topics
 }
 \seealso{
+Other auxiliary data:
+\code{\link{data_iso_3166_1}},
+\code{\link{data_iso_3166_2}},
+\code{\link{data_iso_3166_3}},
+\code{\link{data_iso_639_1}},
+\code{\link{data_municipalities}}
+
 Other referendum topic functions:
 \code{\link{hierarchize_topics}()},
 \code{\link{hierarchize_topics_fast}()},
@@ -25,5 +32,6 @@ Other referendum topic functions:
 \code{\link{topics}()},
 \code{\link{update_topics}()}
 }
+\concept{aux_data}
 \concept{topics}
 \keyword{datasets}
