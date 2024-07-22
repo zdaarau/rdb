@@ -5,6 +5,7 @@ list(
                          data         = "Other data functions:",
                          aux_data     = "Other auxiliary data:",
                          metadata     = "Other referendum metadata functions:",
+                         neon         = "Other Neon.tech functions:",
                          nocodb       = "Other NocoDB functions",
                          pg           = "Other PostgreSQL functions",
                          postgrest    = "Other PostgREST functions",
