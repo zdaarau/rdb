@@ -7,7 +7,7 @@ editor_options:
 
 ## Avoid `R CMD check` notes
 
-### Undefined global objects used in magrittr pipes
+### Undefined global objects used in pipes
 
 Cf. <https://github.com/tidyverse/magrittr/issues/29#issuecomment-74313262>
 
@@ -1615,11 +1615,11 @@ NOTES:
 ```{r}
 #' Authenticate S3-compatible object store
 #'
-#' Executes [s3fs::s3_file_system()] to authenticate against RDB's S3-compatible object storage provider used to store file attachments.
+#' Executes [s3fs::s3_file_system()] to authenticate against the specified S3-compatible object storage provider.
 #'
-#' @param s3_endpoint S3-compatible endpoint URL where RDB's object storage bucket `r pal::wrap_chr(s3_bucket_attachments, "\x60")` resides.
-#' @param s3_access_key S3-compatible access key ID with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
-#' @param s3_access_secret S3-compatible access secret with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
+#' @param s3_endpoint S3-compatible endpoint URL.
+#' @param s3_access_key S3-compatible access key ID.
+#' @param s3_access_secret S3-compatible access secret.
 #'
 #' @return An object of class [`s3fs::S3FileSystem`][s3fs::S3FileSystem], invisibly.
 #' @family s3
@@ -6010,10 +6010,13 @@ NOTES:
 ```{r}
 #' Clean referendum attachments
 #'
-#' Deletes obsolete attachment files from the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` object storage bucket. An attachment is considered obsolete if it
-#' isn't linked to any referendum in the RDB.
+#' Deletes obsolete attachment files from the specified S3-compatible object storage bucket. An attachment is considered obsolete if it isn't linked to any
+#' referendum in the RDB.
 #'
-#' @inheritParams s3_auth
+#' @param s3_bucket Name of the S3-compatible object storage bucket where the referendum attachments reside.
+#' @param s3_endpoint S3-compatible endpoint URL where the object storage bucket to be cleaned `r pal::wrap_chr(s3_bucket_attachments, "\x60")` resides.
+#' @param s3_access_key S3-compatible access key ID with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
+#' @param s3_access_secret S3-compatible access secret with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
 #' @param run_dry Whether or not to display the files to be deleted on the console instead of actually deleting any file.
 #'
 #' @return A character vector of deleted file attachment URLs.
@@ -6273,6 +6276,8 @@ NOTES:
 #' `r nocodb_reset_caution`
 #'
 #' @inheritParams nocodb::update_app_settings
+#' @param b2_bucket Backblaze B2 bucket name used to store NocoDB's file attachments.
+#' @param b2_region Identifier of the Backblaze B2 region where the `b2_bucket` resides.
 #' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
 #'
 #' @return `hostname`, invisibly.
