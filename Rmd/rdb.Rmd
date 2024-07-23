@@ -6015,9 +6015,9 @@ NOTES:
 #' referendum in the RDB.
 #'
 #' @param s3_bucket Name of the S3-compatible object storage bucket where the referendum attachments reside.
-#' @param s3_endpoint S3-compatible endpoint URL where the object storage bucket to be cleaned `r pal::wrap_chr(s3_bucket_attachments, "\x60")` resides.
-#' @param s3_access_key S3-compatible access key ID with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
-#' @param s3_access_secret S3-compatible access secret with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
+#' @param s3_endpoint S3-compatible endpoint URL where `s3_bucket` is located.
+#' @param s3_access_key S3-compatible access key ID with access to `s3_bucket`.
+#' @param s3_access_secret S3-compatible access secret with access to `s3_bucket`.
 #' @param run_dry Whether or not to display the files to be deleted on the console instead of actually deleting any file.
 #'
 #' @return A character vector of deleted file attachment URLs.
