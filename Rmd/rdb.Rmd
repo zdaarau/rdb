@@ -6295,9 +6295,11 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                                   pkg = this_pkg)
   
   # delete possibly existing base
-  if (nocodb_base_title %in% nocodb::bases(hostname = hostname,
-                                           email = email,
-                                           password = password)$title) {
+  bases <- nocodb::bases(hostname = hostname,
+                         email = email,
+                         password = password)
+  
+  if (nrow(bases) > 0L && nocodb_base_title %in% bases$title) {
     
     # if run interactively, ask for confirmation before continuing
     if (ask && interactive()) {
@@ -6308,13 +6310,12 @@ reset_nocodb <- function(hostname = nocodb_hostname,
       }
     }
     
-    nocodb::delete_base(id_base = nocodb::base_id(title = nocodb_base_title,
-                                                  hostname = hostname,
-                                                  email = email,
-                                                  password = password),
-                        hostname = hostname,
-                        email = email,
-                        password = password)
+    bases |>
+      dplyr::filter(title == !!nocodb_base_title) |>
+      dplyr::pull(id) |>
+      nocodb::delete_base(hostname = hostname,
+                          email = email,
+                          password = password)
   }
   
   # create new base
