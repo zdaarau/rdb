@@ -8,8 +8,6 @@ reset_nocodb(
   hostname = nocodb_hostname,
   b2_bucket = s3_bucket_attachments,
   b2_region = s3_region,
-  b2_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key", pkg = this_pkg),
-  b2_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret", pkg = this_pkg),
   ask = TRUE,
   quiet = TRUE
 )

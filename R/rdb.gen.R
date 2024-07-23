@@ -5430,10 +5430,6 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
 reset_nocodb <- function(hostname = nocodb_hostname,
                          b2_bucket = s3_bucket_attachments,
                          b2_region = s3_region,
-                         b2_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
-                                                             pkg = this_pkg),
-                         b2_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
-                                                                pkg = this_pkg),
                          ask = TRUE,
                          quiet = TRUE) {
   
@@ -5441,8 +5437,6 @@ reset_nocodb <- function(hostname = nocodb_hostname,
   checkmate::assert_flag(quiet)
   checkmate::assert_string(b2_bucket)
   checkmate::assert_string(b2_region)
-  checkmate::assert_string(b2_access_key)
-  checkmate::assert_string(b2_access_secret)
   rlang::check_installed("yesno",
                          reason = pal::reason_pkg_required())
   
@@ -5605,15 +5599,17 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                               quiet = quiet)
   
   # add Backblaze B2 object storage provider
-  # TODO: switch to S3 plugin once [nocodb/nocodb#8886](https://github.com/nocodb/nocodb/pull/8886) is released!
+  # TODO: switch to S3 plugin once [nocodb/nocodb#9054](https://github.com/nocodb/nocodb/issues/9054) is resolved!
   nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2",
                                                       hostname = hostname,
                                                       email = email,
                                                       password = password),
                         config = list(bucket = b2_bucket,
                                       region = b2_region,
-                                      access_key = b2_access_key,
-                                      access_secret = b2_access_secret),
+                                      access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
+                                                                       pkg = this_pkg),
+                                      access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
+                                                                          pkg = this_pkg)),
                         activate = TRUE,
                         hostname = hostname,
                         email = email,
