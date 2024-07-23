@@ -15,6 +15,10 @@ reset_nocodb(
 \arguments{
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
+\item{b2_bucket}{Backblaze B2 bucket name used to store NocoDB's file attachments.}
+
+\item{b2_region}{Identifier of the Backblaze B2 region where the \code{b2_bucket} resides.}
+
 \item{ask}{Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run \link[=interactive]{interactively}.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}

@@ -53,8 +53,6 @@ Beware that this results in <strong>loss of all existing NocoDB-specific metadat
 <span>  hostname <span class="op">=</span> <span class="va">nocodb_hostname</span>,</span>
 <span>  b2_bucket <span class="op">=</span> <span class="va">s3_bucket_attachments</span>,</span>
 <span>  b2_region <span class="op">=</span> <span class="va">s3_region</span>,</span>
-<span>  b2_access_key <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"nocodb_s3_access_key"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
-<span>  b2_access_secret <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"nocodb_s3_access_secret"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -66,6 +64,14 @@ Beware that this results in <strong>loss of all existing NocoDB-specific metadat
 
 <dl><dt id="arg-hostname">hostname<a class="anchor" aria-label="anchor" href="#arg-hostname"></a></dt>
 <dd><p>NocoDB server <a href="https://en.wikipedia.org/wiki/Hostname" class="external-link">hostname</a>. A character scalar.</p></dd>
+
+
+<dt id="arg-b-bucket">b2_bucket<a class="anchor" aria-label="anchor" href="#arg-b-bucket"></a></dt>
+<dd><p>Backblaze B2 bucket name used to store NocoDB's file attachments.</p></dd>
+
+
+<dt id="arg-b-region">b2_region<a class="anchor" aria-label="anchor" href="#arg-b-region"></a></dt>
+<dd><p>Identifier of the Backblaze B2 region where the <code>b2_bucket</code> resides.</p></dd>
 
 
 <dt id="arg-ask">ask<a class="anchor" aria-label="anchor" href="#arg-ask"></a></dt>

@@ -5,6 +5,7 @@
 \title{Clean referendum attachments}
 \usage{
 clean_rfrnd_attachments(
+  s3_bucket = s3_bucket_attachments,
   s3_endpoint = s3_endpoint_url,
   s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key", pkg = this_pkg),
   s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret", pkg = this_pkg),
@@ -12,11 +13,13 @@ clean_rfrnd_attachments(
 )
 }
 \arguments{
-\item{s3_endpoint}{S3-compatible endpoint URL where RDB's object storage bucket \code{rdb-attachments} resides.}
+\item{s3_bucket}{Name of the S3-compatible object storage bucket where the referendum attachments reside.}
 
-\item{s3_access_key}{S3-compatible access key ID with access to the \code{rdb-attachments} bucket.}
+\item{s3_endpoint}{S3-compatible endpoint URL where \code{s3_bucket} is located.}
 
-\item{s3_access_secret}{S3-compatible access secret with access to the \code{rdb-attachments} bucket.}
+\item{s3_access_key}{S3-compatible access key ID with access to \code{s3_bucket}.}
+
+\item{s3_access_secret}{S3-compatible access secret with access to \code{s3_bucket}.}
 
 \item{run_dry}{Whether or not to display the files to be deleted on the console instead of actually deleting any file.}
 }
@@ -24,8 +27,8 @@ clean_rfrnd_attachments(
 A character vector of deleted file attachment URLs.
 }
 \description{
-Deletes obsolete attachment files from the \code{rdb-attachments} object storage bucket. An attachment is considered obsolete if it
-isn't linked to any referendum in the RDB.
+Deletes obsolete attachment files from the specified S3-compatible object storage bucket. An attachment is considered obsolete if it isn't linked to any
+referendum in the RDB.
 }
 \seealso{
 Other administration functions:

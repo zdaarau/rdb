@@ -57,10 +57,10 @@ utils::globalVariables(names = c(".",
                                  "generation_expression",
                                  "has_by_cols",
                                  "has_default",
-                                 "identity_generation",
                                  "id_official",
                                  "id_sudd",
                                  "id_sudd_prefix",
+                                 "identity_generation",
                                  "inst_has_precondition",
                                  "inst_has_urgent_legal_basis",
                                  "inst_is_assembly",
@@ -130,6 +130,7 @@ utils::globalVariables(names = c(".",
                                  "subterritories_yes",
                                  "sudd_prefix",
                                  "tags",
+                                 "title",
                                  "topic",
                                  "topic_tier_1",
                                  "topic_tier_2",
@@ -421,7 +422,7 @@ col_names_autofilled <- function(tbl_name = tbl_metadata$name) {
     paste0("pg_metadata_", tbl_name) |>
     get() |>
     dplyr::filter(is_filled_auto) |>
-    dplyr::pull(column_name)
+    dplyr::pull("column_name")
   
   if (tbl_name == "referendums") {
     
@@ -449,7 +450,7 @@ col_names_mandatory <- function(tbl_name = tbl_metadata$name) {
   paste0("pg_metadata_", tbl_name) |>
     get() |>
     dplyr::filter(!is_nullable & !is_filled_auto) |>
-    dplyr::pull(column_name)
+    dplyr::pull("column_name")
 }
 
 country_code_to_name <- function(country_code) {
@@ -528,7 +529,7 @@ pk <- function(tbl_name = tbl_metadata$name) {
   paste0("pg_metadata_", tbl_name) |>
     get() |>
     dplyr::filter(is_pk) |>
-    dplyr::pull(column_name)
+    dplyr::pull("column_name")
 }
 
 plot_share_per_period <- function(data_freq,
@@ -1128,7 +1129,7 @@ pg_tbl_keep <- function(tbl,
   nrow_tbl_obsolete <-
     tbl_obsolete |>
     dplyr::tally() |>
-    dplyr::pull(n)
+    dplyr::pull("n")
   
   if (nrow_tbl_obsolete > 0L) {
     
@@ -1179,7 +1180,7 @@ pg_tbl_update <- function(tbl,
   pk_col_name <-
     col_metadata |>
     dplyr::filter(is_pk) |>
-    dplyr::pull(column_name) |>
+    dplyr::pull("column_name") |>
     # we don't yet properly handle multi-col PKs, so check for them
     checkmate::assert_string(.var.name = "pk_col_name")
   
@@ -1195,7 +1196,7 @@ pg_tbl_update <- function(tbl,
   is_pk_writable <-
     col_metadata |>
     dplyr::filter(is_pk) |>
-    dplyr::pull(identity_generation) |>
+    dplyr::pull("identity_generation") |>
     magrittr::equals("ALWAYS") |>
     isTRUE() |>
     magrittr::not()
@@ -1393,11 +1394,11 @@ split_sql_str <- function(.text,
 
 #' Authenticate S3-compatible object store
 #'
-#' Executes [s3fs::s3_file_system()] to authenticate against RDB's S3-compatible object storage provider used to store file attachments.
+#' Executes [s3fs::s3_file_system()] to authenticate against the specified S3-compatible object storage provider.
 #'
-#' @param s3_endpoint S3-compatible endpoint URL where RDB's object storage bucket `r pal::wrap_chr(s3_bucket_attachments, "\x60")` resides.
-#' @param s3_access_key S3-compatible access key ID with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
-#' @param s3_access_secret S3-compatible access secret with access to the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` bucket.
+#' @param s3_endpoint S3-compatible endpoint URL.
+#' @param s3_access_key S3-compatible access key ID.
+#' @param s3_access_secret S3-compatible access secret.
 #'
 #' @return An object of class [`s3fs::S3FileSystem`][s3fs::S3FileSystem], invisibly.
 #' @family s3
@@ -3623,8 +3624,8 @@ as_ballot_dates <- function(data,
   n_rows_nested <-
     data |>
     dplyr::summarise(n = dplyr::n(),
-                     .by = any_of(ballot_date_colnames)) %$%
-    n
+                     .by = any_of(ballot_date_colnames)) |>
+    dplyr::pull("n")
   
   if (!identical(purrr::map_int(result$rfrnd_data,
                                 nrow),
@@ -4003,7 +4004,7 @@ plot_topic_segmentation <- function(data,
                                                       .f = \(x) infer_topics(x,
                                                                              tier = 2L)))
       ) %>%
-      dplyr::rename(value = n)
+      dplyr::rename(value = "n")
     
   } else {
     
@@ -4711,9 +4712,9 @@ tbl_n_rfrnds_per_period <- function(data,
 #' Connects to RDB's database management system, a PostgreSQL server managed by [neon.tech](https://neon.tech/).
 #'
 #' @param dbname Name of the RDB PostgreSQL database. Defaults to `r pal::as_md_vals(pg_db)`.
-#' @param host `r pkg_config |> dplyr::filter(key == "pg_host") |> dplyr::pull(description)`
-#' @param user `r pkg_config |> dplyr::filter(key == "pg_user") |> dplyr::pull(description)`
-#' @param password `r pkg_config |> dplyr::filter(key == "pg_password") |> dplyr::pull(description)`
+#' @param host `r pkg_config |> dplyr::filter(key == "pg_host") |> dplyr::pull("description")`
+#' @param user `r pkg_config |> dplyr::filter(key == "pg_user") |> dplyr::pull("description")`
+#' @param password `r pkg_config |> dplyr::filter(key == "pg_password") |> dplyr::pull("description")`
 #' @param sslmode PostgreSQL connection parameter that determines whether or with what priority a secure TLS connection is negotiated with the server. See the
 #'   [official documentation](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE) for more information about the supported
 #'   keywords.
@@ -5204,39 +5205,45 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
 
 #' Clean referendum attachments
 #'
-#' Deletes obsolete attachment files from the `r pal::wrap_chr(s3_bucket_attachments, "\x60")` object storage bucket. An attachment is considered obsolete if it
-#' isn't linked to any referendum in the RDB.
+#' Deletes obsolete attachment files from the specified S3-compatible object storage bucket. An attachment is considered obsolete if it isn't linked to any
+#' referendum in the RDB.
 #'
-#' @inheritParams s3_auth
+#' @param s3_bucket Name of the S3-compatible object storage bucket where the referendum attachments reside.
+#' @param s3_endpoint S3-compatible endpoint URL where `s3_bucket` is located.
+#' @param s3_access_key S3-compatible access key ID with access to `s3_bucket`.
+#' @param s3_access_secret S3-compatible access secret with access to `s3_bucket`.
 #' @param run_dry Whether or not to display the files to be deleted on the console instead of actually deleting any file.
 #'
 #' @return A character vector of deleted file attachment URLs.
 #' @family admin
 #' @export
-clean_rfrnd_attachments <- function(s3_endpoint = s3_endpoint_url,
+clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
+                                    s3_endpoint = s3_endpoint_url,
                                     s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
                                                                         pkg = this_pkg),
                                     s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
                                                                            pkg = this_pkg),
                                     run_dry = TRUE) {
+  
+  checkmate::assert_string(s3_bucket)
   checkmate::assert_flag(run_dry)
   
   s3_auth(s3_endpoint = s3_endpoint,
           s3_access_key = s3_access_key,
           s3_access_secret = s3_access_secret)
   
-  s3_prefix <- paste0("s3://", s3_bucket_attachments, "/")
-  url_prefix <- paste0("https://", s3_bucket_attachments, ".", httr2::url_parse(s3_endpoint_url)$hostname, "/")
+  s3_prefix <- paste0("s3://", s3_bucket, "/")
+  url_prefix <- paste0("https://", s3_bucket, ".", httr2::url_parse(s3_endpoint_url)$hostname, "/")
   
   all_attachments <-
-    s3fs::s3_dir_ls(fs::path(s3_bucket_attachments, "nc/uploads"),
+    s3fs::s3_dir_ls(fs::path(s3_bucket, "nc/uploads"),
                     recurse = TRUE) |>
     fs::path_rel(start = s3_prefix)
   
   valid_attachments <-
     rfrnds(use_cache = FALSE,
            incl_drafts = TRUE) |>
-    dplyr::pull(attachments) |>
+    dplyr::pull("attachments") |>
     purrr::map(\(x) x$url) |>
     purrr::list_c(ptype = character()) |>
     xml2::url_unescape() |>
@@ -5421,6 +5428,8 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
 #' `r nocodb_reset_caution`
 #'
 #' @inheritParams nocodb::update_app_settings
+#' @param b2_bucket Backblaze B2 bucket name used to store NocoDB's file attachments.
+#' @param b2_region Identifier of the Backblaze B2 region where the `b2_bucket` resides.
 #' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
 #'
 #' @return `hostname`, invisibly.
@@ -5446,9 +5455,11 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                                   pkg = this_pkg)
   
   # delete possibly existing base
-  if (nocodb_base_title %in% nocodb::bases(hostname = hostname,
-                                           email = email,
-                                           password = password)$title) {
+  bases <- nocodb::bases(hostname = hostname,
+                         email = email,
+                         password = password)
+  
+  if (nrow(bases) > 0L && nocodb_base_title %in% bases$title) {
     
     # if run interactively, ask for confirmation before continuing
     if (ask && interactive()) {
@@ -5459,13 +5470,12 @@ reset_nocodb <- function(hostname = nocodb_hostname,
       }
     }
     
-    nocodb::delete_base(id_base = nocodb::base_id(title = nocodb_base_title,
-                                                  hostname = hostname,
-                                                  email = email,
-                                                  password = password),
-                        hostname = hostname,
-                        email = email,
-                        password = password)
+    bases |>
+      dplyr::filter(title == !!nocodb_base_title) |>
+      dplyr::pull("id") |>
+      nocodb::delete_base(hostname = hostname,
+                          email = email,
+                          password = password)
   }
   
   # create new base
@@ -5476,7 +5486,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                         hostname = hostname,
                         email = email,
                         password = password) |>
-    purrr::chuck("id")
+    dplyr::pull("id")
   
   Sys.sleep(1L)
   
@@ -5500,7 +5510,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                           hostname = hostname,
                           email = email,
                           password = password)
-  Sys.sleep(1L)
+  Sys.sleep(3L)
   
   # disable default SQLite data source
   nocodb::data_srcs(id_base = id_base,
@@ -5619,45 +5629,45 @@ reset_nocodb <- function(hostname = nocodb_hostname,
 
 #' Purge NocoDB
 #'
-#' Stops the `fly_app_name` NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under `{b2_bucket_name}/nocodb`) and then
-#' restarts the NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
+#' Stops the `fly_app` NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under `{b2_bucket}/nocodb`) and then restarts the
+#' NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
 #'
-#' @param fly_app_name Fly.io app name.
-#' @param b2_bucket_name Backblaze B2 bucket name.
+#' @param fly_app Fly.io app name.
+#' @param b2_bucket Backblaze B2 bucket name where NocoDB's internal SQLite database is replicated to via Litestream.
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
-#' @return `fly_app_name`, invisibly.
+#' @return `fly_app`, invisibly.
 #' @family nocodb
 #' @family admin
 #' @keywords internal
-purge_nocodb <- function(fly_app_name = "rdb-nocodb",
-                         b2_bucket_name = fly_app_name,
+purge_nocodb <- function(fly_app = "rdb-nocodb",
+                         b2_bucket = fly_app,
                          ask = TRUE,
                          quiet = FALSE) {
   
-  checkmate::assert_string(fly_app_name)
-  checkmate::assert_string(b2_bucket_name)
+  checkmate::assert_string(fly_app)
+  checkmate::assert_string(b2_bucket)
   checkmate::assert_flag(ask)
   checkmate::assert_flag(quiet)
   pal::assert_cli(cmd = "flyctl")
   pal::assert_cli(cmd = "b2")
   
-  app_flag <- glue::glue("--app={fly_app_name}")
-  b2_uri <- glue::glue("b2://{b2_bucket_name}/nocodb")
+  app_flag <- glue::glue("--app={fly_app}")
+  b2_uri <- glue::glue("b2://{b2_bucket}/nocodb")
   out <- ifelse(quiet,
                 FALSE,
                 "")
   
   # if run interactively, ask for confirmation before continuing
   if (ask && interactive()) {
-    cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely resets the NocoDB server running as Fly app {.field {fly_app_name}}. This results",
+    cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely resets the NocoDB server running as Fly app {.field {fly_app}}. This results",
                                   " in loss of all existing NocoDB-specific metadata (comments, audit logs etc.).\n\n"))
     if (!yesno::yesno2("Are you sure you want to continue?")) {
-      return(invisible(fly_app_name))
+      return(invisible(fly_app))
     }
   }
   
-  # get Fly app status
+  # define local fns
   fly_app_status <- function() {
     system2(command = "flyctl",
             args = c("status", "--json", app_flag),
@@ -5665,28 +5675,31 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
     jsonlite::fromJSON()
   }
   
+  fly_machine_config <- function(machine_id) {
+    system2(command = "flyctl",
+            args = c("machine", "status", "--display-config", app_flag, machine_id),
+            stdout = TRUE) |>
+      # extract JSON data
+      paste0(collapse = " ") |>
+      stringr::str_extract(pattern = "\\{.+\\}") |>
+      cli::ansi_strip() |>
+      jsonlite::fromJSON()
+  }
+  
+  # get Fly app status
   data_app_status <- fly_app_status()
   
   # extract 1st machine ID
   machine_id <- data_app_status$Machines$id[1L]
   
   # get Fly machine config
-  data_machine_config <-
-    system2(command = "flyctl",
-            args = c("machine", "status", "--display-config", app_flag, machine_id),
-            stdout = TRUE) |>
-    # extract JSON data
-    paste0(collapse = " ") |>
-    stringr::str_extract(pattern = "\\{.+\\}") |>
-    cli::ansi_strip() |>
-    jsonlite::fromJSON()
-  
+  data_machine_config <- fly_machine_config(machine_id)
   machine_autostart <- data_machine_config$services$autostart[1L]
   
   # temporarily disable machine autostart if necessary
   if (machine_autostart) {
     system2(command = "flyctl",
-            args = c("machine", "update", "--autostart=false", "--yes", app_flag, machine_id),
+            args = c("machine", "update", "--autostart=false", "--skip-start", "--yes", app_flag, machine_id),
             stdout = out,
             stderr = out)
   }
@@ -5722,7 +5735,7 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
   # reenable machine autostart (implicitly restarts machine)
   if (machine_autostart) {
     system2(command = "flyctl",
-            args = c("machine", "update", "--autostart=true", "--yes", app_flag, machine_id),
+            args = c("machine", "update", "--autostart=true", "--skip-start", "--yes", app_flag, machine_id),
             stdout = out,
             stderr = out)
   }
@@ -5730,14 +5743,14 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
   # restart Fly app if necessary
   data_app_status <- fly_app_status()
   
-  if (data_app_status$Status != "deployed") {
+  if (data_app_status$Status != "deployed" || data_app_status$Machines$state[1L] != "started") {
     system2(command = "flyctl",
-            args = c("apps", "restart", fly_app_name),
+            args = c("apps", "restart", fly_app),
             stdout = out,
             stderr = out)
   }
   
-  invisible(fly_app_name)
+  invisible(fly_app)
 }
 
 #' Notify RDB PostgREST about schema changes

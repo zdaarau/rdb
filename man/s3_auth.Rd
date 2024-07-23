@@ -11,17 +11,17 @@ s3_auth(
 )
 }
 \arguments{
-\item{s3_endpoint}{S3-compatible endpoint URL where RDB's object storage bucket \code{rdb-attachments} resides.}
+\item{s3_endpoint}{S3-compatible endpoint URL.}
 
-\item{s3_access_key}{S3-compatible access key ID with access to the \code{rdb-attachments} bucket.}
+\item{s3_access_key}{S3-compatible access key ID.}
 
-\item{s3_access_secret}{S3-compatible access secret with access to the \code{rdb-attachments} bucket.}
+\item{s3_access_secret}{S3-compatible access secret.}
 }
 \value{
 An object of class \code{\link[s3fs:S3FileSystem]{s3fs::S3FileSystem}}, invisibly.
 }
 \description{
-Executes \code{\link[s3fs:s3_file_system]{s3fs::s3_file_system()}} to authenticate against RDB's S3-compatible object storage provider used to store file attachments.
+Executes \code{\link[s3fs:s3_file_system]{s3fs::s3_file_system()}} to authenticate against the specified S3-compatible object storage provider.
 }
 \concept{s3}
 \keyword{internal}
