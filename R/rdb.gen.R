@@ -2053,7 +2053,7 @@ tbl_metadata <- tibble::tribble(
   "subnational_entities",         FALSE,        "#ffdf80",      "name",                    "\U0001F512",
   "municipalities",               FALSE,        "#ffdf80",      "name",                    "\U0001F512",
   "languages",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512",
-  "topics",                       FALSE,        "#ffdf80",      "name",                    "\U0001F512",
+  "topics",                       FALSE,        "#ffdf80",      "name",                    "\U0001F512"
 ) |>
   # add `desc` col separately (otherwise col vals exceed screen width to easily)
   dplyr::left_join(
