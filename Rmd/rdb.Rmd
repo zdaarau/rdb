@@ -6480,45 +6480,45 @@ NOTES:
 ```{r}
 #' Purge NocoDB
 #'
-#' Stops the `fly_app_name` NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under `{b2_bucket_name}/nocodb`) and then
-#' restarts the NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
+#' Stops the `fly_app` NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under `{b2_bucket}/nocodb`) and then restarts the
+#' NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
 #'
-#' @param fly_app_name Fly.io app name.
-#' @param b2_bucket_name Backblaze B2 bucket name.
+#' @param fly_app Fly.io app name.
+#' @param b2_bucket Backblaze B2 bucket name where NocoDB's internal SQLite database is replicated to via Litestream.
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
-#' @return `fly_app_name`, invisibly.
+#' @return `fly_app`, invisibly.
 #' @family nocodb
 #' @family admin
 #' @keywords internal
-purge_nocodb <- function(fly_app_name = "rdb-nocodb",
-                         b2_bucket_name = fly_app_name,
+purge_nocodb <- function(fly_app = "rdb-nocodb",
+                         b2_bucket = fly_app,
                          ask = TRUE,
                          quiet = FALSE) {
   
-  checkmate::assert_string(fly_app_name)
-  checkmate::assert_string(b2_bucket_name)
+  checkmate::assert_string(fly_app)
+  checkmate::assert_string(b2_bucket)
   checkmate::assert_flag(ask)
   checkmate::assert_flag(quiet)
   pal::assert_cli(cmd = "flyctl")
   pal::assert_cli(cmd = "b2")
   
-  app_flag <- glue::glue("--app={fly_app_name}")
-  b2_uri <- glue::glue("b2://{b2_bucket_name}/nocodb")
+  app_flag <- glue::glue("--app={fly_app}")
+  b2_uri <- glue::glue("b2://{b2_bucket}/nocodb")
   out <- ifelse(quiet,
                 FALSE,
                 "")
   
   # if run interactively, ask for confirmation before continuing
   if (ask && interactive()) {
-    cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely resets the NocoDB server running as Fly app {.field {fly_app_name}}. This results",
+    cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely resets the NocoDB server running as Fly app {.field {fly_app}}. This results",
                                   " in loss of all existing NocoDB-specific metadata (comments, audit logs etc.).\n\n"))
     if (!yesno::yesno2("Are you sure you want to continue?")) {
-      return(invisible(fly_app_name))
+      return(invisible(fly_app))
     }
   }
   
-  # get Fly app status
+  # define local fns
   fly_app_status <- function() {
     system2(command = "flyctl",
             args = c("status", "--json", app_flag),
@@ -6526,28 +6526,31 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
     jsonlite::fromJSON()
   }
   
+  fly_machine_config <- function(machine_id) {
+    system2(command = "flyctl",
+            args = c("machine", "status", "--display-config", app_flag, machine_id),
+            stdout = TRUE) |>
+      # extract JSON data
+      paste0(collapse = " ") |>
+      stringr::str_extract(pattern = "\\{.+\\}") |>
+      cli::ansi_strip() |>
+      jsonlite::fromJSON()
+  }
+  
+  # get Fly app status
   data_app_status <- fly_app_status()
   
   # extract 1st machine ID
   machine_id <- data_app_status$Machines$id[1L]
   
   # get Fly machine config
-  data_machine_config <-
-    system2(command = "flyctl",
-            args = c("machine", "status", "--display-config", app_flag, machine_id),
-            stdout = TRUE) |>
-    # extract JSON data
-    paste0(collapse = " ") |>
-    stringr::str_extract(pattern = "\\{.+\\}") |>
-    cli::ansi_strip() |>
-    jsonlite::fromJSON()
-  
+  data_machine_config <- fly_machine_config(machine_id)
   machine_autostart <- data_machine_config$services$autostart[1L]
   
   # temporarily disable machine autostart if necessary
   if (machine_autostart) {
     system2(command = "flyctl",
-            args = c("machine", "update", "--autostart=false", "--yes", app_flag, machine_id),
+            args = c("machine", "update", "--autostart=false", "--skip-start", "--yes", app_flag, machine_id),
             stdout = out,
             stderr = out)
   }
@@ -6583,7 +6586,7 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
   # reenable machine autostart (implicitly restarts machine)
   if (machine_autostart) {
     system2(command = "flyctl",
-            args = c("machine", "update", "--autostart=true", "--yes", app_flag, machine_id),
+            args = c("machine", "update", "--autostart=true", "--skip-start", "--yes", app_flag, machine_id),
             stdout = out,
             stderr = out)
   }
@@ -6591,14 +6594,14 @@ purge_nocodb <- function(fly_app_name = "rdb-nocodb",
   # restart Fly app if necessary
   data_app_status <- fly_app_status()
   
-  if (data_app_status$Status != "deployed") {
+  if (data_app_status$Status != "deployed" || data_app_status$Machines$state[1L] != "started") {
     system2(command = "flyctl",
-            args = c("apps", "restart", fly_app_name),
+            args = c("apps", "restart", fly_app),
             stdout = out,
             stderr = out)
   }
   
-  invisible(fly_app_name)
+  invisible(fly_app)
 }
 ```
 
