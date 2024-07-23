@@ -467,7 +467,7 @@ col_names_autofilled <- function(tbl_name = tbl_metadata$name) {
     paste0("pg_metadata_", tbl_name) |>
     get() |>
     dplyr::filter(is_filled_auto) |>
-    dplyr::pull(column_name)
+    dplyr::pull("column_name")
   
   if (tbl_name == "referendums") {
     
@@ -499,7 +499,7 @@ col_names_mandatory <- function(tbl_name = tbl_metadata$name) {
   paste0("pg_metadata_", tbl_name) |>
     get() |>
     dplyr::filter(!is_nullable & !is_filled_auto) |>
-    dplyr::pull(column_name)
+    dplyr::pull("column_name")
 }
 ```
 
@@ -602,7 +602,7 @@ pk <- function(tbl_name = tbl_metadata$name) {
   paste0("pg_metadata_", tbl_name) |>
     get() |>
     dplyr::filter(is_pk) |>
-    dplyr::pull(column_name)
+    dplyr::pull("column_name")
 }
 ```
 
@@ -1309,7 +1309,7 @@ pg_tbl_keep <- function(tbl,
   nrow_tbl_obsolete <-
     tbl_obsolete |>
     dplyr::tally() |>
-    dplyr::pull(n)
+    dplyr::pull("n")
   
   if (nrow_tbl_obsolete > 0L) {
     
@@ -1368,7 +1368,7 @@ pg_tbl_update <- function(tbl,
   pk_col_name <-
     col_metadata |>
     dplyr::filter(is_pk) |>
-    dplyr::pull(column_name) |>
+    dplyr::pull("column_name") |>
     # we don't yet properly handle multi-col PKs, so check for them
     checkmate::assert_string(.var.name = "pk_col_name")
   
@@ -1384,7 +1384,7 @@ pg_tbl_update <- function(tbl,
   is_pk_writable <-
     col_metadata |>
     dplyr::filter(is_pk) |>
-    dplyr::pull(identity_generation) |>
+    dplyr::pull("identity_generation") |>
     magrittr::equals("ALWAYS") |>
     isTRUE() |>
     magrittr::not()
@@ -4254,8 +4254,8 @@ as_ballot_dates <- function(data,
   n_rows_nested <-
     data |>
     dplyr::summarise(n = dplyr::n(),
-                     .by = any_of(ballot_date_colnames)) %$%
-    n
+                     .by = any_of(ballot_date_colnames)) |>
+    dplyr::pull("n")
   
   if (!identical(purrr::map_int(result$rfrnd_data,
                                 nrow),
@@ -4703,7 +4703,7 @@ plot_topic_segmentation <- function(data,
                                                       .f = \(x) infer_topics(x,
                                                                              tier = 2L)))
       ) %>%
-      dplyr::rename(value = n)
+      dplyr::rename(value = "n")
     
   } else {
     
@@ -5452,9 +5452,9 @@ NOTES:
 #' Connects to RDB's database management system, a PostgreSQL server managed by [neon.tech](https://neon.tech/).
 #'
 #' @param dbname Name of the RDB PostgreSQL database. Defaults to `r pal::as_md_vals(pg_db)`.
-#' @param host `r pkg_config |> dplyr::filter(key == "pg_host") |> dplyr::pull(description)`
-#' @param user `r pkg_config |> dplyr::filter(key == "pg_user") |> dplyr::pull(description)`
-#' @param password `r pkg_config |> dplyr::filter(key == "pg_password") |> dplyr::pull(description)`
+#' @param host `r pkg_config |> dplyr::filter(key == "pg_host") |> dplyr::pull("description")`
+#' @param user `r pkg_config |> dplyr::filter(key == "pg_user") |> dplyr::pull("description")`
+#' @param password `r pkg_config |> dplyr::filter(key == "pg_password") |> dplyr::pull("description")`
 #' @param sslmode PostgreSQL connection parameter that determines whether or with what priority a secure TLS connection is negotiated with the server. See the
 #'   [official documentation](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE) for more information about the supported
 #'   keywords.
@@ -6048,7 +6048,7 @@ clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
   valid_attachments <-
     rfrnds(use_cache = FALSE,
            incl_drafts = TRUE) |>
-    dplyr::pull(attachments) |>
+    dplyr::pull("attachments") |>
     purrr::map(\(x) x$url) |>
     purrr::list_c(ptype = character()) |>
     xml2::url_unescape() |>
@@ -6320,7 +6320,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
     
     bases |>
       dplyr::filter(title == !!nocodb_base_title) |>
-      dplyr::pull(id) |>
+      dplyr::pull("id") |>
       nocodb::delete_base(hostname = hostname,
                           email = email,
                           password = password)
@@ -6334,7 +6334,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                         hostname = hostname,
                         email = email,
                         password = password) |>
-    purrr::chuck("id")
+    dplyr::pull("id")
   
   Sys.sleep(1L)
   
