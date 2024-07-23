@@ -6349,7 +6349,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                           hostname = hostname,
                           email = email,
                           password = password)
-  Sys.sleep(1L)
+  Sys.sleep(3L)
   
   # disable default SQLite data source
   nocodb::data_srcs(id_base = id_base,
