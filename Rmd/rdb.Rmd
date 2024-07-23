@@ -6019,23 +6019,26 @@ NOTES:
 #' @return A character vector of deleted file attachment URLs.
 #' @family admin
 #' @export
-clean_rfrnd_attachments <- function(s3_endpoint = s3_endpoint_url,
+clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
+                                    s3_endpoint = s3_endpoint_url,
                                     s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
                                                                         pkg = this_pkg),
                                     s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
                                                                            pkg = this_pkg),
                                     run_dry = TRUE) {
+  
+  checkmate::assert_string(s3_bucket)
   checkmate::assert_flag(run_dry)
   
   s3_auth(s3_endpoint = s3_endpoint,
           s3_access_key = s3_access_key,
           s3_access_secret = s3_access_secret)
   
-  s3_prefix <- paste0("s3://", s3_bucket_attachments, "/")
-  url_prefix <- paste0("https://", s3_bucket_attachments, ".", httr2::url_parse(s3_endpoint_url)$hostname, "/")
+  s3_prefix <- paste0("s3://", s3_bucket, "/")
+  url_prefix <- paste0("https://", s3_bucket, ".", httr2::url_parse(s3_endpoint_url)$hostname, "/")
   
   all_attachments <-
-    s3fs::s3_dir_ls(fs::path(s3_bucket_attachments, "nc/uploads"),
+    s3fs::s3_dir_ls(fs::path(s3_bucket, "nc/uploads"),
                     recurse = TRUE) |>
     fs::path_rel(start = s3_prefix)
   
