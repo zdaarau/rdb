@@ -6,7 +6,10 @@
 \usage{
 purge_nocodb(
   fly_app = "rdb-nocodb",
-  b2_bucket = fly_app,
+  s3_bucket = fly_app,
+  s3_endpoint = s3_endpoint_url,
+  s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key", pkg = this_pkg),
+  s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret", pkg = this_pkg),
   ask = TRUE,
   quiet = FALSE
 )
@@ -14,7 +17,15 @@ purge_nocodb(
 \arguments{
 \item{fly_app}{Fly.io app name.}
 
-\item{b2_bucket}{Backblaze B2 bucket name where NocoDB's internal SQLite database is replicated to via Litestream.}
+\item{s3_bucket}{Name of the S3-compatible object storage bucket to which NocoDB's internal SQLite database is replicated to via Litestream.}
+
+\item{s3_endpoint}{S3-compatible endpoint URL where \code{s3_bucket} is located.}
+
+\item{s3_access_key}{S3-compatible access key ID with access to \code{s3_bucket}.}
+
+\item{s3_access_secret}{S3-compatible access secret with access to \code{s3_bucket}.}
+
+\item{ask}{Whether or not to ask for confirmation before proceeding. Only relevant if run \link[=interactive]{interactively}.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }

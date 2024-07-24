@@ -5632,28 +5632,33 @@ reset_nocodb <- function(hostname = nocodb_hostname,
 #' Stops the `fly_app` NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under `{b2_bucket}/nocodb`) and then restarts the
 #' NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
 #'
+#' @inheritParams clean_rfrnd_attachments
+#' @inheritParams reset_rdb
 #' @param fly_app Fly.io app name.
-#' @param b2_bucket Backblaze B2 bucket name where NocoDB's internal SQLite database is replicated to via Litestream.
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#' @param s3_bucket Name of the S3-compatible object storage bucket to which NocoDB's internal SQLite database is replicated to via Litestream.
 #'
 #' @return `fly_app`, invisibly.
 #' @family nocodb
 #' @family admin
 #' @keywords internal
 purge_nocodb <- function(fly_app = "rdb-nocodb",
-                         b2_bucket = fly_app,
+                         s3_bucket = fly_app,
+                         s3_endpoint = s3_endpoint_url,
+                         s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
+                                                             pkg = this_pkg),
+                         s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
+                                                                pkg = this_pkg),
                          ask = TRUE,
                          quiet = FALSE) {
   
   checkmate::assert_string(fly_app)
-  checkmate::assert_string(b2_bucket)
+  checkmate::assert_string(s3_bucket)
   checkmate::assert_flag(ask)
   checkmate::assert_flag(quiet)
   pal::assert_cli(cmd = "flyctl")
-  pal::assert_cli(cmd = "b2")
   
   app_flag <- glue::glue("--app={fly_app}")
-  b2_uri <- glue::glue("b2://{b2_bucket}/nocodb")
+  s3_url <- glue::glue("s3://{s3_bucket}/nocodb")
   out <- ifelse(quiet,
                 FALSE,
                 "")
@@ -5712,20 +5717,20 @@ purge_nocodb <- function(fly_app = "rdb-nocodb",
             stderr = out)
   }
   
-  # delete NocoDB Litestream data from Backblaze B2 bucket
-  system2(command = "b2",
-          args = c("rm", "--recursive", b2_uri),
-          stdout = out,
-          stderr = out)
+  # delete NocoDB Litestream data from S3 bucket
+  s3_auth(s3_endpoint = s3_endpoint_url,
+          s3_access_key = s3_access_key,
+          s3_access_secret = s3_access_secret)
+  
+  s3fs::s3_dir_delete(path = s3_url)
   
   # wait until deletion has fully propagated
   repeat {
     
-    b2_files <- system2(command = "b2",
-                        args = c("ls", "--recursive", b2_uri),
-                        stdout = TRUE)
+    s3_files <- s3fs::s3_dir_ls(path = s3_url,
+                                recurse = TRUE)
     
-    if (length(b2_files) == 0L) {
+    if (length(s3_files) == 0L) {
       break
     }
     
