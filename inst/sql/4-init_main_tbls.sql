@@ -106,7 +106,7 @@ CREATE TABLE public.options (
 -- Create main tables intended to be updated via NocoDB
 CREATE TABLE public.referendum_types (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  display                 text GENERATED ALWAYS AS ("level" || ' ' || COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || ': ' || "title" || ' (' || to_char_immutable("valid_from") || ')') STORED,
+  display                 text GENERATED ALWAYS AS ("level" || ' ' || COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || ': ' || "title" || ' (valid from: ' || to_char_immutable("valid_from") || ')') STORED,
   "level"                 text NOT NULL CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
   supranational_entity_id text REFERENCES public.supranational_entities ON UPDATE CASCADE,
   country_code            text REFERENCES public.countries ON UPDATE CASCADE,
@@ -164,7 +164,7 @@ CREATE TABLE public.legal_norms (
 
 CREATE TABLE public.referendums (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  display                 text GENERATED ALWAYS AS (to_char_immutable("date") || ' ' || "level" || ' ' || COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || ' (' || "id" || ')') STORED,
+  display                 text GENERATED ALWAYS AS (to_char_immutable("date") || ' ' || "level" || ' ' || COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || ' (id: ' || "id" || ')') STORED,
   id_official             text,
   id_sudd                 text,
   is_draft                boolean NOT NULL DEFAULT TRUE,
