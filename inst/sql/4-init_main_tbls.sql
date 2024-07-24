@@ -31,8 +31,10 @@
   virtual `SingleSelect` type and define the set of allowed values.
 
 - Custom `ENUM` types like `"level"` can be modified via [`ALTER TYPE`](https://www.postgresql.org/docs/current/sql-altertype.html), e.g. to change existing
-  values or add new ones. Removing values is not possible – but we could work around this by converting existing columns of the custom type to `text`, `DROP`ing
-  the custom `ENUM` type, creating a new one and converting the columns back to the new `ENUM` type (I guess; untested!).
+  values or add new ones. Removing values is not possible – but we can work around this [by converting existing columns of the custom type to `text`, `DROP`ing
+  the custom `ENUM` type, creating a new one and converting the columns back to the new `ENUM` type](https://stackoverflow.com/a/47305844/7196903). But beware
+  that `DROP`ping the old `ENUM` might be a bad idea [since it could still be in use in
+  indexes](https://www.postgresql.org/message-id/835.1527628154%40sss.pgh.pa.us).
 
 - NocoDB by default takes the first non-numeric column name after the primary key as the [display value](https://docs.nocodb.com/fields/display-value), which
   is used as label for foreign keys in other tables. We have to run our R function `rdb::set_ncdb_display_vals()` once after all tables are created to set
