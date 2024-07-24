@@ -4,15 +4,15 @@
 \alias{split_sql_str}
 \title{Split SQL string into statements}
 \usage{
-split_sql_str(.text, .connection = connect(), ...)
+split_sql_str(.text, ..., .connection = connect())
 }
 \arguments{
 \item{.text}{SQL statements to split as a character scalar.}
 
-\item{.connection}{Database connection as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
-
 \item{...}{Further (named) arguments used as temporary variables available for substitution while interpolating the SQL statements via
 \code{\link[DBI:sqlInterpolate]{DBI::sqlInterpolate()}}.}
+
+\item{.connection}{Database connection as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 }
 \value{
 A list of \code{\link[DBI:SQL]{DBI::SQL}} objects.

@@ -4,15 +4,15 @@
 \alias{read_sql_file}
 \title{Read SQL script as statements}
 \usage{
-read_sql_file(.path, .connection = connect(), ...)
+read_sql_file(.path, ..., .connection = connect())
 }
 \arguments{
 \item{.path}{Path to a file containing SQL statements.}
 
-\item{.connection}{Database connection as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
-
 \item{...}{Further (named) arguments used as temporary variables available for substitution while interpolating the SQL statements via
 \code{\link[DBI:sqlInterpolate]{DBI::sqlInterpolate()}}.}
+
+\item{.connection}{Database connection as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 }
 \value{
 A list of \code{\link[DBI:SQL]{DBI::SQL}} objects.

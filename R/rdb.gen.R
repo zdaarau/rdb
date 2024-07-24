@@ -1253,9 +1253,9 @@ pg_tbl_update <- function(tbl,
 #' @family pg
 #' @keywords internal
 exec_sql_file <- function(.path,
+                          ...,
                           .connection = connect(),
-                          .disconnect = TRUE,
-                          ...) {
+                          .disconnect = TRUE) {
   
   checkmate::assert_flag(.disconnect)
   
@@ -1289,8 +1289,8 @@ exec_sql_file <- function(.path,
 #' @family pg
 #' @keywords internal
 read_sql_file <- function(.path,
-                          .connection = connect(),
-                          ...) {
+                          ...,
+                          .connection = connect()) {
   
   rlang::check_installed("brio",
                          reason = pal::reason_pkg_required())
@@ -1315,8 +1315,8 @@ read_sql_file <- function(.path,
 #' @keywords internal
 # nolint start: cyclocomp_linter
 split_sql_str <- function(.text,
-                          .connection = connect(),
-                          ...) {
+                          ...,
+                          .connection = connect()) {
   parts <-
     .text |>
     # remove comments
