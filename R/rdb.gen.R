@@ -5525,6 +5525,15 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                             email = email,
                             password = password)
   
+  # set current user's display name (derived from e-mail address)
+  email |>
+    stringr::str_extract(pattern = "(.+?)@",
+                         group = 1L) |>
+    stringr::str_to_title() |>
+    nocodb::update_user(hostname = hostname,
+                        email = email,
+                        password = password)
+  
   # add user accounts if necessary
   path_users_ref <- pal::pkg_config_val(key = "nocodb_user_account_csv_file",
                                         pkg = this_pkg)
