@@ -6337,7 +6337,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                         password = password) |>
     dplyr::pull("id")
   
-  Sys.sleep(1L)
+  Sys.sleep(3L)
   
   # add PGSQL data source
   nocodb::create_data_src(alias = nocodb_data_src_alias,
@@ -6359,7 +6359,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                           hostname = hostname,
                           email = email,
                           password = password)
-  Sys.sleep(3L)
+  Sys.sleep(1L)
   
   # disable default SQLite data source
   nocodb::data_srcs(id_base = id_base,
