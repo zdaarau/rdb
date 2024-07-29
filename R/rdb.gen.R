@@ -5090,6 +5090,9 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
     restart_neon_ep(project_id = neon_project_id,
                     endpoint_id = hostname_to_ep(hostname_pg))
     
+    # wait 1s to allow `pg_reset_db()` to fully propagate
+    Sys.sleep(1.0)
+    
     # NOTE: we can only establish a reusable `connection` *after* possible DB deletion just above
     connection <- connect(host = hostname_pg,
                           user = "rdb_admin",
@@ -5117,7 +5120,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                ask = FALSE,
                quiet = TRUE)
   
-  Sys.sleep(1L)
+  Sys.sleep(1.0)
   
   # create temp NocoDB tbls ----
   if (!quiet) {
@@ -5142,7 +5145,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
     pal::cli_progress_step_quick("Synchronizing NocoDB data source with external PostgreSQL schema")
   }
   
-  Sys.sleep(1L)
+  Sys.sleep(1.0)
   
   # sync NocoDB data src ----
   # NOTE: we can only reuse NocoDB IDs *after* base reset above
