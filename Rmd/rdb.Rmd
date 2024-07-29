@@ -6376,6 +6376,19 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                           password = password)
   Sys.sleep(1L)
   
+  # ensure data src was created succcessfully
+  if (nocodb::data_srcs(id_base = id_base,
+                        hostname = hostname,
+                        email = email,
+                        password = password) |>
+      dplyr::filter(type == "pg" & alias == !!nocodb_data_src_alias) |>
+      nrow() |>
+      magrittr::equals(0L)) {
+    
+    cli::cli_abort(message = "Creating external PostgreSQL data source on NocoDB failed for unknown reason. Please investigate.",
+                   .internal = TRUE)
+  }
+  
   # disable default SQLite data source
   nocodb::data_srcs(id_base = id_base,
                     hostname = hostname,
