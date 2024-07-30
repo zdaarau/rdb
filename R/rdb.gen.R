@@ -5486,6 +5486,12 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                           password = password)
   }
   
+  ## log out to avoid stale auth token
+  nocodb::sign_out(hostname = hostname,
+                   email = email,
+                   password = password,
+                   quiet = quiet)
+  
   # create new base
   id_base <-
     nocodb::create_base(title = nocodb_base_title,
