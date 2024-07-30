@@ -62,6 +62,7 @@
 <li><p><code>"options"</code></p></li>
 <li><p><code>"legal_norms"</code></p></li>
 <li><p><code>"referendum_types"</code></p></li>
+<li><p><code>"referendum_clusters"</code></p></li>
 <li><p><code>"referendums"</code></p></li>
 <li><p><code>"referendum_types_legal_norms"</code></p></li>
 <li><p><code>"referendum_types_referendums"</code></p></li>
@@ -110,16 +111,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 281 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    code  name                 name_long                       created_at          updated_at         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> AD    Andorra              Principality of Andorra         2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AE    United Arab Emirates United Arab Emirates            2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AF    Afghanistan          Islamic Republic of Afghanistan 2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AG    Antigua and Barbuda  Antigua and Barbuda             2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AI    Anguilla             Anguilla                        2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AL    Albania              Republic of Albania             2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AM    Armenia              Republic of Armenia             2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AO    Angola               Republic of Angola              2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AQ    Antarctica           Antarctica                      2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AR    Argentina            Argentine Republic              2024-07-24 <span style="color: #949494;">18:50:39</span> 2024-07-24 <span style="color: #949494;">18:50:39</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> AD    Andorra              Principality of Andorra         2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AE    United Arab Emirates United Arab Emirates            2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AF    Afghanistan          Islamic Republic of Afghanistan 2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AG    Antigua and Barbuda  Antigua and Barbuda             2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AI    Anguilla             Anguilla                        2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AL    Albania              Republic of Albania             2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AM    Armenia              Republic of Armenia             2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AO    Angola               Republic of Angola              2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AQ    Antarctica           Antarctica                      2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AR    Argentina            Argentine Republic              2024-07-29 <span style="color: #949494;">16:12:19</span> 2024-07-29 <span style="color: #949494;">16:12:19</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 271 more rows</span></span>
 </code></pre></div>
     </div>
