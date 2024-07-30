@@ -2249,7 +2249,9 @@ rfrnds_old <- function(is_draft = FALSE,
   )
   
   # exclude `archive` if requested
-  if (!incl_archive) result %<>% dplyr::select(-any_of("archive"))
+  if (!incl_archive) {
+    result %<>% dplyr::select(-any_of("archive"))
+  }
   
   # respect `is_draft`
   if (!is.null(is_draft)) {
