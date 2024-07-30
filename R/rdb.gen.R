@@ -5097,9 +5097,6 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
     restart_neon_ep(project_id = neon_project_id,
                     endpoint_id = hostname_to_ep(hostname_pg))
     
-    # wait 1s to allow `pg_reset_db()` to fully propagate
-    Sys.sleep(1.0)
-    
     # NOTE: we can only establish a reusable `connection` *after* possible DB deletion just above
     connection <- connect(host = hostname_pg,
                           user = "rdb_admin",
@@ -5127,8 +5124,6 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                ask = FALSE,
                quiet = TRUE)
   
-  Sys.sleep(1.0)
-  
   # create temp NocoDB tbls ----
   if (!quiet) {
     pal::cli_progress_step_quick("Temporarily creating tables with {.var created_by} and {.var updated_by} columns via NocoDB")
@@ -5153,6 +5148,21 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   }
   
   Sys.sleep(1.0)
+  
+  # populate PGSQL tbls ----
+  if (!quiet) {
+    pal::cli_progress_step_quick("Populating auxiliary PostgreSQL tables")
+  }
+  update_countries(connection = connection,
+                   disconnect = FALSE)
+  update_subnational_entities(connection = connection,
+                              disconnect = FALSE)
+  update_municipalities(connection = connection,
+                        disconnect = FALSE)
+  update_langs(connection = connection,
+               disconnect = FALSE)
+  update_topics(connection = connection,
+                disconnect = FALSE)
   
   # sync NocoDB data src ----
   # NOTE: we can only reuse NocoDB IDs *after* base reset above
@@ -5179,21 +5189,6 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   }
   config_nocodb_tbls(hostname = hostname_nocodb,
                      quiet = quiet)
-  
-  # populate PGSQL tbls ----
-  if (!quiet) {
-    pal::cli_progress_step_quick("Populating auxiliary PostgreSQL tables")
-  }
-  update_countries(connection = connection,
-                   disconnect = FALSE)
-  update_subnational_entities(connection = connection,
-                              disconnect = FALSE)
-  update_municipalities(connection = connection,
-                        disconnect = FALSE)
-  update_langs(connection = connection,
-               disconnect = FALSE)
-  update_topics(connection = connection,
-                disconnect = FALSE)
   
   # trigger PostgREST schema cache reload ----
   if (!quiet) {
@@ -5498,7 +5493,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                         password = password) |>
     dplyr::pull("id")
   
-  Sys.sleep(3L)
+  Sys.sleep(3.0)
   
   # add PGSQL data source
   nocodb::create_data_src(alias = nocodb_data_src_alias,
@@ -5520,7 +5515,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                           hostname = hostname,
                           email = email,
                           password = password)
-  Sys.sleep(1L)
+  Sys.sleep(1.0)
   
   # ensure data src was created succcessfully
   if (nocodb::data_srcs(id_base = id_base,
@@ -5566,7 +5561,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
     users_ref <- readr::read_csv(file = path_users_ref,
                                  col_types = "c")
     checkmate::assert_names(colnames(users_ref),
-                            must.include = c("name", "email", "password"),
+                            must.include = c("name", "email", "password", "role"),
                             what = "colnames",
                             .var.name = "users_ref")
     base_users <- nocodb::base_users(id_base = id_base,
@@ -5575,6 +5570,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                                      password = password)
     users_to_create <- users_ref |> dplyr::filter(!(email %in% base_users$email))
     
+    # create missing users
     if (nrow(users_to_create) > 0L) {
       
       if (!quiet) {
@@ -5590,7 +5586,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
       users_to_create |>
         dplyr::rename_with(.cols = everything(),
                            .fn = \(x) paste0("user_", x)) |>
-        purrr::pwalk(\(user_name, user_email, user_password, user_role, ...) {
+        purrr::pwalk(\(user_name, user_email, user_password, ...) {
           
           nocodb::sign_up_user(user_email = user_email,
                                user_password = user_password,
@@ -5612,6 +5608,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                     email = email,
                     password = password)
     }
+    
   } else {
     cli::cli_alert_warning(paste0("The package configuration option {.field nocodb_user_account_csv_file} is not set to a CSV file path, thus no user accounts",
                                   " were created."))
