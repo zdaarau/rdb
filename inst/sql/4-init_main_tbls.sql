@@ -195,6 +195,7 @@ CREATE TABLE public.referendums (
                                                      COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id),
                                                      '(id: ' || "id" || ')'
                                                    )) STORED,
+  id_old                  text UNIQUE,
   id_official             text,
   id_sudd                 text,
   is_draft                boolean NOT NULL DEFAULT TRUE,
