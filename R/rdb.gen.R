@@ -22,6 +22,7 @@ utils::globalVariables(names = c(".",
                                  "starts_with",
                                  "where",
                                  # other
+                                 "alias",
                                  "alpha_2",
                                  "alpha_2_old",
                                  "alpha_3",
