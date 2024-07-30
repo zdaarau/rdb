@@ -240,13 +240,14 @@ CREATE TABLE public.options (
   display       text GENERATED ALWAYS AS (COALESCE('Referendum (id: ' || referendum_id || ')', label)) STORED PRIMARY KEY,
   label         text,
   description   text,
-  referendum_id integer REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+  referendum_id integer UNIQUE REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   created_by    varchar DEFAULT CURRENT_USER,
   updated_by    varchar DEFAULT CURRENT_USER,
   created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT options_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
-  CONSTRAINT options_check_referendum_id_or_label CHECK (referendum_id IS NOT NULL OR label IS NOT NULL)
+  CONSTRAINT options_check_referendum_id_or_label_1 CHECK (referendum_id IS NOT NULL OR label IS NOT NULL),
+  CONSTRAINT options_check_referendum_id_or_label_2 CHECK (referendum_id IS NULL OR label IS NULL)
 );
 
 CREATE TABLE public.referendum_titles (
