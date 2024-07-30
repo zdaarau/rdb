@@ -476,4 +476,10 @@ DO LANGUAGE plpgsql
 */
 
 --- Add default rows
-INSERT INTO public.referendum_types (is_draft, title) VALUES (FALSE, 'tie-breaker question');
+INSERT INTO public.referendum_types (is_draft, title, are_empty_votes_counted) VALUES (FALSE, 'tie-breaker question', FALSE);
+INSERT INTO public.actors (label, description) VALUES ('government', 'voting recommendation of the government on the referendum proposal');
+INSERT INTO public.actors (label, description) VALUES ('parliament', 'voting recommendation of the parliament on the referendum proposal');
+INSERT INTO public.options (label, description) VALUES ('yes',     'approval of the referendum proposal');
+INSERT INTO public.options (label, description) VALUES ('no',      'rejection of the referendum proposal');
+INSERT INTO public.options (label, description) VALUES ('empty',   'explicit abstention from voting on the referendum proposal');
+INSERT INTO public.options (label, description) VALUES ('invalid', 'formally invalid vote cast on the referendum proposal');
