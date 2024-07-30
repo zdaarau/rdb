@@ -5766,7 +5766,7 @@ purge_nocodb <- function(fly_app = "rdb-nocodb",
       break
     }
     
-    Sys.sleep(2.0)
+    Sys.sleep(1.0)
   }
   
   # reenable machine autostart (implicitly restarts machine)
