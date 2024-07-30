@@ -73,6 +73,7 @@
 - [Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
 - [Generated Columns](https://www.postgresql.org/docs/current/ddl-generated-columns.html)
 - [Executing Dynamic Commands](https://www.postgresql.org/docs/current/plpgsql-statements.html#PLPGSQL-STATEMENTS-EXECUTING-DYN)
+- [Overview of Trigger Behavior](https://www.postgresql.org/docs/current/trigger-definition.html)
 
 */
 
@@ -373,6 +374,58 @@ DO LANGUAGE plpgsql
       END LOOP;
     END;
   $$;
+
+--- Create functions and triggers to complement `topics_referendums` with parent topics after `INSERT/UPDATE` and clean up child topics after `DELETE`
+CREATE OR REPLACE FUNCTION public.add_parent_topic()
+  RETURNS TRIGGER
+  LANGUAGE plpgsql
+  AS $$
+    DECLARE
+      parent_topic text;
+    BEGIN
+      -- Get the parent topic of the newly inserted topic
+      SELECT parent_name INTO parent_topic
+      FROM public.topics
+      WHERE name = NEW.topic_name;
+
+      -- Check if the parent topic exists and insert it if not already present
+      IF parent_topic IS NOT NULL THEN
+        INSERT INTO public.topics_referendums (topic_name, referendum_id)
+        VALUES (parent_topic, NEW.referendum_id)
+        ON CONFLICT DO NOTHING;
+      END IF;
+
+      RETURN NEW;
+    END;
+  $$;
+
+CREATE OR REPLACE TRIGGER add_parent_topic
+  AFTER INSERT OR UPDATE ON public.topics_referendums
+  FOR EACH ROW EXECUTE PROCEDURE public.add_parent_topic();
+
+CREATE OR REPLACE FUNCTION remove_children_topics()
+  RETURNS TRIGGER
+  LANGUAGE plpgsql
+  AS $$
+    DECLARE
+      child_topic text;
+    BEGIN
+      -- Delete all rows in topics_referendums where the topic is a child of the deleted topic
+      DELETE FROM public.topics_referendums
+      WHERE topic_name IN (
+        SELECT name
+        FROM public.topics
+        WHERE parent_name = OLD.topic_name
+      )
+      AND referendum_id = OLD.referendum_id;
+
+      RETURN OLD;
+    END;
+    $$;
+
+CREATE OR REPLACE TRIGGER remove_children_topics
+  AFTER DELETE ON public.topics_referendums
+  FOR EACH ROW EXECUTE PROCEDURE public.remove_children_topics();
 
 --- Create function and trigger to fix NocoDB attachment URLs, cf. https://github.com/nocodb/nocodb/issues/5914#issuecomment-2005008734
 CREATE OR REPLACE FUNCTION public.fix_attachments_url()
