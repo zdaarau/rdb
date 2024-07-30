@@ -158,6 +158,7 @@ CREATE TABLE public.referendum_types (
   title                   text NOT NULL,
   valid_from              date NOT NULL DEFAULT '0001-01-01',
   valid_to                date,
+  are_empty_votes_counted boolean NOT NULL DEFAULT FALSE,
   quorum_turnout          numeric(5,4) DEFAULT 0 CHECK (quorum_turnout BETWEEN 0 AND 1),
   created_by              varchar DEFAULT CURRENT_USER,
   updated_by              varchar DEFAULT CURRENT_USER,
