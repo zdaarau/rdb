@@ -2,7 +2,7 @@
 
 # Initialize database
 
-## NOTES
+## Notes
 
 - The file uses [`DBI::sqlInterpolate()`](https://dbi.r-dbi.org/reference/sqlInterpolate.html)-compatible named placeholders à la `?pw_r_anon` to refer to
   sensitive information.
@@ -25,12 +25,13 @@
 
 4. The SQL statements below are run on database `rdb` with the owner role `rdb_admin`.
 
-## Relevant doc
+## Relevant documentation
 
 - [SQL Key Words](https://www.postgresql.org/docs/current/sql-keywords-appendix.html)
 - [CREATE ROLE](https://www.postgresql.org/docs/current/sql-createrole.html)
 - [Database Roles](https://www.postgresql.org/docs/current/user-manag.html)
 - [Privileges](https://www.postgresql.org/docs/current/ddl-priv.html)
+- [Parallel Labeling for Functions and Aggregates](https://www.postgresql.org/docs/current/parallel-safety.html#PARALLEL-LABELING)
 
 */
 
@@ -46,7 +47,9 @@ COMMENT ON DATABASE rdb IS
   'Referendum Database (RDB), aiming to record all direct democratic votings worldwide organized by states or state-like entities';
 
 -- Reset public schema to initial state, cf. https://stackoverflow.com/a/21247009/7196903
--- NOTE: only relevant if DB wasn't re-created from scratch
+-- NOTES: 
+-- * only relevant if DB wasn't re-created from scratch
+-- * unclear whether this really conforms with Neon's factory settings, thus commented out for now
 /* DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 GRANT ALL ON SCHEMA public TO neon_superuser;
@@ -81,14 +84,20 @@ CREATE OR REPLACE FUNCTION public.graphql(
     );
   $$;
 
--- Create immutable `to_char` function for dates
+-- Create custom immutable functions
+--- immutable `to_char` for dates
 CREATE OR REPLACE FUNCTION public.to_char_immutable(date)
   RETURNS text
   LANGUAGE sql
-  IMMUTABLE
-  AS $$
-    SELECT to_char($1, 'YYYY-MM-DD');
-  $$;
+  IMMUTABLE PARALLEL SAFE
+  RETURN to_char($1, 'YYYY-MM-DD');
+
+--- immutable `concat_ws`, cf. https://stackoverflow.com/a/54384767/7196903
+CREATE OR REPLACE FUNCTION public.concat_ws_immutable(text, VARIADIC text[])
+  RETURNS text
+  LANGUAGE sql
+  IMMUTABLE PARALLEL SAFE
+  RETURN array_to_string($2, $1);
 
 -- Create `drop_owned_by` and `reassign_owned_by` functions to drop/reassign owned by objs
 CREATE OR REPLACE FUNCTION public.drop_owned_by(text)

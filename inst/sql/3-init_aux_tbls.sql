@@ -2,7 +2,7 @@
 
 # Initialize auxiliary tables
 
-## NOTES
+## Notes
 
 - Column names equal to [reserved PostgreSQL keywords](https://www.postgresql.org/docs/current/sql-keywords-appendix.html) are preventively quoted.
 
@@ -13,7 +13,7 @@
   is used as label for foreign keys in other tables. We have to run our R function `rdb::set_ncdb_display_vals()` once after all tables are created to set
   the proper display value columns via NocoDB's metadata API.
 
-## Relevant doc
+## Relevant documentation
 
 - [CREATE TABLE](https://www.postgresql.org/docs/current/sql-createtable.html)
 - [Data Types](https://www.postgresql.org/docs/current/datatype.html)

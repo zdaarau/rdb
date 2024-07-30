@@ -17,6 +17,7 @@ read_tbl(
 \item \code{"options"}
 \item \code{"legal_norms"}
 \item \code{"referendum_types"}
+\item \code{"referendum_clusters"}
 \item \code{"referendums"}
 \item \code{"referendum_types_legal_norms"}
 \item \code{"referendum_types_referendums"}

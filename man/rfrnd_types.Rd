@@ -7,6 +7,7 @@
 rfrnd_types(
   connection = connect(),
   disconnect = TRUE,
+  incl_drafts = FALSE,
   use_cache = TRUE,
   max_cache_age = "1 week"
 )
@@ -15,6 +16,8 @@ rfrnd_types(
 \item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
+
+\item{incl_drafts}{Whether or not to include database entries with \emph{draft} status.}
 
 \item{use_cache}{Whether or not to return cached results if possible. If \code{FALSE}, results are always newly fetched regardless of \code{max_cache_age}.}
 

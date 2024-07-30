@@ -2,12 +2,12 @@
 
 # Initialize main tables
 
-## ASSUMPTIONS
+## Assumptions
 
 - The following main tables (which are meant to be editable via NocoDB) were freshly created from NocoDB (so that their `created_by` and `updated_by`
   columns work as supposed) *after* `init_db.sql` was run.
 
-## NOTES
+## Notes
 
 - The following tables must first be created *once* in NocoDB after the PGSQL DB has been added as external data source to let NocoDB register the necessary
   metadata for the `created/updated_by` cols. After creating the tables via NocoDB, delete them via SQL and run the below code.
@@ -40,11 +40,37 @@
   is used as label for foreign keys in other tables. We have to run our R function `rdb::set_ncdb_display_vals()` once after all tables are created to set
   the proper display value columns via NocoDB's metadata API.
 
-## Relevant doc
+- Possible alternatives to the `referendum_clusters` table include:
+
+  - A simple array column `siblings text[] REFERENCES public.referendums ON UPDATE CASCADE ON DELETE SET NULL` in `referendums` which would require PostgreSQL
+    to land [support for foreign key arrays](https://commitfest.postgresql.org/17/1252/) first. With this approach, we would lose the information encoded in the
+    `referendum_clusters.description` column.
+  
+  - A many-to-many "junction" table like
+
+    ```sql
+    CREATE TABLE public.referendums_referendums (
+      referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+      referendum_id_linked    integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+      created_by              varchar DEFAULT CURRENT_USER,
+      updated_by              varchar DEFAULT CURRENT_USER,
+      created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+      updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (referendum_id, referendum_id_linked),
+      CONSTRAINT topics_referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
+      CONSTRAINT topics_referendums_check_referendum_id_ne_referendum_id_linked CHECK (referendum_id != referendum_id_linked)
+    );
+    ```
+
+    Main problem with this approach is that it is not properly supported by NocoDB, which renders it basically unusable for us. Besides, the information encoded
+    in the `referendum_clusters.description` column couldn't be easily replicated (i.e. without redundancy or introduction of another table).
+
+## Relevant documentation
 
 - [CREATE TABLE](https://www.postgresql.org/docs/current/sql-createtable.html)
 - [Data Types](https://www.postgresql.org/docs/current/datatype.html)
 - [Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)
+- [Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
 - [Generated Columns](https://www.postgresql.org/docs/current/ddl-generated-columns.html)
 - [Executing Dynamic Commands](https://www.postgresql.org/docs/current/plpgsql-statements.html#PLPGSQL-STATEMENTS-EXECUTING-DYN)
 
@@ -61,8 +87,9 @@ DO LANGUAGE plpgsql
   BEGIN
     FOREACH t IN ARRAY ARRAY['actors',
                              'options',
-                             'referendum_types',
                              'legal_norms',
+                             'referendum_types',
+                             'referendum_clusters',
                              'referendums',
                              'referendum_types_legal_norms',
                              'referendum_types_referendums',
@@ -82,56 +109,7 @@ DO LANGUAGE plpgsql
 DROP TYPE IF EXISTS "level" CASCADE;
 CREATE TYPE "level" AS ENUM ('municipal', 'subnational', 'national', 'supranational');
 
--- Create auxiliary tables intended to be updated via NocoDB
-CREATE TABLE public.actors (
-  label       text PRIMARY KEY,
-  description text,
-  created_by  varchar DEFAULT CURRENT_USER,
-  updated_by  varchar DEFAULT CURRENT_USER,
-  created_at  timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at  timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT actors_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
-);
-
-CREATE TABLE public.options (
-  label         text PRIMARY KEY,
-  description   text,
-  created_by    varchar DEFAULT CURRENT_USER,
-  updated_by    varchar DEFAULT CURRENT_USER,
-  created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT options_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
-);
-
 -- Create main tables intended to be updated via NocoDB
-CREATE TABLE public.referendum_types (
-  "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  display                 text GENERATED ALWAYS AS ("level" || ' ' || COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || ': ' || "title" || ' (valid from: ' || to_char_immutable("valid_from") || ')') STORED,
-  "level"                 text NOT NULL CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
-  supranational_entity_id text REFERENCES public.supranational_entities ON UPDATE CASCADE,
-  country_code            text REFERENCES public.countries ON UPDATE CASCADE,
-  subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
-  municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
-  title                   text NOT NULL,
-  valid_from              date NOT NULL DEFAULT '0001-01-01',
-  valid_to                date,
-  quorum_turnout          numeric(5,4) DEFAULT 0 CHECK (quorum_turnout BETWEEN 0 AND 1),
-  created_by              varchar DEFAULT CURRENT_USER,
-  updated_by              varchar DEFAULT CURRENT_USER,
-  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT referendum_types_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from),
-  CONSTRAINT referendum_types_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
-  CONSTRAINT referendum_types_check_level_and_codes_1 CHECK ("level" != 'supranational'                              OR supranational_entity_id IS NOT NULL),
-  CONSTRAINT referendum_types_check_level_and_codes_2 CHECK ("level" = 'supranational'                               OR country_code IS NOT NULL),
-  CONSTRAINT referendum_types_check_level_and_codes_3 CHECK ("level" IN ('supranational', 'national')                OR subnational_entity_code IS NOT NULL),
-  CONSTRAINT referendum_types_check_level_and_codes_4 CHECK ("level" IN ('supranational', 'national', 'subnational') OR municipality_id IS NOT NULL),
-  CONSTRAINT referendum_types_check_level_and_codes_5 CHECK ("level" = 'supranational'                               OR supranational_entity_id IS NULL),
-  CONSTRAINT referendum_types_check_level_and_codes_6 CHECK ("level" != 'supranational'                              OR country_code IS NULL),
-  CONSTRAINT referendum_types_check_level_and_codes_7 CHECK ("level" IN ('subnational', 'municipal')                 OR subnational_entity_code IS NULL),
-  CONSTRAINT referendum_types_check_level_and_codes_8 CHECK ("level" = 'municipal'                                   OR municipality_id IS NULL)
-);
-
 CREATE TABLE public.legal_norms (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "level"                 text NOT NULL CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
@@ -162,9 +140,60 @@ CREATE TABLE public.legal_norms (
   CONSTRAINT legal_norms_check_level_and_codes_8 CHECK ("level" = 'municipal'                                   OR municipality_id IS NULL)
 );
 
+CREATE TABLE public.referendum_types (
+  "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  display                 text GENERATED ALWAYS AS (concat_ws_immutable(
+                                                     ' ',
+                                                     "level",
+                                                     COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || ': ',
+                                                     "title",
+                                                     NULLIF('(valid from: ' || to_char_immutable(valid_from) || ')', '(valid from: 0001-01-01)')
+                                                   )) STORED,
+  is_draft                boolean NOT NULL DEFAULT TRUE,
+  "level"                 text CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
+  supranational_entity_id text REFERENCES public.supranational_entities ON UPDATE CASCADE,
+  country_code            text REFERENCES public.countries ON UPDATE CASCADE,
+  subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
+  municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
+  title                   text NOT NULL,
+  valid_from              date NOT NULL DEFAULT '0001-01-01',
+  valid_to                date,
+  quorum_turnout          numeric(5,4) DEFAULT 0 CHECK (quorum_turnout BETWEEN 0 AND 1),
+  created_by              varchar DEFAULT CURRENT_USER,
+  updated_by              varchar DEFAULT CURRENT_USER,
+  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT referendum_types_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from),
+  CONSTRAINT referendum_types_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
+  CONSTRAINT referendum_types_check_level_and_codes_1 CHECK ("level" != 'supranational'                              OR supranational_entity_id IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_2 CHECK ("level" = 'supranational'                               OR country_code IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_3 CHECK ("level" IN ('supranational', 'national')                OR subnational_entity_code IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_4 CHECK ("level" IN ('supranational', 'national', 'subnational') OR municipality_id IS NOT NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_5 CHECK ("level" = 'supranational'                               OR supranational_entity_id IS NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_6 CHECK ("level" != 'supranational'                              OR country_code IS NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_7 CHECK ("level" IN ('subnational', 'municipal')                 OR subnational_entity_code IS NULL),
+  CONSTRAINT referendum_types_check_level_and_codes_8 CHECK ("level" = 'municipal'                                   OR municipality_id IS NULL)
+);
+
+CREATE TABLE public.referendum_clusters (
+  "id"       integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  remarks    text,
+  created_by varchar DEFAULT CURRENT_USER,
+  updated_by varchar DEFAULT CURRENT_USER,
+  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT referendum_clusters_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+);
+
 CREATE TABLE public.referendums (
   "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  display                 text GENERATED ALWAYS AS (to_char_immutable("date") || ' ' || "level" || ' ' || COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id) || ' (id: ' || "id" || ')') STORED,
+  display                 text GENERATED ALWAYS AS (concat_ws_immutable(
+                                                     ' ',
+                                                     to_char_immutable("date"),
+                                                     "level",
+                                                     COALESCE(municipality_id, subnational_entity_code, country_code, supranational_entity_id),
+                                                     '(id: ' || "id" || ')'
+                                                   )) STORED,
   id_official             text,
   id_sudd                 text,
   is_draft                boolean NOT NULL DEFAULT TRUE,
@@ -174,6 +203,7 @@ CREATE TABLE public.referendums (
   country_code            text REFERENCES public.countries ON UPDATE CASCADE,
   subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
   municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
+  cluster_id              integer REFERENCES public.referendum_clusters ON UPDATE CASCADE ON DELETE SET NULL,
   attachments             text,
   "source"                text,
   remarks                 text,
@@ -192,41 +222,31 @@ CREATE TABLE public.referendums (
   CONSTRAINT referendums_check_level_and_codes_8 CHECK ("level" = 'municipal'                                   OR municipality_id IS NULL)
 );
 
--- Create junction tables intended to be updated via NocoDB
-CREATE TABLE public.referendum_types_legal_norms (
-  referendum_type_id      integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE ON DELETE CASCADE,
-  legal_norm_id           integer NOT NULL REFERENCES public.legal_norms ON UPDATE CASCADE ON DELETE CASCADE,
-  created_by              varchar DEFAULT CURRENT_USER,
-  updated_by              varchar DEFAULT CURRENT_USER,
-  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (referendum_type_id, legal_norm_id),
-  CONSTRAINT referendum_types_legal_norms_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+-- Create auxiliary tables intended to be updated via NocoDB
+CREATE TABLE public.actors (
+  label       text PRIMARY KEY,
+  description text,
+  created_by  varchar DEFAULT CURRENT_USER,
+  updated_by  varchar DEFAULT CURRENT_USER,
+  created_at  timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at  timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT actors_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
-CREATE TABLE public.referendum_types_referendums (
-  referendum_type_id      integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE ON DELETE CASCADE,
-  referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
-  created_by              varchar DEFAULT CURRENT_USER,
-  updated_by              varchar DEFAULT CURRENT_USER,
-  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (referendum_type_id, referendum_id),
-  CONSTRAINT referendum_types_referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+CREATE TABLE public.options (
+  "id"          integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  display       text GENERATED ALWAYS AS (COALESCE('Referendum (id: ' || referendum_id || ')', label)) STORED,
+  label         text UNIQUE,
+  description   text,
+  referendum_id integer REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+  created_by    varchar DEFAULT CURRENT_USER,
+  updated_by    varchar DEFAULT CURRENT_USER,
+  created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT options_check_updated_at_gt_created_at CHECK (updated_at >= created_at),
+  CONSTRAINT options_check_referendum_id_or_label CHECK (referendum_id IS NOT NULL OR label IS NOT NULL)
 );
 
-CREATE TABLE public.topics_referendums (
-  topic_name              text NOT NULL REFERENCES public.topics ON UPDATE CASCADE ON DELETE CASCADE,
-  referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
-  created_by              varchar DEFAULT CURRENT_USER,
-  updated_by              varchar DEFAULT CURRENT_USER,
-  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (topic_name, referendum_id),
-  CONSTRAINT topics_referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
-);
-
--- Create remaining auxiliary tables intended to be updated via NocoDB
 CREATE TABLE public.referendum_titles (
   referendum_id integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   language_code text NOT NULL REFERENCES public.languages ON UPDATE CASCADE,
@@ -296,6 +316,40 @@ CREATE TABLE public.referendum_sub_votes (
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (referendum_id, subnational_entity_code, option_label),
   CONSTRAINT referendum_sub_votes_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+);
+
+-- Create junction tables intended to be updated via NocoDB
+CREATE TABLE public.referendum_types_legal_norms (
+  referendum_type_id      integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE ON DELETE CASCADE,
+  legal_norm_id           integer NOT NULL REFERENCES public.legal_norms ON UPDATE CASCADE ON DELETE CASCADE,
+  created_by              varchar DEFAULT CURRENT_USER,
+  updated_by              varchar DEFAULT CURRENT_USER,
+  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (referendum_type_id, legal_norm_id),
+  CONSTRAINT referendum_types_legal_norms_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+);
+
+CREATE TABLE public.referendum_types_referendums (
+  referendum_type_id      integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE ON DELETE CASCADE,
+  referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+  created_by              varchar DEFAULT CURRENT_USER,
+  updated_by              varchar DEFAULT CURRENT_USER,
+  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (referendum_type_id, referendum_id),
+  CONSTRAINT referendum_types_referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
+);
+
+CREATE TABLE public.topics_referendums (
+  topic_name              text NOT NULL REFERENCES public.topics ON UPDATE CASCADE ON DELETE CASCADE,
+  referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+  created_by              varchar DEFAULT CURRENT_USER,
+  updated_by              varchar DEFAULT CURRENT_USER,
+  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (topic_name, referendum_id),
+  CONSTRAINT topics_referendums_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 -- Enable RLS and create policies
@@ -417,3 +471,6 @@ DO LANGUAGE plpgsql
     END;
   $$;
 */
+
+--- Add default rows
+INSERT INTO public.referendum_types (is_draft, title) VALUES (FALSE, 'tie-breaker question');

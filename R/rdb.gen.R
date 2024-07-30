@@ -2039,6 +2039,7 @@ tbl_metadata <- tibble::tribble(
   "options",                      TRUE,         "#9900cc",      "label",                   "\u2611",
   "legal_norms",                  TRUE,         "#33cc33",      "title",                   "\U0001F4DC",
   "referendum_types",             TRUE,         "#33cc33",      "display",                 "\U0001F3DB",
+  "referendum_clusters",          TRUE,         "#6673ff",      "id",                      "\U0001F347",
   "referendums",                  TRUE,         color_rdb_main, "display",                 "\U0001F5F3",
   "referendum_types_legal_norms", TRUE,         "#85e085",      NA_character_,             NA_character_,
   "referendum_types_referendums", TRUE,         "#85e085",      NA_character_,             NA_character_,
@@ -2064,6 +2065,7 @@ tbl_metadata <- tibble::tribble(
       "options",                      "referendum answer options",
       "legal_norms",                  "legal norms enabling referendums",
       "referendum_types",             "referendum types",
+      "referendum_clusters",          "referendum clusters",
       "referendums",                  "*main table*",
       "referendum_types_legal_norms", "*junction table*",
       "referendum_types_referendums", "*junction table*",
@@ -2271,14 +2273,19 @@ rfrnds_old <- function(is_draft = FALSE,
 #' rdb::rfrnd_types()
 rfrnd_types <- function(connection = connect(),
                         disconnect = TRUE,
+                        incl_drafts = FALSE,
                         use_cache = TRUE,
                         max_cache_age = "1 week") {
+  
+  checkmate::assert_flag(incl_drafts)
+  
   pkgpins::with_cache(
     expr = {
       
       read_tbl(tbl_name = "referendum_types",
                connection = connection,
-               disconnect = disconnect)
+               disconnect = disconnect) |>
+        dplyr::filter(is_draft %in% c(FALSE, incl_drafts))
     },
     pkg = this_pkg,
     from_fn = "rfrnd_types",

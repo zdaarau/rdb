@@ -2,7 +2,7 @@
 
 # Reset database
 
-## Relevant doc
+## Relevant documentation
 
 - [SQL Key Words](https://www.postgresql.org/docs/current/sql-keywords-appendix.html)
 - [DROP DATABASE](https://www.postgresql.org/docs/16/sql-dropdatabase.html)
