@@ -234,9 +234,8 @@ CREATE TABLE public.actors (
 );
 
 CREATE TABLE public.options (
-  "id"          integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  display       text GENERATED ALWAYS AS (COALESCE('Referendum (id: ' || referendum_id || ')', label)) STORED,
-  label         text UNIQUE,
+  display       text GENERATED ALWAYS AS (COALESCE('Referendum (id: ' || referendum_id || ')', label)) STORED PRIMARY KEY,
+  label         text,
   description   text,
   referendum_id integer REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   created_by    varchar DEFAULT CURRENT_USER,
@@ -278,35 +277,35 @@ CREATE TABLE public.referendum_questions (
 );
 
 CREATE TABLE public.referendum_positions (
-  referendum_id integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
-  actor_label   text NOT NULL REFERENCES public.actors ON UPDATE CASCADE,
-  option_label  text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
-  created_by    varchar DEFAULT CURRENT_USER,
-  updated_by    varchar DEFAULT CURRENT_USER,
-  created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (referendum_id, actor_label, option_label),
+  referendum_id  integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+  actor_label    text NOT NULL REFERENCES public.actors ON UPDATE CASCADE,
+  option_display text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
+  created_by     varchar DEFAULT CURRENT_USER,
+  updated_by     varchar DEFAULT CURRENT_USER,
+  created_at     timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at     timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (referendum_id, actor_label, option_display),
   CONSTRAINT referendum_positions_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.referendum_votes (
-  referendum_id integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
-  option_label  text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
-  "count"       bigint NOT NULL CHECK ("count" >= 0),
-  "source"      text,
-  remarks       text,
-  created_by    varchar DEFAULT CURRENT_USER,
-  updated_by    varchar DEFAULT CURRENT_USER,
-  created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (referendum_id, option_label),
+  referendum_id  integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+  option_display text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
+  "count"        bigint NOT NULL CHECK ("count" >= 0),
+  "source"       text,
+  remarks        text,
+  created_by     varchar DEFAULT CURRENT_USER,
+  updated_by     varchar DEFAULT CURRENT_USER,
+  created_at     timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at     timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (referendum_id, option_display),
   CONSTRAINT referendum_votes_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE public.referendum_sub_votes (
   referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   subnational_entity_code text NOT NULL REFERENCES public.subnational_entities ON UPDATE CASCADE,
-  option_label            text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
+  option_display          text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
   "count"                 bigint NOT NULL CHECK ("count" >= 0),
   "source"                text,
   remarks                 text,
@@ -314,7 +313,7 @@ CREATE TABLE public.referendum_sub_votes (
   updated_by              varchar DEFAULT CURRENT_USER,
   created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (referendum_id, subnational_entity_code, option_label),
+  PRIMARY KEY (referendum_id, subnational_entity_code, option_display),
   CONSTRAINT referendum_sub_votes_check_updated_at_gt_created_at CHECK (updated_at >= created_at)
 );
 
