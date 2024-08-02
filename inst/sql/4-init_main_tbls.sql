@@ -137,7 +137,9 @@ DO LANGUAGE plpgsql
 
 -- Recreate custom enumerated types
 DROP TYPE IF EXISTS "level" CASCADE;
+DROP TYPE IF EXISTS hierarchy_level CASCADE;
 CREATE TYPE "level" AS ENUM ('municipal', 'subnational', 'national', 'supranational');
+CREATE TYPE hierarchy_level AS ENUM ('international treaty', 'treaty', 'constitution', 'law', 'decree', 'other');
 
 -- Create main tables intended to be updated via NocoDB
 CREATE TABLE public.legal_norms (
