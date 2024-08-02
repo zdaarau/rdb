@@ -17,7 +17,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/add_world_regions.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/as_ballot_dates.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/assert_vars.html</loc></url>
-<url><loc>https://rdb.rpkg.dev/dev/reference/clean_rfrnd_attachments.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/clean_attachment_bucket.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/config_nocodb_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/connect.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/create_nocodb_tbls.html</loc></url>
@@ -30,7 +30,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/data_topics.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/delete_rfrnds.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/dm.html</loc></url>
-<url><loc>https://rdb.rpkg.dev/dev/reference/download_file_attachments.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/download_attachments.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/exec_sql_file.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/ggplot_streamgraph.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/hierarchize_topics.html</loc></url>

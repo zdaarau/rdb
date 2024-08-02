@@ -1,5 +1,6 @@
 list(
   rd_family_title = list(admin        = "Other administration functions:",
+                         attachments  = "Other referendum file attachment functions:",
                          augment      = "Other referendum data augmentation functions:",
                          s3           = "Other AWS S3-compatible object storage functions:",
                          data         = "Other data functions:",

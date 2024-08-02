@@ -24,8 +24,11 @@ reference:
   - rfrnds_old
   - rfrnd_types
   - read_tbl
-  - download_file_attachments
   - assert_vars
+- subtitle: File attachments
+- contents:
+  - download_attachments
+  - clean_attachment_bucket
 - subtitle: Auxiliary data
 - contents:
   - data_iso_3166_1
@@ -98,7 +101,6 @@ reference:
   - update_topics
   - update_tbl
   - reset_rdb
-  - clean_rfrnd_attachments
 - title: sudd.ch scraping
   desc: Functions to scrape the data from the [sudd.ch](https://sudd.ch/) database.
 - contents:

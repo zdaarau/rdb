@@ -22,7 +22,7 @@ Deletes \code{data} from the RDB's \code{referendums} table.
 }
 \seealso{
 Other administration functions:
-\code{\link{clean_rfrnd_attachments}()},
+\code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbls}()},
@@ -43,7 +43,6 @@ Other administration functions:
 
 Other data functions:
 \code{\link{assert_vars}()},
-\code{\link{download_file_attachments}()},
 \code{\link{read_tbl}()},
 \code{\link{rfrnd_types}()},
 \code{\link{rfrnds}()},

@@ -52,7 +52,6 @@ rdb::read_tbl("countries")
 Other data functions:
 \code{\link{assert_vars}()},
 \code{\link{delete_rfrnds}()},
-\code{\link{download_file_attachments}()},
 \code{\link{rfrnd_types}()},
 \code{\link{rfrnds}()},
 \code{\link{rfrnds_old}()},

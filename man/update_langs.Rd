@@ -21,7 +21,7 @@ Updates the RDB's \code{languages} table with the data from \code{\link{data_iso
 }
 \seealso{
 Other administration functions:
-\code{\link{clean_rfrnd_attachments}()},
+\code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbls}()},
