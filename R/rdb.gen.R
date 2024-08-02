@@ -2572,17 +2572,17 @@ assert_vars <- function(data,
 #'   dplyr::filter(dplyr::row_number() %in% 1:3)
 #'
 #' # download the attachments to the current directory
-#' d |> rdb::download_rfrnd_attachments()
+#' d |> rdb::download_attachments()
 #' 
 #' # and delete them again
 #' d$attachments |>
 #'   purrr::map(\(x) x$title) |>
 #'   unlist() |>
 #'   fs::file_delete()
-download_rfrnd_attachments <- function(data,
-                                       path = ".",
-                                       filename_from_title = FALSE,
-                                       fileext_from_mimetype = !filename_from_title) {
+download_attachments <- function(data,
+                                 path = ".",
+                                 filename_from_title = FALSE,
+                                 fileext_from_mimetype = !filename_from_title) {
   assert_vars(data = data,
               vars = c("id", "attachments"))
   checkmate::assert_directory_exists(path,
@@ -2629,7 +2629,7 @@ download_rfrnd_attachments <- function(data,
 #' @family attachments
 #' @family admin
 #' @export
-clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
+clean_attachment_bucket <- function(s3_bucket = s3_bucket_attachments,
                                     s3_endpoint = s3_endpoint_url,
                                     s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
                                                                         pkg = this_pkg),
@@ -5685,7 +5685,7 @@ reset_nocodb <- function(hostname = nocodb_hostname,
 #' Stops the `fly_app` NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under `{b2_bucket}/nocodb`) and then restarts the
 #' NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
 #'
-#' @inheritParams clean_rfrnd_attachments
+#' @inheritParams clean_attachment_bucket
 #' @inheritParams reset_rdb
 #' @param fly_app Fly.io app name.
 #' @param s3_bucket Name of the S3-compatible object storage bucket to which NocoDB's internal SQLite database is replicated to via Litestream.
