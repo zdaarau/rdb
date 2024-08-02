@@ -65,6 +65,35 @@
     Main problem with this approach is that it is not properly supported by NocoDB, which renders it basically unusable for us. Besides, the information encoded
     in the `referendum_clusters.description` column couldn't be easily replicated (i.e. without redundancy or introduction of another table).
 
+- A more efficient alternative to the consistency assurance via custom triggers would be to specify table `referendum_types_legal_norms` as
+
+  ```sql
+  CREATE TABLE public.referendum_types_legal_norms (
+    referendum_type_id      integer NOT NULL REFERENCES public.referendum_types ON UPDATE CASCADE ON DELETE CASCADE,
+    legal_norm_id           integer NOT NULL REFERENCES public.legal_norms ON UPDATE CASCADE ON DELETE CASCADE,
+    "level"                 level NOT NULL REFERENCES public.referendum_types("level") ON UPDATE CASCADE ON DELETE CASCADE,
+    supranational_entity_id text REFERENCES public.supranational_entities ON UPDATE CASCADE,
+    country_code            text REFERENCES public.countries ON UPDATE CASCADE,
+    subnational_entity_code text REFERENCES public.subnational_entities ON UPDATE CASCADE,
+    municipality_id         text REFERENCES public.municipalities ON UPDATE CASCADE,
+    PRIMARY KEY (referendum_type_id, legal_norm_id),
+    CONSTRAINT referendum_types_legal_norms_fk_referendum_type_id_level FOREIGN KEY (referendum_type_id, "level") REFERENCES public.referendum_types(id, "level") ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT referendum_types_legal_norms_fk_referendum_type_id_supranational_entity FOREIGN KEY (referendum_type_id, supranational_entity_id) REFERENCES public.referendum_types(id, supranational_entity_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT referendum_types_legal_norms_fk_referendum_type_id_country FOREIGN KEY (referendum_type_id, country_code) REFERENCES public.referendum_types(id, country_code) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT referendum_types_legal_norms_fk_referendum_type_id_subnational FOREIGN KEY (referendum_type_id, subnational_entity_code) REFERENCES public.referendum_types(id, subnational_entity_code) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT referendum_types_legal_norms_fk_referendum_type_id_municipality FOREIGN KEY (referendum_type_id, municipality_id) REFERENCES public.referendum_types(id, municipality_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT referendum_types_legal_norms_fk_legal_norm_id_level FOREIGN KEY (legal_norm_id, "level") REFERENCES public.legal_norms(id, "level") ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT referendum_types_legal_norms_fk_legal_norm_id_supranational_entity FOREIGN KEY (legal_norm_id, supranational_entity_id) REFERENCES public.legal_norms(id, supranational_entity_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT referendum_types_legal_norms_fk_legal_norm_id_country FOREIGN KEY (legal_norm_id, country_code) REFERENCES public.legal_norms(id, country_code) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT referendum_types_legal_norms_fk_legal_norm_id_subnational FOREIGN KEY (legal_norm_id, subnational_entity_code) REFERENCES public.legal_norms(id, subnational_entity_code) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT referendum_types_legal_norms_fk_legal_norm_id_municipality FOREIGN KEY (legal_norm_id, municipality_id) REFERENCES public.legal_norms(id, municipality_id) ON UPDATE CASCADE ON DELETE CASCADE
+  );
+  ```
+
+  We refrain from the above since its usability via NocoDB is currently subpar: Tables with more than 5 columns [aren't recognized as M2M
+  tables](https://github.com/nocodb/nocodb/issues/8241). Should this restriction get lifted, we could switch, but then we would need to auto-fill `level` etc.
+  via a trigger since there is no UI way to do this (a trigger would be most convenient anyways).
+
 ## Relevant documentation
 
 - [CREATE TABLE](https://www.postgresql.org/docs/current/sql-createtable.html)
