@@ -5266,6 +5266,7 @@ clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
                                     recycle0 = TRUE)
   
   if (length(invalid_attachments) > 0L) {
+    
     if (run_dry) {
       cli::cli_alert_info("Files that would be deleted with {.code run_dry = FALSE}:")
       cli::cli_li(items = purrr::map_chr(invalid_attachment_urls,
@@ -5273,6 +5274,16 @@ clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
     } else {
       s3fs::s3_file_delete(path = paste0(s3_prefix, invalid_attachments,
                                          recycle0 = TRUE))
+      # delete obsolete thumbnails
+      patterns <-
+        invalid_attachments |>
+        fs::path_rel(start = "nc/uploads/") |>
+        rex::escape()
+      
+      s3fs::s3_dir_ls(fs::path(s3_bucket, "nc/thumbnails"),
+                      recurse = TRUE) |>
+        stringr::str_subset(pattern = rex::rex(or(patterns))) |>
+        s3fs::s3_file_delete()
     }
   }
   

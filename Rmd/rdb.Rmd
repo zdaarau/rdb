@@ -6034,7 +6034,9 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
 
 NOTES:
 
--   Resolving [nocodb/nocodb#7895](https://github.com/nocodb/nocodb/issues/7895) would render this fn largely obsolete.
+-   Merging [nocodb/nocodb#9140](https://github.com/nocodb/nocodb/pull/9140) should resolve [nocodb/nocodb#7895](https://github.com/nocodb/nocodb/issues/7895),
+    which renders this fn largely obsolete. It might still be useful to clean up obsolete attachments added outside of NocoDB (TODO: check whether thumbnail
+    generation works for them and whether they're properly tracked in NocoDB's new internal `MetaTable.FILE_REFERENCES`).
 
 ```{r}
 #' Clean referendum attachments
@@ -6089,6 +6091,7 @@ clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
                                     recycle0 = TRUE)
   
   if (length(invalid_attachments) > 0L) {
+    
     if (run_dry) {
       cli::cli_alert_info("Files that would be deleted with {.code run_dry = FALSE}:")
       cli::cli_li(items = purrr::map_chr(invalid_attachment_urls,
@@ -6096,6 +6099,16 @@ clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
     } else {
       s3fs::s3_file_delete(path = paste0(s3_prefix, invalid_attachments,
                                          recycle0 = TRUE))
+      # delete obsolete thumbnails
+      patterns <-
+        invalid_attachments |>
+        fs::path_rel(start = "nc/uploads/") |>
+        rex::escape()
+      
+      s3fs::s3_dir_ls(fs::path(s3_bucket, "nc/thumbnails"),
+                      recurse = TRUE) |>
+        stringr::str_subset(pattern = rex::rex(or(patterns))) |>
+        s3fs::s3_file_delete()
     }
   }
   
