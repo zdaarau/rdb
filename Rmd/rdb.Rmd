@@ -2789,75 +2789,6 @@ read_tbl <- function(tbl_name = tbl_metadata$name,
 }
 ```
 
-### `download_file_attachments`
-
-```{r}
-#' Download file attachments
-#'
-#' Downloads file attachments from the Referendum Database (RDB). ... the `attachments` list column returned by [rfrnds()].
-#'
-#' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns `id` and `attachments`.
-#' @param path Path to the directory where the downloaded file(s) are to be written to.
-#' @param filename_from_title Whether to use an attachment's `title` field value as the filename. Note that attachment titles are **not guaranteed to be
-#'   unique**, i.e. there can be multiple file attachments with the same title (but differing content, of course). If `FALSE`, the referendum identifier plus a
-#'   sequential number is used as an attachment's filename.
-#' @param fileext_from_mimetype Whether to add a file extension suffix to the filename which is determined from the attachment's `mimetype` field.
-#'
-#' @return `data`, invisibly.
-#' @family data
-#' @export
-#'
-#' @examples
-#' # get the first three referendums which contain attachments
-#' d <-
-#'   rdb::rfrnds() |>
-#'   dplyr::filter(purrr::map_lgl(attachments, \(x) !is.null(x))) |>
-#'   dplyr::filter(dplyr::row_number() %in% 1:3)
-#'
-#' # download the attachments to the current directory
-#' d |> rdb::download_file_attachments()
-#' 
-#' # and delete them again
-#' d$attachments |>
-#'   purrr::map(\(x) x$title) |>
-#'   unlist() |>
-#'   fs::file_delete()
-download_file_attachments <- function(data,
-                                      path = ".",
-                                      filename_from_title = FALSE,
-                                      fileext_from_mimetype = !filename_from_title) {
-  assert_vars(data = data,
-              vars = c("id", "attachments"))
-  checkmate::assert_directory_exists(path,
-                                     access = "rw")
-  checkmate::assert_flag(filename_from_title)
-  checkmate::assert_flag(fileext_from_mimetype)
-  
-  data |>
-    dplyr::select("id", "attachments") |>
-    purrr::pwalk(\(id, attachments) {
-      
-      assert_vars(data = attachments,
-                  vars = c("url", "title", "mimetype")) |>
-        tibble::rowid_to_column() |>
-        dplyr::select("url", "rowid", "title", "mimetype") |>
-        purrr::pwalk(\(url, rowid, title, mimetype) utils::download.file(url = url,
-                                                                         destfile = fs::path(path,
-                                                                                             ifelse(filename_from_title,
-                                                                                                    title,
-                                                                                                    paste(id, rowid, sep = "_")),
-                                                                                             ext = ifelse(fileext_from_mimetype,
-                                                                                                          pal::mime_to_ext(mime_type = mimetype,
-                                                                                                                           quiet = TRUE) %|% "",
-                                                                                                          "")),
-                                                                         mode = "wb",
-                                                                         quiet = TRUE))
-    })
-  
-  invisible(data)
-}
-```
-
 ### !`validate_rfrnds`
 
 TODO:
@@ -3080,6 +3011,163 @@ assert_vars <- function(data,
   })
   
   invisible(data)
+}
+```
+
+### File attachments
+
+#### `download_rfrnd_attachments`
+
+```{r}
+#' Download file attachments
+#'
+#' Downloads file attachments from the Referendum Database (RDB). ... the `attachments` list column returned by [rfrnds()].
+#'
+#' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the columns `id` and `attachments`.
+#' @param path Path to the directory where the downloaded file(s) are to be written to.
+#' @param filename_from_title Whether to use an attachment's `title` field value as the filename. Note that attachment titles are **not guaranteed to be
+#'   unique**, i.e. there can be multiple file attachments with the same title (but differing content, of course). If `FALSE`, the referendum identifier plus a
+#'   sequential number is used as an attachment's filename.
+#' @param fileext_from_mimetype Whether to add a file extension suffix to the filename which is determined from the attachment's `mimetype` field.
+#'
+#' @return `data`, invisibly.
+#' @family attachments
+#' @export
+#'
+#' @examples
+#' # get the first three referendums which contain attachments
+#' d <-
+#'   rdb::rfrnds() |>
+#'   dplyr::filter(purrr::map_lgl(attachments, \(x) !is.null(x))) |>
+#'   dplyr::filter(dplyr::row_number() %in% 1:3)
+#'
+#' # download the attachments to the current directory
+#' d |> rdb::download_rfrnd_attachments()
+#' 
+#' # and delete them again
+#' d$attachments |>
+#'   purrr::map(\(x) x$title) |>
+#'   unlist() |>
+#'   fs::file_delete()
+download_rfrnd_attachments <- function(data,
+                                       path = ".",
+                                       filename_from_title = FALSE,
+                                       fileext_from_mimetype = !filename_from_title) {
+  assert_vars(data = data,
+              vars = c("id", "attachments"))
+  checkmate::assert_directory_exists(path,
+                                     access = "rw")
+  checkmate::assert_flag(filename_from_title)
+  checkmate::assert_flag(fileext_from_mimetype)
+  
+  data |>
+    dplyr::select("id", "attachments") |>
+    purrr::pwalk(\(id, attachments) {
+      
+      assert_vars(data = attachments,
+                  vars = c("url", "title", "mimetype")) |>
+        tibble::rowid_to_column() |>
+        dplyr::select("url", "rowid", "title", "mimetype") |>
+        purrr::pwalk(\(url, rowid, title, mimetype) utils::download.file(url = url,
+                                                                         destfile = fs::path(path,
+                                                                                             ifelse(filename_from_title,
+                                                                                                    title,
+                                                                                                    paste(id, rowid, sep = "_")),
+                                                                                             ext = ifelse(fileext_from_mimetype,
+                                                                                                          pal::mime_to_ext(mime_type = mimetype,
+                                                                                                                           quiet = TRUE) %|% "",
+                                                                                                          "")),
+                                                                         mode = "wb",
+                                                                         quiet = TRUE))
+    })
+  
+  invisible(data)
+}
+```
+
+#### `clean_rfrnd_attachments`
+
+NOTES:
+
+-   Merging [nocodb/nocodb#9140](https://github.com/nocodb/nocodb/pull/9140) should resolve [nocodb/nocodb#7895](https://github.com/nocodb/nocodb/issues/7895),
+    which renders this fn largely obsolete.
+
+```{r}
+#' Clean referendum attachments
+#'
+#' Deletes obsolete attachment files from the specified S3-compatible object storage bucket. An attachment is considered obsolete if it isn't linked to any
+#' referendum in the RDB.
+#'
+#' @param s3_bucket Name of the S3-compatible object storage bucket where the referendum attachments reside.
+#' @param s3_endpoint S3-compatible endpoint URL where `s3_bucket` is located.
+#' @param s3_access_key S3-compatible access key ID with access to `s3_bucket`.
+#' @param s3_access_secret S3-compatible access secret with access to `s3_bucket`.
+#' @param run_dry Whether or not to display the files to be deleted on the console instead of actually deleting any file.
+#'
+#' @return A character vector of deleted file attachment URLs.
+#' @family attachments
+#' @family admin
+#' @export
+clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
+                                    s3_endpoint = s3_endpoint_url,
+                                    s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
+                                                                        pkg = this_pkg),
+                                    s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
+                                                                           pkg = this_pkg),
+                                    run_dry = TRUE) {
+  
+  checkmate::assert_string(s3_bucket)
+  checkmate::assert_flag(run_dry)
+  
+  s3_auth(s3_endpoint = s3_endpoint,
+          s3_access_key = s3_access_key,
+          s3_access_secret = s3_access_secret)
+  
+  s3_prefix <- paste0("s3://", s3_bucket, "/")
+  url_prefix <- paste0("https://", s3_bucket, ".", httr2::url_parse(s3_endpoint_url)$hostname, "/")
+  
+  all_attachments <-
+    s3fs::s3_dir_ls(fs::path(s3_bucket, "nc/uploads"),
+                    recurse = TRUE) |>
+    fs::path_rel(start = s3_prefix)
+  
+  valid_attachments <-
+    rfrnds(use_cache = FALSE,
+           incl_drafts = TRUE) |>
+    dplyr::pull("attachments") |>
+    purrr::map(\(x) x$url) |>
+    purrr::list_c(ptype = character()) |>
+    xml2::url_unescape() |>
+    fs::path_rel(start = url_prefix)
+  
+  invalid_attachments <- setdiff(x = all_attachments,
+                                 y = valid_attachments)
+  invalid_attachment_urls <- paste0(url_prefix, fs::path(fs::path_dir(invalid_attachments), xml2::url_escape(fs::path_file(invalid_attachments))),
+                                    recycle0 = TRUE)
+  
+  if (length(invalid_attachments) > 0L) {
+    
+    if (run_dry) {
+      cli::cli_alert_info("Files that would be deleted with {.code run_dry = FALSE}:")
+      cli::cli_li(items = purrr::map_chr(invalid_attachment_urls,
+                                         \(x) cli::format_inline("{.url {x}}")))
+    } else {
+      s3fs::s3_file_delete(path = paste0(s3_prefix, invalid_attachments,
+                                         recycle0 = TRUE))
+      # delete obsolete thumbnails
+      patterns <-
+        invalid_attachments |>
+        fs::path_rel(start = "nc/uploads/") |>
+        rex::escape()
+      
+      s3fs::s3_dir_ls(fs::path(s3_bucket, "nc/thumbnails"),
+                      recurse = TRUE) |>
+        stringr::str_subset(pattern = rex::rex(or(patterns))) |>
+        s3fs::s3_file_delete()
+    }
+  }
+  
+  invisible(invalid_attachment_urls)
 }
 ```
 
@@ -6028,92 +6116,6 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   invisible(hostname_nocodb)
 }
 # nolint end
-```
-
-### `clean_rfrnd_attachments`
-
-NOTES:
-
--   Merging [nocodb/nocodb#9140](https://github.com/nocodb/nocodb/pull/9140) should resolve [nocodb/nocodb#7895](https://github.com/nocodb/nocodb/issues/7895),
-    which renders this fn largely obsolete. It might still be useful to clean up obsolete attachments added outside of NocoDB (TODO: check whether thumbnail
-    generation works for them and whether they're properly tracked in NocoDB's new internal `MetaTable.FILE_REFERENCES`).
-
-```{r}
-#' Clean referendum attachments
-#'
-#' Deletes obsolete attachment files from the specified S3-compatible object storage bucket. An attachment is considered obsolete if it isn't linked to any
-#' referendum in the RDB.
-#'
-#' @param s3_bucket Name of the S3-compatible object storage bucket where the referendum attachments reside.
-#' @param s3_endpoint S3-compatible endpoint URL where `s3_bucket` is located.
-#' @param s3_access_key S3-compatible access key ID with access to `s3_bucket`.
-#' @param s3_access_secret S3-compatible access secret with access to `s3_bucket`.
-#' @param run_dry Whether or not to display the files to be deleted on the console instead of actually deleting any file.
-#'
-#' @return A character vector of deleted file attachment URLs.
-#' @family admin
-#' @export
-clean_rfrnd_attachments <- function(s3_bucket = s3_bucket_attachments,
-                                    s3_endpoint = s3_endpoint_url,
-                                    s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
-                                                                        pkg = this_pkg),
-                                    s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
-                                                                           pkg = this_pkg),
-                                    run_dry = TRUE) {
-  
-  checkmate::assert_string(s3_bucket)
-  checkmate::assert_flag(run_dry)
-  
-  s3_auth(s3_endpoint = s3_endpoint,
-          s3_access_key = s3_access_key,
-          s3_access_secret = s3_access_secret)
-  
-  s3_prefix <- paste0("s3://", s3_bucket, "/")
-  url_prefix <- paste0("https://", s3_bucket, ".", httr2::url_parse(s3_endpoint_url)$hostname, "/")
-  
-  all_attachments <-
-    s3fs::s3_dir_ls(fs::path(s3_bucket, "nc/uploads"),
-                    recurse = TRUE) |>
-    fs::path_rel(start = s3_prefix)
-  
-  valid_attachments <-
-    rfrnds(use_cache = FALSE,
-           incl_drafts = TRUE) |>
-    dplyr::pull("attachments") |>
-    purrr::map(\(x) x$url) |>
-    purrr::list_c(ptype = character()) |>
-    xml2::url_unescape() |>
-    fs::path_rel(start = url_prefix)
-  
-  invalid_attachments <- setdiff(x = all_attachments,
-                                 y = valid_attachments)
-  invalid_attachment_urls <- paste0(url_prefix, fs::path(fs::path_dir(invalid_attachments), xml2::url_escape(fs::path_file(invalid_attachments))),
-                                    recycle0 = TRUE)
-  
-  if (length(invalid_attachments) > 0L) {
-    
-    if (run_dry) {
-      cli::cli_alert_info("Files that would be deleted with {.code run_dry = FALSE}:")
-      cli::cli_li(items = purrr::map_chr(invalid_attachment_urls,
-                                         \(x) cli::format_inline("{.url {x}}")))
-    } else {
-      s3fs::s3_file_delete(path = paste0(s3_prefix, invalid_attachments,
-                                         recycle0 = TRUE))
-      # delete obsolete thumbnails
-      patterns <-
-        invalid_attachments |>
-        fs::path_rel(start = "nc/uploads/") |>
-        rex::escape()
-      
-      s3fs::s3_dir_ls(fs::path(s3_bucket, "nc/thumbnails"),
-                      recurse = TRUE) |>
-        stringr::str_subset(pattern = rex::rex(or(patterns))) |>
-        s3fs::s3_file_delete()
-    }
-  }
-  
-  invisible(invalid_attachment_urls)
-}
 ```
 
 ### Neon.tech
