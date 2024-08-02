@@ -171,6 +171,9 @@ utils::globalVariables(names = c(".",
                                  "votes_yes",
                                  "year"))
 
+# avoid notes about "possible error"s when using non-exported rex shortcuts, cf. https://rex.r-lib.org/#using-rex-in-other-packages
+rex::register_shortcuts(pkg_name = utils::packageName())
+
 # katex is used in documentation dynamically via `\Sexpr`, so it has to be imported to avoid an error when rendering the corresponding help page
 # TODO: since the `R CMD check` warning can be considered a bug in this case, investigate the situation and possibly submit bug report
 has_katex <- function() {
@@ -1654,12 +1657,12 @@ sudd_rfrnd <- function(id_sudd) {
                                   paste0(collapse = "")))
   ix_fields_to_remarks <-
     field_names |>
-    stringr::str_detect(pattern = paste0("^",
-                                         pal::fuse_regex("\u2517\u2501\u2501\u2501 .+Stimmen( .+)?",
-                                                         "Unklare Stimmen",
-                                                         "Unstimmigkeiten",
-                                                         "G\u00fcltig stimmende Personen"),
-                                         "$")) |>
+    stringr::str_detect(pattern = rex::rex(start,
+                                           or("\u2517\u2501\u2501\u2501 .+Stimmen( .+)?",
+                                              "Unklare Stimmen",
+                                              "Unstimmigkeiten",
+                                              "G\u00fcltig stimmende Personen"),
+                                           end)) |>
     which()
   
   if (length(ix_fields_to_remarks) > 0L) {

@@ -40,6 +40,7 @@ Imports:
     pkgpins (>= 0.8.0.9000),
     purrr (>= 1.0.0),
     readr (>= 2.1.5),
+    rex (>= 1.2.1),
     rlang (>= 1.0.1),
     RPostgres (>= 1.4.6),
     rvest (>= 1.0.1),
