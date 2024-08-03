@@ -6301,11 +6301,27 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
 
 TODO:
 
+-   Disable schema edit for external PGSQL data source after NocoDB setup is complete via
+
+    ``` r
+    nocodb::data_srcs(id_base = id_base,
+                      hostname = hostname,
+                      email = email,
+                      password = password) |>
+      dplyr::filter(type == "pg" & alias == !!nocodb_data_src_alias) |>
+      purrr::chuck("id") |>
+      nocodb::update_data_src(is_schema_readonly = TRUE,
+                              id_base = id_base,
+                              hostname = hostname,
+                              email = email,
+                              password = password)
+    ```
+
 -   Improve status msg output for `quiet = FALSE` and adapt `reset_rdb()` accordingly.
 
 -   Currently, we use the *Backblaze B2* NocoDB plugin. Ideally, we'd just use the vendor-neutral S3 plugin instead which [allows configuration via the
     `NC_S3_*` environment variables](https://docs.nocodb.com/getting-started/self-hosted/environment-variables/#storage). Once
-    [nocodb/nocodb#9054](https://github.com/nocodb/nocodb/issues/9054) is fixed, we should be able to switch to the *S3* plugin.
+    [nocodb/nocodb#7903](https://github.com/nocodb/nocodb/issues/7903#issuecomment-2266257529) is fixed, we should be able to switch to the *S3* plugin.
 
     When done, all the `b2_*` args below should be renamed to `s3_*` and the `nocodb::update_plugin()` call removed.
 
