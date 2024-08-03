@@ -409,7 +409,66 @@ DO LANGUAGE plpgsql
     END;
   $$;
 
---- Create functions and triggers to complement `topics_referendums` with parent topics after `INSERT/UPDATE` and clean up child topics after `DELETE`
+-- Create functions and triggers to ensure `referendum_types_legal_norms` consistency
+CREATE OR REPLACE FUNCTION public.check_referendum_types_legal_norms_consistency()
+  RETURNS TRIGGER
+  LANGUAGE plpgsql
+  AS $$
+    BEGIN
+      IF NOT (
+        SELECT
+          r.municipality_id IS NOT DISTINCT FROM l.municipality_id AND
+          r.subnational_entity_code IS NOT DISTINCT FROM l.subnational_entity_code AND
+          r.country_code IS NOT DISTINCT FROM l.country_code AND
+          r.supranational_entity_id IS NOT DISTINCT FROM l.supranational_entity_id
+        FROM 
+          public.referendum_types r, public.legal_norms l
+        WHERE
+          r."id" = NEW.referendum_type_id AND 
+          l."id" = NEW.legal_norm_id
+      ) THEN
+        RAISE EXCEPTION 'Referendum type and legal norm attributes do not match';
+      END IF;
+
+      RETURN NEW;
+    END;
+  $$;
+
+CREATE TRIGGER check_consistency
+  BEFORE INSERT OR UPDATE ON public.referendum_types_legal_norms
+  FOR EACH ROW EXECUTE PROCEDURE public.check_referendum_types_legal_norms_consistency();
+
+-- Create functions and triggers to ensure `referendum_types_referendums` consistency
+CREATE OR REPLACE FUNCTION public.check_referendum_types_referendums_consistency()
+  RETURNS TRIGGER
+  LANGUAGE plpgsql
+  AS $$
+    BEGIN
+      IF NOT (
+        SELECT
+          rt."level" IS NOT DISTINCT FROM r."level" AND 
+          rt.municipality_id IS NOT DISTINCT FROM r.municipality_id AND
+          rt.subnational_entity_code IS NOT DISTINCT FROM r.subnational_entity_code AND
+          rt.country_code IS NOT DISTINCT FROM r.country_code AND
+          rt.supranational_entity_id IS NOT DISTINCT FROM r.supranational_entity_id
+        FROM 
+          public.referendum_types rt, public.referendums r
+        WHERE
+          rt."id" = NEW.referendum_type_id AND 
+          r."id" = NEW.referendum_id
+      ) THEN
+        RAISE EXCEPTION 'Referendum type and referendum attributes do not match';
+      END IF;
+
+      RETURN NEW;
+    END;
+  $$;
+
+CREATE TRIGGER check_consistency
+  BEFORE INSERT OR UPDATE ON public.referendum_types_referendums
+  FOR EACH ROW EXECUTE PROCEDURE public.check_referendum_types_referendums_consistency();
+
+-- Create functions and triggers to complement `topics_referendums` with parent topics after `INSERT/UPDATE` and clean up child topics after `DELETE`
 CREATE OR REPLACE FUNCTION public.add_parent_topic()
   RETURNS TRIGGER
   LANGUAGE plpgsql
