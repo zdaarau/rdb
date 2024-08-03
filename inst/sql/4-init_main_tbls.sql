@@ -392,6 +392,8 @@ ALTER TABLE public.referendums ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.referendums FORCE  ROW LEVEL SECURITY;
 CREATE POLICY default_allow          ON public.referendums AS PERMISSIVE  FOR ALL    TO PUBLIC USING (TRUE);
 CREATE POLICY nocodb_restrict_delete ON public.referendums AS RESTRICTIVE FOR DELETE TO nocodb USING (is_draft);
+CREATE POLICY default_allow          ON public.referendum_types AS PERMISSIVE  FOR ALL    TO PUBLIC USING (TRUE);
+CREATE POLICY nocodb_restrict_delete ON public.referendum_types AS RESTRICTIVE FOR DELETE TO nocodb USING (is_draft);
 
 -- Create triggers for `updated_at` columns
 DO LANGUAGE plpgsql
