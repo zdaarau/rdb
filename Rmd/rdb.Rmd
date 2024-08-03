@@ -2466,7 +2466,7 @@ tbl_metadata <- tibble::tribble(
   "referendum_questions",         TRUE,         "#6673ff",      "question",                "\u2753",
   "referendum_positions",         TRUE,         "#6673ff",      "actor_label",             "\U0001F4E3",
   "referendum_votes",             TRUE,         "#6673ff",      "option_display",          "\U0001F9FE",
-  "referendum_sub_votes",         TRUE,         "#6673ff",      "subnational_entity_code", "\U0001F9FE",
+  "referendum_sub_votes",         TRUE,         "#6673ff",      "display",                 "\U0001F9FE",
   "supranational_entities",       FALSE,        "#ffdf80",      "name",                    "\U0001F512",
   "countries",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512",
   "subnational_entities",         FALSE,        "#ffdf80",      "name",                    "\U0001F512",

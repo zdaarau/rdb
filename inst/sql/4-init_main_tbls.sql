@@ -339,6 +339,7 @@ CREATE TABLE public.referendum_votes (
 );
 
 CREATE TABLE public.referendum_sub_votes (
+  display                 text GENERATED ALWAYS AS (subnational_entity_code || ' ' || option_display) STORED,
   referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   subnational_entity_code text NOT NULL REFERENCES public.subnational_entities ON UPDATE CASCADE,
   option_display          text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
