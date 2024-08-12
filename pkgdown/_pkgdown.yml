@@ -4,13 +4,15 @@ url: https://rdb.rpkg.dev
 navbar:
   structure:
     left:
-    - home
     - intro
     - reference
     - codebook
     - tutorials
     - news
-    right: github
+    right:
+    - search
+    - github
+    - lightswitch
   components:
     codebook:
       text: RDB codebook
