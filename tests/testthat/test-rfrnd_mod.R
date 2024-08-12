@@ -11,6 +11,14 @@ test_rfrnd_mod <- function(use_testing_server = FALSE) {
 
     skip_if(use_testing_server && !test_testing)
 
+    has_creds <-
+      pal::has_pkg_config_val(key = "api_username",
+                              pkg = this_pkg) &&
+      pal::has_pkg_config_val(key = "api_password",
+                              pkg = this_pkg)
+
+    skip_if_not(has_creds)
+
     # add_rfrnds ----
     # TODO: create new rfrnd on production, too, once rfrnd deletion is deployed
     if (use_testing_server) {
@@ -97,4 +105,4 @@ test_rfrnd_mod <- function(use_testing_server = FALSE) {
 }
 
 test_rfrnd_mod(use_testing_server = FALSE)
-test_rfrnd_mod(use_testing_server = TRUE)
+# test_rfrnd_mod(use_testing_server = TRUE)

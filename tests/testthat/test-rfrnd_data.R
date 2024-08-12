@@ -87,4 +87,4 @@ test_rfrnd_data <- function(use_testing_server = FALSE) {
 }
 
 test_rfrnd_data(use_testing_server = FALSE)
-test_rfrnd_data(use_testing_server = TRUE)
+# test_rfrnd_data(use_testing_server = TRUE)

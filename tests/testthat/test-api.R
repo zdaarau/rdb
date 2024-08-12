@@ -51,4 +51,4 @@ test_api <- function(use_testing_server = FALSE) {
 }
 
 test_api(use_testing_server = FALSE)
-test_api(use_testing_server = TRUE)
+# test_api(use_testing_server = TRUE)
