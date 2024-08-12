@@ -7,7 +7,7 @@
 url_codebook(var = NULL)
 }
 \arguments{
-\item{var_name}{Optional variable name to add as the \href{https://en.wikipedia.org/wiki/URI_fragment}{fragment identifier} of the returned URL, which leads to a
+\item{var}{Optional variable name to add as the \href{https://en.wikipedia.org/wiki/URI_fragment}{fragment identifier} of the returned URL, which leads to a
 direct link to the relevant codebook section. Must be either one of the column names of \code{\link{data_codebook}}, or a valid fragment identifier of a codebook
 section above the individual variables (institution-level-variables, referendum-level-variables or topics).}
 }

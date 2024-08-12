@@ -35,8 +35,8 @@ rdb::infer_topics(topics = "foreign policy",
 \seealso{
 Other referendum topic functions:
 \code{\link{data_topics}},
-\code{\link{hierarchize_topics_fast}()},
 \code{\link{hierarchize_topics}()},
+\code{\link{hierarchize_topics_fast}()},
 \code{\link{topics}()}
 }
 \concept{topics}

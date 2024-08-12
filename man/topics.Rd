@@ -21,8 +21,8 @@ rdb::topics(tiers = 1:2)
 \seealso{
 Other referendum topic functions:
 \code{\link{data_topics}},
-\code{\link{hierarchize_topics_fast}()},
 \code{\link{hierarchize_topics}()},
+\code{\link{hierarchize_topics_fast}()},
 \code{\link{infer_topics}()}
 }
 \concept{topics}

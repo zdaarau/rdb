@@ -31,10 +31,10 @@ Other referendum data functions:
 \code{\link{delete_rfrnds}()},
 \code{\link{download_file_attachment}()},
 \code{\link{edit_rfrnds}()},
-\code{\link{rfrnd_exists}()},
-\code{\link{rfrnds_old}()},
-\code{\link{rfrnds}()},
 \code{\link{rfrnd}()},
+\code{\link{rfrnd_exists}()},
+\code{\link{rfrnds}()},
+\code{\link{rfrnds_old}()},
 \code{\link{search_rfrnds}()},
 \code{\link{validate_rfrnds}()}
 }
