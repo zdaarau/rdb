@@ -1774,7 +1774,7 @@ url_admin_portal <- function(...,
 
 #' Assemble codebook URL
 #'
-#' @param var_name Optional variable name to add as the [fragment identifier](https://en.wikipedia.org/wiki/URI_fragment) of the returned URL, which leads to a
+#' @param var Optional variable name to add as the [fragment identifier](https://en.wikipedia.org/wiki/URI_fragment) of the returned URL, which leads to a
 #' direct link to the relevant codebook section. Must be either one of the column names of [`data_codebook`], or a valid fragment identifier of a codebook
 #' section above the individual variables (`r pal::enum_str(codebook_fragments, last = " or ")`).
 #'
