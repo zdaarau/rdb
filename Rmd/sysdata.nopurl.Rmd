@@ -622,13 +622,18 @@ months_de <-
 months_de_fms <- rdb:::as_fm_list(months_de)
 ```
 
-## `pg_metadata_*`
+## `pg_tbl_metadata`
 
 ```{r}
-rdb:::tbl_metadata$name |>
-  purrr::walk(\(tbl_name) assign(x = paste0("pg_metadata_", tbl_name),
-                                 value = rdb:::pg_col_metadata(tbl_name = tbl_name),
-                                 pos = globalenv()))
+connection <- rdb::connect()
+
+pg_tbl_metadata <-
+  rdb:::tbl_metadata$name %>%
+  magrittr::set_names(., .) |>
+  purrr::map(\(x) rdb:::pg_col_metadata(tbl_name = x,
+                                        connection = connection))
+
+DBI::dbDisconnect(conn = connection)
 ```
 
 ## `pkg_config`
@@ -952,21 +957,7 @@ usethis::use_data(col_names_nocodb_filled,
                   data_topics,
                   months_de,
                   months_de_fms,
-                  pg_metadata_countries,
-                  pg_metadata_subnational_entities,
-                  pg_metadata_municipalities,
-                  pg_metadata_languages,
-                  pg_metadata_actors,
-                  pg_metadata_options,
-                  pg_metadata_referendum_types,
-                  pg_metadata_legal_norms,
-                  pg_metadata_referendum_types_legal_norms,
-                  pg_metadata_referendums,
-                  pg_metadata_referendum_titles,
-                  pg_metadata_referendum_questions,
-                  pg_metadata_referendum_positions,
-                  pg_metadata_referendum_votes,
-                  pg_metadata_referendum_sub_votes,
+                  pg_tbl_metadata,
                   pkg_config,
                   rfrnd_cols_order,
                   topics_tier_1_,

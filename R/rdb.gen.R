@@ -427,8 +427,7 @@ col_names_autofilled <- function(tbl_name = tbl_metadata$name) {
   tbl_name <- rlang::arg_match(tbl_name)
   
   result <-
-    paste0("pg_metadata_", tbl_name) |>
-    get() |>
+    pg_tbl_metadata[[tbl_name]]
     dplyr::filter(is_filled_auto) |>
     dplyr::pull("column_name")
   
@@ -455,8 +454,7 @@ col_names_mandatory <- function(tbl_name = tbl_metadata$name) {
   
   tbl_name <- rlang::arg_match(tbl_name)
   
-  paste0("pg_metadata_", tbl_name) |>
-    get() |>
+  pg_tbl_metadata[[tbl_name]] |>
     dplyr::filter(!is_nullable & !is_filled_auto) |>
     dplyr::pull("column_name")
 }
@@ -536,7 +534,7 @@ parse_array <- function(x) {
 #'
 #' Returns the primary key column name(s) of the specified table, based on PostgreSQL metadata obtained at package-build time. This function is faster than
 #' [pg_pk()] since it doesn't perform network requests. But it can return outdated information if changes were made to the RDB PostgreSQL schema *after* the
-#' package-internal `rdb:::pg_metadata_{tbl_name}` was last updated.
+#' package-internal `rdb:::pg_tbl_metadata` was last updated.
 #'
 #' @inheritParams pg_pk
 #'
@@ -546,8 +544,7 @@ pk <- function(tbl_name = tbl_metadata$name) {
   
   tbl_name <- rlang::arg_match(tbl_name)
   
-  paste0("pg_metadata_", tbl_name) |>
-    get() |>
+  pg_tbl_metadata[[tbl_name]] |>
     dplyr::filter(is_pk) |>
     dplyr::pull("column_name")
 }
