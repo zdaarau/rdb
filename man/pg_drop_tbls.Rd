@@ -7,7 +7,8 @@
 pg_drop_tbls(
   tbl_names,
   connection = connect(user = "rdb_admin", password = pg_role_pw("rdb_admin")),
-  disconnect = TRUE
+  disconnect = TRUE,
+  min_msg_severity_lvl = "WARNING"
 )
 }
 \arguments{
@@ -16,6 +17,10 @@ pg_drop_tbls(
 \item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
+
+\item{min_msg_severity_lvl}{Minimum PostgreSQL \href{https://www.postgresql.org/docs/current/runtime-config-logging.html#RUNTIME-CONFIG-SEVERITY-LEVELS}{message severity level} to be printed. one of
+\code{"DEBUG5"}, \code{"DEBUG4"}, \code{"DEBUG3"}, \code{"DEBUG2"}, \code{"DEBUG1"}, \code{"LOG"}, \code{"NOTICE"}, \code{"WARNING"} or \code{"ERROR"}. Each level includes all the levels that follow it. The later the level, the
+fewer messages are sent.}
 }
 \value{
 \code{tbl_names}, invisibly.
@@ -26,18 +31,23 @@ Deletes the specified \code{tbl_names} from a PostgreSQL database.
 \seealso{
 Other PostgreSQL functions
 \code{\link{exec_sql_file}()},
+\code{\link{pg_add_default_data}()},
 \code{\link{pg_col_metadata}()},
+\code{\link{pg_col_nr_to_name}()},
+\code{\link{pg_has_rls}()},
 \code{\link{pg_has_tbl}()},
 \code{\link{pg_init_aux_tbls}()},
 \code{\link{pg_init_db}()},
 \code{\link{pg_init_main_tbls}()},
 \code{\link{pg_pk}()},
+\code{\link{pg_post_nocodb}()},
 \code{\link{pg_reset_db}()},
 \code{\link{pg_role_pw}()},
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
 \code{\link{pg_tbl_update}()},
+\code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}
 }

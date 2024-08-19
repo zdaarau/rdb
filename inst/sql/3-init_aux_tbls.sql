@@ -9,9 +9,14 @@
 - The columns `created_at` and `updated_at` must come last for NocoDB to be hidden as "system fields" until
   [nocodb/nocodb#6476](https://github.com/nocodb/nocodb/issues/6476) has been resolved.
 
-- NocoDB by default takes the first non-numeric column name after the primary key as the [display value](https://docs.nocodb.com/fields/display-value), which
-  is used as label for foreign keys in other tables. We have to run our R function `rdb::set_ncdb_display_vals()` once after all tables are created to set
-  the proper display value columns via NocoDB's metadata API.
+- NocoDB doesn't handle [PostgreSQL `ENUM` types](https://www.postgresql.org/docs/current/datatype-enum.html) as `SingleSelect` fields
+  [yet](https://github.com/nocodb/nocodb/issues/4862), so we do not use them for now. Instead, we use `text` types and manually set the columns to NocoDB's
+  virtual `SingleSelect` type and define the set of allowed values.
+
+- Custom `ENUM` types like `"level"` can be modified via [`ALTER TYPE`](https://www.postgresql.org/docs/current/sql-altertype.html), e.g. to change existing
+  values or add new ones. Removing values is not possible – and just replacing `ENUM`s is a bad idea [since the old `ENUM` could still be in use in
+  indexes](https://www.postgresql.org/message-id/835.1527628154%40sss.pgh.pa.us). Read the [excellent Supabase documentation on this
+  topic](https://supabase.com/docs/guides/database/postgres/enums#managing-enums) for details.
 
 ## Relevant documentation
 
@@ -19,7 +24,10 @@
 - [Data Types](https://www.postgresql.org/docs/current/datatype.html)
 - [Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)
 - [Generated Columns](https://www.postgresql.org/docs/current/ddl-generated-columns.html)
+- [Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
+- [Generated Columns](https://www.postgresql.org/docs/current/ddl-generated-columns.html)
 - [Executing Dynamic Commands](https://www.postgresql.org/docs/current/plpgsql-statements.html#PLPGSQL-STATEMENTS-EXECUTING-DYN)
+- [Overview of Trigger Behavior](https://www.postgresql.org/docs/current/trigger-definition.html)
 
 */
 
@@ -35,7 +43,8 @@ DO LANGUAGE plpgsql
   DECLARE
     t text;
   BEGIN
-    FOREACH t IN ARRAY ARRAY['supranational_entities',
+    FOREACH t IN ARRAY ARRAY['administrative_units',
+                             'supranational_entities',
                              'countries',
                              'subnational_entities',
                              'municipalities',
@@ -47,22 +56,20 @@ DO LANGUAGE plpgsql
   END;
   $$;
 
+-- Recreate custom enumerated types
+DROP TYPE IF EXISTS "level" CASCADE;
+CREATE TYPE "level" AS ENUM ('municipal', 'subnational', 'national', 'supranational');
+
 -- Create tables *not* intended to be updated via NocoDB
 CREATE TABLE public.supranational_entities (
   "id"         text PRIMARY KEY,
-  "name"       text NOT NULL,
-  created_at   timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at   timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (updated_at >= created_at)
+  "name"       text NOT NULL
 );
 
 CREATE TABLE public.countries (
   code         text PRIMARY KEY,
   "name"       text NOT NULL,
-  name_long    text NOT NULL,
-  created_at   timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at   timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (updated_at >= created_at)
+  name_long    text NOT NULL
 );
 
 CREATE TABLE public.subnational_entities (
@@ -72,10 +79,7 @@ CREATE TABLE public.subnational_entities (
   "type"      text NOT NULL,
   valid_from  date NOT NULL,
   valid_to    date,
-  created_at  timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at  timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (valid_to >= valid_from),
-  CHECK (updated_at >= created_at)
+  CHECK (valid_to >= valid_from)
 );
 
 CREATE TABLE public.municipalities (
@@ -87,68 +91,28 @@ CREATE TABLE public.municipalities (
   "name"                  text NOT NULL,
   valid_from              date NOT NULL,
   valid_to                date,
-  created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   UNIQUE (country_code, id_official, valid_from), -- this might seem redundant with the PK, but is actually required for proper `ON CONFLICT` handling in upserts, cf. https://stackoverflow.com/questions/42022362/no-unique-or-exclusion-constraint-matching-the-on-conflict
   UNIQUE (un_locode, valid_from),
-  CHECK (valid_to >= valid_from),
-  CHECK (updated_at >= created_at)
+  CHECK (valid_to >= valid_from)
+);
+
+CREATE TABLE public.administrative_units (
+  "id"       text PRIMARY KEY,
+  "name"     text NOT NULL,
+  "level"    text NOT NULL CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
+  "type"     text NOT NULL,
+  parent_id  text REFERENCES public.administrative_units
 );
 
 CREATE TABLE public.languages (
   code       text PRIMARY KEY,
-  "name"     text NOT NULL,
-  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (updated_at >= created_at)
+  "name"     text NOT NULL
 );
 
 CREATE TABLE public.topics (
   name        text PRIMARY KEY,
-  parent_name text REFERENCES public.topics,
-  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  CHECK (updated_at >= created_at)
+  parent_name text REFERENCES public.topics
 );
-
--- Create triggers for `updated_at` columns
-DO LANGUAGE plpgsql
-  $$
-    DECLARE
-      r record;
-    BEGIN
-      FOR r IN SELECT table_name FROM information_schema.columns WHERE table_schema = 'public' AND column_name = 'updated_at'
-      LOOP
-        EXECUTE format('CREATE OR REPLACE TRIGGER %I BEFORE UPDATE ON public.%I FOR EACH ROW EXECUTE PROCEDURE moddatetime (%I)', 'set_updated_at', r.table_name, 'updated_at');
-      END LOOP;
-    END;
-  $$;
-
--- Add column labels
---- for common column names
-DO LANGUAGE plpgsql
-  $$
-    DECLARE
-      r record;
-    BEGIN
-      FOR r IN SELECT table_name FROM information_schema.columns WHERE table_schema = 'public' AND column_name = 'created_at'
-      LOOP
-        EXECUTE format('COMMENT ON COLUMN public.%I.created_at IS %L', r.table_name, E'creation time\n\ndate and time on which the entry was created');
-      END LOOP;
-    END;
-  $$;
-
-DO LANGUAGE plpgsql
-  $$
-    DECLARE
-      r record;
-    BEGIN
-      FOR r IN SELECT table_name FROM information_schema.columns WHERE table_schema = 'public' AND column_name = 'updated_at'
-      LOOP
-        EXECUTE format('COMMENT ON COLUMN public.%I.updated_at IS %L', r.table_name, E'update time\n\ndate and time on which the entry was last updated');
-      END LOOP;
-    END;
-  $$;
 
 /* Set all 'public' schema tables to be owned by 'nocodb' to avoid bug
    TODO: remove this once [nocodb/nocodb#719](https://github.com/nocodb/nocodb/issues/719) is fixed, i.e. [nocodb/nocodb#5397](https://github.com/nocodb/nocodb/pull/5397) is merged and released. */

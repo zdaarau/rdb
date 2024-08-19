@@ -4,7 +4,9 @@
 \alias{create_nocodb_tbls}
 \title{Create NocoDB tables}
 \usage{
-create_nocodb_tbls(hostname = nocodb_hostname)
+create_nocodb_tbls(
+  hostname = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg)
+)
 }
 \arguments{
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
@@ -13,6 +15,8 @@ create_nocodb_tbls(hostname = nocodb_hostname)
 A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created tables.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} in favor of \code{\link[=create_nocodb_tbl_cols]{create_nocodb_tbl_cols()}}.
+
 Creates all the PostgreSQL database tables that must be first created \emph{once} in NocoDB after the PostgreSQL database has been added as external data source
 (e.g. via \code{\link[=reset_nocodb]{reset_nocodb()}}) to let NocoDB register the necessary metadata for the \code{created_by} and \code{updated_by} columns (so they are properly auto-filled by
 NocoDB later on).
@@ -22,6 +26,7 @@ After running \code{create_nocodb_tbls()}, the created tables are supposed to be
 \seealso{
 Other NocoDB functions
 \code{\link{config_nocodb_tbls}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{purge_nocodb}()},
 \code{\link{reset_nocodb}()},
 \code{\link{reset_rdb}()}
@@ -30,6 +35,7 @@ Other administration functions:
 \code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
 \code{\link{notify_postgrest}()},
@@ -38,6 +44,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},

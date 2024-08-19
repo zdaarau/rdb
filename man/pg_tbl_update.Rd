@@ -23,6 +23,7 @@ update the corresponding database fields with.}
 \itemize{
 \item \code{"actors"}
 \item \code{"options"}
+\item \code{"legal_instruments"}
 \item \code{"legal_norms"}
 \item \code{"referendum_types"}
 \item \code{"referendum_clusters"}
@@ -35,6 +36,7 @@ update the corresponding database fields with.}
 \item \code{"referendum_positions"}
 \item \code{"referendum_votes"}
 \item \code{"referendum_sub_votes"}
+\item \code{"administrative_units"}
 \item \code{"supranational_entities"}
 \item \code{"countries"}
 \item \code{"subnational_entities"}
@@ -61,18 +63,23 @@ restriction to avoid accidental insertions.
 \seealso{
 Other PostgreSQL functions
 \code{\link{exec_sql_file}()},
+\code{\link{pg_add_default_data}()},
 \code{\link{pg_col_metadata}()},
+\code{\link{pg_col_nr_to_name}()},
 \code{\link{pg_drop_tbls}()},
+\code{\link{pg_has_rls}()},
 \code{\link{pg_has_tbl}()},
 \code{\link{pg_init_aux_tbls}()},
 \code{\link{pg_init_db}()},
 \code{\link{pg_init_main_tbls}()},
 \code{\link{pg_pk}()},
+\code{\link{pg_post_nocodb}()},
 \code{\link{pg_reset_db}()},
 \code{\link{pg_role_pw}()},
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
+\code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}
 }

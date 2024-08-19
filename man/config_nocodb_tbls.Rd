@@ -4,7 +4,10 @@
 \alias{config_nocodb_tbls}
 \title{Configure NocoDB tables}
 \usage{
-config_nocodb_tbls(hostname = nocodb_hostname, quiet = FALSE)
+config_nocodb_tbls(
+  hostname = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg),
+  quiet = FALSE
+)
 }
 \arguments{
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
@@ -12,17 +15,19 @@ config_nocodb_tbls(hostname = nocodb_hostname, quiet = FALSE)
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-\code{nocodb_hostname}, invisibly.
+\code{hostname}, invisibly.
 }
 \description{
 Configures the RDB tables on the specified NocoDB server. Currently, this includes:
 \itemize{
-\item Setting the correct display value columm for all tables via \link[nocodb:set_display_vals]{nocodb::set_display_vals}.
-\item Setting the proper metadata for all tables via \link[nocodb:set_tbl_metadata]{nocodb::set_tbl_metadata}.
+\item Setting the correct display value columm for all tables via \code{\link[nocodb:set_display_vals]{nocodb::set_display_vals()}}.
+\item Setting the proper metadata for all tables via \code{\link[nocodb:set_tbl_metadata]{nocodb::set_tbl_metadata()}}.
+\item Setting the proper visibility rules (UI ACL) for the default view of all tables via \code{\link[nocodb:update_base_ui_acl]{nocodb::update_base_ui_acl()}}.
 }
 }
 \seealso{
 Other NocoDB functions
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{purge_nocodb}()},
 \code{\link{reset_nocodb}()},
@@ -31,6 +36,7 @@ Other NocoDB functions
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
 \code{\link{connect}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
@@ -40,6 +46,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},

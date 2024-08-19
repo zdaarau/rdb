@@ -168,9 +168,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO read
 -- (Re-)create user for automated backup task
 SELECT drop_owned_by('archiver');
 DROP ROLE IF EXISTS archiver;
-CREATE ROLE archiver WITH LOGIN PASSWORD ?pw_archiver ROLE rdb_admin;
+CREATE ROLE archiver WITH LOGIN BYPASSRLS PASSWORD ?pw_archiver ROLE rdb_admin;
 GRANT readonly TO archiver;
 GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO archiver;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON SEQUENCES TO archiver;
 
 -- (Re-)create users for PostgREST and grant necessary access rights
 SELECT reassign_owned_by('authenticator', 'rdb_admin');

@@ -5,11 +5,15 @@
 \title{Get RDB data model}
 \usage{
 dm(
-  connection = connect(user = "rdb_admin", password = pg_role_pw("rdb_admin"))
+  connection = connect(user = "rdb_admin", password = pg_role_pw("rdb_admin")),
+  incl_aux_admin_tbls = FALSE
 )
 }
 \arguments{
 \item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+
+\item{incl_aux_admin_tbls}{Whether or not to include the auxiliary administrative unit tables
+supranational_entities, countries, subnational_entities, municipalities}
 }
 \value{
 A \link[dm:dm]{data model} object.
@@ -25,6 +29,7 @@ Other administration functions:
 \code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{notify_postgrest}()},
@@ -33,6 +38,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},

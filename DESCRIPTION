@@ -34,6 +34,7 @@ Imports:
     jsonlite (>= 1.8.8),
     katex (>= 1.4.0),
     labelled (>= 2.8.0),
+    lifecycle,
     magrittr (>= 2.0.1),
     nocodb (>= 0.0.9000),
     pal (>= 0.0.9101),

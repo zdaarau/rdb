@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{pk}
 \alias{pk}
-\title{Get primary key column names(s)}
+\title{Get primary key column name(s)}
 \usage{
 pk(tbl_name = tbl_metadata$name)
 }
@@ -13,8 +13,8 @@ pk(tbl_name = tbl_metadata$name)
 A character scalar.
 }
 \description{
-Returns the primary key column names(s) of the specified table, based on PostgreSQL metadata obtained at package-build time. This function is faster
-than \code{\link[=pg_pk]{pg_pk()}} since it doesn't perform network requests. But it can return outdated information if changes were made to the RDB PostgreSQL schema \emph{after}
-the package was last built.
+Returns the primary key column name(s) of the specified table, based on PostgreSQL metadata obtained at package-build time. This function is faster than
+\code{\link[=pg_pk]{pg_pk()}} since it doesn't perform network requests. But it can return outdated information if changes were made to the RDB PostgreSQL schema \emph{after} the
+package-internal \verb{rdb:::pg_metadata_\{tbl_name\}} was last updated.
 }
 \keyword{internal}

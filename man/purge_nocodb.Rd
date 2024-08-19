@@ -33,12 +33,13 @@ purge_nocodb(
 \code{fly_app}, invisibly.
 }
 \description{
-Stops the \code{fly_app} NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under \code{{b2_bucket}/nocodb}) and then restarts the
+Stops the \code{fly_app} NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under \code{{s3_bucket}/nocodb}) and then restarts the
 NocoDB instance, thereby resetting it to factory settings. Beware that this results in \strong{loss of all existing NocoDB-specific metadata} (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments}, \href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
 }
 \seealso{
 Other NocoDB functions
 \code{\link{config_nocodb_tbls}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{reset_nocodb}()},
 \code{\link{reset_rdb}()}
@@ -47,6 +48,7 @@ Other administration functions:
 \code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
@@ -55,6 +57,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},

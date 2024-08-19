@@ -4,14 +4,14 @@
 \alias{pg_tbl_del}
 \title{Delete specified data from PostgreSQL table}
 \usage{
-pg_tbl_del(tbl, data, pk_col_name)
+pg_tbl_del(tbl, data, pk_col_names)
 }
 \arguments{
 \item{tbl}{PostgreSQL database table from which data is to be deleted. A \code{\link[dbplyr:tbl.src_dbi]{tbl.src_dbi}} object.}
 
 \item{data}{Table data to delete. A data frame that must contain the table's primary key column. Additional columns are ignored.}
 
-\item{pk_col_name}{Primary key column name. A character scalar.}
+\item{pk_col_names}{Primary key column name(s). A character vector.}
 }
 \value{
 The updated table data as a \link[tibble:tbl_df-class]{tibble}, invisibly. Note that newly inserted rows aren't included if the table's primary key column is
@@ -23,18 +23,23 @@ Delete specified data from PostgreSQL table
 \seealso{
 Other PostgreSQL functions
 \code{\link{exec_sql_file}()},
+\code{\link{pg_add_default_data}()},
 \code{\link{pg_col_metadata}()},
+\code{\link{pg_col_nr_to_name}()},
 \code{\link{pg_drop_tbls}()},
+\code{\link{pg_has_rls}()},
 \code{\link{pg_has_tbl}()},
 \code{\link{pg_init_aux_tbls}()},
 \code{\link{pg_init_db}()},
 \code{\link{pg_init_main_tbls}()},
 \code{\link{pg_pk}()},
+\code{\link{pg_post_nocodb}()},
 \code{\link{pg_reset_db}()},
 \code{\link{pg_role_pw}()},
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_keep}()},
 \code{\link{pg_tbl_update}()},
+\code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}
 }

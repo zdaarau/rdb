@@ -20,6 +20,7 @@ update the corresponding database fields with.}
 \itemize{
 \item \code{"actors"}
 \item \code{"options"}
+\item \code{"legal_instruments"}
 \item \code{"legal_norms"}
 \item \code{"referendum_types"}
 \item \code{"referendum_clusters"}
@@ -32,6 +33,7 @@ update the corresponding database fields with.}
 \item \code{"referendum_positions"}
 \item \code{"referendum_votes"}
 \item \code{"referendum_sub_votes"}
+\item \code{"administrative_units"}
 \item \code{"supranational_entities"}
 \item \code{"countries"}
 \item \code{"subnational_entities"}
@@ -57,6 +59,7 @@ Other administration functions:
 \code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
@@ -66,6 +69,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},

@@ -249,7 +249,7 @@ NOTES:
     published in 1998. In such cases, we assign `CUSTOM-` codes.
 
 -   Due to lack of official revocation information in ISO 3166-2, we construct our own (delayed) `valid_to` date column based on detected changes in
-    `ISOcodes::ISO_3166_2` and just set `valid_from` to the dummy value `0001-01-01`. Ideally, the actual dates would be added to the
+    `ISOcodes::ISO_3166_2` and just set `valid_from` to the dummy value `0101-01-01`. Ideally, the actual dates would be added to the
     [`iso_3166-2.json`](https://salsa.debian.org/iso-codes-team/iso-codes/-/blob/main/data/iso_3166-2.json) source file gathered from officially anounced
     [changes](https://en.wikipedia.org/wiki/ISO_3166-2#Changes).
 
@@ -266,7 +266,7 @@ data_iso_3166_2 <-
   # convert column names to snake_case
   dplyr::rename_with(.cols = everything(),
                      .fn = heck::to_snake_case) |>
-  dplyr::mutate(valid_from = clock::date_parse("0001-01-01"),
+  dplyr::mutate(valid_from = clock::date_parse("0101-01-01"),
                 valid_to = as.Date(NA)) |>
   dplyr::relocate(parent_code = parent,
                   .after = code) |>
@@ -435,16 +435,14 @@ NOTES:
 ## define function to recursively determine root entity (= subnational entity = canton)
 ## NOTE: this is inefficient by design
 ## TODO: add an optimized and polished version of this fn to pkg swissmuni?
-derive_subnational_entity_code <- function(id) {
-  
+derive_subnational_entity_code <- function(id,
+                                           levels = 1:3) {
   parent <-
     data_municipalities |>
-    dplyr::filter(Identifier == !!id) |>
+    dplyr::filter(Identifier == !!id & Level %in% !!levels) |>
     # choose most recent entry in case of multiple ones
     tidyr::replace_na(replace = list(ValidTo = clock::date_today(zone = "UTC") + 1L)) |>
-    dplyr::filter(ValidTo == max(ValidTo)) |>
-    # this is necessary to filter out Identifiers that are assigned more than once (god knows why)
-    dplyr::filter(Level == min(Level))
+    dplyr::filter(ValidTo == max(ValidTo))
   
   if (nrow(parent) == 0L) {
     cli::cli_alert_warning("No parent entry found for entity with OFS code {.val {id}}.")
@@ -465,13 +463,14 @@ derive_subnational_entity_code <- function(id) {
       paste0("CH-", .)
     
   } else {
-    result <- derive_subnational_entity_code(parent$Parent)
+    result <- derive_subnational_entity_code(id = parent$Parent,
+                                             levels = 1:2)
   }
   
   result
 }
 
-data_municipalities <- swissmuni::snapshots(start_date = "0001-01-01",
+data_municipalities <- swissmuni::snapshots(start_date = "0101-01-01",
                                             end_date = clock::date_today(zone = "UTC"))
 data_municipalities %<>%
   # reduce to only municipalities
@@ -479,19 +478,42 @@ data_municipalities %<>%
   # add `country_code` and derive `subnational_entity_code`
   dplyr::mutate(country_code = "CH",
                 subnational_entity_code = purrr::map_chr(Parent,
-                                                         derive_subnational_entity_code)) %>%
+                                                         \(id) derive_subnational_entity_code(id = id,
+                                                                                              levels = 1:2))) %>%
   # tidy cols
   dplyr::select(country_code,
                 subnational_entity_code,
                 id_official = CODE_OFS_1_Text_en,
                 name = Name_en,
                 valid_from = ValidFrom,
-                valid_to = ValidTo)
+                valid_to = ValidTo) %>%
+  # remove spurious rows with `valid_from == valid_to` which is i.a. necessary to fulfill `UNIQUE (country_code, id_official, valid_from)` constraint
+  # REMARK: the duplicates for [Bischofszell](https://de.wikipedia.org/wiki/Bischofszell) e.g. are likely caused by because it was a
+  #         [Einheitsgemeinde](https://de.wikipedia.org/wiki/Einheitsgemeinde#Kanton_Thurgau) up until 1987
+  dplyr::filter(valid_from != valid_to | is.na(valid_to)) %>%
+  # because municipalities that only existed in the period before the first allocation of FSO numbers in 1960 were given the FSO number 7700,
+  # replace `id_official == 7700` with custom unique one
+  dplyr::mutate(id_official = dplyr::if_else(id_official == "7700",
+                                             paste(id_official, name,
+                                                   sep = "-"),
+                                             id_official)) %>%
+  # add our municipality ID
+  dplyr::mutate(id = paste(country_code, id_official, valid_from,
+                           sep = "_"),
+                .before = 1L)
 
-# add our municipality ID
-data_municipalities %<>% dplyr::mutate(id = paste(country_code, id_official, valid_from,
-                                                  sep = "_"),
-                                       .before = 1L)
+# ensure `UNIQUE (country_code, id_official, valid_from)` constraint
+invalid_data <-
+  data_municipalities |>
+  dplyr::group_by(country_code, id_official, valid_from) |>
+  dplyr::summarise(n = dplyr::n(),
+                   .groups = "drop_last") |>
+  dplyr::filter(n > 1L)
+
+if (nrow(invalid_data) > 0L) {
+  cli::cli_abort("{.code UNIQUE (country_code, id_official, valid_from)} constraint is still violated. Please debug.")
+}
+
 # add UN/LOCODEs
 data_un_locode <-
   readr::read_csv(file = "https://raw.githubusercontent.com/datasets/un-locode/main/data/code-list.csv",
@@ -641,16 +663,19 @@ pkg_config <-
                                        pal::wrap_chr(rdb:::neon_project, "\x60"),
                                        ". Required for [rdb::restart_neon_ep()]."),
                   require = TRUE) |>
+  tibble::add_row(key = "nocodb_host",
+                  default_value = list("admin.rdb.vote"),
+                  description = "RDB NocoDB server host address. Required for [rdb::reset_nocodb()].",
+                  require = TRUE) |>
   tibble::add_row(key = "nocodb_email",
-                  description = "E-mail address of the [RDB NocoDB server](https://admin.rdb.vote/)'s super admin user. Required for [rdb::reset_nocodb()].",
+                  description = "E-mail address of the RDB NocoDB server's super admin user. Required for [rdb::reset_nocodb()].",
                   require = TRUE) |>
   tibble::add_row(key = "nocodb_password",
-                  description = "Password of the [RDB NocoDB server](https://admin.rdb.vote/)'s super admin user Required for [rdb::reset_nocodb()].",
+                  description = "Password of the RDB NocoDB server's super admin user. Required for [rdb::reset_nocodb()].",
                   require = TRUE) |>
   tibble::add_row(key = "nocodb_user_account_csv_file",
                   description = paste0("File path to a UTF-8 encoded CSV file containing the columns `name`, `email` and `password` describing additional user",
-                                       " accounts to create on the [RDB NocoDB server](https://admin.rdb.vote/) via ",
-                                       "[rdb::reset_nocodb()]."),
+                                       " accounts to create on the RDB NocoDB server via [rdb::reset_nocodb()]."),
                   require = FALSE) |>
   tibble::add_row(key = "nocodb_s3_access_key",
                   description = paste0("ID of an access key granting read/write access to the S3-compatible object storage buckets `rdb-attachments` and ",

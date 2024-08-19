@@ -33,6 +33,7 @@ utils::globalVariables(names = c(".",
                                  "children_tier_1",
                                  "children_tier_2",
                                  "children_tier_3",
+                                 "code",
                                  "column_default",
                                  "column_name",
                                  "committee_name",
@@ -56,8 +57,8 @@ utils::globalVariables(names = c(".",
                                  "files",
                                  "generated",
                                  "generation_expression",
-                                 "has_by_cols",
                                  "has_default",
+                                 "id",
                                  "id_official",
                                  "id_sudd",
                                  "id_sudd_prefix",
@@ -84,6 +85,7 @@ utils::globalVariables(names = c(".",
                                  "inst_trigger_threshold",
                                  "inst_trigger_time_limit",
                                  "inst_trigger_type",
+                                 "is_aux",
                                  "is_draft",
                                  "is_filled_auto",
                                  "is_filled_nocodb",
@@ -107,10 +109,12 @@ utils::globalVariables(names = c(".",
                                  "month",
                                  "municipality_name",
                                  "n",
+                                 "name",
                                  "name_long",
                                  "name_short",
                                  "number",
                                  "ordinal_position",
+                                 "parent_code",
                                  "parent_topic",
                                  "password",
                                  "position_government",
@@ -587,14 +591,35 @@ order_rfrnd_cols <- function(data) {
 }
 ```
 
+### `parse_array`
+
+NOTES:
+
+-   Pkgs DBI and RPostgres respectively do not yet natively [support PostgreSQL array types](https://github.com/r-dbi/dbi3/issues/22), thus we have to convert
+    them manually using this function.
+
+```{r}
+parse_array <- function(x) {
+  
+  pg_class <- class(x)
+  
+  stringr::str_extract(string = x,
+                       pattern = "^(\\{)(.*)(\\})$",
+                       group = 2L) |>
+    stringr::str_split(pattern = stringr::fixed(",")) |>
+    pal::when(length(pg_class) == 1L && startsWith(pg_class, "pq__int") ~ purrr::map(., as.integer),
+              ~ .)
+}
+```
+
 ### `pk`
 
 ```{r}
-#' Get primary key column names(s)
+#' Get primary key column name(s)
 #'
-#' Returns the primary key column names(s) of the specified table, based on PostgreSQL metadata obtained at package-build time. This function is faster
-#' than [pg_pk()] since it doesn't perform network requests. But it can return outdated information if changes were made to the RDB PostgreSQL schema *after*
-#' the package was last built.
+#' Returns the primary key column name(s) of the specified table, based on PostgreSQL metadata obtained at package-build time. This function is faster than
+#' [pg_pk()] since it doesn't perform network requests. But it can return outdated information if changes were made to the RDB PostgreSQL schema *after* the
+#' package-internal `rdb:::pg_metadata_{tbl_name}` was last updated.
 #'
 #' @inheritParams pg_pk
 #'
@@ -931,6 +956,46 @@ pg_col_metadata <- function(tbl_name,
 }
 ```
 
+#### `pg_col_nr_to_name`
+
+```{r}
+#' Get PostreSQL column name from number
+#'
+#' @inheritParams pg_pk
+#' @param col_nr Number of the column whose name is to be retrieved.
+#'
+#' @return A character scalar.
+#' @family pg
+#' @keywords internal
+pg_col_nr_to_name <- function(col_nr,
+                              tbl_name,
+                              schema = pg_schema,
+                              connection = connect()) {
+  
+  checkmate::assert_int(col_nr)
+  checkmate::assert_string(tbl_name)
+  checkmate::assert_string(schema)
+  
+  result <-
+    glue::glue_sql(.con = connection,
+                   "SELECT pg_attribute.attname AS column_name",
+                   "  FROM pg_attribute",
+                   "  JOIN pg_class ON pg_class.oid = pg_attribute.attrelid",
+                   "  JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace",
+                   "  WHERE pg_class.oid = {tbl_name}::regclass",
+                   "    AND pg_namespace.nspname = {schema}",
+                   "    AND pg_attribute.attnum = {col_nr}",
+                   "    AND pg_attribute.attisdropped = FALSE;") |>
+    DBI::dbGetQuery(conn = connection)
+  
+  if (nrow(result) == 0L) {
+    cli::cli_abort("Table {.field {schema}.{tbl_name}} has no column number {.val {col_nr}}.")
+  }
+  
+  result$column_name
+}
+```
+
 #### `pg_has_tbl`
 
 ```{r}
@@ -1118,6 +1183,7 @@ pg_init_db <- function(connection = connect(user = "rdb_admin",
 pg_init_aux_tbls <- function(connection = connect(user = "rdb_admin",
                                                   password = pg_role_pw("rdb_admin")),
                              disconnect = TRUE) {
+  
   "sql/3-init_aux_tbls.sql" |>
     fs::path_package(package = this_pkg) |>
     exec_sql_file(.connection = connection,
@@ -1140,6 +1206,7 @@ pg_init_aux_tbls <- function(connection = connect(user = "rdb_admin",
 pg_init_main_tbls <- function(connection = connect(user = "rdb_admin",
                                                    password = pg_role_pw("rdb_admin")),
                               disconnect = TRUE) {
+  
   "sql/4-init_main_tbls.sql" |>
     fs::path_package(package = this_pkg) |>
     exec_sql_file(.connection = connection,
@@ -1149,18 +1216,92 @@ pg_init_main_tbls <- function(connection = connect(user = "rdb_admin",
 }
 ```
 
+#### `pg_post_nocodb`
+
+```{r}
+#' Alter RDB PostgreSQL meta columns
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `NULL`, invisibly.
+#' @family pg
+#' @keywords internal
+pg_post_nocodb <- function(connection = connect(user = "rdb_admin",
+                                                password = pg_role_pw("rdb_admin")),
+                           disconnect = TRUE) {
+  
+  "sql/5-post_nocodb.sql" |>
+    fs::path_package(package = this_pkg) |>
+    exec_sql_file(.connection = connection,
+                  .disconnect = disconnect)
+  
+  invisible(NULL)
+}
+```
+
+#### `pg_add_default_data`
+
+```{r}
+#' Add default RDB PostgreSQL data
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `NULL`, invisibly.
+#' @family pg
+#' @keywords internal
+pg_add_default_data <- function(connection = connect(user = "rdb_admin",
+                                                     password = pg_role_pw("rdb_admin")),
+                                disconnect = TRUE) {
+  
+  "sql/6-add_default_data.sql" |>
+    fs::path_package(package = this_pkg) |>
+    exec_sql_file(.connection = connection,
+                  .disconnect = disconnect)
+  
+  invisible(NULL)
+}
+```
+
+#### `pg_has_rls`
+
+Source: <https://stackoverflow.com/a/55046184/7196903>
+
+```{r}
+#' Test whether PostreSQL table has row-level security enabled
+#'
+#' @inheritParams pg_pk
+#'
+#' @return A logical scalar.
+#' @family pg
+#' @keywords internal
+pg_has_rls <- function(tbl_name,
+                       schema = pg_schema,
+                       connection = connect()) {
+  
+  checkmate::assert_string(tbl_name)
+  checkmate::assert_string(schema)
+  
+  glue::glue_sql(.con = connection,
+                 "SELECT relrowsecurity",
+                 "  FROM pg_class",
+                 "  WHERE oid = {tbl_name}::regclass;") |>
+    DBI::dbGetQuery(conn = connection) |>
+    dplyr::pull("relrowsecurity")
+}
+```
+
 #### `pg_pk`
 
 ```{r}
-#' Get primary key column names(s) from PostgreSQL
+#' Get primary key column name(s) from PostgreSQL
 #'
-#' Returns the primary key column names(s) from RDB's DBMS, a PostgreSQL server.
+#' Returns the primary key column name(s) from RDB's DBMS, a PostgreSQL server.
 #'
 #' @inheritParams read_tbl
 #' @param tbl_name Table name. A character scalar.
 #' @param schema Schema name. A character scalar.
 #'
-#' @return A character scalar if `tbl_name` exists. Otherwise an empty character vector.
+#' @return A character vector.
 #' @family pg
 #' @keywords internal
 pg_pk <- function(tbl_name,
@@ -1183,8 +1324,8 @@ pg_pk <- function(tbl_name,
                    "SELECT pg_attribute.attname AS column_name",               
                    "  FROM pg_index, pg_class, pg_attribute, pg_namespace",
                    "  WHERE pg_class.oid = {tbl_name}::regclass",
-                   "    AND indrelid = pg_class.oid ",
-                   "    AND nspname = {schema} ",
+                   "    AND indrelid = pg_class.oid",
+                   "    AND nspname = {schema}",
                    "    AND pg_class.relnamespace = pg_namespace.oid",
                    "    AND pg_attribute.attrelid = pg_class.oid",
                    "    AND pg_attribute.attnum = any(pg_index.indkey)",
@@ -1207,6 +1348,7 @@ pg_pk <- function(tbl_name,
 #' Extracts the specified `role`'s password from the CSV file under `path`.
 #'
 #' @param role Role name to return the password for.
+#' @param path Path to a CSV file containing PostgreSQL user account information. The two columns `role` and `password` must be present.
 #'
 #' @return `role`'s password as a character scalar.
 #' @family pg
@@ -1216,17 +1358,45 @@ pg_role_pw <- function(role,
                                                   pkg = this_pkg)) {
   roles <- readr::read_csv(file = path,
                            col_types = "c")
-  
-  checkmate::assert_names(colnames(roles),
-                          what = "colnames",
-                          must.include = c("role", "password"),
-                          .var.name = "pg_roles_csv_file")
-  
+  pal::assert_cols(data = roles,
+                   cols = c("role", "password"),
+                   obj_name = "path")
   role <- rlang::arg_match0(arg = role,
                             values = roles$role)
   roles |>
     dplyr::filter(role == !!role) |>
     dplyr::pull("password")
+}
+```
+
+#### `pg_update_seq`
+
+Source: <https://gist.github.com/henriquemenezes/962829815e8e7875f5f4376133b2f209>
+
+```{r}
+#' Update
+#'
+#' @inheritParams pg_pk
+#' @param col_name Name of the column whose sequence is to be updated.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family pg
+#' @keywords internal
+pg_update_seq <- function(tbl_name,
+                          col_name = pg_pk(tbl_name = tbl_name,
+                                           schema = schema,
+                                           connection = connection),
+                          schema = pg_schema,
+                          connection = connect()) {
+  
+  checkmate::assert_string(tbl_name)
+  checkmate::assert_string(col_name)
+  checkmate::assert_string(schema)
+  
+  glue::glue_sql(.con = connection,
+                 "SELECT setval({paste(tbl_name, col_name, 'seq', sep = '_')}, (SELECT MAX({`col_name`}) FROM {`schema`}.{`tbl_name`}));") |>
+    DBI::dbGetQuery(conn = connection) |>
+    tibble::as_tibble()
 }
 ```
 
@@ -1271,29 +1441,32 @@ pg_tbl_constraints <- function(tbl_name,
 #'
 #' @param tbl PostgreSQL database table from which data is to be deleted. A [`tbl.src_dbi`][dbplyr::tbl.src_dbi] object.
 #' @param data Table data to delete. A data frame that must contain the table's primary key column. Additional columns are ignored.
-#' @param pk_col_name Primary key column name. A character scalar.
+#' @param pk_col_names Primary key column name(s). A character vector.
 #'
 #' @inherit pg_tbl_update return
 #' @family pg
 #' @keywords internal
 pg_tbl_del <- function(tbl,
                        data,
-                       pk_col_name) {
+                       pk_col_names) {
   
   checkmate::assert_class(tbl,
                           classes = "tbl_PqConnection")
   checkmate::assert_data_frame(data)
-  checkmate::assert_string(pk_col_name)
-  
-  pk_vals_to_rm <- data |> dplyr::pull(!!pk_col_name)
-  
+  checkmate::assert_character(pk_col_names,
+                              any.missing = FALSE)
   tbl |>
-    dplyr::filter(!!as.symbol(pk_col_name) %in% !!pk_vals_to_rm) |>
-    dplyr::select(!!pk_col_name) |>
+    dplyr::select(!!pk_col_names) |>
+    tibble::as_tibble() |>
+    dplyr::intersect(y =
+                       data |>
+                       dplyr::select(!!pk_col_names) |>
+                       dplyr::filter(!dplyr::if_any(.cols = !!pk_col_names,
+                                                    .fns = is.na))) |>
     dplyr::rows_delete(x = tbl,
-                       by = pk_col_name,
+                       by = pk_col_names,
                        unmatched = "ignore",
-                       copy = FALSE,
+                       copy = TRUE,
                        in_place = TRUE)
 }
 ```
@@ -1311,43 +1484,30 @@ pg_tbl_del <- function(tbl,
 #' @keywords internal
 pg_tbl_keep <- function(tbl,
                         data,
-                        pk_col_name) {
+                        pk_col_names) {
   
   checkmate::assert_class(tbl,
                           classes = "tbl_PqConnection")
   checkmate::assert_data_frame(data)
-  checkmate::assert_string(pk_col_name)
-  
-  pk_vals_to_keep <- data |> dplyr::pull(!!pk_col_name)
-  
-  result <- tbl
-  tbl_obsolete <- tbl |> dplyr::filter(!(!!as.symbol(pk_col_name) %in% !!pk_vals_to_keep))
-  nrow_tbl_obsolete <-
-    tbl_obsolete |>
-    dplyr::tally() |>
-    dplyr::pull("n")
-  
-  if (nrow_tbl_obsolete > 0L) {
-    
-    result <-
-      tbl_obsolete |>
-      dplyr::select(!!pk_col_name) |>
-      dplyr::rows_delete(x = tbl,
-                         by = pk_col_name,
-                         unmatched = "ignore",
-                         copy = FALSE,
-                         in_place = TRUE)
-  }
-  
-  invisible(result)
+  checkmate::assert_character(pk_col_names,
+                              any.missing = FALSE)
+  tbl |>
+    dplyr::select(!!pk_col_names) |>
+    tibble::as_tibble() |>
+    dplyr::setdiff(y =
+                     data |>
+                     dplyr::select(!!pk_col_names) |>
+                     dplyr::filter(!dplyr::if_any(.cols = !!pk_col_names,
+                                                  .fns = is.na))) |>
+    dplyr::rows_delete(x = tbl,
+                       by = pk_col_names,
+                       unmatched = "ignore",
+                       copy = TRUE,
+                       in_place = TRUE)
 }
 ```
 
 #### `pg_tbl_update`
-
-TODO:
-
--   support multi-col PKs (e.g. `referendum_types_legal_norms`)
 
 ```{r}
 #' Update PostgreSQL table
@@ -1381,66 +1541,78 @@ pg_tbl_update <- function(tbl,
   col_metadata <- pg_col_metadata(tbl_name = tbl_name,
                                   schema = schema,
                                   connection = connection)
-  pk_col_name <-
+  pk_col_names <-
     col_metadata |>
     dplyr::filter(is_pk) |>
-    dplyr::pull("column_name") |>
-    # we don't yet properly handle multi-col PKs, so check for them
-    checkmate::assert_string(.var.name = "pk_col_name")
+    dplyr::pull("column_name")
   
   # delete obsolete data if requested
   if (sweep) {
     pg_tbl_keep(tbl = tbl,
                 data = data,
-                pk_col_name = pk_col_name)
+                pk_col_names = pk_col_names)
   }
   
   # update existing and add new data
   # NOTE: we can't use `dplyr::rows_in/upsert()` on tables with always-generated pk col
-  is_pk_writable <-
+  are_pks_writable <-
     col_metadata |>
     dplyr::filter(is_pk) |>
-    dplyr::pull("identity_generation") |>
+    dplyr::select("identity_generation", "generated") |>
+    unlist() |>
     magrittr::equals("ALWAYS") |>
+    any() |>
     isTRUE() |>
     magrittr::not()
   
-  if (is_pk_writable) {
+  if (are_pks_writable) {
     
     result <- dplyr::rows_upsert(x = tbl,
                                  y = data,
-                                 by = pk_col_name,
+                                 by = pk_col_names,
                                  copy = TRUE,
                                  in_place = TRUE)
   } else {
     
-    pk_vals_new <- setdiff(data[[pk_col_name]],
-                           c(dplyr::pull(tbl, !!pk_col_name), NA))
-    n_pk_vals_new <- length(pk_vals_new)
+    introduces_new_pk_vals <- FALSE
     
-    if (n_pk_vals_new > 0L) {
-      cli::cli_abort(paste0("{.val {n_pk_vals_new}} row{?s} in {.arg data} detected that {?has/have} an {.var {pk_col_name}} value set that is not present in ",
-                            "the {.field {tbl_name}} table. Rows to be newly inserted into the table must have `NA` values in {.arg data} column ",
-                            "{.var {pk_col_name}}."))
+    n_unknown_pks <-
+      data |>
+      dplyr::select(!!pk_col_names) |>
+      dplyr::setdiff(y =
+                       tbl |>
+                       dplyr::select(!!pk_col_names) |>
+                       tibble::as_tibble() |>
+                       # add an empty row to account for all-NA PK vals
+                       tibble::add_row()) |>
+      nrow()
+    
+    if (n_unknown_pks > 0L) {
+      cli::cli_abort(paste0("{.val {n_pk_vals_new}} row{?s} in {.arg data} detected that {?has/have} an {.var {pk_col_names}} value set that is not present in",
+                            " the {.field {tbl_name}} table. Rows to be newly inserted into the table must have `NA` values in {.arg data} column ",
+                            "{.var {pk_col_names}}."))
     }
     
     result <- dplyr::rows_update(x = tbl,
                                  y = data,
-                                 by = pk_col_name,
+                                 by = pk_col_names,
                                  copy = TRUE,
                                  in_place = TRUE,
                                  unmatched = "ignore")
     
-    if (NA %in% data[[pk_col_name]]) {
+    if (anyNA(data[, pk_col_names])) {
       
       # NOTE: we can't append the result of `DBI::dbAppendTable()` to `result` since the former just returns an integer scalar
       data |>
-        dplyr::filter(is.na(!!as.symbol(pk_col_name))) |>
-        dplyr::select(-!!pk_col_name) |>
+        dplyr::filter(dplyr::if_any(.cols = !!pk_col_names,
+                                    .fns = is.na)) |>
+        dplyr::select(-!!pk_col_names) |>
         DBI::dbAppendTable(conn = connection,
                            name = DBI::Id(schema = schema,
                                           table = tbl_name),
-                           value = _)
+                           value = _,
+                           # disable `COPY FROM` for tbls with RLS enabled, cf. https://github.com/r-dbi/RPostgres/issues/470
+                           copy = !pg_has_rls(tbl_name = tbl_name))
     }
   }
   
@@ -2374,18 +2546,18 @@ NOTES:
 -   `NA` in `uidt` or `meta.*` cols means to leave the respective settings untouched, i.e. at their defaults.
 
 ```{r}
-nocodb_hostname <- "admin.rdb.vote"
 nocodb_hostname_testing <- "admin-testing.rdb.vote"
 nocodb_base_title <- "Main"
 nocodb_data_src_alias <- "RDB"
 
 nocodb_col_metadata <- tibble::tribble(
-  ~tbl_name,     ~col_name,     ~uidt,         ~meta.richMode,
-  "referendums", "attachments", "Attachment",  NA,
-  NA_character_, "url",         "URL",         NA,
-  NA_character_, "description", NA_character_, TRUE,
-  NA_character_, "label",       NA_character_, TRUE,
-  NA_character_, "remarks",     NA_character_, TRUE
+  ~tbl_name,              ~col_name,     ~title,                 ~uidt,                 ~meta.richMode, ~hidden,
+  "referendums",          "attachments", NA_character_,          "Attachment",          NA,             FALSE,
+  NA_character_,          "url",         NA_character_,          "URL",                 NA,             FALSE,
+  NA_character_,          "description", NA_character_,          NA_character_,         TRUE,           FALSE,
+  NA_character_,          "label",       NA_character_,          NA_character_,         TRUE,           FALSE,
+  NA_character_,          "remarks",     NA_character_,          NA_character_,         TRUE,           FALSE,
+  "subnational_entities", NA_character_, "subnational_entities", "LinkToAnotherRecord", NA,             TRUE
 )
 
 # the virtual columns NocoDB maintains for foreign keys not always have optimal default titles, so we have to tweak 'em
@@ -2394,6 +2566,7 @@ nocodb_col_metadata <- tibble::tribble(
 nocodb_col_renames <- tibble::tribble(
   ~uidt,                 ~col_title_old,           ~col_title_new,
   "LinkToAnotherRecord", "actors",                 "actor",
+  "LinkToAnotherRecord", "administrative_units",   "administrative_unit",
   "LinkToAnotherRecord", "countries",              "country",
   "LinkToAnotherRecord", "languages",              "language",
   "LinkToAnotherRecord", "municipalities",         "municipality",
@@ -2417,6 +2590,7 @@ Define PostgreSQL metadata centrally.
 pg_db <- "rdb"
 pg_port <- 5432L
 pg_schema <- "public"
+pg_client_min_messages <- c("DEBUG5", "DEBUG4", "DEBUG3", "DEBUG2", "DEBUG1", "LOG", "NOTICE", "WARNING", "ERROR")
 ```
 
 ### `s3_*`
@@ -2457,59 +2631,67 @@ NOTES:
 
 -   Viable alternative emojis for `nocodb_meta.icon` include:
 
+    -   `legal_norms`: § (but no actual emoji and thus not recognized by NocoDB 🙁)
     -   `countries`: "\U0001F1FA\U0001F1F3"
     -   `municipalities`: "\U0001F3D8"
     -   `languages`: "\U0001F310"
 
 ```{r}
-tbl_metadata <- tibble::tribble(
-  ~name,                          ~has_by_cols, ~dm_color,      ~nocodb_display_col,       ~nocodb_meta.icon,
-  "actors",                       TRUE,         "#9900cc",      "label",                   "\U0001F3AD",
-  "options",                      TRUE,         "#9900cc",      "display",                 "\u2611",
-  "legal_norms",                  TRUE,         "#33cc33",      "title",                   "\U0001F4DC",
-  "referendum_types",             TRUE,         "#33cc33",      "display",                 "\U0001F3DB",
-  "referendum_clusters",          TRUE,         "#6673ff",      "id",                      "\U0001F347",
-  "referendums",                  TRUE,         color_rdb_main, "display",                 "\U0001F5F3",
-  "referendum_types_legal_norms", TRUE,         "#85e085",      NA_character_,             NA_character_,
-  "referendum_types_referendums", TRUE,         "#85e085",      NA_character_,             NA_character_,
-  "topics_referendums",           TRUE,         "#6673ff",      NA_character_,             NA_character_,
-  "referendum_titles",            TRUE,         "#6673ff",      "title",                   "\U0001F4D5",
-  "referendum_questions",         TRUE,         "#6673ff",      "question",                "\u2753",
-  "referendum_positions",         TRUE,         "#6673ff",      "actor_label",             "\U0001F4E3",
-  "referendum_votes",             TRUE,         "#6673ff",      "option_display",          "\U0001F9FE",
-  "referendum_sub_votes",         TRUE,         "#6673ff",      "display",                 "\U0001F9FE",
-  "supranational_entities",       FALSE,        "#ffdf80",      "name",                    "\U0001F512",
-  "countries",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512",
-  "subnational_entities",         FALSE,        "#ffdf80",      "name",                    "\U0001F512",
-  "municipalities",               FALSE,        "#ffdf80",      "name",                    "\U0001F512",
-  "languages",                    FALSE,        "#ffdf80",      "name",                    "\U0001F512",
-  "topics",                       FALSE,        "#ffdf80",      "name",                    "\U0001F512"
-) |>
-  # add `desc` col separately (otherwise col vals exceed screen width to easily)
+tbl_metadata <-
+  tibble::tribble(
+    ~name,                          ~dm_color,      ~nocodb_display_col, ~nocodb_meta.icon, ~is_aux,
+    "actors",                       "#cf3dff",      "label",             "\U0001F3AD",      FALSE,
+    "options",                      "#cf3dff",      "display",           "\u2611",          FALSE,
+    "legal_instruments",            "#c2f0c2",      "display",           "\U0001F4DC",      FALSE,
+    "legal_norms",                  "#64d864",      "display",           "\u2712\ufe0f",    FALSE,
+    "referendum_types",             "#64d864",      "display",           "\U0001F3DB",      FALSE,
+    "referendum_clusters",          "#b3b9ff",      "id",                "\U0001F347",      FALSE,
+    "referendums",                  color_rdb_main, "display",           "\U0001F5F3",      FALSE,
+    "referendum_types_legal_norms", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,
+    "referendum_types_referendums", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,
+    "topics_referendums",           "#b3b9ff",      NA_character_,       NA_character_,     FALSE,
+    "referendum_titles",            "#b3b9ff",      "title",             "\U0001F4D5",      FALSE,
+    "referendum_questions",         "#b3b9ff",      "question",          "\u2753",          FALSE,
+    "referendum_positions",         "#b3b9ff",      "actor_label",       "\U0001F4E3",      FALSE,
+    "referendum_votes",             "#b3b9ff",      "option_display",    "\U0001F9FE",      FALSE,
+    "referendum_sub_votes",         "#b3b9ff",      "display",           "\U0001F9FE",      FALSE,
+    "administrative_units",         "#ffcf3d",      "name",              "\U0001F512",      FALSE,
+    "supranational_entities",       "#ffecb3",      "name",              "\U0001F512",      TRUE,
+    "countries",                    "#ffecb3",      "name",              "\U0001F512",      TRUE,
+    "subnational_entities",         "#ffecb3",      "name",              "\U0001F512",      TRUE,
+    "municipalities",               "#ffecb3",      "name",              "\U0001F512",      TRUE,
+    "languages",                    "#ffcf3d",      "name",              "\U0001F512",      FALSE,
+    "topics",                       "#ffcf3d",      "name",              "\U0001F512",      FALSE
+  ) |>
+  # add `desc` col separately (otherwise col vals exceed screen width too easily)
   dplyr::left_join(
     by = "name",
     y = tibble::tribble(
       ~name,                          ~desc,
-      "actors",                       "entities acting in connection with the referendums",
+      "actors",                       "entities acting in connection with referendums",
       "options",                      "referendum answer options",
+      "legal_instruments",            "legal instruments covering the regulation of referendums",
       "legal_norms",                  "legal norms enabling referendums",
       "referendum_types",             "referendum types",
-      "referendum_clusters",          "referendum clusters",
-      "referendums",                  "*main table*",
-      "referendum_types_legal_norms", "*junction table*",
-      "referendum_types_referendums", "*junction table*",
-      "topics_referendums",           "*junction table*",
+      "referendum_clusters",          "referendums clusters",
+      "referendums",                  "***main table***",
+      "referendum_types_legal_norms", "*junction table:* `referendum_types` \u2194 `legal_norms`",
+      "referendum_types_referendums", "*junction table:* `referendum_types` \u2194 `referendums`",
+      "topics_referendums",           "*junction table:* `topics` \u2194 `referendums`",
       "referendum_titles",            "referendum titles",
       "referendum_questions",         "referendum questions",
       "referendum_positions",         "actor positions on referendums",
       "referendum_votes",             "votes cast in referendums",
       "referendum_sub_votes",         "votes cast in referendums by subnational entity",
-      "supranational_entities",       "supranational entities",
-      "countries",                    paste0("countries (ISO [3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)/",
-                                             "[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3)-compliant) "),
-      "subnational_entities",         "subnational entities ([ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)-compliant)",
-      "municipalities",               "municipalities",
-      "languages",                    "languages ([ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1))",
+      "administrative_units",         "administrative units on all political levels",
+      "supranational_entities",       "administrative units on the supranational level",
+      "countries",                    paste0("administrative units on the national level (conforming to the ISO ",
+                                             "[3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)/[3166-3](https://en.wikipedia.org/wiki/ISO_3166-3) ",
+                                             "standards)"),
+      "subnational_entities",         paste0("administrative units on the subnational level (conforming to the ",
+                                             "[ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) standard)"),
+      "municipalities",               "administrative units on the municipal level",
+      "languages",                    "languages (conforming to the [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1) standard)",
       "topics",                       "political topics to classify referendums"
     )) |>
   assertr::assert(predicate = assertr::not_na,
@@ -2517,7 +2699,9 @@ tbl_metadata <- tibble::tribble(
   dplyr::relocate(desc,
                   .after = name) |>
   # add Unicode image variation selector
-  dplyr::mutate(nocodb_meta.icon = paste0(nocodb_meta.icon, "\ufe0f"))
+  dplyr::mutate(nocodb_meta.icon = dplyr::if_else(is.na(nocodb_meta.icon),
+                                                  nocodb_meta.icon,
+                                                  paste0(nocodb_meta.icon, "\ufe0f")))
 ```
 
 ### `*var_names*`
@@ -2607,8 +2791,7 @@ sub_var_names_fms <- purrr::map(sub_var_names,
 #'
 #' Downloads the referendum data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
 #'
-#' @param connection Database connection to a PostgreSQL DBMS as returned by [connect()]. `r pkgsnip::param_lbl("dbi_connection")`
-#' @param disconnect Whether or not to [terminate][DBI::dbDisconnect] the database connection when finished.
+#' @inheritParams read_tbl
 #' @param incl_drafts Whether or not to include database entries with _draft_ status.
 #' @param use_cache `r pkgsnip::param_lbl("use_cache")`
 #' @param max_cache_age `r pkgsnip::param_lbl("max_cache_age")`
@@ -2767,9 +2950,10 @@ rfrnd_types <- function(connection = connect(),
 #'
 #' Fetches a table from the [RDB DBMS][connect]'s `r pal::wrap_chr(pg_schema, "\x60")` schema and returns it as a [tibble][tibble::tbl_df].
 #'
-#' @inheritParams rfrnds
 #' @param tbl_name Table name. One of
 #'   `r pal::as_md_val_list(tbl_metadata$name)`.
+#' @param connection Database connection to a PostgreSQL DBMS as returned by [connect()]. `r pkgsnip::param_lbl("dbi_connection")`
+#' @param disconnect Whether or not to [terminate][DBI::dbDisconnect] the database connection when finished.
 #'
 #' @return `r pkgsnip::param_lbl("tibble")`
 #' @family data
@@ -3100,8 +3284,9 @@ download_attachments <- function(data,
 
 NOTES:
 
--   Merging [nocodb/nocodb#9140](https://github.com/nocodb/nocodb/pull/9140) should resolve [nocodb/nocodb#7895](https://github.com/nocodb/nocodb/issues/7895),
-    which renders this fn largely obsolete.
+-   [nocodb/nocodb#9215](https://github.com/nocodb/nocodb/pull/9215) laid groundwork to resolve
+    [nocodb/nocodb#7895](https://github.com/nocodb/nocodb/issues/7895) (predecessor PR [nocodb/nocodb#9140](https://github.com/nocodb/nocodb/pull/9140) was
+    closed unmerged), which in turn will render this fn largely obsolete when resolved.
 
 ```{r}
 #' Clean referendum attachments
@@ -3786,7 +3971,8 @@ nest_topics <- function(data) {
         unique(),
       # add tier-1 topics
       tibble::tibble(name = unique(data$topic_tier_1),
-                     parent_name = NA_character_))
+                     parent_name = NA_character_)
+    )
 }
 ```
 
@@ -5611,6 +5797,8 @@ TODO:
 #' Get RDB data model
 #'
 #' @inheritParams rfrnds
+#' @param incl_aux_admin_tbls Whether or not to include the auxiliary administrative unit tables
+#'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name")`
 #'
 #' @return `r pkgsnip::return_lbl("dm")`
 #' @family admin
@@ -5619,14 +5807,26 @@ TODO:
 #' @examples
 #' rdb::dm() |> dm::dm_draw(view_type = "all")
 dm <- function(connection = connect(user = "rdb_admin",
-                                    password = pg_role_pw("rdb_admin"))) {
-  dm::dm_from_con(con = connection,
-                  learn_keys = TRUE,
-                  schema = pg_schema) |>
-    dm::dm_set_colors(!!!magrittr::set_names(x = tbl_metadata$name,
-                                             value = tbl_metadata$dm_color)) |>
-    dm::dm_set_table_description(!!!magrittr::set_names(x = tbl_metadata$name,
-                                                        value = pal::strip_md(tbl_metadata$desc)))
+                                    password = pg_role_pw("rdb_admin")),
+               incl_aux_admin_tbls = FALSE) {
+  
+  checkmate::assert_flag(incl_aux_admin_tbls)
+  
+  tbl_metadata_subset <-
+    tbl_metadata |>
+    dplyr::filter(if (incl_aux_admin_tbls) TRUE else !is_aux)
+  
+  tbl_metadata_subset |>
+    dplyr::pull("name") |> 
+    dm::dm_from_con(con = connection,
+                    # NOTE: we have to explicitly set `table_names` in order to avoid a spurious "NA" table linked to everything else
+                    table_names = _,
+                    learn_keys = TRUE,
+                    schema = pg_schema) |>
+    dm::dm_set_colors(!!!magrittr::set_names(x = tbl_metadata_subset$name,
+                                             value = tbl_metadata_subset$dm_color)) |>
+    dm::dm_set_table_description(!!!magrittr::set_names(x = tbl_metadata_subset$name,
+                                                        value = pal::strip_md(tbl_metadata_subset$desc)))
 }
 ```
 
@@ -5639,7 +5839,7 @@ dm <- function(connection = connect(user = "rdb_admin",
 #'
 #' @inheritParams rfrnds
 #' @inheritParams pg_tbl_update
-#' @param data New or updated referendum data. A [tibble][tibble::tbl_df] that must contain a [`r pg_pk("referendums")`](`r url_codebook("id")`) column
+#' @param data New or updated referendum data. A [tibble][tibble::tbl_df] that must contain a [`r pk("referendums")`](`r url_codebook("id")`) column
 #'   identifying the referendums to be updated plus any additional columns containing the new values to update the corresponding database fields with.
 #'
 #' @return `data`, invisibly.
@@ -5711,8 +5911,8 @@ delete_rfrnds <- function(data,
                from = dbplyr::in_schema(schema = pg_schema,
                                         table = "referendums")) |>
     pg_tbl_del(data = data,
-               pk_col_name = pg_pk(tbl_name = "referendums",
-                                   connection = connection))
+               pk_col_names = pg_pk(tbl_name = "referendums",
+                                    connection = connection))
   if (disconnect) {
     DBI::dbDisconnect(conn = connection)
   }
@@ -5721,7 +5921,68 @@ delete_rfrnds <- function(data,
 }
 ```
 
-### `update_countries`
+### `update_administrative_units`
+
+```{r}
+#' Update RDB `administrative_units` table
+#'
+#' Updates the RDB's `administrative_units` table with data combined from the `subnational_entities`, `countries`, `subnational_entities` and `municipalities`
+#' tables.
+#'
+#' @inheritParams update_rfrnds
+#'
+#' @return The newly written `administrative_units` table data as a [tibble][tibble::tbl_df], invisibly.
+#' @family admin
+#' @export
+update_administrative_units <- function(sweep = TRUE,
+                                        connection = connect(),
+                                        disconnect = TRUE) {
+  # update source tbls
+  update_countries(sweep = sweep,
+                   connection = connection,
+                   disconnect = FALSE)
+  update_subnational_entities(sweep = sweep,
+                              connection = connection,
+                              disconnect = FALSE)
+  update_municipalities(sweep = sweep,
+                        connection = connection,
+                        disconnect = FALSE)
+  # update target tbl
+  dplyr::bind_rows(
+    # add countries
+    read_tbl("countries") |>
+      dplyr::transmute(id = code,
+                       name,
+                       level = "national",
+                       type = "country",
+                       parent_id = NA_character_),
+    # add supranational entities
+    # NONE YET
+    # add subnational entities
+    read_tbl("subnational_entities") |>
+      dplyr::transmute(id = code,
+                       name,
+                       level = "subnational",
+                       type = tolower(type),
+                       parent_id = parent_code %|% stringr::str_extract(code, "^\\w+")),
+    # add municipalities
+    read_tbl("municipalities") |>
+      dplyr::transmute(id,
+                       name,
+                       level = "municipal",
+                       type = "municipality",
+                       # NOTE: municipalities also have an *immediate* subnational entity parent (usually district), which we currently don't capture; this
+                       #       shouldn't pose a problem since there are no legal instruments on these intermediate levels AFAIK
+                       parent_id = subnational_entity_code)
+  ) |>
+    update_tbl(tbl_name = "administrative_units",
+               sweep = sweep,
+               connection = connection,
+               disconnect = disconnect)
+}
+```
+
+### !`update_countries`
 
 ```{r}
 #' Update RDB `countries` table
@@ -5732,7 +5993,7 @@ delete_rfrnds <- function(data,
 #'
 #' @return The newly written `countries` table data as a [tibble][tibble::tbl_df], invisibly.
 #' @family admin
-#' @export
+#' @keywords internal
 update_countries <- function(sweep = TRUE,
                              connection = connect(),
                              disconnect = TRUE) {
@@ -5752,7 +6013,7 @@ update_countries <- function(sweep = TRUE,
 }
 ```
 
-### `update_subnational_entities`
+### !`update_subnational_entities`
 
 ```{r}
 #' Update RDB `subnational_entities` table
@@ -5763,7 +6024,7 @@ update_countries <- function(sweep = TRUE,
 #'
 #' @return [`data_iso_3166_2`][data_iso_3166_2], invisibly.
 #' @family admin
-#' @export
+#' @keywords internal
 update_subnational_entities <- function(sweep = TRUE,
                                         connection = connect(),
                                         disconnect = TRUE) {
@@ -5775,15 +6036,7 @@ update_subnational_entities <- function(sweep = TRUE,
 }
 ```
 
-### `update_municipalities`
-
-NOTES:
-
--   We could also use `update_tbl()` (which builds upon `pg_tbl_update()`) here. But since the `municipalities` table has a
-    `UNIQUE (country_code, id_official, valid_from)` constraint, we can leverage that, which is more elegant.
-
--   It doesn't make much sense to return the return value of `dplyr::rows_upsert()` since evaluating it will throw an `Invalid connection` error if
-    `disconnect = TRUE` (the default). Hence, we just return `data_municipalities`.
+### !`update_municipalities`
 
 ```{r}
 #' Update RDB `municipalities` table
@@ -5794,46 +6047,16 @@ NOTES:
 #'
 #' @return [`data_municipalities`][data_municipalities], invisibly.
 #' @family admin
-#' @export
+#' @keywords internal
 update_municipalities <- function(sweep = TRUE,
                                   connection = connect(),
                                   disconnect = TRUE) {
-  checkmate::assert_flag(sweep)
-  checkmate::assert_flag(disconnect)
-  
-  # necessary to avoid error on first run of `connect()`
-  force(connection)
-  
-  tbl <- dplyr::tbl(src = connection,
-                    from = dbplyr::in_schema(schema = pg_schema,
-                                             table = "municipalities"))
-  pk_col_name <-
-    pg_pk(tbl_name = "municipalities",
-          connection = connection) |>
-    # multi-col pks aren't supported
-    checkmate::assert_string(.var.name = "pk_col_name")
-  
-  # delete obsolete data if requested
-  if (sweep) {
-    pg_tbl_keep(tbl = tbl,
-                data = data_municipalities,
-                pk_col_name = pk_col_name)
-  }
-  
-  # update existing and add new data
   data_municipalities |>
-    # NOTE: we can't write the PK column since it's `GENERATED ALWAYS`
-    dplyr::select(-!!pk_col_name) |>
-    dplyr::rows_upsert(x = tbl,
-                       y = _,
-                       by = c("country_code", "id_official", "valid_from"),
-                       copy = TRUE,
-                       in_place = TRUE)
-  if (disconnect) {
-    DBI::dbDisconnect(conn = connection)
-  }
-  
-  invisible(data_municipalities)
+    dplyr::mutate(id = NA_character_) |>
+    update_tbl(tbl_name = "municipalities",
+               sweep = sweep,
+               connection = connection,
+               disconnect = disconnect)
 }
 ```
 
@@ -5934,7 +6157,9 @@ update_tbl <- function(data,
 
 ### `reset_rdb`
 
-TODO:
+TODO
+
+-   implement PGSQL data backup -\> restore
 
 -   Sometimes, `reset_rdb()` fails with
 
@@ -5949,12 +6174,20 @@ TODO:
     The error suggests that it occurred during `pg_init_db()`. We've tried adding a sleep delay of 2s (to wait long enough for `pg_reset_db()` to fully
     propagate) without success. 😕
 
-    `reset_rdb()` always finishes successfully on the second attempt, so we just live with it for now...
+    Note that `reset_rdb()` always finishes successfully on the second attempt.
+
+    Update: This didn't occur anymore since at least 2024-08-18...
+
+NOTES
+
+-   When resetting only NocoDB via `rdb::reset_rdb(reset_db = FALSE, reset_tbls = FALSE)`, the `created/updated_by/at` columns aren't recognized as *system*
+    columns anymore in the re-created NocoDB base, which breaks auto-fill of `created/updated_by/at` columns as well as M2M table detection (including the
+    `created/updated_by/at`, the 5-column limit for M2M tables is exceeded).
 
 ```{r}
 #' Reset RDB
 #'
-#' Resets the whole RDB PostgreSQL database including all RDB PostgreSQL tables and the RDB NocoDB server.
+#' Resets the RDB NocoDB server, optionally including the whole RDB PostgreSQL database and/or tables.
 #'
 #' @inheritParams nocodb::update_app_settings
 #' @inheritParams rfrnds
@@ -5962,35 +6195,50 @@ TODO:
 #' @param hostname_pg PostgreSQL server hostname. A character scalar.
 #' @param reset_db Whether or not to first fully recreate the RDB PostgreSQL database using [pg_reset_db()] and [pg_init_db()]. If `FALSE`, only the RDB
 #'   PostgreSQL tables are recreated.
+#' @param reset_tbls Whether or not to recreate the RDB PostgreSQL tables.
 #' @param ask Whether or not to ask for confirmation before proceeding. Only relevant if run [interactively][interactive].
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
-#' @return `nocodb_hostname`, invisibly.
+#' @return `hostname_nocodb`, invisibly.
 #' @family admin
 #' @family nocodb
 #' @export
 # nolint start: cyclocomp_linter
-reset_rdb <- function(hostname_nocodb = nocodb_hostname,
+reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
+                                                            pkg = this_pkg),
                       hostname_pg = pal::pkg_config_val(key = "pg_host",
                                                         pkg = this_pkg),
                       reset_db = FALSE,
+                      reset_tbls = reset_db,
                       ask = TRUE,
                       disconnect = TRUE,
                       quiet = FALSE) {
   
   checkmate::assert_flag(reset_db)
+  checkmate::assert_flag(reset_tbls)
   checkmate::assert_flag(ask)
   checkmate::assert_flag(disconnect)
   checkmate::assert_flag(quiet)
   
+  if (reset_db && !reset_tbls) {
+    cli::cli_abort("{.arg reset_tbls} cannot be {.val FALSE} when {.arg reset_db} is {.val TRUE}.")
+  }
+  
   # if run interactively, ask for confirmation before continuing
   if (ask && interactive()) {
-    cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely resets the RDB PostgreSQL ",
-                                  ifelse(reset_db,
-                                         "database including all ",
+    cli::cli_alert_warning(paste0("{.strong CAUTION!}\nContinuing completely resets ",
+                                  ifelse(reset_tbls,
+                                         paste0("the RDB PostgreSQL ",
+                                                ifelse(reset_db,
+                                                       "database including all ",
+                                                       ""),
+                                                "tables and "),
                                          ""),
-                                  "tables and the RDB NocoDB server {.field {hostname_nocodb}}. This results in loss of all existing PostgreSQL data as well ",
-                                  "as NocoDB-specific metadata (comments, audit logs etc.).\n\n"))
+                                  "the RDB NocoDB server {.field {hostname_nocodb}}. This results in loss of all ",
+                                  ifelse(reset_tbls,
+                                         "existing PostgreSQL data as well as ",
+                                         ""),
+                                  "NocoDB-specific metadata (comments, audit logs etc.).\n\n"))
     if (!yesno::yesno2("Are you sure you want to continue?")) {
       return(invisible(hostname_nocodb))
     }
@@ -6000,8 +6248,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                                pkg = this_pkg)
   password <- pal::pkg_config_val(key = "nocodb_password",
                                   pkg = this_pkg)
-  
-  # init PGSQL DB/tbls ----
+  # reset PGSQL DB ----
   if (reset_db) {
     
     if (!quiet) {
@@ -6013,9 +6260,17 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                                      password = pg_role_pw("rdb_admin")),
                 disconnect = TRUE)
     
-    # restart Neon read-only compute endpoint (to render it accessible again)
+    # restart Neon compute endpoints (otherwise the read-only one becomes inaccessible sometimes)
+    endpoint_id <- hostname_to_ep(hostname_pg)
+    endpoint_id_ro <- hostname_to_ep(pal::pkg_config_val_default(key = "pg_host",
+                                                                 pkg = this_pkg))
+    ## restart RW endpoint before RO one
+    if (endpoint_id != endpoint_id_ro) {
+      restart_neon_ep(project_id = neon_project_id,
+                      endpoint_id = endpoint_id)
+    }
     restart_neon_ep(project_id = neon_project_id,
-                    endpoint_id = hostname_to_ep(hostname_pg))
+                    endpoint_id = endpoint_id_ro)
     
     # NOTE: we can only establish a reusable `connection` *after* possible DB deletion just above
     connection <- connect(host = hostname_pg,
@@ -6023,7 +6278,8 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                           password = pg_role_pw("rdb_admin"))
     pg_init_db(connection = connection,
                disconnect = FALSE)
-  } else {
+    
+  } else if (reset_tbls) {
     
     if (!quiet) {
       pal::cli_progress_step_quick("Dropping existing PostgreSQL tables")
@@ -6036,6 +6292,22 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                  disconnect = FALSE)
   }
   
+  # reset PGSQL tbls ----
+  if (reset_tbls) {
+    
+    if (!quiet) {
+      pal::cli_progress_step_quick("Initializing auxiliary PostgreSQL tables")
+    }
+    pg_init_aux_tbls(connection = connection,
+                     disconnect = FALSE)
+    
+    if (!quiet) {
+      pal::cli_progress_step_quick("Initializing main PostgreSQL tables")
+    }
+    pg_init_main_tbls(connection = connection,
+                      disconnect = FALSE)
+  }
+  
   # reset NocoDB base ----
   if (!quiet) {
     pal::cli_progress_step_quick("Resetting NocoDB base")
@@ -6044,48 +6316,40 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
                ask = FALSE,
                quiet = TRUE)
   
-  # create temp NocoDB tbls ----
-  if (!quiet) {
-    pal::cli_progress_step_quick("Temporarily creating tables with {.var created_by} and {.var updated_by} columns via NocoDB")
-  }
-  create_nocodb_tbls(hostname = hostname_nocodb)
+  Sys.sleep(1.0)
   
-  # init PGSQL tbls ----
-  if (!quiet) {
-    pal::cli_progress_step_quick("Initializing auxiliary PostgreSQL tables")
-  }
-  pg_init_aux_tbls(connection = connection,
+  if (reset_tbls) {
+    # add meta cols ----
+    if (!quiet) {
+      pal::cli_progress_step_quick("Adding PostgreSQL meta columns via NocoDB API")
+    }
+    create_nocodb_tbl_cols(hostname = hostname_nocodb)
+    
+    # run post-NocoDB PGSQL steps ----
+    if (!quiet) {
+      pal::cli_progress_step_quick("Altering PostgreSQL meta columns")
+    }
+    pg_post_nocodb(connection = connection,
                    disconnect = FALSE)
-  
-  if (!quiet) {
-    pal::cli_progress_step_quick("Initializing main PostgreSQL tables")
+    
+    # populate PGSQL tbls ----
+    if (!quiet) {
+      pal::cli_progress_step_quick("Populating auxiliary PostgreSQL tables")
+    }
+    pg_add_default_data(connection = connection,
+                        disconnect = FALSE)
+    update_administrative_units(connection = connection,
+                                disconnect = FALSE)
+    update_langs(connection = connection,
+                 disconnect = FALSE)
+    update_topics(connection = connection,
+                  disconnect = FALSE)
   }
-  pg_init_main_tbls(connection = connection,
-                    disconnect = FALSE)
   
+  # sync NocoDB data src ----
   if (!quiet) {
     pal::cli_progress_step_quick("Synchronizing NocoDB data source with external PostgreSQL schema")
   }
-  
-  Sys.sleep(1.0)
-  
-  # populate PGSQL tbls ----
-  if (!quiet) {
-    pal::cli_progress_step_quick("Populating auxiliary PostgreSQL tables")
-  }
-  update_countries(connection = connection,
-                   disconnect = FALSE)
-  update_subnational_entities(connection = connection,
-                              disconnect = FALSE)
-  update_municipalities(connection = connection,
-                        disconnect = FALSE)
-  update_langs(connection = connection,
-               disconnect = FALSE)
-  update_topics(connection = connection,
-                disconnect = FALSE)
-  
-  # sync NocoDB data src ----
-  # NOTE: we can only reuse NocoDB IDs *after* base reset above
   id_base <- nocodb::base_id(title = nocodb_base_title,
                              hostname = hostname_nocodb,
                              email = email,
@@ -6110,6 +6374,14 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   config_nocodb_tbls(hostname = hostname_nocodb,
                      quiet = quiet)
   
+  # prohibit further schema changes from NocoDB
+  nocodb::update_data_src(id_data_src = id_data_src,
+                          is_schema_readonly = TRUE,
+                          id_base = id_base,
+                          hostname = hostname_nocodb,
+                          email = email,
+                          password = password)
+  
   # trigger PostgREST schema cache reload ----
   if (!quiet) {
     # pal::cli_progress_step_quick("Notifying PostgREST server about schema changes")
@@ -6120,7 +6392,7 @@ reset_rdb <- function(hostname_nocodb = nocodb_hostname,
   restart_postgrest(quiet = TRUE)
   
   # disconnect PGSQL ----
-  if (disconnect) {
+  if (reset_tbls && disconnect) {
     DBI::dbDisconnect(conn = connection)
   }
   
@@ -6166,15 +6438,25 @@ restart_neon_ep <- function(project_id = neon_project_id,
   checkmate::assert_count(max_tries,
                           positive = TRUE)
   
-  httr2::request(base_url = glue::glue("https://console.neon.tech/api/v2/projects/{project_id}/endpoints/{endpoint_id}/restart")) |>
-    httr2::req_method(method = "POST") |>
-    httr2::req_user_agent(string = "rdb R package (https://rdb.rpkg.dev)") |>
-    httr2::req_headers(authorization = paste("Bearer", api_key)) |>
-    httr2::req_retry(max_tries = max_tries) |>
-    httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$message) |>
-    httr2::req_perform() |>
-    httr2::resp_body_json() |>
-    invisible()
+  result <- tryCatch(expr =
+                       httr2::request(base_url = glue::glue("https://console.neon.tech/api/v2/projects/{project_id}/endpoints/{endpoint_id}/restart")) |>
+                       httr2::req_method(method = "POST") |>
+                       httr2::req_user_agent(string = "rdb R package (https://rdb.rpkg.dev)") |>
+                       httr2::req_headers(authorization = paste("Bearer", api_key)) |>
+                       httr2::req_retry(max_tries = max_tries) |>
+                       httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$message) |>
+                       httr2::req_perform() |>
+                       httr2::resp_body_json(),
+                     httr2_http_423 = \(cnd) {
+                       # infinitely retry with 1s wait in case of HTTP 423 status
+                       # cf. https://community.neon.tech/t/project-already-has-running-operations-scheduling-of-new-ones-is-prohibited/242/2
+                       Sys.sleep(1.0)
+                       restart_neon_ep(project_id = project_id,
+                                       endpoint_id = endpoint_id,
+                                       api_key = api_key,
+                                       max_tries = max_tries)
+                     })
+  invisible(result)
 }
 ```
 
@@ -6190,6 +6472,8 @@ Function to administrate the [RDB NocoDB server](https://admin.rdb.vote/).
 #' Create NocoDB tables
 #'
 #' @description
+#' `r lifecycle::badge("deprecated")` in favor of [create_nocodb_tbl_cols()].
+#'
 #' Creates all the PostgreSQL database tables that must be first created *once* in NocoDB after the PostgreSQL database has been added as external data source
 #' (e.g. via [reset_nocodb()]) to let NocoDB register the necessary metadata for the `created_by` and `updated_by` columns (so they are properly auto-filled by
 #' NocoDB later on).
@@ -6202,8 +6486,8 @@ Function to administrate the [RDB NocoDB server](https://admin.rdb.vote/).
 #' @family nocodb
 #' @family admin
 #' @keywords internal
-create_nocodb_tbls <- function(hostname = nocodb_hostname) {
-  
+create_nocodb_tbls <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
+                                                              pkg = this_pkg)) {
   email <- pal::pkg_config_val(key = "nocodb_email",
                                pkg = this_pkg)
   password <- pal::pkg_config_val(key = "nocodb_password",
@@ -6217,10 +6501,7 @@ create_nocodb_tbls <- function(hostname = nocodb_hostname) {
                                      hostname = hostname,
                                      email = email,
                                      password = password)
-  tbl_names <-
-    tbl_metadata |>
-    dplyr::filter(has_by_cols) |>
-    dplyr::pull("name")
+  tbl_names <- tbl_metadata$name
   
   i_existing_tbl_names <-
     nocodb::tbls(id_base = id_base,
@@ -6257,7 +6538,87 @@ create_nocodb_tbls <- function(hostname = nocodb_hostname) {
 }
 ```
 
+#### !`create_nocodb_tbl_cols`
+
+NOTES
+
+-   Trying to set `nocodb::create_tbl_col(dt = "timestamp with time zone")` fails with HTTP `400 Bad Request`, thus we have to alter the column type afterwards
+    via `pg_post_nocodb()`.
+
+```{r}
+#' Create NocoDB table meta columns
+#'
+#' Adds the PostgreSQL meta columns `created_by`, `updated_by`, `created_at` and `updated_at` to all RDB tables via NocoDB's API.
+#'
+#' @inheritParams nocodb::data_src_id
+#'
+#' @return `hostname`, invisibly.
+#' @family nocodb
+#' @family admin
+#' @keywords internal
+create_nocodb_tbl_cols <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
+                                                                  pkg = this_pkg)) {
+  email <- pal::pkg_config_val(key = "nocodb_email",
+                               pkg = this_pkg)
+  password <- pal::pkg_config_val(key = "nocodb_password",
+                                  pkg = this_pkg)
+  id_base <- nocodb::base_id(title = nocodb_base_title,
+                             hostname = hostname,
+                             email = email,
+                             password = password)
+  tbl_metadata |>
+    dplyr::filter(name %in% nocodb::tbls(id_base = id_base,
+                                         include_m2m = TRUE,
+                                         hostname = hostname,
+                                         email = email,
+                                         password = password)$table_name) |>
+    dplyr::pull("name") |>
+    purrr::walk(\(name) {
+      
+      id_tbl <- nocodb::tbl_id(name = name,
+                               id_base = id_base,
+                               hostname = hostname,
+                               email = email,
+                               password = password)
+      nocodb::create_tbl_col(id_tbl = id_tbl,
+                             column_name = "created_by",
+                             uidt = "CreatedBy",
+                             dt = "text",
+                             hostname = hostname,
+                             email = email,
+                             password = password)
+      nocodb::create_tbl_col(id_tbl = id_tbl,
+                             column_name = "updated_by",
+                             uidt = "LastModifiedBy",
+                             dt = "text",
+                             hostname = hostname,
+                             email = email,
+                             password = password)
+      nocodb::create_tbl_col(id_tbl = id_tbl,
+                             column_name = "created_at",
+                             uidt = "CreatedTime",
+                             hostname = hostname,
+                             email = email,
+                             password = password)
+      nocodb::create_tbl_col(id_tbl = id_tbl,
+                             column_name = "updated_at",
+                             uidt = "LastModifiedTime",
+                             hostname = hostname,
+                             email = email,
+                             password = password)
+    })
+  
+  invisible(hostname)
+}
+```
+
 #### !`config_nocodb_tbls`
+
+TODO
+
+-   `nocodb::update_tbl_col(id_col = nocodb::tbl_col_id(id_tbl = nocodb::tbl_id(name = "referendums"), name = "attachments"), uidt = "Attachment")` etc.
+
+    Ensure that no constraints get lost!
 
 ```{r}
 #' Configure NocoDB tables
@@ -6265,16 +6626,18 @@ create_nocodb_tbls <- function(hostname = nocodb_hostname) {
 #' @description
 #' Configures the RDB tables on the specified NocoDB server. Currently, this includes:
 #' 
-#' - Setting the correct display value columm for all tables via [nocodb::set_display_vals].
-#' - Setting the proper metadata for all tables via [nocodb::set_tbl_metadata].
+#' - Setting the correct display value columm for all tables via [nocodb::set_display_vals()].
+#' - Setting the proper metadata for all tables via [nocodb::set_tbl_metadata()].
+#' - Setting the proper visibility rules (UI ACL) for the default view of all tables via [nocodb::update_base_ui_acl()].
 #'
 #' @inheritParams nocodb::set_tbl_metadata
 #'
-#' @return `nocodb_hostname`, invisibly.
+#' @return `hostname`, invisibly.
 #' @family nocodb
 #' @family admin
 #' @keywords internal
-config_nocodb_tbls <- function(hostname = nocodb_hostname,
+config_nocodb_tbls <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
+                                                              pkg = this_pkg),
                                quiet = FALSE) {
   
   email <- pal::pkg_config_val(key = "nocodb_email",
@@ -6285,6 +6648,7 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
                              hostname = hostname,
                              email = email,
                              password = password)
+  # set display vals
   data <-
     tbl_metadata |>
     dplyr::rename_with(.cols = starts_with("nocodb_"),
@@ -6296,6 +6660,7 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
                            email = email,
                            password = password,
                            quiet = quiet)
+  # set tbl metadata
   data |>
     # NOTE: we exclude junction tbls since they are hidden in NocoDB and its API
     dplyr::filter(!is.na(display_col)) |>
@@ -6304,7 +6669,27 @@ config_nocodb_tbls <- function(hostname = nocodb_hostname,
                              email = email,
                              password = password,
                              quiet = quiet)
-  invisible(nocodb_hostname)
+  
+  # set visibility rules for default tbl views (hide aux tbls for all roles below `creator`)
+  data |>
+    dplyr::filter(is_aux) |>
+    dplyr::pull(name) |>
+    purrr::walk(\(tbl_name) nocodb::update_base_ui_acl(id_tbl_view = nocodb::tbl_view_id(id_tbl = nocodb::tbl_id(name = tbl_name,
+                                                                                                                 id_base = id_base,
+                                                                                                                 hostname = hostname,
+                                                                                                                 email = email,
+                                                                                                                 password = password),
+                                                                                         type = "default",
+                                                                                         hostname = hostname,
+                                                                                         email = email,
+                                                                                         password = password),
+                                                       editor = TRUE,
+                                                       id_base = id_base,
+                                                       hostname = hostname,
+                                                       email = email,
+                                                       password = password,
+                                                       quiet = quiet))
+  invisible(hostname)
 }
 ```
 
@@ -6330,12 +6715,6 @@ TODO:
 
 -   Improve status msg output for `quiet = FALSE` and adapt `reset_rdb()` accordingly.
 
--   Currently, we use the *Backblaze B2* NocoDB plugin. Ideally, we'd just use the vendor-neutral S3 plugin instead which [allows configuration via the
-    `NC_S3_*` environment variables](https://docs.nocodb.com/getting-started/self-hosted/environment-variables/#storage). Once
-    [nocodb/nocodb#7903](https://github.com/nocodb/nocodb/issues/7903#issuecomment-2266257529) is fixed, we should be able to switch to the *S3* plugin.
-
-    When done, all the `b2_*` args below should be renamed to `s3_*` and the `nocodb::update_plugin()` call removed.
-
 NOTES:
 
 -   Sensitive user account information is retrieved from a CSV file defined via pkg conf val `nocodb_user_account_csv_file`.
@@ -6347,24 +6726,20 @@ NOTES:
 #' `r nocodb_reset_caution`
 #'
 #' @inheritParams nocodb::update_app_settings
-#' @param b2_bucket Backblaze B2 bucket name used to store NocoDB's file attachments.
-#' @param b2_region Identifier of the Backblaze B2 region where the `b2_bucket` resides.
 #' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
 #'
 #' @return `hostname`, invisibly.
 #' @family nocodb
 #' @family admin
 #' @keywords internal
-reset_nocodb <- function(hostname = nocodb_hostname,
-                         b2_bucket = s3_bucket_attachments,
-                         b2_region = s3_region,
+# nolint start: cyclocomp_linter
+reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
+                                                        pkg = this_pkg),
                          ask = TRUE,
                          quiet = TRUE) {
   
   checkmate::assert_flag(ask)
   checkmate::assert_flag(quiet)
-  checkmate::assert_string(b2_bucket)
-  checkmate::assert_string(b2_region)
   rlang::check_installed("yesno",
                          reason = pal::reason_pkg_required())
   
@@ -6440,17 +6815,37 @@ reset_nocodb <- function(hostname = nocodb_hostname,
   Sys.sleep(1.0)
   
   # ensure data src was created succcessfully
-  if (nocodb::data_srcs(id_base = id_base,
-                        hostname = hostname,
-                        email = email,
-                        password = password) |>
-      dplyr::filter(type == "pg" & alias == !!nocodb_data_src_alias) |>
-      nrow() |>
-      magrittr::equals(0L)) {
+  id_data_src <-
+    nocodb::data_srcs(id_base = id_base,
+                      hostname = hostname,
+                      email = email,
+                      password = password) |>
+    dplyr::filter(type == "pg" & alias == !!nocodb_data_src_alias) |>
+    dplyr::pull("id")
+  
+  n_data_srcs <- length(id_data_src)
+  
+  if (n_data_srcs == 0L) {
     
     cli::cli_abort(message = "Creating external PostgreSQL data source on NocoDB failed for unknown reason. Please investigate.",
                    .internal = TRUE)
+    
+  } else if (n_data_srcs > 1L) {
+    cli::cli_abort(message = paste0("Multiple external PostgreSQL data sources of type {.field pg} with alias {.val {nocodb_data_src_alias}} found on NocoDB ",
+                                    "server. Please investigate."),
+                   .internal = TRUE)
   }
+  
+  Sys.sleep(3.0)
+  
+  # sync PGSQL data source
+  nocodb::sync_data_src_eagerly(id_data_src = id_data_src,
+                                id_base = id_base,
+                                hostname = hostname,
+                                email = email,
+                                password = password,
+                                wait_max = 30L,
+                                wait_resync = 7.0)
   
   # disable default SQLite data source
   nocodb::data_srcs(id_base = id_base,
@@ -6469,6 +6864,8 @@ reset_nocodb <- function(hostname = nocodb_hostname,
   email |>
     stringr::str_extract(pattern = "(.+?)@",
                          group = 1L) |>
+    stringr::str_replace_all(pattern = stringr::fixed("."),
+                             replacement = " ") |>
     stringr::str_to_title() |>
     nocodb::update_user(hostname = hostname,
                         email = email,
@@ -6482,10 +6879,9 @@ reset_nocodb <- function(hostname = nocodb_hostname,
     
     users_ref <- readr::read_csv(file = path_users_ref,
                                  col_types = "c")
-    checkmate::assert_names(colnames(users_ref),
-                            must.include = c("name", "email", "password", "role"),
-                            what = "colnames",
-                            .var.name = "users_ref")
+    pal::assert_cols(data = users_ref,
+                     cols = c("name", "email", "password", "role"),
+                     obj_name = "nocodb_user_account_csv_file")
     base_users <- nocodb::base_users(id_base = id_base,
                                      hostname = hostname,
                                      email = email,
@@ -6558,25 +6954,9 @@ reset_nocodb <- function(hostname = nocodb_hostname,
                               email = email,
                               password = password,
                               quiet = quiet)
-  
-  # add Backblaze B2 object storage provider
-  # TODO: switch to S3 plugin once [nocodb/nocodb#9054](https://github.com/nocodb/nocodb/issues/9054) is resolved!
-  nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2",
-                                                      hostname = hostname,
-                                                      email = email,
-                                                      password = password),
-                        config = list(bucket = b2_bucket,
-                                      region = b2_region,
-                                      access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
-                                                                       pkg = this_pkg),
-                                      access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
-                                                                          pkg = this_pkg)),
-                        activate = TRUE,
-                        hostname = hostname,
-                        email = email,
-                        password = password)
   invisible(hostname)
 }
+# nolint end
 ```
 
 #### !`purge_nocodb`
@@ -6592,7 +6972,7 @@ NOTES:
 ```{r}
 #' Purge NocoDB
 #'
-#' Stops the `fly_app` NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under `{b2_bucket}/nocodb`) and then restarts the
+#' Stops the `fly_app` NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under `{s3_bucket}/nocodb`) and then restarts the
 #' NocoDB instance, thereby resetting it to factory settings. `r nocodb_reset_caution`
 #'
 #' @inheritParams clean_attachment_bucket
@@ -6709,6 +7089,7 @@ purge_nocodb <- function(fly_app = "rdb-nocodb",
   }
   
   # restart Fly app if necessary
+  Sys.sleep(1.0)
   data_app_status <- fly_app_status()
   
   if (data_app_status$Status != "deployed" || data_app_status$Machines$state[1L] != "started") {

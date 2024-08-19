@@ -5,9 +5,10 @@
 \title{Reset RDB}
 \usage{
 reset_rdb(
-  hostname_nocodb = nocodb_hostname,
+  hostname_nocodb = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg),
   hostname_pg = pal::pkg_config_val(key = "pg_host", pkg = this_pkg),
   reset_db = FALSE,
+  reset_tbls = reset_db,
   ask = TRUE,
   disconnect = TRUE,
   quiet = FALSE
@@ -21,6 +22,8 @@ reset_rdb(
 \item{reset_db}{Whether or not to first fully recreate the RDB PostgreSQL database using \code{\link[=pg_reset_db]{pg_reset_db()}} and \code{\link[=pg_init_db]{pg_init_db()}}. If \code{FALSE}, only the RDB
 PostgreSQL tables are recreated.}
 
+\item{reset_tbls}{Whether or not to recreate the RDB PostgreSQL tables.}
+
 \item{ask}{Whether or not to ask for confirmation before proceeding. Only relevant if run \link[=interactive]{interactively}.}
 
 \item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
@@ -28,16 +31,17 @@ PostgreSQL tables are recreated.}
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-\code{nocodb_hostname}, invisibly.
+\code{hostname_nocodb}, invisibly.
 }
 \description{
-Resets the whole RDB PostgreSQL database including all RDB PostgreSQL tables and the RDB NocoDB server.
+Resets the RDB NocoDB server, optionally including the whole RDB PostgreSQL database and/or tables.
 }
 \seealso{
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
@@ -46,6 +50,7 @@ Other administration functions:
 \code{\link{reset_nocodb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
@@ -56,6 +61,7 @@ Other administration functions:
 
 Other NocoDB functions
 \code{\link{config_nocodb_tbls}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{purge_nocodb}()},
 \code{\link{reset_nocodb}()}

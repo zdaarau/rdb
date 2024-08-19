@@ -94,9 +94,7 @@ reference:
   - dm
   - update_rfrnds
   - delete_rfrnds
-  - update_countries
-  - update_subnational_entities
-  - update_municipalities
+  - update_administrative_units
   - update_langs
   - update_topics
   - update_tbl

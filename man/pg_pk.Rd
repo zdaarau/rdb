@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{pg_pk}
 \alias{pg_pk}
-\title{Get primary key column names(s) from PostgreSQL}
+\title{Get primary key column name(s) from PostgreSQL}
 \usage{
 pg_pk(tbl_name, schema = pg_schema, connection = connect())
 }
@@ -14,26 +14,31 @@ pg_pk(tbl_name, schema = pg_schema, connection = connect())
 \item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
 }
 \value{
-A character scalar if \code{tbl_name} exists. Otherwise an empty character vector.
+A character vector.
 }
 \description{
-Returns the primary key column names(s) from RDB's DBMS, a PostgreSQL server.
+Returns the primary key column name(s) from RDB's DBMS, a PostgreSQL server.
 }
 \seealso{
 Other PostgreSQL functions
 \code{\link{exec_sql_file}()},
+\code{\link{pg_add_default_data}()},
 \code{\link{pg_col_metadata}()},
+\code{\link{pg_col_nr_to_name}()},
 \code{\link{pg_drop_tbls}()},
+\code{\link{pg_has_rls}()},
 \code{\link{pg_has_tbl}()},
 \code{\link{pg_init_aux_tbls}()},
 \code{\link{pg_init_db}()},
 \code{\link{pg_init_main_tbls}()},
+\code{\link{pg_post_nocodb}()},
 \code{\link{pg_reset_db}()},
 \code{\link{pg_role_pw}()},
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
 \code{\link{pg_tbl_update}()},
+\code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}
 }

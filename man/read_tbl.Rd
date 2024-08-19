@@ -15,6 +15,7 @@ read_tbl(
 \itemize{
 \item \code{"actors"}
 \item \code{"options"}
+\item \code{"legal_instruments"}
 \item \code{"legal_norms"}
 \item \code{"referendum_types"}
 \item \code{"referendum_clusters"}
@@ -27,6 +28,7 @@ read_tbl(
 \item \code{"referendum_positions"}
 \item \code{"referendum_votes"}
 \item \code{"referendum_sub_votes"}
+\item \code{"administrative_units"}
 \item \code{"supranational_entities"}
 \item \code{"countries"}
 \item \code{"subnational_entities"}

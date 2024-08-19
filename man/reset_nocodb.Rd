@@ -5,19 +5,13 @@
 \title{Reset NocoDB}
 \usage{
 reset_nocodb(
-  hostname = nocodb_hostname,
-  b2_bucket = s3_bucket_attachments,
-  b2_region = s3_region,
+  hostname = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg),
   ask = TRUE,
   quiet = TRUE
 )
 }
 \arguments{
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
-
-\item{b2_bucket}{Backblaze B2 bucket name used to store NocoDB's file attachments.}
-
-\item{b2_region}{Identifier of the Backblaze B2 region where the \code{b2_bucket} resides.}
 
 \item{ask}{Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run \link[=interactive]{interactively}.}
 
@@ -33,6 +27,7 @@ Beware that this results in \strong{loss of all existing NocoDB-specific metadat
 \seealso{
 Other NocoDB functions
 \code{\link{config_nocodb_tbls}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{purge_nocodb}()},
 \code{\link{reset_rdb}()}
@@ -41,6 +36,7 @@ Other administration functions:
 \code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
+\code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{delete_rfrnds}()},
 \code{\link{dm}()},
@@ -49,6 +45,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
