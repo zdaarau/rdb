@@ -52,6 +52,7 @@
 - [CREATE TABLE](https://www.postgresql.org/docs/current/sql-createtable.html)
 - [Data Types](https://www.postgresql.org/docs/current/datatype.html)
 - [Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)
+- [Pattern Matching](https://www.postgresql.org/docs/current/functions-matching.html)
 - [Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
 - [Generated Columns](https://www.postgresql.org/docs/current/ddl-generated-columns.html)
 - [Executing Dynamic Commands](https://www.postgresql.org/docs/current/plpgsql-statements.html#PLPGSQL-STATEMENTS-EXECUTING-DYN)
@@ -82,6 +83,7 @@ DO LANGUAGE plpgsql
                              'options',
                              'referendum_titles',
                              'referendum_questions',
+                             'referendum_urls',
                              'referendum_positions',
                              'referendum_votes',
                              'referendum_sub_votes',
@@ -104,6 +106,13 @@ Legal level at which the instrument is implemented.
 
 @graphql({"mappings": {"supra-level treaty": "supra_level_treaty"}})$$;
 
+-- Recreate custom domains
+DROP DOMAIN IF EXISTS url CASCADE;
+CREATE DOMAIN url AS text CHECK (VALUE ~ '^https?:\/\/[^/.\n]+\.[^/.\n]+[^\n]*');
+DROP DOMAIN IF EXISTS bigcount CASCADE;
+CREATE DOMAIN bigcount AS bigint CHECK (VALUE >= 0);
+DROP DOMAIN IF EXISTS roundedfraction CASCADE;
+CREATE DOMAIN roundedfraction AS numeric(10,9) CHECK (VALUE BETWEEN 0 AND 1);
 
 -- Create prerequisite auxiliary tables intended to be updated via NocoDB
 CREATE TABLE public.actors (
@@ -134,7 +143,7 @@ CREATE TABLE public.legal_norms (
   legal_instrument_display text NOT NULL REFERENCES public.legal_instruments (display) ON UPDATE CASCADE,
   clause                   text,
   "text"                   text NOT NULL,
-  url                      text,
+  url                      url,
   valid_from               date NOT NULL DEFAULT '0101-01-01',
   valid_to                 date,
   UNIQUE (legal_instrument_display, clause, valid_from),
@@ -155,9 +164,10 @@ CREATE TABLE public.referendum_types (
   valid_from              date NOT NULL DEFAULT '0101-01-01',
   valid_to                date,
   trigger_actor_label     text REFERENCES public.actors ON UPDATE CASCADE,
-  trigger_threshold_count bigint CHECK (trigger_threshold_count >= 0),
+  trigger_threshold_count bigcount,
   are_empty_votes_counted boolean DEFAULT FALSE,
-  quorum_turnout          numeric(5,4) DEFAULT 0 CHECK (quorum_turnout BETWEEN 0 AND 1),
+  quorum_approval         roundedfraction DEFAULT 0.5,
+  quorum_turnout          roundedfraction DEFAULT 0,
   UNIQUE (administrative_unit_id, title, valid_from),
   CONSTRAINT referendum_types_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from)
 );
@@ -204,8 +214,6 @@ CREATE TABLE public.referendum_titles (
   language_code text NOT NULL REFERENCES public.languages ON UPDATE CASCADE,
   title         text NOT NULL,
   is_official   boolean NOT NULL,
-  "source"      text,
-  remarks       text,
   PRIMARY KEY (referendum_id, language_code)
 );
 
@@ -214,8 +222,15 @@ CREATE TABLE public.referendum_questions (
   language_code text NOT NULL REFERENCES public.languages ON UPDATE CASCADE,
   question      text NOT NULL,
   is_official   boolean NOT NULL,
-  "source"      text,
-  remarks       text,
+  PRIMARY KEY (referendum_id, language_code)
+);
+
+CREATE TABLE public.referendum_urls (
+  referendum_id integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
+  language_code text NOT NULL REFERENCES public.languages ON UPDATE CASCADE,
+  url           url NOT NULL,
+  description   text,
+  is_official   boolean NOT NULL,
   PRIMARY KEY (referendum_id, language_code)
 );
 
@@ -229,7 +244,7 @@ CREATE TABLE public.referendum_positions (
 CREATE TABLE public.referendum_votes (
   referendum_id  integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   option_display text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
-  "count"        bigint NOT NULL CHECK ("count" >= 0),
+  "count"        bigcount NOT NULL,
   "source"       text,
   remarks        text,
   PRIMARY KEY (referendum_id, option_display)
@@ -240,7 +255,7 @@ CREATE TABLE public.referendum_sub_votes (
   referendum_id           integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   administrative_unit_id  text NOT NULL REFERENCES public.administrative_units ON UPDATE CASCADE,
   option_display          text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
-  "count"                 bigint NOT NULL CHECK ("count" >= 0),
+  "count"                 bigcount NOT NULL,
   "source"                text,
   remarks                 text,
   PRIMARY KEY (referendum_id, administrative_unit_id, option_display)
