@@ -13,6 +13,9 @@
 -- Switch to `rdb_admin` role (errors if not authorized)
 SET ROLE rdb_admin;
 
+-- Disable printing `NOTICE`s during this session
+SET client_min_messages TO WARNING;
+
 -- Drop possibly existing DB
 DROP DATABASE IF EXISTS rdb WITH (FORCE);
 

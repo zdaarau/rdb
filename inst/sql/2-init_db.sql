@@ -38,6 +38,9 @@
 -- Switch to `rdb_admin` role (errors if not authorized)
 SET ROLE rdb_admin;
 
+-- Disable printing `NOTICE`s during this session
+SET client_min_messages TO WARNING;
+
 -- Install necessary PostgreSQL extensions
 CREATE EXTENSION IF NOT EXISTS moddatetime;
 CREATE EXTENSION IF NOT EXISTS pg_graphql;

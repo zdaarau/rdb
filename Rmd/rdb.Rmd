@@ -966,6 +966,10 @@ pg_has_tbl <- function(tbl_name,
 #'
 #' @inheritParams rfrnds
 #' @param tbl_names Names of the tables to delete from the PostgreSQL database.
+#' @param min_msg_severity_lvl Minimum PostgreSQL [message severity
+#'   level](https://www.postgresql.org/docs/current/runtime-config-logging.html#RUNTIME-CONFIG-SEVERITY-LEVELS) to be printed. one of
+#'   `r pal::as_md_vals(pg_client_min_messages) |> pal::enum_str(sep2 = " or ")`. Each level includes all the levels that follow it. The later the level, the
+#'   fewer messages are sent.
 #'
 #' @return `tbl_names`, invisibly.
 #' @family pg
@@ -973,14 +977,21 @@ pg_has_tbl <- function(tbl_name,
 pg_drop_tbls <- function(tbl_names,
                          connection = connect(user = "rdb_admin",
                                               password = pg_role_pw("rdb_admin")),
-                         disconnect = TRUE) {
+                         disconnect = TRUE,
+                         min_msg_severity_lvl = "WARNING") {
   
   checkmate::assert_character(tbl_names,
                               any.missing = FALSE)
+  min_msg_severity_lvl <- rlang::arg_match(arg = min_msg_severity_lvl,
+                                           values = pg_client_min_messages)
   checkmate::assert_flag(disconnect)
   
   DBI::dbWithTransaction(conn = connection,
                          code = {
+                           
+                           DBI::dbSendStatement(conn = connection,
+                                                statement = glue::glue("SET client_min_messages TO {min_msg_severity_lvl};")) |>
+                             DBI::dbClearResult()
                            
                            DBI::sqlInterpolate(conn = connection,
                                                sql = paste("DO LANGUAGE plpgsql",
