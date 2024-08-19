@@ -814,8 +814,8 @@ pg_has_tbl <- function(tbl_name,
   checkmate::assert_string(tbl_name)
   checkmate::assert_string(schema)
   
-  # NOTE: `glue::glue_sql()` wraps interpolated strings in single quotes, which we don't want here
-  glue::glue("SELECT to_regclass('{schema}.{tbl_name}') AS \"tbl\";") |>
+  glue::glue_sql("SELECT to_regclass({paste(schema, tbl_name, sep = '.')}) AS \"tbl\";",
+                 .con = connection) |>
     DBI::dbGetQuery(conn = connection) |>
     dplyr::pull("tbl") |>
     is.na() |>
