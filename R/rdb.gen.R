@@ -2137,29 +2137,14 @@ nocodb_base_title <- "Main"
 nocodb_data_src_alias <- "RDB"
 
 nocodb_col_metadata <- tibble::tribble(
-  ~tbl_name,              ~col_name,     ~title,                 ~uidt,                 ~meta.richMode, ~hidden,
-  "referendums",          "attachments", NA_character_,          "Attachment",          NA,             FALSE,
-  NA_character_,          "url",         NA_character_,          "URL",                 NA,             FALSE,
-  NA_character_,          "description", NA_character_,          NA_character_,         TRUE,           FALSE,
-  NA_character_,          "label",       NA_character_,          NA_character_,         TRUE,           FALSE,
-  NA_character_,          "remarks",     NA_character_,          NA_character_,         TRUE,           FALSE,
-  "subnational_entities", NA_character_, "subnational_entities", "LinkToAnotherRecord", NA,             TRUE
-)
-
-# the virtual columns NocoDB maintains for foreign keys not always have optimal default titles, so we have to tweak 'em
-# NOTE: columns of `uidt == "Links"` are automatically renamed if necessary
-# TODO: we don't really need this tbl but instead should be able to singularize col display titles purely programmatically (`ies` -> `y` otherwise del `s`)
-nocodb_col_renames <- tibble::tribble(
-  ~uidt,                 ~col_title_old,           ~col_title_new,
-  "LinkToAnotherRecord", "actors",                 "actor",
-  "LinkToAnotherRecord", "administrative_units",   "administrative_unit",
-  "LinkToAnotherRecord", "countries",              "country",
-  "LinkToAnotherRecord", "languages",              "language",
-  "LinkToAnotherRecord", "municipalities",         "municipality",
-  "LinkToAnotherRecord", "options",                "option",
-  "LinkToAnotherRecord", "referendums",            "referendum",
-  "LinkToAnotherRecord", "subnational_entities",   "subnational_entity",
-  "LinkToAnotherRecord", "supranational_entities", "supranational_entity"
+  ~tbl_name,              ~col_name,     ~title,                 ~title_new,            ~uidt,                 ~meta.richMode, ~hidden,
+  "referendum_types",     NA_character_, "actors",               "trigger_actor",       "LinkToAnotherRecord", NA,             FALSE,
+  "referendums",          "attachments", NA_character_,          NA_character_,         "Attachment",          NA,             FALSE,
+  NA_character_,          "url",         NA_character_,          NA_character_,         "URL",                 NA,             FALSE,
+  NA_character_,          "description", NA_character_,          NA_character_,         NA_character_,         TRUE,           FALSE,
+  NA_character_,          "label",       NA_character_,          NA_character_,         NA_character_,         TRUE,           FALSE,
+  NA_character_,          "remarks",     NA_character_,          NA_character_,         NA_character_,         TRUE,           FALSE,
+  "subnational_entities", NA_character_, "subnational_entities", NA_character_,         "LinkToAnotherRecord", NA,             TRUE
 )
 
 nocodb_reset_caution <- paste0("Beware that this results in **loss of all existing NocoDB-specific metadata** ",
