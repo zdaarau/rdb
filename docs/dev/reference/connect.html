@@ -90,6 +90,7 @@ keywords.</p></dd>
     <div class="dont-index"><p>Other administration functions:
 <code><a href="clean_attachment_bucket.html">clean_attachment_bucket</a>()</code>,
 <code><a href="config_nocodb_tbls.html">config_nocodb_tbls</a>()</code>,
+<code><a href="create_nocodb_tbl_cols.html">create_nocodb_tbl_cols</a>()</code>,
 <code><a href="create_nocodb_tbls.html">create_nocodb_tbls</a>()</code>,
 <code><a href="delete_rfrnds.html">delete_rfrnds</a>()</code>,
 <code><a href="dm.html">dm</a>()</code>,
@@ -99,6 +100,7 @@ keywords.</p></dd>
 <code><a href="reset_rdb.html">reset_rdb</a>()</code>,
 <code><a href="restart_neon_ep.html">restart_neon_ep</a>()</code>,
 <code><a href="restart_postgrest.html">restart_postgrest</a>()</code>,
+<code><a href="update_administrative_units.html">update_administrative_units</a>()</code>,
 <code><a href="update_countries.html">update_countries</a>()</code>,
 <code><a href="update_langs.html">update_langs</a>()</code>,
 <code><a href="update_municipalities.html">update_municipalities</a>()</code>,
@@ -113,10 +115,11 @@ keywords.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu">connect</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">con</span> <span class="op">|&gt;</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "actors"                       "countries"                    "languages"                    "legal_norms"                  "municipalities"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "options"                      "referendum_clusters"          "referendum_positions"         "referendum_questions"         "referendum_sub_votes"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "referendum_titles"            "referendum_types"             "referendum_types_legal_norms" "referendum_types_referendums" "referendum_votes"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "referendums"                  "subnational_entities"         "supranational_entities"       "topics"                       "topics_referendums"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "actors"                       "administrative_units"         "countries"                    "languages"                    "legal_instruments"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "legal_norms"                  "municipalities"               "options"                      "referendum_clusters"          "referendum_positions"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "referendum_questions"         "referendum_sub_votes"         "referendum_titles"            "referendum_types"             "referendum_types_legal_norms"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "referendum_types_referendums" "referendum_votes"             "referendums"                  "subnational_entities"         "supranational_entities"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "topics"                       "topics_referendums"          </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

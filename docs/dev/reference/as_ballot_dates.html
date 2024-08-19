@@ -83,8 +83,8 @@ mustn't vary within ballot-date-level observations. <a href="https://dplyr.tidyv
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># standard RDB columns are retained as far as possible</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">as_ballot_dates</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 variables: date &lt;date&gt;, level &lt;chr&gt;, supranational_entity_id &lt;chr&gt;, country_code &lt;chr&gt;, subnational_entity_code &lt;chr&gt;, rfrnd_data &lt;list&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 variables: date &lt;date&gt;, rfrnd_data &lt;list&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># non-standard columns must be explicitly specified in order to be retained</span></span></span>
 <span class="r-in"><span><span class="va">data_rdb</span> <span class="op">&lt;-</span></span></span>
@@ -99,8 +99,9 @@ mustn't vary within ballot-date-level observations. <a href="https://dplyr.tidyv
 <span class="r-in"><span>                    <span class="fu">forcats</span><span class="fu">::</span><span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_relevel.html" class="external-link">fct_relevel</a></span><span class="op">(</span><span class="st">"Switzerland &amp; Liechtenstein"</span>,</span></span>
 <span class="r-in"><span>                                         after <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>                    <span class="fu">forcats</span><span class="fu">::</span><span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_recode.html" class="external-link">fct_recode</a></span><span class="op">(</span><span class="st">"rest of Europe"</span> <span class="op">=</span> <span class="st">"Europe"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>coercing argument of type 'list' to logical</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (all(log.mat)) return(success_fun(data, "assert", name.of.predicate,     colnames(log.mat), NA, description)):</span> missing value where TRUE/FALSE needed</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in map(.x, .f, ..., .progress = .progress):</span> <span style="color: #00BBBB;">ℹ</span> In index: 1.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `.f()`:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> `data` must contain a column `country_code` with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">data_rdb</span> <span class="op">|&gt;</span> <span class="fu">rdb</span><span class="fu">::</span><span class="fu">as_ballot_dates</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'data_rdb' not found</span>

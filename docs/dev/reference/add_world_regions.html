@@ -133,8 +133,9 @@ this issue by providing a uniform combination of <code>un_region_tier_2_name</co
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"country_"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"un_"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>coercing argument of type 'list' to logical</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (all(log.mat)) return(success_fun(data, "assert", name.of.predicate,     colnames(log.mat), NA, description)):</span> missing value where TRUE/FALSE needed</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in map(.x, .f, ..., .progress = .progress):</span> <span style="color: #00BBBB;">ℹ</span> In index: 1.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `.f()`:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> `data` must contain a column `country_code` with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
