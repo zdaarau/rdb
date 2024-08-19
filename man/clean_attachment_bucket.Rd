@@ -35,6 +35,7 @@ Other referendum file attachment functions:
 \code{\link{download_attachments}()}
 
 Other administration functions:
+\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},

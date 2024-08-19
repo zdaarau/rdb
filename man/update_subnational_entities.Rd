@@ -26,6 +26,7 @@ Updates the RDB's \code{subnational_entities} table with the data from \code{\li
 \seealso{
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
+\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},

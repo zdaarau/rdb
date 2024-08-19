@@ -27,6 +27,7 @@ rdb::dm() |> dm::dm_draw(view_type = "all")
 \seealso{
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
+\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},

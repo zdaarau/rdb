@@ -30,6 +30,7 @@ update the corresponding database fields with.}
 \item \code{"topics_referendums"}
 \item \code{"referendum_titles"}
 \item \code{"referendum_questions"}
+\item \code{"referendum_urls"}
 \item \code{"referendum_positions"}
 \item \code{"referendum_votes"}
 \item \code{"referendum_sub_votes"}
@@ -57,6 +58,7 @@ Updates the specified RDB table with the provided data.
 \seealso{
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
+\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},

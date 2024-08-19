@@ -25,6 +25,7 @@ read_tbl(
 \item \code{"topics_referendums"}
 \item \code{"referendum_titles"}
 \item \code{"referendum_questions"}
+\item \code{"referendum_urls"}
 \item \code{"referendum_positions"}
 \item \code{"referendum_votes"}
 \item \code{"referendum_sub_votes"}

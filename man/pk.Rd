@@ -15,6 +15,6 @@ A character scalar.
 \description{
 Returns the primary key column name(s) of the specified table, based on PostgreSQL metadata obtained at package-build time. This function is faster than
 \code{\link[=pg_pk]{pg_pk()}} since it doesn't perform network requests. But it can return outdated information if changes were made to the RDB PostgreSQL schema \emph{after} the
-package-internal \verb{rdb:::pg_metadata_\{tbl_name\}} was last updated.
+package-internal \code{rdb:::pg_tbl_metadata} was last updated.
 }
 \keyword{internal}
