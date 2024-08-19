@@ -275,10 +275,39 @@ CREATE POLICY nocodb_restrict_delete ON public.referendums      AS RESTRICTIVE F
 CREATE POLICY default_allow          ON public.referendum_types AS PERMISSIVE  FOR ALL    TO PUBLIC USING (TRUE);
 CREATE POLICY nocodb_restrict_delete ON public.referendum_types AS RESTRICTIVE FOR DELETE TO nocodb USING (is_draft);
 
--- Create function and trigger to ensure `referendum_sub_votes` consistency regarding `administrative_units`s
---- TODO
+-- Create trigger function to ensure `referendum_sub_votes` consistency regarding administrative units
+CREATE OR REPLACE FUNCTION check_referendum_sub_votes_administrative_units()
+  RETURNS TRIGGER
+  LANGUAGE plpgsql
+  AS $$
+    DECLARE
+      referendum_administrative_unit_id text;
+      parent_administrative_unit_id text;
+    BEGIN
+      -- Get the referendum's administrative unit id
+      SELECT administrative_unit_id INTO referendum_administrative_unit_id
+      FROM public.referendums
+      WHERE id = NEW.referendum_id;
 
--- Create function and trigger to ensure `referendum_types_legal_norms` consistency regarding `administrative_units`s
+      -- Get the parent administrative unit id
+      SELECT parent_id INTO parent_administrative_unit_id
+      FROM public.administrative_units
+      WHERE id = NEW.administrative_unit_id;
+
+      -- Ensure referendum's administrative unit is the parent of the sub vote's administrative unit
+      IF parent_administrative_unit_id IS NULL OR referendum_administrative_unit_id != parent_administrative_unit_id THEN
+        RAISE EXCEPTION 'The referendum''s administrative unit must be the parent of the sub vote''s administrative unit.';
+      END IF;
+
+      RETURN NEW;
+    END;
+  $$;
+
+CREATE TRIGGER check_administrative_units
+  BEFORE INSERT OR UPDATE ON public.referendum_sub_votes
+  FOR EACH ROW EXECUTE PROCEDURE public.check_referendum_sub_votes_administrative_units();
+
+-- Create trigger function to ensure `referendum_types_legal_norms` consistency regarding administrative units
 CREATE OR REPLACE FUNCTION check_referendum_types_legal_norms_administrative_units()
   RETURNS TRIGGER
   LANGUAGE plpgsql
@@ -291,13 +320,13 @@ CREATE OR REPLACE FUNCTION check_referendum_types_legal_norms_administrative_uni
       rt_au_parent_id text;
       rt_au_parent_level text;
     BEGIN
-      -- Get the level of the administrative unit of the referendum type
+      -- Get the required attrs of the administrative unit of the referendum type
       SELECT au.level, au.id, au.parent_id INTO rt_au_level, rt_au_id, rt_au_parent_id
       FROM public.referendum_types rt
       JOIN public.administrative_units au ON rt.administrative_unit_id = au.id
       WHERE rt.id = NEW.referendum_type_id;
 
-      -- Get the level of the administrative unit of the legal instrument associated with the legal norm
+      -- Get the required attrs of the administrative unit of the legal instrument associated with the legal norm
       SELECT au.level, au.id INTO ln_au_level, ln_au_id
       FROM public.legal_norms ln
       JOIN public.legal_instruments li ON ln.legal_instrument_display = li.display
@@ -351,7 +380,7 @@ CREATE TRIGGER check_administrative_units
   BEFORE INSERT OR UPDATE ON public.referendum_types_legal_norms
   FOR EACH ROW EXECUTE PROCEDURE public.check_referendum_types_legal_norms_administrative_units();
 
--- Create function and trigger to ensure `referendum_types_legal_norms` consistency regarding `valid_from` and `valid_to`
+-- Create trigger function to ensure `referendum_types_legal_norms` consistency regarding `valid_from` and `valid_to`
 CREATE OR REPLACE FUNCTION check_referendum_types_legal_norms_validity_period()
   RETURNS TRIGGER
   LANGUAGE plpgsql
@@ -392,7 +421,7 @@ CREATE TRIGGER check_validity_period
   BEFORE INSERT OR UPDATE ON public.referendum_types_legal_norms
   FOR EACH ROW EXECUTE PROCEDURE public.check_referendum_types_legal_norms_validity_period();
 
--- Create function and trigger to ensure `referendum_types_referendums` consistency
+-- Create trigger function to ensure `referendum_types_referendums` consistency
 CREATE OR REPLACE FUNCTION public.check_referendum_types_referendums_administrative_units()
   RETURNS TRIGGER
   LANGUAGE plpgsql
