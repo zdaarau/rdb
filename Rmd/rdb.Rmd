@@ -2640,7 +2640,7 @@ tbl_metadata <-
     "referendum_titles",            "#b3b9ff",      "title",             "\U0001F4D5",      FALSE,
     "referendum_questions",         "#b3b9ff",      "question",          "\u2753",          FALSE,
     "referendum_urls",              "#b3b9ff",      "url",               "\U0001f517",      FALSE,
-    "referendum_positions",         "#b3b9ff",      "actor_label",       "\U0001F4E3",      FALSE,
+    "referendum_positions",         "#b3b9ff",      "display",           "\U0001F4E3",      FALSE,
     "referendum_votes",             "#b3b9ff",      "option_display",    "\U0001F9FE",      FALSE,
     "referendum_sub_votes",         "#b3b9ff",      "display",           "\U0001F9FE",      FALSE,
     "administrative_units",         "#ffcf3d",      "name",              "\U0001F512",      FALSE,
