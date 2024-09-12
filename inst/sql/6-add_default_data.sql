@@ -24,3 +24,6 @@ INSERT INTO public.options (label, description) VALUES ('yes',     'approval of 
 INSERT INTO public.options (label, description) VALUES ('no',      'rejection of the referendum proposal');
 INSERT INTO public.options (label, description) VALUES ('empty',   'explicit abstention from voting on the referendum proposal');
 INSERT INTO public.options (label, description) VALUES ('invalid', 'formally invalid vote cast on the referendum proposal');
+
+--- Set default values
+UPDATE public.administrative_units SET guarantees_referendum_id_official = TRUE WHERE "id" IN ('CH');

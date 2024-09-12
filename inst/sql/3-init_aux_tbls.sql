@@ -97,11 +97,12 @@ CREATE TABLE public.municipalities (
 );
 
 CREATE TABLE public.administrative_units (
-  "id"       text PRIMARY KEY,
-  "name"     text NOT NULL,
-  "level"    text NOT NULL CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
-  "type"     text NOT NULL,
-  parent_id  text REFERENCES public.administrative_units
+  "id"                              text PRIMARY KEY,
+  "name"                            text NOT NULL,
+  "level"                           text NOT NULL CHECK ("level" IN ('municipal', 'subnational', 'national', 'supranational')),
+  "type"                            text NOT NULL,
+  guarantees_referendum_id_official boolean,
+  parent_id                         text REFERENCES public.administrative_units
 );
 
 CREATE TABLE public.languages (
