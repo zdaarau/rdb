@@ -1294,9 +1294,11 @@ pg_has_rls <- function(tbl_name,
 #'
 #' Returns the primary key column name(s) from RDB's DBMS, a PostgreSQL server.
 #'
-#' @inheritParams read_tbl
-#' @param tbl_name Table name. A character scalar.
-#' @param schema Schema name. A character scalar.
+#' @inheritParams pg_tbl_read
+#' @param tbl_name `r pkgsnip::type("chr")`
+#'   Table name.
+#' @param schema `r pkgsnip::type("chr")`
+#'   Schema name.
 #'
 #' @return A character vector.
 #' @family pg
@@ -1428,6 +1430,48 @@ pg_tbl_constraints <- function(tbl_name,
                    "  ") |>
     DBI::dbGetQuery(conn = connection) |>
     tibble::as_tibble()
+}
+```
+
+#### `pg_tbl_read`
+
+```{r}
+#' Read PostgreSQL table
+#'
+#' Reads in a PostgreSQL table and returns it as a [tibble][tibble::tbl_df].
+#'
+#' @param tbl_name Table name, passed on to [DBI::dbQuoteIdentifier()]. Options are:
+#'   - A character string with the unquoted DBMS table name, e.g. `"table_name"`.
+#'   - A call to [DBI::Id()] with components to the fully qualified table name, e.g. `DBI::Id(schema = "my_schema", table = "table_name")`.
+#'   - A call to [DBI::SQL()] with the quoted and fully qualified table name given verbatim, e.g. `DBI::SQL('"my_schema"."table_name"')`.
+#' @param connection `r pkgsnip::type("pg_connection")`
+#'   Database connection to a PostgreSQL DBMS as returned by [connect()].
+#' @param disconnect `r pkgsnip::type("lgl")`
+#'   Whether or not to [terminate][DBI::dbDisconnect] the database connection when finished.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family pg
+#' @keywords internal
+pg_tbl_read <- function(tbl_name,
+                        connection = connect(),
+                        disconnect = TRUE) {
+  
+  checkmate::assert_string(tbl_name)
+  checkmate::assert_flag(disconnect)
+  
+  # necessary to avoid error on first run of `connect()`
+  force(connection)
+  
+  data <-
+    DBI::dbReadTable(conn = connection,
+                     name = tbl_name) |>
+    tibble::as_tibble()
+  
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  data
 }
 ```
 
@@ -2939,10 +2983,10 @@ rfrnd_types <- function(connection = connect(),
 #'
 #' Fetches a table from the [RDB DBMS][connect]'s `r pal::wrap_chr(pg_schema, "\x60")` schema and returns it as a [tibble][tibble::tbl_df].
 #'
-#' @param tbl_name Table name. One of
-#'   `r pal::as_md_val_list(tbl_metadata$name)`.
-#' @param connection Database connection to a PostgreSQL DBMS as returned by [connect()]. `r pkgsnip::param_lbl("dbi_connection")`
-#' @param disconnect Whether or not to [terminate][DBI::dbDisconnect] the database connection when finished.
+#' @inheritParams pg_tbl_read
+#' @param tbl_name `r pkgsnip::type("chr")`
+#'   Table name. One of
+#'   `r pal::as_md_val_list(tbl_metadata$name)`
 #'
 #' @return `r pkgsnip::param_lbl("tibble")`
 #' @family data
@@ -2955,21 +2999,10 @@ read_tbl <- function(tbl_name = tbl_metadata$name,
                      disconnect = TRUE) {
   
   tbl_name <- rlang::arg_match(tbl_name)
-  checkmate::assert_flag(disconnect)
   
-  # necessary to avoid error on first run of `connect()`
-  force(connection)
-  
-  data <-
-    DBI::dbReadTable(conn = connection,
-                     name = tbl_name) |>
-    tibble::as_tibble()
-  
-  if (disconnect) {
-    DBI::dbDisconnect(conn = connection)
-  }
-  
-  data
+  pg_tbl_read(tbl_name = tbl_name,
+              connection = connection,
+              disconnect = disconnect)
 }
 ```
 
