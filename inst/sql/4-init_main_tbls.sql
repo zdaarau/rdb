@@ -239,7 +239,7 @@ CREATE TABLE public.referendum_positions (
   referendum_id  integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   actor_label    text NOT NULL REFERENCES public.actors ON UPDATE CASCADE,
   option_display text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
-  PRIMARY KEY (referendum_id, actor_label, option_display)
+  PRIMARY KEY (referendum_id, actor_label)
 );
 
 CREATE TABLE public.referendum_votes (
