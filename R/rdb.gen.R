@@ -5353,6 +5353,14 @@ update_tbl <- function(data,
 #' @family admin
 #' @family nocodb
 #' @export
+#'
+#' @examples
+#' # reset production PGSQL DB branch and NocoDB instance
+#' rdb::reset_rdb()
+#'
+#' # reset testing PGSQL DB branch and NocoDB instance
+#' rdb::reset_rdb(hostname_nocodb = Sys.getenv("R_RDB_NOCODB_HOST_TESTING"),
+#'                hostname_pg = Sys.getenv("R_RDB_PG_HOST_TESTING"))
 # nolint start: cyclocomp_linter
 reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
                                                             pkg = this_pkg),
@@ -6054,6 +6062,13 @@ reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
 #' @family nocodb
 #' @family admin
 #' @keywords internal
+#'
+#' @examples
+#' # purge NocoDB production instance
+#' rdb:::purge_nocodb()
+#'
+#' # purge NocoDB testing instance
+#' rdb:::purge_nocodb(fly_app = "rdb-nocodb-testing")
 purge_nocodb <- function(fly_app = "rdb-nocodb",
                          s3_bucket = fly_app,
                          s3_endpoint = s3_endpoint_url,
