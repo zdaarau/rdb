@@ -6358,14 +6358,14 @@ reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
     if (!quiet) {
       pal::cli_progress_step_quick("Populating auxiliary PostgreSQL tables")
     }
-    pg_add_default_data(connection = connection,
-                        disconnect = FALSE)
     update_administrative_units(connection = connection,
                                 disconnect = FALSE)
     update_langs(connection = connection,
                  disconnect = FALSE)
     update_topics(connection = connection,
                   disconnect = FALSE)
+    pg_add_default_data(connection = connection,
+                        disconnect = FALSE)
   }
   
   # sync NocoDB data src ----
