@@ -756,7 +756,7 @@ url_website <- function(...) {
     paste0("https://", .)
 }
 
-#' Get PostreSQL column metadata
+#' Get PostgreSQL column metadata
 #'
 #' @inheritParams pg_pk
 #'
@@ -813,7 +813,7 @@ pg_col_metadata <- function(tbl_name,
                   generation_expression)
 }
 
-#' Get PostreSQL column name from number
+#' Get PostgreSQL column name from number
 #'
 #' @inheritParams pg_pk
 #' @param col_nr Number of the column whose name is to be retrieved.
@@ -849,7 +849,7 @@ pg_col_nr_to_name <- function(col_nr,
   result$column_name
 }
 
-#' Test whether PostreSQL table exists
+#' Test whether PostgreSQL table exists
 #'
 #' @inheritParams pg_pk
 #'
@@ -1078,7 +1078,7 @@ pg_add_default_data <- function(connection = connect(user = "rdb_admin",
   invisible(NULL)
 }
 
-#' Test whether PostreSQL table has row-level security enabled
+#' Test whether PostgreSQL table has row-level security enabled
 #'
 #' @inheritParams pg_pk
 #'
@@ -1196,7 +1196,7 @@ pg_update_seq <- function(tbl_name,
     tibble::as_tibble()
 }
 
-#' Get PostreSQL table constraints
+#' Get PostgreSQL table constraints
 #'
 #' @inheritParams pg_pk
 #'
