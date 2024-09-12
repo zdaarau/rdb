@@ -235,7 +235,7 @@ CREATE TABLE public.referendum_urls (
 );
 
 CREATE TABLE public.referendum_positions (
-  display        text GENERATED ALWAYS AS (actor_label || ' ' || option_display) STORED,
+  display        text GENERATED ALWAYS AS (actor_label || ': ' || option_display) STORED,
   referendum_id  integer NOT NULL REFERENCES public.referendums ON UPDATE CASCADE ON DELETE CASCADE,
   actor_label    text NOT NULL REFERENCES public.actors ON UPDATE CASCADE,
   option_display text NOT NULL REFERENCES public.options ON UPDATE CASCADE,
