@@ -3309,7 +3309,7 @@ clean_attachment_bucket <- function(s3_bucket = s3_bucket_attachments,
           s3_access_secret = s3_access_secret)
   
   s3_prefix <- paste0("s3://", s3_bucket, "/")
-  url_prefix <- paste0("https://", s3_bucket, ".", httr2::url_parse(s3_endpoint_url)$hostname, "/")
+  url_prefix <- paste0("https://", s3_bucket, ".", httr2::url_parse(s3_endpoint)$hostname, "/")
   
   all_attachments <-
     s3fs::s3_dir_ls(fs::path(s3_bucket, "nc/uploads"),
@@ -7050,7 +7050,7 @@ purge_nocodb <- function(fly_app = "rdb-nocodb",
   }
   
   # delete NocoDB Litestream data from S3 bucket
-  s3_auth(s3_endpoint = s3_endpoint_url,
+  s3_auth(s3_endpoint = s3_endpoint,
           s3_access_key = s3_access_key,
           s3_access_secret = s3_access_secret)
   
