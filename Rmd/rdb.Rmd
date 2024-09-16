@@ -946,7 +946,8 @@ pg_col_metadata <- function(tbl_name,
                   is_identity,
                   identity_generation,
                   generated,
-                  generation_expression)
+                  generation_expression) |>
+    tibble::as_tibble()
 }
 ```
 
