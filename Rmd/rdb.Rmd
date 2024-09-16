@@ -1371,7 +1371,7 @@ pg_role_pw <- function(role,
 Source: <https://gist.github.com/henriquemenezes/962829815e8e7875f5f4376133b2f209>
 
 ```{r}
-#' Update
+#' Update PostgreSQL sequence
 #'
 #' @inheritParams pg_pk
 #' @param col_name Name of the column whose sequence is to be updated.
