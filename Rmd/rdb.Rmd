@@ -909,14 +909,11 @@ pg_col_metadata <- function(tbl_name,
   checkmate::assert_string(tbl_name)
   checkmate::assert_string(schema)
   
-  result <-
-    glue::glue_sql(.con = connection,
-                   "SELECT * FROM information_schema.columns",
-                   "  WHERE table_schema = {schema} AND table_name = {tbl_name};") |>
+  glue::glue_sql(.con = connection,
+                 "SELECT * FROM information_schema.columns",
+                 "  WHERE table_schema = {schema} AND table_name = {tbl_name};") |>
     DBI::dbGetQuery(conn = connection) |>
-    tibble::as_tibble()
-  
-  result |>
+    dplyr::collect() |>
     dplyr::rename(generated = is_generated) |>
     dplyr::mutate(dplyr::across(.cols = any_of(c("is_nullable",
                                                  "is_self_referencing",
@@ -1395,6 +1392,7 @@ pg_update_seq <- function(tbl_name,
   glue::glue_sql(.con = connection,
                  "SELECT setval({paste(tbl_name, col_name, 'seq', sep = '_')}, (SELECT MAX({`col_name`}) FROM {`schema`}.{`tbl_name`}));") |>
     DBI::dbGetQuery(conn = connection) |>
+    dplyr::collect() |>
     tibble::as_tibble()
 }
 ```
@@ -1429,6 +1427,7 @@ pg_tbl_constraints <- function(tbl_name,
                    "      AND rel.relname = {tbl_name};",
                    "  ") |>
     DBI::dbGetQuery(conn = connection) |>
+    dplyr::collect() |>
     tibble::as_tibble()
 }
 ```
@@ -1498,7 +1497,7 @@ pg_tbl_del <- function(tbl,
                               any.missing = FALSE)
   tbl |>
     dplyr::select(!!pk_col_names) |>
-    tibble::as_tibble() |>
+    dplyr::collect() |>
     dplyr::intersect(y =
                        data |>
                        dplyr::select(!!pk_col_names) |>
@@ -1534,7 +1533,7 @@ pg_tbl_keep <- function(tbl,
                               any.missing = FALSE)
   tbl |>
     dplyr::select(!!pk_col_names) |>
-    tibble::as_tibble() |>
+    dplyr::collect() |>
     dplyr::setdiff(y =
                      data |>
                      dplyr::select(!!pk_col_names) |>
@@ -1623,7 +1622,7 @@ pg_tbl_update <- function(tbl,
       dplyr::setdiff(y =
                        tbl |>
                        dplyr::select(!!pk_col_names) |>
-                       tibble::as_tibble() |>
+                       dplyr::collect() |>
                        # add an empty row to account for all-NA PK vals
                        tibble::add_row()) |>
       nrow()
