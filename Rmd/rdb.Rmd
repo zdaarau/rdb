@@ -1615,9 +1615,7 @@ pg_tbl_update <- function(tbl,
                                  in_place = TRUE)
   } else {
     
-    introduces_new_pk_vals <- FALSE
-    
-    n_unknown_pks <-
+    nrow_unknown_pks <-
       data |>
       dplyr::select(!!pk_col_names) |>
       dplyr::setdiff(y =
@@ -1628,19 +1626,20 @@ pg_tbl_update <- function(tbl,
                        tibble::add_row()) |>
       nrow()
     
-    if (n_unknown_pks > 0L) {
-      cli::cli_abort(paste0("{.val {n_pk_vals_new}} row{?s} in {.arg data} detected that {?has/have} an {.var {pk_col_names}} value set that is not present in",
-                            " the {.field {tbl_name}} table. Rows to be newly inserted into the table must have `NA` values in {.arg data} column ",
-                            "{.var {pk_col_names}}."))
+    if (nrow_unknown_pks > 0L) {
+      cli::cli_abort(paste0("{.val {nrow_unknown_pks}} row{?s} detected in {.arg data} with unknown primary key values. Rows to be newly inserted into the ",
+                            "{.field {tbl_name}} table must have `NA` values in the primary key {cli::qty(pk_col_names)} column{?s} ({.var {pk_col_names}}) ",
+                            "since {?it is/at least one of them is} {.code GENERATED ALWAYS}."))
     }
     
+    # update existing rows
     result <- dplyr::rows_update(x = tbl,
                                  y = data,
                                  by = pk_col_names,
                                  copy = TRUE,
                                  in_place = TRUE,
                                  unmatched = "ignore")
-    
+    # add new rows
     if (anyNA(data[, pk_col_names])) {
       
       # NOTE: we can't append the result of `DBI::dbAppendTable()` to `result` since the former just returns an integer scalar
