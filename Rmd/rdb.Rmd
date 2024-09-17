@@ -2591,7 +2591,6 @@ NOTES:
 -   An `NA` value in non-identifiying columns means to leave the respective attribute untouched, i.e. at its default.
 
 ```{r}
-nocodb_hostname_testing <- "admin-testing.rdb.vote"
 nocodb_base_title <- "Main"
 nocodb_data_src_alias <- "RDB"
 
