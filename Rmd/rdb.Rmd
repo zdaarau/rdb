@@ -2653,8 +2653,8 @@ rm(sudd_years)
 
 NOTES:
 
--   The order of the tables corresponds to the desired order in the NocoDB UI, i.e. to re-order tables, simply move them up/down in `tbl_metadata` and run
-    `rdb::config_nocodb()`.
+-   The row order corresponds to the desired order of the tables in the NocoDB UI, i.e. to re-order tables, simply move them up/down in `tbl_metadata` and run
+    `rdb::config_nocodb_tbls()`.
 
 -   `\ufe0f` is the (optional) [Unicode image variation selector](https://stackoverflow.com/a/38100803/7196903) that specifies the emoji should be presented as
     an image; unclear whether this actually has any effect (but it doesn't harm anyways).
@@ -6188,7 +6188,7 @@ update_tbl <- function(data,
 
 TODO
 
--   implement PGSQL data backup -\> restore
+-   implement PGSQL data backup -\> restoral
 
 -   Sometimes, `reset_rdb()` fails with
 
@@ -6759,8 +6759,8 @@ NOTES:
 ```{r}
 #' Reset NocoDB
 #'
-#' Completely re-creates the `r pal::wrap_chr(nocodb_base_title, "\x60")` base and adds the RDB team's user accounts on the specified NocoDB server.
-#' `r nocodb_reset_caution`
+#' Completely re-creates the connection settings and `r pal::wrap_chr(nocodb_base_title, "\x60")` base and adds the RDB team's user accounts on the specified
+#' NocoDB server. `r nocodb_reset_caution`
 #'
 #' @inheritParams nocodb::update_app_settings
 #' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
