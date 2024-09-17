@@ -2673,7 +2673,7 @@ tbl_metadata <-
     "actors",                       "#cf3dff",      "label",             "\U0001F3AD",      FALSE,
     "options",                      "#cf3dff",      "display",           "\u2611",          FALSE,
     "legal_instruments",            "#c2f0c2",      "display",           "\U0001F4DC",      FALSE,
-    "legal_norms",                  "#64d864",      "display",           "\u2712\ufe0f",    FALSE,
+    "legal_norms",                  "#64d864",      "display",           "\u2712",          FALSE,
     "referendum_types",             "#64d864",      "display",           "\U0001F3DB",      FALSE,
     "referendum_clusters",          "#b3b9ff",      "id",                "\U0001F347",      FALSE,
     "referendums",                  color_rdb_main, "display",           "\U0001F5F3",      FALSE,
