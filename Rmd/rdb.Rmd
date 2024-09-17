@@ -2816,7 +2816,58 @@ sub_var_names_fms <- purrr::map(sub_var_names,
 
 ## Data
 
+### `dm`
+
+TODO:
+
+-   Once [cynkra/dm#1879](https://github.com/cynkra/dm/issues/1879) is fixed, we can use default R PG user to connect instead of tbl owner.
+
+```{r}
+#' Get RDB data model
+#'
+#' @inheritParams rfrnds
+#' @param incl_aux_admin_tbls Whether or not to include the auxiliary administrative unit tables
+#'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name")`
+#'
+#' @return `r pkgsnip::return_lbl("dm")`
+#' @family admin
+#' @export
+#'
+#' @examples
+#' # visualize the whole RDB model
+#' rdb::dm() |> dm::dm_draw(view_type = "all")
+#' 
+#' # download all RDB tables into local object (e.g. for later processing)
+#' rdb_dm <- rdb::dm() |> dplyr::collect()
+dm <- function(connection = connect(user = "rdb_admin",
+                                    password = pg_role_pw("rdb_admin")),
+               incl_aux_admin_tbls = FALSE) {
+  
+  checkmate::assert_flag(incl_aux_admin_tbls)
+  
+  tbl_metadata_subset <-
+    tbl_metadata |>
+    dplyr::filter(if (incl_aux_admin_tbls) TRUE else !is_aux)
+  
+  tbl_metadata_subset |>
+    dplyr::pull("name") |> 
+    dm::dm_from_con(con = connection,
+                    # NOTE: we have to explicitly set `table_names` in order to avoid a spurious "NA" table linked to everything else
+                    table_names = _,
+                    learn_keys = TRUE,
+                    schema = pg_schema) |>
+    dm::dm_set_colors(!!!magrittr::set_names(x = tbl_metadata_subset$name,
+                                             value = tbl_metadata_subset$dm_color)) |>
+    dm::dm_set_table_description(!!!magrittr::set_names(x = tbl_metadata_subset$name,
+                                                        value = pal::strip_md(tbl_metadata_subset$desc)))
+}
+```
+
 ### `rfrnds`
+
+TODO:
+
+-   Join with additional db tbls; experiment with [`rdb::dm() |> dm::dm_flatten_to_tbl()`](https://dm.cynkra.com/reference/dm_flatten_to_tbl.html)
 
 ```{r}
 #' Get referendum data
@@ -5805,49 +5856,6 @@ connect <- function(dbname = pg_db,
                  sslmode = sslmode,
                  sslrootcert = fs::path_package(package = this_pkg,
                                                 "certs/ISRG_Root_X1.crt"))
-}
-```
-
-### `dm`
-
-TODO:
-
--   Once [cynkra/dm#1879](https://github.com/cynkra/dm/issues/1879) is fixed, we can use default R PG user to connect instead of tbl owner.
-
-```{r}
-#' Get RDB data model
-#'
-#' @inheritParams rfrnds
-#' @param incl_aux_admin_tbls Whether or not to include the auxiliary administrative unit tables
-#'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name")`
-#'
-#' @return `r pkgsnip::return_lbl("dm")`
-#' @family admin
-#' @export
-#'
-#' @examples
-#' rdb::dm() |> dm::dm_draw(view_type = "all")
-dm <- function(connection = connect(user = "rdb_admin",
-                                    password = pg_role_pw("rdb_admin")),
-               incl_aux_admin_tbls = FALSE) {
-  
-  checkmate::assert_flag(incl_aux_admin_tbls)
-  
-  tbl_metadata_subset <-
-    tbl_metadata |>
-    dplyr::filter(if (incl_aux_admin_tbls) TRUE else !is_aux)
-  
-  tbl_metadata_subset |>
-    dplyr::pull("name") |> 
-    dm::dm_from_con(con = connection,
-                    # NOTE: we have to explicitly set `table_names` in order to avoid a spurious "NA" table linked to everything else
-                    table_names = _,
-                    learn_keys = TRUE,
-                    schema = pg_schema) |>
-    dm::dm_set_colors(!!!magrittr::set_names(x = tbl_metadata_subset$name,
-                                             value = tbl_metadata_subset$dm_color)) |>
-    dm::dm_set_table_description(!!!magrittr::set_names(x = tbl_metadata_subset$name,
-                                                        value = pal::strip_md(tbl_metadata_subset$desc)))
 }
 ```
 
