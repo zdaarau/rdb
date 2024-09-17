@@ -6251,6 +6251,7 @@ reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
                       disconnect = TRUE,
                       quiet = FALSE) {
   
+  checkmate::assert_string(hostname_nocodb)
   checkmate::assert_flag(reset_db)
   checkmate::assert_flag(reset_tbls)
   checkmate::assert_flag(ask)
