@@ -6736,21 +6736,7 @@ config_nocodb_tbls <- function(hostname = pal::pkg_config_val(key = "nocodb_host
 
 TODO:
 
--   Disable schema edit for external PGSQL data source after NocoDB setup is complete via
 
-    ``` r
-    nocodb::data_srcs(id_base = id_base,
-                      hostname = hostname,
-                      email = email,
-                      password = password) |>
-      dplyr::filter(type == "pg" & alias == !!nocodb_data_src_alias) |>
-      purrr::chuck("id") |>
-      nocodb::update_data_src(is_schema_readonly = TRUE,
-                              id_base = id_base,
-                              hostname = hostname,
-                              email = email,
-                              password = password)
-    ```
 
 -   Improve status msg output for `quiet = FALSE` and adapt `reset_rdb()` accordingly.
 
