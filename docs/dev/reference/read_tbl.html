@@ -58,7 +58,8 @@
 
 
 <dl><dt id="arg-tbl-name">tbl_name<a class="anchor" aria-label="anchor" href="#arg-tbl-name"></a></dt>
-<dd><p>Table name. One of</p><ul><li><p><code>"actors"</code></p></li>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Table name. One of</p><ul><li><p><code>"actors"</code></p></li>
 <li><p><code>"options"</code></p></li>
 <li><p><code>"legal_instruments"</code></p></li>
 <li><p><code>"legal_norms"</code></p></li>
@@ -80,16 +81,18 @@
 <li><p><code>"subnational_entities"</code></p></li>
 <li><p><code>"municipalities"</code></p></li>
 <li><p><code>"languages"</code></p></li>
-<li><p><code>"topics"</code> .</p></li>
+<li><p><code>"topics"</code></p></li>
 </ul></dd>
 
 
 <dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
-<dd><p>Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
+<dd><p><code><a href="https://rpostgres.r-dbi.org/reference/PqConnection-class.html" class="external-link">PqConnection</a></code><br>
+Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>.</p></dd>
 
 
 <dt id="arg-disconnect">disconnect<a class="anchor" aria-label="anchor" href="#arg-disconnect"></a></dt>
-<dd><p>Whether or not to <a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">terminate</a> the database connection when finished.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to <a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">terminate</a> the database connection when finished.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -113,16 +116,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 281 × 7</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    code  name                 name_long                       created_by updated_by created_at          updated_at         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> AD    Andorra              Principality of Andorra         rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AE    United Arab Emirates United Arab Emirates            rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AF    Afghanistan          Islamic Republic of Afghanistan rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AG    Antigua and Barbuda  Antigua and Barbuda             rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AI    Anguilla             Anguilla                        rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AL    Albania              Republic of Albania             rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AM    Armenia              Republic of Armenia             rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AO    Angola               Republic of Angola              rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AQ    Antarctica           Antarctica                      rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AR    Argentina            Argentine Republic              rdb_admin  rdb_admin  2024-08-19 <span style="color: #949494;">21:36:18</span> 2024-08-19 <span style="color: #949494;">21:36:18</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> AD    Andorra              Principality of Andorra         rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> AE    United Arab Emirates United Arab Emirates            rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> AF    Afghanistan          Islamic Republic of Afghanistan rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> AG    Antigua and Barbuda  Antigua and Barbuda             rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> AI    Anguilla             Anguilla                        rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> AL    Albania              Republic of Albania             rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> AM    Armenia              Republic of Armenia             rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> AO    Angola               Republic of Angola              rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> AQ    Antarctica           Antarctica                      rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> AR    Argentina            Argentine Republic              rdb_admin  rdb_admin  2024-09-17 <span style="color: #949494;">01:34:11</span> 2024-09-17 <span style="color: #949494;">01:34:11</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 271 more rows</span></span>
 </code></pre></div>
     </div>
@@ -135,7 +138,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

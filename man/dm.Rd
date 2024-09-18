@@ -10,7 +10,8 @@ dm(
 )
 }
 \arguments{
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
 \item{incl_aux_admin_tbls}{Whether or not to include the auxiliary administrative unit tables
 supranational_entities, countries, subnational_entities, municipalities}
@@ -22,12 +23,15 @@ A \link[dm:dm]{data model} object.
 Get RDB data model
 }
 \examples{
+# visualize the whole RDB model
 rdb::dm() |> dm::dm_draw(view_type = "all")
+
+# download all RDB tables into local object (e.g. for later processing)
+rdb_dm <- rdb::dm() |> dplyr::collect()
 }
 \seealso{
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},

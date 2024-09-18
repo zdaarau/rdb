@@ -20,6 +20,7 @@ navbar:
 reference:
 - title: Data
 - contents:
+  - dm
   - rfrnds
   - rfrnds_old
   - rfrnd_types
@@ -91,7 +92,6 @@ reference:
 - title: Administration
 - contents:
   - connect
-  - dm
   - update_rfrnds
   - delete_rfrnds
   - update_administrative_units

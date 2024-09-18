@@ -61,7 +61,7 @@
 
 
 <dl><dt id="arg-tbl">tbl<a class="anchor" aria-label="anchor" href="#arg-tbl"></a></dt>
-<dd><p>PostgreSQL database table to be updated. A <code><a href="https://dbplyr.tidyverse.org/reference/tbl.src_dbi.html" class="external-link">tbl.src_dbi</a></code> object.</p></dd>
+<dd><p>PostgreSQL database table to be updated. A <code><a href="https://dbplyr.tidyverse.org/reference/tbl.src_dbi.html" class="external-link">dbplyr::tbl.src_dbi</a></code> object.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
@@ -70,7 +70,8 @@ update the corresponding database fields with.</p></dd>
 
 
 <dt id="arg-tbl-name">tbl_name<a class="anchor" aria-label="anchor" href="#arg-tbl-name"></a></dt>
-<dd><p>Table name. One of</p><ul><li><p><code>"actors"</code></p></li>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Table name. One of</p><ul><li><p><code>"actors"</code></p></li>
 <li><p><code>"options"</code></p></li>
 <li><p><code>"legal_instruments"</code></p></li>
 <li><p><code>"legal_norms"</code></p></li>
@@ -92,7 +93,7 @@ update the corresponding database fields with.</p></dd>
 <li><p><code>"subnational_entities"</code></p></li>
 <li><p><code>"municipalities"</code></p></li>
 <li><p><code>"languages"</code></p></li>
-<li><p><code>"topics"</code> .</p></li>
+<li><p><code>"topics"</code></p></li>
 </ul></dd>
 
 
@@ -101,7 +102,8 @@ update the corresponding database fields with.</p></dd>
 
 
 <dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
-<dd><p>Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
+<dd><p><code><a href="https://rpostgres.r-dbi.org/reference/PqConnection-class.html" class="external-link">PqConnection</a></code><br>
+Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -134,6 +136,7 @@ restriction to avoid accidental insertions.</p>
 <code><a href="pg_tbl_constraints.html">pg_tbl_constraints</a>()</code>,
 <code><a href="pg_tbl_del.html">pg_tbl_del</a>()</code>,
 <code><a href="pg_tbl_keep.html">pg_tbl_keep</a>()</code>,
+<code><a href="pg_tbl_read.html">pg_tbl_read</a>()</code>,
 <code><a href="pg_update_seq.html">pg_update_seq</a>()</code>,
 <code><a href="read_sql_file.html">read_sql_file</a>()</code>,
 <code><a href="split_sql_str.html">split_sql_str</a>()</code></p></div>
@@ -148,7 +151,7 @@ restriction to avoid accidental insertions.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

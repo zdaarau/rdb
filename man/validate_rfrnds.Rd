@@ -13,7 +13,7 @@ validate_rfrnds(
 \arguments{
 \item{data}{Referendum data to validate, as returned by \code{\link[=rfrnds]{rfrnds()}}.}
 
-\item{check_applicability_constraint}{Whether or not to check that no applicability constraints as defined in the \link[=data_codebook]{codebook} are violated.}
+\item{check_applicability_constraint}{Whether or not to check that no applicability constraints as defined in the \code{\link{codebook}} are violated.}
 
 \item{check_id_sudd_prefix}{Whether or not to check that all \href{https://rdb.rpkg.dev/articles/codebook.html#id-sudd}{\code{id_sudd}} prefixes are valid.}
 }

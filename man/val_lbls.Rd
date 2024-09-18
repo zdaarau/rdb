@@ -13,11 +13,11 @@ val_lbls(var_name, incl_affixes = TRUE)
 }
 \value{
 A character vector. Of length \code{0} if \code{var_name}'s values are not restricted to a predefined set or no value labels are defined in the
-\link[=data_codebook]{codebook}.
+\code{\link{codebook}}.
 }
 \description{
 Returns a character vector of value labels of a specific \code{\link[=rfrnds]{rfrnds()}} column, in the same order as \code{\link[=var_vals]{var_vals()}}, or of length \code{0} if \code{var_name}'s values are
-not restricted to a predefined set or no value labels are defined in the \link[=data_codebook]{codebook}.
+not restricted to a predefined set or no value labels are defined in the \code{\link{codebook}}.
 }
 \examples{
 rdb::val_lbls("result",

@@ -14,9 +14,11 @@ pg_drop_tbls(
 \arguments{
 \item{tbl_names}{Names of the tables to delete from the PostgreSQL database.}
 
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
-\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
+\item{disconnect}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 
 \item{min_msg_severity_lvl}{Minimum PostgreSQL \href{https://www.postgresql.org/docs/current/runtime-config-logging.html#RUNTIME-CONFIG-SEVERITY-LEVELS}{message severity level} to be printed. one of
 \code{"DEBUG5"}, \code{"DEBUG4"}, \code{"DEBUG3"}, \code{"DEBUG2"}, \code{"DEBUG1"}, \code{"LOG"}, \code{"NOTICE"}, \code{"WARNING"} or \code{"ERROR"}. Each level includes all the levels that follow it. The later the level, the
@@ -46,6 +48,7 @@ Other PostgreSQL functions
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
+\code{\link{pg_tbl_read}()},
 \code{\link{pg_tbl_update}()},
 \code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},

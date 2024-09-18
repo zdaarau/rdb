@@ -27,7 +27,6 @@ Configures the RDB tables on the specified NocoDB server. Currently, this includ
 }
 \seealso{
 Other NocoDB functions
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
 \code{\link{purge_nocodb}()},
@@ -36,7 +35,6 @@ Other NocoDB functions
 
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},

@@ -13,9 +13,11 @@ rfrnd_types(
 )
 }
 \arguments{
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
-\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
+\item{disconnect}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 
 \item{incl_drafts}{Whether or not to include database entries with \emph{draft} status.}
 

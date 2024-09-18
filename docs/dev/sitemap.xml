@@ -18,7 +18,6 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/as_ballot_dates.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/assert_vars.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/clean_attachment_bucket.html</loc></url>
-<url><loc>https://rdb.rpkg.dev/dev/reference/config_nocodb_tbl_cols.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/config_nocodb_tbls.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/connect.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/create_nocodb_tbl_cols.html</loc></url>
@@ -62,6 +61,7 @@
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_constraints.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_del.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_keep.html</loc></url>
+<url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_read.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_tbl_update.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pg_update_seq.html</loc></url>
 <url><loc>https://rdb.rpkg.dev/dev/reference/pk.html</loc></url>

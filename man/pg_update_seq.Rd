@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{pg_update_seq}
 \alias{pg_update_seq}
-\title{Update}
+\title{Update PostgreSQL sequence}
 \usage{
 pg_update_seq(
   tbl_name,
@@ -12,19 +12,22 @@ pg_update_seq(
 )
 }
 \arguments{
-\item{tbl_name}{Table name. A character scalar.}
+\item{tbl_name}{\code{\link[base:character]{character(1)}}\cr
+Table name.}
 
 \item{col_name}{Name of the column whose sequence is to be updated.}
 
-\item{schema}{Schema name. A character scalar.}
+\item{schema}{\code{\link[base:character]{character(1)}}\cr
+Schema name.}
 
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Update
+Update PostgreSQL sequence
 }
 \seealso{
 Other PostgreSQL functions
@@ -45,6 +48,7 @@ Other PostgreSQL functions
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
+\code{\link{pg_tbl_read}()},
 \code{\link{pg_tbl_update}()},
 \code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}

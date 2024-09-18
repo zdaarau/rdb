@@ -14,12 +14,13 @@ pg_tbl_update(
 )
 }
 \arguments{
-\item{tbl}{PostgreSQL database table to be updated. A \code{\link[dbplyr:tbl.src_dbi]{tbl.src_dbi}} object.}
+\item{tbl}{PostgreSQL database table to be updated. A \code{\link[dbplyr:tbl.src_dbi]{dbplyr::tbl.src_dbi}} object.}
 
 \item{data}{New or updated table data. A data frame that must contain at least the table's primary key column plus any additional columns with new values to
 update the corresponding database fields with.}
 
-\item{tbl_name}{Table name. One of
+\item{tbl_name}{\code{\link[base:character]{character(1)}}\cr
+Table name. One of
 \itemize{
 \item \code{"actors"}
 \item \code{"options"}
@@ -43,12 +44,13 @@ update the corresponding database fields with.}
 \item \code{"subnational_entities"}
 \item \code{"municipalities"}
 \item \code{"languages"}
-\item \code{"topics"} .
+\item \code{"topics"}
 }}
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
 
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 }
 \value{
 The updated table data as a \link[tibble:tbl_df-class]{tibble}, invisibly. Note that newly inserted rows aren't included if the table's primary key column is
@@ -80,6 +82,7 @@ Other PostgreSQL functions
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
+\code{\link{pg_tbl_read}()},
 \code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}

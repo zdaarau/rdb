@@ -26,7 +26,8 @@ PostgreSQL tables are recreated.}
 
 \item{ask}{Whether or not to ask for confirmation before proceeding. Only relevant if run \link[=interactive]{interactively}.}
 
-\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
+\item{disconnect}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
@@ -36,10 +37,19 @@ PostgreSQL tables are recreated.}
 \description{
 Resets the RDB NocoDB server, optionally including the whole RDB PostgreSQL database and/or tables.
 }
+\examples{
+\dontrun{
+# reset production PGSQL DB branch and NocoDB instance
+rdb::reset_rdb(reset_db = TRUE)
+
+# reset testing PGSQL DB branch and NocoDB instance
+rdb::reset_rdb(hostname_nocodb = Sys.getenv("R_RDB_NOCODB_HOST_TESTING"),
+               hostname_pg = Sys.getenv("R_RDB_PG_HOST_TESTING"),
+               reset_db = TRUE)}
+}
 \seealso{
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},
@@ -61,7 +71,6 @@ Other administration functions:
 \code{\link{update_topics}()}
 
 Other NocoDB functions
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},

@@ -10,9 +10,11 @@ pg_post_nocodb(
 )
 }
 \arguments{
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
-\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
+\item{disconnect}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
 \code{NULL}, invisibly.
@@ -38,6 +40,7 @@ Other PostgreSQL functions
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
+\code{\link{pg_tbl_read}()},
 \code{\link{pg_tbl_update}()},
 \code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},

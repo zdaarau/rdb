@@ -12,9 +12,11 @@ identifying the referendums to be updated plus any additional columns containing
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
 
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
-\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
+\item{disconnect}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
 \code{data}, invisibly.
@@ -25,7 +27,6 @@ Updates the RDB's \code{referendums} table with \code{data}. By default, rows no
 \seealso{
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},

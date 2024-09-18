@@ -7,11 +7,14 @@
 pg_pk(tbl_name, schema = pg_schema, connection = connect())
 }
 \arguments{
-\item{tbl_name}{Table name. A character scalar.}
+\item{tbl_name}{\code{\link[base:character]{character(1)}}\cr
+Table name.}
 
-\item{schema}{Schema name. A character scalar.}
+\item{schema}{\code{\link[base:character]{character(1)}}\cr
+Schema name.}
 
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 }
 \value{
 A character vector.
@@ -37,6 +40,7 @@ Other PostgreSQL functions
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
+\code{\link{pg_tbl_read}()},
 \code{\link{pg_tbl_update}()},
 \code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},

@@ -21,12 +21,11 @@ reset_nocodb(
 \code{hostname}, invisibly.
 }
 \description{
-Completely re-creates the \code{Main} base and adds the RDB team's user accounts on the specified NocoDB server.
-Beware that this results in \strong{loss of all existing NocoDB-specific metadata} (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments}, \href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
+Completely re-creates the connection settings and \code{Main} base and adds the RDB team's user accounts on the specified
+NocoDB server. Beware that this results in \strong{loss of all existing NocoDB-specific metadata} (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments}, \href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
 }
 \seealso{
 Other NocoDB functions
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
@@ -35,7 +34,6 @@ Other NocoDB functions
 
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},

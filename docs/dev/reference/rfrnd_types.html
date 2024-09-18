@@ -60,11 +60,13 @@
 
 
 <dl><dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
-<dd><p>Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>. An S4 object that inherits from <code><a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a></code>.</p></dd>
+<dd><p><code><a href="https://rpostgres.r-dbi.org/reference/PqConnection-class.html" class="external-link">PqConnection</a></code><br>
+Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>.</p></dd>
 
 
 <dt id="arg-disconnect">disconnect<a class="anchor" aria-label="anchor" href="#arg-disconnect"></a></dt>
-<dd><p>Whether or not to <a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">terminate</a> the database connection when finished.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to <a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">terminate</a> the database connection when finished.</p></dd>
 
 
 <dt id="arg-incl-drafts">incl_drafts<a class="anchor" aria-label="anchor" href="#arg-incl-drafts"></a></dt>
@@ -98,10 +100,11 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># get all legal bases</span></span></span>
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu">rfrnd_types</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 15</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 15 variables: id &lt;int&gt;, display &lt;chr&gt;, is_draft &lt;lgl&gt;, administrative_unit_id &lt;chr&gt;, title &lt;chr&gt;, valid_from &lt;date&gt;, valid_to &lt;date&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   trigger_actor_label &lt;chr&gt;, trigger_threshold_count &lt;int64&gt;, are_empty_votes_counted &lt;lgl&gt;, quorum_turnout &lt;dbl&gt;, created_by &lt;chr&gt;, updated_by &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   created_at &lt;dttm&gt;, updated_at &lt;dttm&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 16</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      id display    is_draft administrative_unit_id title valid_from valid_to trigger_actor_label trigger_threshold_count are_empty_votes_counted quorum_approval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>                             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1 tie-break… FALSE    <span style="color: #BB0000;">NA</span>                     tie-… 101-01-01  <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                       <span style="color: #BB0000;">NA</span> FALSE                               0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more variables: quorum_turnout &lt;dbl&gt;, created_by &lt;chr&gt;, updated_by &lt;chr&gt;, created_at &lt;dttm&gt;, updated_at &lt;dttm&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -113,7 +116,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

@@ -36,9 +36,16 @@ purge_nocodb(
 Stops the \code{fly_app} NocoDB instance, purges NocoDB's internal database (the Litestream replication stored under \code{{s3_bucket}/nocodb}) and then restarts the
 NocoDB instance, thereby resetting it to factory settings. Beware that this results in \strong{loss of all existing NocoDB-specific metadata} (\href{https://docs.nocodb.com/records/expand-record/#record-comment}{comments}, \href{https://docs.nocodb.com/records/expand-record/#record-audit}{audit} \href{https://docs.nocodb.com/data-sources/actions-on-data-sources/#audit-logs}{logs} etc.).
 }
+\examples{
+\dontrun{
+# purge NocoDB production instance
+rdb:::purge_nocodb()
+
+# purge NocoDB testing instance
+rdb:::purge_nocodb(fly_app = "rdb-nocodb-testing")}
+}
 \seealso{
 Other NocoDB functions
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{create_nocodb_tbl_cols}()},
 \code{\link{create_nocodb_tbls}()},
@@ -47,7 +54,6 @@ Other NocoDB functions
 
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},

@@ -7,7 +7,8 @@
 pk(tbl_name = tbl_metadata$name)
 }
 \arguments{
-\item{tbl_name}{Table name. A character scalar.}
+\item{tbl_name}{\code{\link[base:character]{character(1)}}\cr
+Table name.}
 }
 \value{
 A character scalar.

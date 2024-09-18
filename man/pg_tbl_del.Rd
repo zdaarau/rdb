@@ -7,7 +7,7 @@
 pg_tbl_del(tbl, data, pk_col_names)
 }
 \arguments{
-\item{tbl}{PostgreSQL database table from which data is to be deleted. A \code{\link[dbplyr:tbl.src_dbi]{tbl.src_dbi}} object.}
+\item{tbl}{PostgreSQL database table from which data is to be deleted. A \code{\link[dbplyr:tbl.src_dbi]{dbplyr::tbl.src_dbi}} object.}
 
 \item{data}{Table data to delete. A data frame that must contain the table's primary key column. Additional columns are ignored.}
 
@@ -38,6 +38,7 @@ Other PostgreSQL functions
 \code{\link{pg_role_pw}()},
 \code{\link{pg_tbl_constraints}()},
 \code{\link{pg_tbl_keep}()},
+\code{\link{pg_tbl_read}()},
 \code{\link{pg_tbl_update}()},
 \code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},

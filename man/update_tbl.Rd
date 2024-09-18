@@ -16,7 +16,8 @@ update_tbl(
 \item{data}{New or updated table data. A data frame that must contain at least the table's primary key column plus any additional columns with new values to
 update the corresponding database fields with.}
 
-\item{tbl_name}{Table name. One of
+\item{tbl_name}{\code{\link[base:character]{character(1)}}\cr
+Table name. One of
 \itemize{
 \item \code{"actors"}
 \item \code{"options"}
@@ -40,14 +41,16 @@ update the corresponding database fields with.}
 \item \code{"subnational_entities"}
 \item \code{"municipalities"}
 \item \code{"languages"}
-\item \code{"topics"} .
+\item \code{"topics"}
 }}
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
 
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
-\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
+\item{disconnect}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
 \code{data}, invisibly.
@@ -58,7 +61,6 @@ Updates the specified RDB table with the provided data.
 \seealso{
 Other administration functions:
 \code{\link{clean_attachment_bucket}()},
-\code{\link{config_nocodb_tbl_cols}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},

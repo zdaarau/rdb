@@ -11,7 +11,8 @@ read_tbl(
 )
 }
 \arguments{
-\item{tbl_name}{Table name. One of
+\item{tbl_name}{\code{\link[base:character]{character(1)}}\cr
+Table name. One of
 \itemize{
 \item \code{"actors"}
 \item \code{"options"}
@@ -35,12 +36,14 @@ read_tbl(
 \item \code{"subnational_entities"}
 \item \code{"municipalities"}
 \item \code{"languages"}
-\item \code{"topics"} .
+\item \code{"topics"}
 }}
 
-\item{connection}{Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}. An S4 object that inherits from \code{\link[DBI:DBIConnection-class]{DBI::DBIConnection}}.}
+\item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
+Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
-\item{disconnect}{Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
+\item{disconnect}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
