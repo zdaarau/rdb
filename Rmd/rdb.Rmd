@@ -2674,33 +2674,38 @@ NOTES:
     -   `municipalities`: "\U0001F3D8"
     -   `languages`: "\U0001F310"
 
+-   Column meanings:
+
+    -   `is_aux` indicates whether a DB table is auxiliary, i.e. is not part of the relational model of the RDB.
+    -   `is_admin` indicates whether a DB table is fully administered programmatically and not intended to be altered by NocoDB users.
+
 ```{r}
 tbl_metadata <-
   tibble::tribble(
-    ~name,                          ~dm_color,      ~nocodb_display_col, ~nocodb_meta.icon, ~is_aux,
-    "actors",                       "#cf3dff",      "label",             "\U0001F3AD",      FALSE,
-    "options",                      "#cf3dff",      "display",           "\u2611",          FALSE,
-    "legal_instruments",            "#c2f0c2",      "display",           "\U0001F4DC",      FALSE,
-    "legal_norms",                  "#64d864",      "display",           "\u2712",          FALSE,
-    "referendum_types",             "#64d864",      "display",           "\U0001F3DB",      FALSE,
-    "referendum_clusters",          "#b3b9ff",      "id",                "\U0001F347",      FALSE,
-    "referendums",                  color_rdb_main, "display",           "\U0001F5F3",      FALSE,
-    "referendum_types_legal_norms", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,
-    "referendum_types_referendums", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,
-    "topics_referendums",           "#b3b9ff",      NA_character_,       NA_character_,     FALSE,
-    "referendum_titles",            "#b3b9ff",      "title",             "\U0001F4D5",      FALSE,
-    "referendum_questions",         "#b3b9ff",      "question",          "\u2753",          FALSE,
-    "referendum_urls",              "#b3b9ff",      "url",               "\U0001f517",      FALSE,
-    "referendum_positions",         "#b3b9ff",      "display",           "\U0001F4E3",      FALSE,
-    "referendum_votes",             "#b3b9ff",      "option_display",    "\U0001F9FE",      FALSE,
-    "referendum_sub_votes",         "#b3b9ff",      "display",           "\U0001F9FE",      FALSE,
-    "administrative_units",         "#ffcf3d",      "name",              "\U0001F512",      FALSE,
-    "supranational_entities",       "#ffecb3",      "name",              "\U0001F512",      TRUE,
-    "countries",                    "#ffecb3",      "name",              "\U0001F512",      TRUE,
-    "subnational_entities",         "#ffecb3",      "name",              "\U0001F512",      TRUE,
-    "municipalities",               "#ffecb3",      "name",              "\U0001F512",      TRUE,
-    "languages",                    "#ffcf3d",      "name",              "\U0001F512",      FALSE,
-    "topics",                       "#ffcf3d",      "name",              "\U0001F512",      FALSE
+    ~name,                          ~dm_color,      ~nocodb_display_col, ~nocodb_meta.icon, ~is_aux, ~is_admin,
+    "actors",                       "#cf3dff",      "label",             "\U0001F3AD",      FALSE,   FALSE,
+    "options",                      "#cf3dff",      "display",           "\u2611",          FALSE,   FALSE,
+    "legal_instruments",            "#c2f0c2",      "display",           "\U0001F4DC",      FALSE,   FALSE,
+    "legal_norms",                  "#64d864",      "display",           "\u2712",          FALSE,   FALSE,
+    "referendum_types",             "#64d864",      "display",           "\U0001F3DB",      FALSE,   FALSE,
+    "referendum_clusters",          "#b3b9ff",      "id",                "\U0001F347",      FALSE,   FALSE,
+    "referendums",                  color_rdb_main, "display",           "\U0001F5F3",      FALSE,   FALSE,
+    "referendum_types_legal_norms", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,   FALSE,
+    "referendum_types_referendums", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,   FALSE,
+    "topics_referendums",           "#b3b9ff",      NA_character_,       NA_character_,     FALSE,   FALSE,
+    "referendum_titles",            "#b3b9ff",      "title",             "\U0001F4D5",      FALSE,   FALSE,
+    "referendum_questions",         "#b3b9ff",      "question",          "\u2753",          FALSE,   FALSE,
+    "referendum_urls",              "#b3b9ff",      "url",               "\U0001f517",      FALSE,   FALSE,
+    "referendum_positions",         "#b3b9ff",      "display",           "\U0001F4E3",      FALSE,   FALSE,
+    "referendum_votes",             "#b3b9ff",      "option_display",    "\U0001F9FE",      FALSE,   FALSE,
+    "referendum_sub_votes",         "#b3b9ff",      "display",           "\U0001F9FE",      FALSE,   FALSE,
+    "administrative_units",         "#ffcf3d",      "name",              "\U0001F512",      FALSE,   TRUE,
+    "supranational_entities",       "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
+    "countries",                    "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
+    "subnational_entities",         "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
+    "municipalities",               "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
+    "languages",                    "#ffcf3d",      "name",              "\U0001F512",      FALSE,   TRUE,
+    "topics",                       "#ffcf3d",      "name",              "\U0001F512",      FALSE,   TRUE
   ) |>
   # add `desc` col separately (otherwise col vals exceed screen width too easily)
   dplyr::left_join(
