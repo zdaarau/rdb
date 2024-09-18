@@ -1594,6 +1594,15 @@ pg_tbl_update <- function(tbl,
                 pk_col_names = pk_col_names)
   }
   
+  # ensure PK cols are present in `data`
+  missing_pk_col_names <- setdiff(pk_col_names,
+                                  colnames(data))
+  n_missing_pk_col_names <- length(missing_pk_col_names)
+  
+  if (n_missing_pk_col_names > 0L) {
+    cli::cli_abort("{cli::qty(n_missing_pk_col_names)} Primary key column{?s} {.var {missing_pk_col_names}} {?is/are} missing from {.arg data}.")
+  }
+  
   # update existing and add new data
   # NOTE: we can't use `dplyr::rows_in/upsert()` on tables with always-generated pk col
   are_pks_writable <-
