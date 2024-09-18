@@ -2,6 +2,11 @@
 
 # Reset database
 
+## Assumptions
+
+- The PostgreSQL role `rdb_admin` has already been created in the Neon Console, API or CLI, so that it is granted membership in the [`neon_superuser`
+  role](https://neon.tech/docs/manage/roles#the-neonsuperuser-role).
+
 ## Relevant documentation
 
 - [SQL Key Words](https://www.postgresql.org/docs/current/sql-keywords-appendix.html)
