@@ -6203,6 +6203,58 @@ TODO
 
 -   implement PGSQL data backup -\> restoral
 
+    -   backup:
+
+        ``` r
+        connection <- connect()
+        file_name_bkp <- "tmp_rdb_dm_bkp.rds"
+
+        tbl_names_to_bkp <-
+          tbl_metadata |>
+          dplyr::filter(!is_admin) |>
+          dplyr::pull(name)
+
+        dm_bkp <-
+          dm(connection = connection) |>
+          dm::dm_select_tbl(!!tbl_names_to_bkp) |>
+          # TODO: exclude non-PK `GENERATED ALWAYS` cols
+          dplyr::collect() |>
+          # we write `dm_bkp` to disk and read it back in before restoral in order to be prepared for any failures in between
+          saveRDS(file = file_name_bkp)
+        ```
+
+    -   restore:
+
+        NOTE: we need to populate the tbls in the right order to not violate FK constraints. we can derive this order from `dm::dm_get_all_fks()`.
+
+        ``` r
+        dm_bkp <- readRDS(file = file_name_bkp)
+
+        tbl_deps_left <-
+          dm_bkp |>
+          dm::dm_get_all_fks() |>
+          dplyr::group_by(child_table) |>
+          dplyr::summarise(parent_tbls = list(unique(parent_table)))
+
+        tbl_names_todo <- tbl_names_to_bkp
+        tbl_names_done <- character()
+
+        while (length(tbl_names_todo) > 0L) {
+
+          tbl_names_next <- setdiff(tbl_names_todo,
+                                    tbl_deps_left$child_table)
+          # restore next tbls
+          tbl_names_next |>
+            purrr::walk(\(tbl_name) rdb::update_tbl(data = dm_bkp[[tbl_name]],
+                                                    tbl_name = tbl_name,
+                                                    connection = connection,
+                                                    disconnect = FALSE))
+          tbl_names_done %<>% c(tbl_names_next)
+          tbl_names_todo %<>% setdiff(y = tbl_names_next)
+          tbl_deps_left %<>% dplyr::filter(purrr::map_lgl(parent_tbls, \(x) any(x %in% tbl_names_todo)))
+        }
+        ```
+
 -   Sometimes, `reset_rdb()` fails with
 
     ```         
