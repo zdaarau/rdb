@@ -770,14 +770,11 @@ pg_col_metadata <- function(tbl_name,
   checkmate::assert_string(tbl_name)
   checkmate::assert_string(schema)
   
-  result <-
-    glue::glue_sql(.con = connection,
-                   "SELECT * FROM information_schema.columns",
-                   "  WHERE table_schema = {schema} AND table_name = {tbl_name};") |>
+  glue::glue_sql(.con = connection,
+                 "SELECT * FROM information_schema.columns",
+                 "  WHERE table_schema = {schema} AND table_name = {tbl_name};") |>
     DBI::dbGetQuery(conn = connection) |>
-    tibble::as_tibble()
-  
-  result |>
+    dplyr::collect() |>
     dplyr::rename(generated = is_generated) |>
     dplyr::mutate(dplyr::across(.cols = any_of(c("is_nullable",
                                                  "is_self_referencing",
@@ -810,7 +807,8 @@ pg_col_metadata <- function(tbl_name,
                   is_identity,
                   identity_generation,
                   generated,
-                  generation_expression)
+                  generation_expression) |>
+    tibble::as_tibble()
 }
 
 #' Get PostgreSQL column name from number
@@ -1173,7 +1171,7 @@ pg_role_pw <- function(role,
     dplyr::pull("password")
 }
 
-#' Update
+#' Update PostgreSQL sequence
 #'
 #' @inheritParams pg_pk
 #' @param col_name Name of the column whose sequence is to be updated.
@@ -1195,6 +1193,7 @@ pg_update_seq <- function(tbl_name,
   glue::glue_sql(.con = connection,
                  "SELECT setval({paste(tbl_name, col_name, 'seq', sep = '_')}, (SELECT MAX({`col_name`}) FROM {`schema`}.{`tbl_name`}));") |>
     DBI::dbGetQuery(conn = connection) |>
+    dplyr::collect() |>
     tibble::as_tibble()
 }
 
@@ -1223,6 +1222,7 @@ pg_tbl_constraints <- function(tbl_name,
                    "      AND rel.relname = {tbl_name};",
                    "  ") |>
     DBI::dbGetQuery(conn = connection) |>
+    dplyr::collect() |>
     tibble::as_tibble()
 }
 
@@ -1266,7 +1266,7 @@ pg_tbl_read <- function(tbl_name,
 
 #' Delete specified data from PostgreSQL table
 #'
-#' @param tbl PostgreSQL database table from which data is to be deleted. A [`tbl.src_dbi`][dbplyr::tbl.src_dbi] object.
+#' @param tbl PostgreSQL database table from which data is to be deleted. A [`dbplyr::tbl.src_dbi`] object.
 #' @param data Table data to delete. A data frame that must contain the table's primary key column. Additional columns are ignored.
 #' @param pk_col_names Primary key column name(s). A character vector.
 #'
@@ -1284,7 +1284,7 @@ pg_tbl_del <- function(tbl,
                               any.missing = FALSE)
   tbl |>
     dplyr::select(!!pk_col_names) |>
-    tibble::as_tibble() |>
+    dplyr::collect() |>
     dplyr::intersect(y =
                        data |>
                        dplyr::select(!!pk_col_names) |>
@@ -1316,7 +1316,7 @@ pg_tbl_keep <- function(tbl,
                               any.missing = FALSE)
   tbl |>
     dplyr::select(!!pk_col_names) |>
-    tibble::as_tibble() |>
+    dplyr::collect() |>
     dplyr::setdiff(y =
                      data |>
                      dplyr::select(!!pk_col_names) |>
@@ -1337,7 +1337,7 @@ pg_tbl_keep <- function(tbl,
 #' restriction to avoid accidental insertions.
 #'
 #' @inheritParams read_tbl
-#' @param tbl PostgreSQL database table to be updated. A [`tbl.src_dbi`][dbplyr::tbl.src_dbi] object.
+#' @param tbl PostgreSQL database table to be updated. A [`dbplyr::tbl.src_dbi`] object.
 #' @param data New or updated table data. A data frame that must contain at least the table's primary key column plus any additional columns with new values to
 #'   update the corresponding database fields with.
 #' @param sweep Whether or not to also sweep the table, i.e. delete rows that are not contained in `data`.
@@ -1372,6 +1372,15 @@ pg_tbl_update <- function(tbl,
                 pk_col_names = pk_col_names)
   }
   
+  # ensure PK cols are present in `data`
+  missing_pk_col_names <- setdiff(pk_col_names,
+                                  colnames(data))
+  n_missing_pk_col_names <- length(missing_pk_col_names)
+  
+  if (n_missing_pk_col_names > 0L) {
+    cli::cli_abort("{cli::qty(n_missing_pk_col_names)} Primary key column{?s} {.var {missing_pk_col_names}} {?is/are} missing from {.arg data}.")
+  }
+  
   # update existing and add new data
   # NOTE: we can't use `dplyr::rows_in/upsert()` on tables with always-generated pk col
   are_pks_writable <-
@@ -1393,32 +1402,31 @@ pg_tbl_update <- function(tbl,
                                  in_place = TRUE)
   } else {
     
-    introduces_new_pk_vals <- FALSE
-    
-    n_unknown_pks <-
+    nrow_unknown_pks <-
       data |>
       dplyr::select(!!pk_col_names) |>
       dplyr::setdiff(y =
                        tbl |>
                        dplyr::select(!!pk_col_names) |>
-                       tibble::as_tibble() |>
+                       dplyr::collect() |>
                        # add an empty row to account for all-NA PK vals
                        tibble::add_row()) |>
       nrow()
     
-    if (n_unknown_pks > 0L) {
-      cli::cli_abort(paste0("{.val {n_pk_vals_new}} row{?s} in {.arg data} detected that {?has/have} an {.var {pk_col_names}} value set that is not present in",
-                            " the {.field {tbl_name}} table. Rows to be newly inserted into the table must have `NA` values in {.arg data} column ",
-                            "{.var {pk_col_names}}."))
+    if (nrow_unknown_pks > 0L) {
+      cli::cli_abort(paste0("{.val {nrow_unknown_pks}} row{?s} detected in {.arg data} with unknown primary key values. Rows to be newly inserted into the ",
+                            "{.field {tbl_name}} table must have `NA` values in the primary key {cli::qty(pk_col_names)} column{?s} ({.var {pk_col_names}}) ",
+                            "since {?it is/at least one of them is} {.code GENERATED ALWAYS}."))
     }
     
+    # update existing rows
     result <- dplyr::rows_update(x = tbl,
                                  y = data,
                                  by = pk_col_names,
                                  copy = TRUE,
                                  in_place = TRUE,
                                  unmatched = "ignore")
-    
+    # add new rows
     if (anyNA(data[, pk_col_names])) {
       
       # NOTE: we can't append the result of `DBI::dbAppendTable()` to `result` since the former just returns an integer scalar
@@ -1505,7 +1513,7 @@ read_sql_file <- function(.path,
 #' @param ... Further (named) arguments used as temporary variables available for substitution while interpolating the SQL statements via
 #'   [DBI::sqlInterpolate()].
 #'
-#' @return A list of [`DBI::SQL`][DBI::SQL] objects.
+#' @return A list of [`DBI::SQL`] objects.
 #' @family pg
 #' @keywords internal
 # nolint start: cyclocomp_linter
@@ -1595,7 +1603,7 @@ split_sql_str <- function(.text,
 #' @param s3_access_key S3-compatible access key ID.
 #' @param s3_access_secret S3-compatible access secret.
 #'
-#' @return An object of class [`s3fs::S3FileSystem`][s3fs::S3FileSystem], invisibly.
+#' @return An object of class [`s3fs::S3FileSystem`], invisibly.
 #' @family s3
 #' @keywords internal
 s3_auth <- function(s3_endpoint = s3_endpoint_url,
@@ -2172,7 +2180,6 @@ date_backup_rdb <- pal::path_mod_time("data-raw/backups/rdb.rds") |> clock::as_d
 neon_project <- "neon_rdb"
 neon_project_id <- "curly-rain-52896163"
 
-nocodb_hostname_testing <- "admin-testing.rdb.vote"
 nocodb_base_title <- "Main"
 nocodb_data_src_alias <- "RDB"
 
@@ -2217,30 +2224,30 @@ rm(sudd_years)
 
 tbl_metadata <-
   tibble::tribble(
-    ~name,                          ~dm_color,      ~nocodb_display_col, ~nocodb_meta.icon, ~is_aux,
-    "actors",                       "#cf3dff",      "label",             "\U0001F3AD",      FALSE,
-    "options",                      "#cf3dff",      "display",           "\u2611",          FALSE,
-    "legal_instruments",            "#c2f0c2",      "display",           "\U0001F4DC",      FALSE,
-    "legal_norms",                  "#64d864",      "display",           "\u2712\ufe0f",    FALSE,
-    "referendum_types",             "#64d864",      "display",           "\U0001F3DB",      FALSE,
-    "referendum_clusters",          "#b3b9ff",      "id",                "\U0001F347",      FALSE,
-    "referendums",                  color_rdb_main, "display",           "\U0001F5F3",      FALSE,
-    "referendum_types_legal_norms", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,
-    "referendum_types_referendums", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,
-    "topics_referendums",           "#b3b9ff",      NA_character_,       NA_character_,     FALSE,
-    "referendum_titles",            "#b3b9ff",      "title",             "\U0001F4D5",      FALSE,
-    "referendum_questions",         "#b3b9ff",      "question",          "\u2753",          FALSE,
-    "referendum_urls",              "#b3b9ff",      "url",               "\U0001f517",      FALSE,
-    "referendum_positions",         "#b3b9ff",      "display",           "\U0001F4E3",      FALSE,
-    "referendum_votes",             "#b3b9ff",      "option_display",    "\U0001F9FE",      FALSE,
-    "referendum_sub_votes",         "#b3b9ff",      "display",           "\U0001F9FE",      FALSE,
-    "administrative_units",         "#ffcf3d",      "name",              "\U0001F512",      FALSE,
-    "supranational_entities",       "#ffecb3",      "name",              "\U0001F512",      TRUE,
-    "countries",                    "#ffecb3",      "name",              "\U0001F512",      TRUE,
-    "subnational_entities",         "#ffecb3",      "name",              "\U0001F512",      TRUE,
-    "municipalities",               "#ffecb3",      "name",              "\U0001F512",      TRUE,
-    "languages",                    "#ffcf3d",      "name",              "\U0001F512",      FALSE,
-    "topics",                       "#ffcf3d",      "name",              "\U0001F512",      FALSE
+    ~name,                          ~dm_color,      ~nocodb_display_col, ~nocodb_meta.icon, ~is_aux, ~is_admin,
+    "actors",                       "#cf3dff",      "label",             "\U0001F3AD",      FALSE,   FALSE,
+    "options",                      "#cf3dff",      "display",           "\u2611",          FALSE,   FALSE,
+    "legal_instruments",            "#c2f0c2",      "display",           "\U0001F4DC",      FALSE,   FALSE,
+    "legal_norms",                  "#64d864",      "display",           "\u2712",          FALSE,   FALSE,
+    "referendum_types",             "#64d864",      "display",           "\U0001F3DB",      FALSE,   FALSE,
+    "referendum_clusters",          "#b3b9ff",      "id",                "\U0001F347",      FALSE,   FALSE,
+    "referendums",                  color_rdb_main, "display",           "\U0001F5F3",      FALSE,   FALSE,
+    "referendum_types_legal_norms", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,   FALSE,
+    "referendum_types_referendums", "#c2f0c2",      NA_character_,       NA_character_,     FALSE,   FALSE,
+    "topics_referendums",           "#b3b9ff",      NA_character_,       NA_character_,     FALSE,   FALSE,
+    "referendum_titles",            "#b3b9ff",      "title",             "\U0001F4D5",      FALSE,   FALSE,
+    "referendum_questions",         "#b3b9ff",      "question",          "\u2753",          FALSE,   FALSE,
+    "referendum_urls",              "#b3b9ff",      "url",               "\U0001f517",      FALSE,   FALSE,
+    "referendum_positions",         "#b3b9ff",      "display",           "\U0001F4E3",      FALSE,   FALSE,
+    "referendum_votes",             "#b3b9ff",      "option_display",    "\U0001F9FE",      FALSE,   FALSE,
+    "referendum_sub_votes",         "#b3b9ff",      "display",           "\U0001F9FE",      FALSE,   FALSE,
+    "administrative_units",         "#ffcf3d",      "name",              "\U0001F512",      FALSE,   TRUE,
+    "supranational_entities",       "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
+    "countries",                    "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
+    "subnational_entities",         "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
+    "municipalities",               "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
+    "languages",                    "#ffcf3d",      "name",              "\U0001F512",      FALSE,   TRUE,
+    "topics",                       "#ffcf3d",      "name",              "\U0001F512",      FALSE,   TRUE
   ) |>
   # add `desc` col separately (otherwise col vals exceed screen width too easily)
   dplyr::left_join(
@@ -2341,9 +2348,48 @@ var_names_fms <- as_fm_list(var_names)
 sub_var_names_fms <- purrr::map(sub_var_names,
                                 \(x) as_fm_list(x))
 
+#' Get RDB data model
+#'
+#' @inheritParams rfrnds
+#' @param incl_aux_admin_tbls Whether or not to include the auxiliary administrative unit tables
+#'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name")`
+#'
+#' @return `r pkgsnip::return_lbl("dm")`
+#' @family admin
+#' @export
+#'
+#' @examples
+#' # visualize the whole RDB model
+#' rdb::dm() |> dm::dm_draw(view_type = "all")
+#' 
+#' # download all RDB tables into local object (e.g. for later processing)
+#' rdb_dm <- rdb::dm() |> dplyr::collect()
+dm <- function(connection = connect(user = "rdb_admin",
+                                    password = pg_role_pw("rdb_admin")),
+               incl_aux_admin_tbls = FALSE) {
+  
+  checkmate::assert_flag(incl_aux_admin_tbls)
+  
+  tbl_metadata_subset <-
+    tbl_metadata |>
+    dplyr::filter(if (incl_aux_admin_tbls) TRUE else !is_aux)
+  
+  tbl_metadata_subset |>
+    dplyr::pull("name") |> 
+    dm::dm_from_con(con = connection,
+                    # NOTE: we have to explicitly set `table_names` in order to avoid a spurious "NA" table linked to everything else
+                    table_names = _,
+                    learn_keys = TRUE,
+                    schema = pg_schema) |>
+    dm::dm_set_colors(!!!magrittr::set_names(x = tbl_metadata_subset$name,
+                                             value = tbl_metadata_subset$dm_color)) |>
+    dm::dm_set_table_description(!!!magrittr::set_names(x = tbl_metadata_subset$name,
+                                                        value = pal::strip_md(tbl_metadata_subset$desc)))
+}
+
 #' Get referendum data
 #'
-#' Downloads the referendum data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
+#' Downloads the referendum data from the Referendum Database (RDB). See the [`codebook`] for a detailed description of all variables.
 #'
 #' @inheritParams read_tbl
 #' @param incl_drafts Whether or not to include database entries with _draft_ status.
@@ -2393,7 +2439,7 @@ rfrnds <- function(connection = connect(),
 
 #' Get *old* referendum data
 #'
-#' Downloads the latest backup of the old referendum data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all
+#' Downloads the latest backup of the old referendum data from the Referendum Database (RDB). See the [`codebook`] for a detailed description of all
 #' variables.
 #'
 #' @inheritParams rfrnds
@@ -2454,7 +2500,7 @@ rfrnds_old <- function(is_draft = FALSE,
 
 #' Get legal bases data
 #'
-#' Downloads the legal bases data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
+#' Downloads the legal bases data from the Referendum Database (RDB). See the [`codebook`] for a detailed description of all variables.
 #'
 #' @inheritParams rfrnds
 #'
@@ -2519,7 +2565,7 @@ read_tbl <- function(tbl_name = tbl_metadata$name,
 #' Performs various data validation steps to ensure there are no errors in the supplied `data`.
 #'
 #' @param data Referendum data to validate, as returned by [rfrnds()].
-#' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [codebook][data_codebook] are violated.
+#' @param check_applicability_constraint Whether or not to check that no applicability constraints as defined in the [`codebook`] are violated.
 #' @param check_id_sudd_prefix Whether or not to check that all [`id_sudd`](`r url_codebook("id_sudd")`) prefixes are valid.
 #'
 #' @return `data`, invisibly.
@@ -2894,7 +2940,7 @@ clean_attachment_bucket <- function(s3_bucket = s3_bucket_attachments,
 #'   codes are assigned in random order and have no further meaning.
 #'
 #' - information on the period of validity. Due to lack of official revocation information in ISO 3166-2, we construct our own (delayed) `valid_from` and
-#'   `valid_to` date columns based on detected changes in [`ISOcodes::ISO_3166_2`][ISOcodes::ISO_3166_2].
+#'   `valid_to` date columns based on detected changes in [`ISOcodes::ISO_3166_2`].
 #'
 #' @format `r pkgsnip::return_lbl("tibble")`
 #' @family aux_data
@@ -2978,13 +3024,13 @@ clean_attachment_bucket <- function(s3_bucket = s3_bucket_attachments,
 #' Get set of possible *value labels* of referendum data variable
 #'
 #' Returns a character vector of value labels of a specific [rfrnds()] column, in the same order as [var_vals()], or of length `0` if `var_name`'s values are
-#' not restricted to a predefined set or no value labels are defined in the [codebook][data_codebook].
+#' not restricted to a predefined set or no value labels are defined in the [`codebook`].
 #'
 #' @param var_name Variable name present in [`data_codebook`] for which the labels are to be returned. A character scalar.
 #' @param incl_affixes Whether or not to add the corresponding `value_label_prefix` and `value_label_suffix` to the returned labels.
 #'
 #' @return A character vector. Of length `0` if `var_name`'s values are not restricted to a predefined set or no value labels are defined in the
-#'   [codebook][data_codebook].
+#'   [`codebook`].
 #' @family metadata
 #' @export
 #'
@@ -3344,7 +3390,7 @@ infer_topics <- function(topics,
 #' Takes a data frame with the three columns `r paste0("topic_tier_", 1:3) |> pal::enum_str(wrap = "\x60")` and transforms it into a nested data frame with the
 #' two columns `name` and `parent_name`.
 #'
-#' @param data Political topics like [`data_topics`][data_topics].
+#' @param data Political topics like [`data_topics`].
 #'
 #' @return `r pkgsnip::return_lbl("tibble_cols", cols = c("name", "parent_name"))`
 #' @family topics
@@ -5016,41 +5062,6 @@ connect <- function(dbname = pg_db,
                                                 "certs/ISRG_Root_X1.crt"))
 }
 
-#' Get RDB data model
-#'
-#' @inheritParams rfrnds
-#' @param incl_aux_admin_tbls Whether or not to include the auxiliary administrative unit tables
-#'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name")`
-#'
-#' @return `r pkgsnip::return_lbl("dm")`
-#' @family admin
-#' @export
-#'
-#' @examples
-#' rdb::dm() |> dm::dm_draw(view_type = "all")
-dm <- function(connection = connect(user = "rdb_admin",
-                                    password = pg_role_pw("rdb_admin")),
-               incl_aux_admin_tbls = FALSE) {
-  
-  checkmate::assert_flag(incl_aux_admin_tbls)
-  
-  tbl_metadata_subset <-
-    tbl_metadata |>
-    dplyr::filter(if (incl_aux_admin_tbls) TRUE else !is_aux)
-  
-  tbl_metadata_subset |>
-    dplyr::pull("name") |> 
-    dm::dm_from_con(con = connection,
-                    # NOTE: we have to explicitly set `table_names` in order to avoid a spurious "NA" table linked to everything else
-                    table_names = _,
-                    learn_keys = TRUE,
-                    schema = pg_schema) |>
-    dm::dm_set_colors(!!!magrittr::set_names(x = tbl_metadata_subset$name,
-                                             value = tbl_metadata_subset$dm_color)) |>
-    dm::dm_set_table_description(!!!magrittr::set_names(x = tbl_metadata_subset$name,
-                                                        value = pal::strip_md(tbl_metadata_subset$desc)))
-}
-
 #' Update RDB `referendums` table
 #'
 #' Updates the RDB's `referendums` table with `data`. By default, rows not contained in `data` are kept.
@@ -5193,7 +5204,7 @@ update_administrative_units <- function(sweep = TRUE,
 
 #' Update RDB `countries` table
 #'
-#' Updates the RDB's `countries` table with the data from [`data_iso_3166_1`][data_iso_3166_1] and [`data_iso_3166_3`][data_iso_3166_3].
+#' Updates the RDB's `countries` table with the data from [`data_iso_3166_1`] and [`data_iso_3166_3`].
 #'
 #' @inheritParams update_rfrnds
 #'
@@ -5220,11 +5231,11 @@ update_countries <- function(sweep = TRUE,
 
 #' Update RDB `subnational_entities` table
 #'
-#' Updates the RDB's `subnational_entities` table with the data from [`data_iso_3166_2`][data_iso_3166_2].
+#' Updates the RDB's `subnational_entities` table with the data from [`data_iso_3166_2`].
 #'
 #' @inheritParams update_rfrnds
 #'
-#' @return [`data_iso_3166_2`][data_iso_3166_2], invisibly.
+#' @return [`data_iso_3166_2`], invisibly.
 #' @family admin
 #' @keywords internal
 update_subnational_entities <- function(sweep = TRUE,
@@ -5239,11 +5250,11 @@ update_subnational_entities <- function(sweep = TRUE,
 
 #' Update RDB `municipalities` table
 #'
-#' Updates the RDB's `municipalities` table with the data from [`data_municipalities`][data_municipalities].
+#' Updates the RDB's `municipalities` table with the data from [`data_municipalities`].
 #'
 #' @inheritParams update_rfrnds
 #'
-#' @return [`data_municipalities`][data_municipalities], invisibly.
+#' @return [`data_municipalities`], invisibly.
 #' @family admin
 #' @keywords internal
 update_municipalities <- function(sweep = TRUE,
@@ -5259,11 +5270,11 @@ update_municipalities <- function(sweep = TRUE,
 
 #' Update RDB `languages` table
 #'
-#' Updates the RDB's `languages` table with the data from [`data_iso_639_1`][data_iso_639_1].
+#' Updates the RDB's `languages` table with the data from [`data_iso_639_1`].
 #'
 #' @inheritParams update_rfrnds
 #'
-#' @return [`data_iso_639_1`][data_iso_639_1], invisibly.
+#' @return [`data_iso_639_1`], invisibly.
 #' @family admin
 #' @export
 update_langs <- function(sweep = TRUE,
@@ -5355,12 +5366,14 @@ update_tbl <- function(data,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # reset production PGSQL DB branch and NocoDB instance
-#' rdb::reset_rdb()
+#' rdb::reset_rdb(reset_db = TRUE)
 #'
 #' # reset testing PGSQL DB branch and NocoDB instance
 #' rdb::reset_rdb(hostname_nocodb = Sys.getenv("R_RDB_NOCODB_HOST_TESTING"),
-#'                hostname_pg = Sys.getenv("R_RDB_PG_HOST_TESTING"))
+#'                hostname_pg = Sys.getenv("R_RDB_PG_HOST_TESTING"),
+#'                reset_db = TRUE)}
 # nolint start: cyclocomp_linter
 reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
                                                             pkg = this_pkg),
@@ -5372,6 +5385,7 @@ reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
                       disconnect = TRUE,
                       quiet = FALSE) {
   
+  checkmate::assert_string(hostname_nocodb)
   checkmate::assert_flag(reset_db)
   checkmate::assert_flag(reset_tbls)
   checkmate::assert_flag(ask)
@@ -5810,10 +5824,12 @@ config_nocodb_tbls <- function(hostname = pal::pkg_config_val(key = "nocodb_host
   invisible(hostname)
 }
 
+
+
 #' Reset NocoDB
 #'
-#' Completely re-creates the `r pal::wrap_chr(nocodb_base_title, "\x60")` base and adds the RDB team's user accounts on the specified NocoDB server.
-#' `r nocodb_reset_caution`
+#' Completely re-creates the connection settings and `r pal::wrap_chr(nocodb_base_title, "\x60")` base and adds the RDB team's user accounts on the specified
+#' NocoDB server. `r nocodb_reset_caution`
 #'
 #' @inheritParams nocodb::update_app_settings
 #' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
@@ -6064,11 +6080,12 @@ reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
 #' @keywords internal
 #'
 #' @examples
+#' \dontrun{
 #' # purge NocoDB production instance
 #' rdb:::purge_nocodb()
 #'
 #' # purge NocoDB testing instance
-#' rdb:::purge_nocodb(fly_app = "rdb-nocodb-testing")
+#' rdb:::purge_nocodb(fly_app = "rdb-nocodb-testing")}
 purge_nocodb <- function(fly_app = "rdb-nocodb",
                          s3_bucket = fly_app,
                          s3_endpoint = s3_endpoint_url,
