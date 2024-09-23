@@ -2684,7 +2684,7 @@ NOTES:
 -   Column meanings:
 
     -   `is_aux` indicates whether a DB table is auxiliary, i.e. is not part of the relational model of the RDB.
-    -   `is_admin` indicates whether a DB table is fully administered programmatically and not intended to be altered by NocoDB users.
+    -   `is_admin` indicates whether a DB table is administered fully programmatically and not intended to be altered by NocoDB users.
 
 ```{r}
 tbl_metadata <-
@@ -2846,8 +2846,10 @@ TODO:
 #' Get RDB data model
 #'
 #' @inheritParams rfrnds
+#' @param incl_admin_tbls Whether or not to include tables that are administered fully programmatically 
+#'   (`r tbl_metadata |> dplyr::filter(is_admin) |> dplyr::pull("name") |> pal::enum_str(wrap = "\x60")`).
 #' @param incl_aux_admin_tbls Whether or not to include the auxiliary administrative unit tables
-#'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name")`
+#'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name") |> pal::enum_str(wrap = "\x60")`.
 #'
 #' @return `r pkgsnip::return_lbl("dm")`
 #' @family admin
@@ -2861,12 +2863,15 @@ TODO:
 #' rdb_dm <- rdb::dm() |> dplyr::collect()
 dm <- function(connection = connect(user = "rdb_admin",
                                     password = pg_role_pw("rdb_admin")),
+               incl_admin_tbls = TRUE,
                incl_aux_admin_tbls = FALSE) {
   
+  checkmate::assert_flag(incl_admin_tbls)
   checkmate::assert_flag(incl_aux_admin_tbls)
   
   tbl_metadata_subset <-
     tbl_metadata |>
+    dplyr::filter(if (incl_admin_tbls) TRUE else !is_admin) |>
     dplyr::filter(if (incl_aux_admin_tbls) TRUE else !is_aux)
   
   tbl_metadata_subset |>
