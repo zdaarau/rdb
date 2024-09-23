@@ -909,6 +909,13 @@ pg_col_metadata <- function(tbl_name,
   checkmate::assert_string(tbl_name)
   checkmate::assert_string(schema)
   
+  if (!DBI::dbExistsTable(conn = connection,
+                          name = DBI::Id(schema = schema,
+                                         table = tbl_name))) {
+    
+    cli::cli_abort("No {.field {schema}.{tbl_name}} table found.")
+  }
+  
   glue::glue_sql(.con = connection,
                  "SELECT * FROM information_schema.columns",
                  "  WHERE table_schema = {schema} AND table_name = {tbl_name};") |>
