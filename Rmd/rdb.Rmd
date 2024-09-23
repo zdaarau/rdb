@@ -5921,8 +5921,8 @@ update_rfrnds <- function(data,
                                                                        jsonlite::toJSON(x = x)
                                                                      })))
   dplyr::tbl(src = connection,
-             from = dbplyr::in_schema(schema = pg_schema,
-                                      table = "referendums")) |>
+             from = DBI::Id(schema = pg_schema,
+                            table = "referendums")) |>
     pg_tbl_update(data = data,
                   tbl_name = "referendums",
                   sweep = sweep,
@@ -5962,8 +5962,8 @@ delete_rfrnds <- function(data,
   
   result <-
     dplyr::tbl(src = connection,
-               from = dbplyr::in_schema(schema = pg_schema,
-                                        table = "referendums")) |>
+               from = DBI::Id(schema = pg_schema,
+                              table = "referendums")) |>
     pg_tbl_del(data = data,
                pk_col_names = pg_pk(tbl_name = "referendums",
                                     connection = connection))
