@@ -2892,7 +2892,8 @@ dm <- function(connection = connect(user = "rdb_admin",
 
 TODO:
 
--   Join with additional db tbls; experiment with [`rdb::dm() |> dm::dm_flatten_to_tbl()`](https://dm.cynkra.com/reference/dm_flatten_to_tbl.html)
+-   Join with additional db tbls; experiment with [`rdb::dm() |> dm::dm_flatten_to_tbl()`](https://dm.cynkra.com/reference/dm_flatten_to_tbl.html) and
+    [`rdb::dm() |> dm::dm_wrap_tbl()`](https://dm.cynkra.com/reference/dm_wrap_tbl.html)
 
 ```{r}
 #' Get referendum data
