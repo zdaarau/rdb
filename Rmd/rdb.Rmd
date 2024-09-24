@@ -1375,15 +1375,18 @@ pg_role_pw <- function(role,
 
 #### `pg_update_seq`
 
-Source: <https://gist.github.com/henriquemenezes/962829815e8e7875f5f4376133b2f209>
+Source: <https://stackoverflow.com/a/23390399/7196903>
 
 ```{r}
-#' Update PostgreSQL sequence
+#' Update PostgreSQL column sequence
+#'
+#' Updates the current value of the sequence associated with a PostgreSQL table column to the maximum `col_name` value if necessary, so that the sequence
+#' is valid to be used for inserting new rows again. Useful after manually overriding `col_name` values.
 #'
 #' @inheritParams pg_pk
 #' @param col_name Name of the column whose sequence is to be updated.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return The updated sequence value as an integer.
 #' @family pg
 #' @keywords internal
 pg_update_seq <- function(tbl_name,
@@ -1397,11 +1400,37 @@ pg_update_seq <- function(tbl_name,
   checkmate::assert_string(col_name)
   checkmate::assert_string(schema)
   
-  glue::glue_sql(.con = connection,
-                 "SELECT setval({paste(tbl_name, col_name, 'seq', sep = '_')}, (SELECT MAX({`col_name`}) FROM {`schema`}.{`tbl_name`}));") |>
-    DBI::dbGetQuery(conn = connection) |>
-    dplyr::collect() |>
-    tibble::as_tibble()
+  connection |>
+    DBI::dbWithTransaction(code = {
+      
+      seq_id <-
+        connection |>
+        DBI::dbGetQuery(statement = glue::glue_sql(.con = connection,
+                                                   "SELECT pg_get_serial_sequence({paste(schema, tbl_name, sep = '.')}, {col_name});")) |>
+        unlist(use.names = FALSE)
+      
+      seq_id_split <- stringr::str_split_1(string = seq_id,
+                                           pattern = stringr::fixed("."))
+      max_col_val <-
+        connection |>
+        DBI::dbGetQuery(statement = glue::glue_sql(.con = connection,
+                                                   "SELECT MAX({`col_name`}) FROM {`schema`}.{`tbl_name`};")) |>
+        unlist(use.names = FALSE)
+      
+      DBI::dbExecute(conn = connection,
+                     statement = glue::glue_sql(.con = connection,
+                                                "LOCK TABLE {`schema`}.{`tbl_name`} IN SHARE MODE;"))
+      connection |>
+        DBI::dbGetQuery(statement = glue::glue_sql(.con = connection,
+                                                   "SELECT setval({seq_id},",
+                                                   "              COALESCE(MAX({`col_name`}) + 1, 1),",
+                                                   "              false)",
+                                                   "  FROM {`schema`}.{`tbl_name`}",
+                                                   "  HAVING MAX({`col_name`}) > (SELECT last_value FROM {`seq_id_split[1L]`}.{`seq_id_split[2L]`});")) |>
+        unlist(use.names = FALSE) |>
+        pal::safe_max(max_col_val)
+    }) |>
+    invisible()
 }
 ```
 
