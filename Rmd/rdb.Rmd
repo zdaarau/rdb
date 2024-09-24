@@ -465,6 +465,19 @@ assert_cols_valid <- function(data,
 }
 ```
 
+### `assert_dm`
+
+```{r}
+assert_dm <- function(dm) {
+  
+  if (!dm::is_dm(dm)) {
+    cli::cli_abort("{.arg dm} must be an object of type {.help dm::dm}.")
+  }
+  
+  invisible(dm)
+}
+```
+
 ### `col_names_autofilled`
 
 ```{r}
@@ -540,6 +553,42 @@ country_code_to_name <- function(country_code) {
                     
                     result
                   })
+}
+```
+
+### `dm_excl_gen_always_cols`
+
+```{r}
+#' Remove `GENERATED ALWAYS` columns from `dm`
+#'
+#' Removes `GENERATED ALWAYS` columns from a data model object.
+#'
+#' @param dm `r pkgsnip::param_lbl("dm")`
+#'
+#' @return `r pkgsnip::return_lbl("dm")`
+#' @keywords internal
+#'
+#' @examples
+#' rdb::dm() |> rdb:::dm_excl_gen_always_cols()
+dm_excl_gen_always_cols <- function(dm) {
+  
+  assert_dm(dm)
+  
+  # exclude non-PK `GENERATED ALWAYS` cols
+  for (tbl_name in names(dm)) {
+    
+    col_names_to_excl <-
+      pg_col_metadata(tbl_name = tbl_name) |>
+      dplyr::filter(generated == "ALWAYS" & !is_pk) |>
+      dplyr::pull(column_name)
+    
+    if (length(col_names_to_excl) > 0L) {
+      dm %<>% dm::dm_select(table = !!tbl_name,
+                            -!!col_names_to_excl)
+    }
+  }
+  
+  dm
 }
 ```
 
