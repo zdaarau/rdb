@@ -284,4 +284,5 @@ CREATE EVENT TRIGGER pgrst_ddl_watch
 
 CREATE EVENT TRIGGER pgrst_drop_watch
   ON sql_drop
-  EXECUTE PROCEDURE public.pgrst_drop_watch();*/
+  EXECUTE PROCEDURE public.pgrst_drop_watch();
+*/

@@ -111,7 +111,7 @@ DO LANGUAGE plpgsql
   $$;
 
 /* Revoke write privileges from 'nocodb' for autofilled tables */
-/* NOTE: commented out for now due to issues with updating tables (certain actions are always performed as table owner which is currently `nocodb`)
+/* COMMENTED OUT for now due to issues with updating tables (certain actions are always performed as table owner which is currently `nocodb`)
 DO LANGUAGE plpgsql
   $$
     DECLARE
