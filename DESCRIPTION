@@ -24,7 +24,6 @@ Imports:
     cli (>= 3.1.1),
     clock (>= 0.6.0),
     DBI (>= 1.2.2),
-    dbplyr (>= 2.5.0),
     dm (>= 1.0.10),
     dplyr (>= 1.1.1),
     forcats (>= 1.0.0),
