@@ -5961,7 +5961,7 @@ connect <- function(dbname = pg_db,
                  password = password,
                  sslmode = sslmode,
                  sslrootcert = fs::path_package(package = this_pkg,
-                                                "certs/ISRG_Root_X1.crt"))
+                                                "certs/ISRG_Root_X1.pem"))
 }
 ```
 
