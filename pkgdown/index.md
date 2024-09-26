@@ -4,8 +4,10 @@
 
 rdb provides access to the Referendum Database (RDB) from R. This database aims to record all direct democratic votes worldwide and is operated by the [Centre for Democracy Studies Aarau (ZDA)](https://www.zdaarau.ch/en/) at the University of Zurich, Switzerland.
 
-<svg width="1250pt" height="1976pt" viewBox="0.00 0.00 1250.00 1976.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1972)">
+# RDB data model
+
+<a href='reference/figures/rdb_dm.svg' title='RDB data model diagram'> <svg width="776px" height="100%"
+ viewBox="0.00 0.00 1250.00 1976.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1972)">
 <title>
 %0
 </title>
@@ -205,8 +207,10 @@ topics_referendums:referendum_id-\>referendums:id
 <title>
 topics_referendums:topic_name-\>topics:name
 </title>
-<path fill="none" stroke="#555555" d="M775.5,-130.5C808.2431,-130.5 818.9229,-130.5 847.1844,-130.5"/> <polygon fill="#555555" stroke="#555555" points="847.5,-134.0001 857.5,-130.5 847.5,-127.0001 847.5,-134.0001"/> </g> </g>
-</svg>
+
+<path fill="none" stroke="#555555" d="M775.5,-130.5C808.2431,-130.5 818.9229,-130.5 847.1844,-130.5"/> <polygon fill="#555555" stroke="#555555" points="847.5,-134.0001 857.5,-130.5 847.5,-127.0001 847.5,-134.0001"/> </g> </g> </svg>
+
+</a>
 
 ## Installation
 

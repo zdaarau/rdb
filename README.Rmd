@@ -28,6 +28,8 @@ pal::cat_lines(paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::
                                                                       "[\\1](https://www.zdaarau.ch/en/)"))
 ```
 
+# RDB data model
+
 ```{r}
 #| echo: false
 #| results: asis
@@ -35,6 +37,14 @@ pal::cat_lines(paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::
 brio::read_file("man/figures/rdb_dm.svg") |>
   # remove XML file header
   stringr::str_remove(pattern = "^(.|\\n)+?(?=<svg[\\s>])") |>
+  # adjust dimensions to avoid overflow
+  stringr::str_replace(pattern = "width=\".+?\"",
+                       replacement = "width=\"776px\"") |>
+  stringr::str_replace(pattern = "height=\".+?\"",
+                       replacement = "height=\"100%\"") |>
+  pal::when(isTRUE(getOption("pal.build_readme.is_pkgdown")) ~ paste("<a href='reference/figures/rdb_dm.svg' title='RDB data model diagram'>", ., "</a>",
+                                                                     sep = "\n"),
+            ~ .) |>
   cat()
 ```
 
