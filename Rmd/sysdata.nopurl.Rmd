@@ -987,15 +987,12 @@ if (pal::desc_dep_vrsn(pkg = "ISOcodes") < max(as.numeric_version(pal::ls_pkg(pk
 
 NOTES:
 
--   We just blindly copy over the root certificate from the system if it exists and user=salim. This ensures the certificate is updated before it expires.
+-   We just fetch the root certificate from [Let's Encrypt](https://letsencrypt.org/certificates/).
 
 ```{r}
-path_sys_root_cert <- "/usr/share/ca-certificates/mozilla/ISRG_Root_X1.crt"
+download.file(url = "https://letsencrypt.org/certs/isrgrootx1.pem",
+              destfile = "inst/certs/ISRG_Root_X1.pem",
+              quiet = TRUE,
+              mode = "wb")
 
-if (Sys.info()[["user"]] == "salim" && fs::file_exists(path_sys_root_cert)) {
-  
-  fs::file_copy(path = path_sys_root_cert,
-                new_path = "inst/certs/ISRG_Root_X1.crt",
-                overwrite = TRUE)
-}
 ```
