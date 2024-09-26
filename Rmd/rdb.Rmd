@@ -1432,6 +1432,10 @@ Source: <https://stackoverflow.com/a/23390399/7196903>
 #' Updates the current value of the sequence associated with a PostgreSQL table column to the maximum `col_name` value if necessary, so that the sequence
 #' is valid to be used for inserting new rows again. Useful after manually overriding `col_name` values.
 #'
+#' This function obtains a [table-level lock](https://www.postgresql.org/docs/current/sql-lock.html) to avoid concurrency issues during the sequence update.
+#' The sequence is only ever *in*creased and never *de*creased to further defend against concurrency issues in certain edge cases. Finally, `pg_update_seq()`
+#' also works on empty tables where the sequence has never been called before.
+#'
 #' @inheritParams pg_pk
 #' @param col_name Name of the column whose sequence is to be updated.
 #'
@@ -1471,9 +1475,7 @@ pg_update_seq <- function(tbl_name,
                                                 "LOCK TABLE {`schema`}.{`tbl_name`} IN SHARE MODE;"))
       connection |>
         DBI::dbGetQuery(statement = glue::glue_sql(.con = connection,
-                                                   "SELECT setval({seq_id},",
-                                                   "              COALESCE(MAX({`col_name`}) + 1, 1),",
-                                                   "              false)",
+                                                   "SELECT setval({seq_id}, COALESCE(MAX({`col_name`}) + 1, 1), false)",
                                                    "  FROM {`schema`}.{`tbl_name`}",
                                                    "  HAVING MAX({`col_name`}) > (SELECT last_value FROM {`seq_id_split[1L]`}.{`seq_id_split[2L]`});")) |>
         unlist(use.names = FALSE) |>
