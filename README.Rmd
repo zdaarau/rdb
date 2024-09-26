@@ -29,6 +29,16 @@ pal::cat_lines(paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::
 ```
 
 ```{r}
+#| echo: false
+#| results: asis
+
+brio::read_file("man/figures/rdb_dm.svg") |>
+  # remove XML file header
+  stringr::str_remove(pattern = "^(.|\\n)+?(?=<svg[\\s>])") |>
+  cat()
+```
+
+```{r}
 #| label: documentation
 #| eval: !expr '!isTRUE(getOption("pal.build_readme.is_pkgdown"))'
 #| results: asis

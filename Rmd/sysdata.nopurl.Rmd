@@ -994,5 +994,15 @@ download.file(url = "https://letsencrypt.org/certs/isrgrootx1.pem",
               destfile = "inst/certs/ISRG_Root_X1.pem",
               quiet = TRUE,
               mode = "wb")
+```
 
+# Regenerate RDB data model diagram
+
+```{r}
+fs::dir_create(path = "man/figures",
+               recurse = TRUE)
+rdb::dm() |>
+  dm::dm_draw(view_type = "all") |>
+  DiagrammeRsvg::export_svg() |>
+  brio::write_file(path = "man/figures/rdb_dm.svg")
 ```
