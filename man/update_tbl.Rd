@@ -8,6 +8,7 @@ update_tbl(
   data,
   tbl_name = tbl_metadata$name,
   sweep = FALSE,
+  override_pk_sys_val = FALSE,
   connection = connect(),
   disconnect = TRUE
 )
@@ -46,6 +47,9 @@ Table name. One of
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
 
+\item{override_pk_sys_val}{Whether or not to add new rows that have primary key values set (i.e. which are not \code{NA}) to a \code{tbl} whose primary key is
+\verb{GENERATED ALWAYS}. Setting \code{override_pk_sys_val = TRUE} is roughly equivalent to \href{https://www.postgresql.org/docs/current/sql-insert.html#id-1.9.3.152.6.2}{specifying \verb{OVERRIDING SYSTEM VALUE} in an SQL \code{INSERT} statement}.}
+
 \item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
 Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
@@ -60,6 +64,7 @@ Updates the specified RDB table with the provided data.
 }
 \seealso{
 Other administration functions:
+\code{\link{backup_rdb}()},
 \code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
@@ -73,6 +78,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{restore_rdb}()},
 \code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},

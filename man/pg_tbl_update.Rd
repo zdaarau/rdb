@@ -10,6 +10,7 @@ pg_tbl_update(
   tbl_name,
   schema = pg_schema,
   sweep = FALSE,
+  override_pk_sys_val = FALSE,
   connection = connect()
 )
 }
@@ -49,6 +50,9 @@ Table name. One of
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
 
+\item{override_pk_sys_val}{Whether or not to add new rows that have primary key values set (i.e. which are not \code{NA}) to a \code{tbl} whose primary key is
+\verb{GENERATED ALWAYS}. Setting \code{override_pk_sys_val = TRUE} is roughly equivalent to \href{https://www.postgresql.org/docs/current/sql-insert.html#id-1.9.3.152.6.2}{specifying \verb{OVERRIDING SYSTEM VALUE} in an SQL \code{INSERT} statement}.}
+
 \item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
 Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 }
@@ -60,8 +64,8 @@ The updated table data as a \link[tibble:tbl_df-class]{tibble}, invisibly. Note 
 Updates the specified PostgreSQL \code{tbl} with values from \code{data}.
 }
 \details{
-If the \code{tbl}'s primary key column is \verb{GENERATED ALWAYS}, rows to be newly added must have \code{NA} values in the corresponding \code{data} column. This is a safety
-restriction to avoid accidental insertions.
+If the \code{tbl}'s primary key column is \verb{GENERATED ALWAYS}, rows to be newly added must have \code{NA} values in the corresponding \code{data} column unless
+\code{override_pk_sys_val = TRUE}. This is a safety measure to avoid accidental insertions.
 }
 \seealso{
 Other PostgreSQL functions

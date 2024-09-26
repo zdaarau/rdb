@@ -23,6 +23,7 @@ Updates the RDB's \code{languages} table with the data from \code{\link{data_iso
 }
 \seealso{
 Other administration functions:
+\code{\link{backup_rdb}()},
 \code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
@@ -36,6 +37,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{restore_rdb}()},
 \code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_municipalities}()},

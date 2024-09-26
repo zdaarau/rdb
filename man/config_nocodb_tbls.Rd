@@ -34,6 +34,7 @@ Other NocoDB functions
 \code{\link{reset_rdb}()}
 
 Other administration functions:
+\code{\link{backup_rdb}()},
 \code{\link{clean_attachment_bucket}()},
 \code{\link{connect}()},
 \code{\link{create_nocodb_tbl_cols}()},
@@ -46,6 +47,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{restore_rdb}()},
 \code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},

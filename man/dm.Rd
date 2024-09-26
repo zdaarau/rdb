@@ -6,6 +6,7 @@
 \usage{
 dm(
   connection = connect(user = "rdb_admin", password = pg_role_pw("rdb_admin")),
+  incl_admin_tbls = TRUE,
   incl_aux_admin_tbls = FALSE
 )
 }
@@ -13,8 +14,11 @@ dm(
 \item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr
 Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
+\item{incl_admin_tbls}{Whether or not to include tables that are administered fully programmatically
+(\code{administrative_units}, \code{supranational_entities}, \code{countries}, \code{subnational_entities}, \code{municipalities}, \code{languages} and \code{topics}).}
+
 \item{incl_aux_admin_tbls}{Whether or not to include the auxiliary administrative unit tables
-supranational_entities, countries, subnational_entities, municipalities}
+\code{supranational_entities}, \code{countries}, \code{subnational_entities} and \code{municipalities}.}
 }
 \value{
 A \link[dm:dm]{data model} object.
@@ -31,6 +35,7 @@ rdb_dm <- rdb::dm() |> dplyr::collect()
 }
 \seealso{
 Other administration functions:
+\code{\link{backup_rdb}()},
 \code{\link{clean_attachment_bucket}()},
 \code{\link{config_nocodb_tbls}()},
 \code{\link{connect}()},
@@ -43,6 +48,7 @@ Other administration functions:
 \code{\link{reset_rdb}()},
 \code{\link{restart_neon_ep}()},
 \code{\link{restart_postgrest}()},
+\code{\link{restore_rdb}()},
 \code{\link{update_administrative_units}()},
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},

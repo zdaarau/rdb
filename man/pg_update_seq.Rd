@@ -2,7 +2,7 @@
 % Please edit documentation in R/rdb.gen.R
 \name{pg_update_seq}
 \alias{pg_update_seq}
-\title{Update PostgreSQL sequence}
+\title{Update PostgreSQL column sequence}
 \usage{
 pg_update_seq(
   tbl_name,
@@ -24,10 +24,16 @@ Schema name.}
 Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+The updated sequence value as an integer.
 }
 \description{
-Update PostgreSQL sequence
+Updates the current value of the sequence associated with a PostgreSQL table column to the maximum \code{col_name} value if necessary, so that the sequence
+is valid to be used for inserting new rows again. Useful after manually overriding \code{col_name} values.
+}
+\details{
+This function obtains a \href{https://www.postgresql.org/docs/current/sql-lock.html}{table-level lock} to avoid concurrency issues during the sequence update.
+The sequence is only ever \emph{in}creased and never \emph{de}creased to further defend against concurrency issues in certain edge cases. Finally, \code{pg_update_seq()}
+also works on empty tables where the sequence has never been called before.
 }
 \seealso{
 Other PostgreSQL functions

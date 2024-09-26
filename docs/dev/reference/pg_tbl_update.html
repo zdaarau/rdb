@@ -52,6 +52,7 @@
 <span>  <span class="va">tbl_name</span>,</span>
 <span>  schema <span class="op">=</span> <span class="va">pg_schema</span>,</span>
 <span>  sweep <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  override_pk_sys_val <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  connection <span class="op">=</span> <span class="fu"><a href="connect.html">connect</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -101,6 +102,11 @@ Table name. One of</p><ul><li><p><code>"actors"</code></p></li>
 <dd><p>Whether or not to also sweep the table, i.e. delete rows that are not contained in <code>data</code>.</p></dd>
 
 
+<dt id="arg-override-pk-sys-val">override_pk_sys_val<a class="anchor" aria-label="anchor" href="#arg-override-pk-sys-val"></a></dt>
+<dd><p>Whether or not to add new rows that have primary key values set (i.e. which are not <code>NA</code>) to a <code>tbl</code> whose primary key is
+<code>GENERATED ALWAYS</code>. Setting <code>override_pk_sys_val = TRUE</code> is roughly equivalent to <a href="https://www.postgresql.org/docs/current/sql-insert.html#id-1.9.3.152.6.2" class="external-link">specifying <code>OVERRIDING SYSTEM VALUE</code> in an SQL <code>INSERT</code> statement</a>.</p></dd>
+
+
 <dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
 <dd><p><code><a href="https://rpostgres.r-dbi.org/reference/PqConnection-class.html" class="external-link">PqConnection</a></code><br>
 Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>.</p></dd>
@@ -113,8 +119,8 @@ Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.h
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If the <code>tbl</code>'s primary key column is <code>GENERATED ALWAYS</code>, rows to be newly added must have <code>NA</code> values in the corresponding <code>data</code> column. This is a safety
-restriction to avoid accidental insertions.</p>
+    <p>If the <code>tbl</code>'s primary key column is <code>GENERATED ALWAYS</code>, rows to be newly added must have <code>NA</code> values in the corresponding <code>data</code> column unless
+<code>override_pk_sys_val = TRUE</code>. This is a safety measure to avoid accidental insertions.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -48,6 +48,7 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dm</span><span class="op">(</span></span>
 <span>  connection <span class="op">=</span> <span class="fu"><a href="connect.html">connect</a></span><span class="op">(</span>user <span class="op">=</span> <span class="st">"rdb_admin"</span>, password <span class="op">=</span> <span class="fu"><a href="pg_role_pw.html">pg_role_pw</a></span><span class="op">(</span><span class="st">"rdb_admin"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  incl_admin_tbls <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  incl_aux_admin_tbls <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -61,9 +62,14 @@
 Database connection to a PostgreSQL DBMS as returned by <code><a href="connect.html">connect()</a></code>.</p></dd>
 
 
+<dt id="arg-incl-admin-tbls">incl_admin_tbls<a class="anchor" aria-label="anchor" href="#arg-incl-admin-tbls"></a></dt>
+<dd><p>Whether or not to include tables that are administered fully programmatically
+(<code>administrative_units</code>, <code>supranational_entities</code>, <code>countries</code>, <code>subnational_entities</code>, <code>municipalities</code>, <code>languages</code> and <code>topics</code>).</p></dd>
+
+
 <dt id="arg-incl-aux-admin-tbls">incl_aux_admin_tbls<a class="anchor" aria-label="anchor" href="#arg-incl-aux-admin-tbls"></a></dt>
 <dd><p>Whether or not to include the auxiliary administrative unit tables
-supranational_entities, countries, subnational_entities, municipalities</p></dd>
+<code>supranational_entities</code>, <code>countries</code>, <code>subnational_entities</code> and <code>municipalities</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -73,6 +79,7 @@ supranational_entities, countries, subnational_entities, municipalities</p></dd>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other administration functions:
+<code><a href="backup_rdb.html">backup_rdb</a>()</code>,
 <code><a href="clean_attachment_bucket.html">clean_attachment_bucket</a>()</code>,
 <code><a href="config_nocodb_tbls.html">config_nocodb_tbls</a>()</code>,
 <code><a href="connect.html">connect</a>()</code>,
@@ -85,6 +92,7 @@ supranational_entities, countries, subnational_entities, municipalities</p></dd>
 <code><a href="reset_rdb.html">reset_rdb</a>()</code>,
 <code><a href="restart_neon_ep.html">restart_neon_ep</a>()</code>,
 <code><a href="restart_postgrest.html">restart_postgrest</a>()</code>,
+<code><a href="restore_rdb.html">restore_rdb</a>()</code>,
 <code><a href="update_administrative_units.html">update_administrative_units</a>()</code>,
 <code><a href="update_countries.html">update_countries</a>()</code>,
 <code><a href="update_langs.html">update_langs</a>()</code>,
