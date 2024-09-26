@@ -282,6 +282,7 @@ CREATE TABLE public.topics_referendums (
 );
 
 -- Enable RLS and create policies
+/* COMMENTED OUT because from R we can't easily write to a table that has RLS *and* a `GENERATED ALWAYS` PK
 ALTER TABLE public.referendums      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.referendums      FORCE  ROW LEVEL SECURITY;
 ALTER TABLE public.referendum_types ENABLE ROW LEVEL SECURITY;
@@ -290,6 +291,7 @@ CREATE POLICY default_allow          ON public.referendums      AS PERMISSIVE  F
 CREATE POLICY nocodb_restrict_delete ON public.referendums      AS RESTRICTIVE FOR DELETE TO nocodb USING (is_draft);
 CREATE POLICY default_allow          ON public.referendum_types AS PERMISSIVE  FOR ALL    TO PUBLIC USING (TRUE);
 CREATE POLICY nocodb_restrict_delete ON public.referendum_types AS RESTRICTIVE FOR DELETE TO nocodb USING (is_draft);
+*/
 
 -- Create trigger function to ensure `referendum_sub_votes` consistency regarding administrative units
 CREATE OR REPLACE FUNCTION check_referendum_sub_votes_administrative_units()
