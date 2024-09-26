@@ -422,6 +422,15 @@ assert_cols_valid <- function(data,
   invisible(data)
 }
 
+assert_dm <- function(dm) {
+  
+  if (!dm::is_dm(dm)) {
+    cli::cli_abort("{.arg dm} must be an object of type {.help dm::dm}.")
+  }
+  
+  invisible(dm)
+}
+
 col_names_autofilled <- function(tbl_name = tbl_metadata$name) {
   
   tbl_name <- rlang::arg_match(tbl_name)
@@ -486,6 +495,38 @@ country_code_to_name <- function(country_code) {
                     
                     result
                   })
+}
+
+#' Remove `GENERATED ALWAYS` columns from `dm`
+#'
+#' Removes `GENERATED ALWAYS` columns from a data model object.
+#'
+#' @param dm `r pkgsnip::param_lbl("dm")`
+#'
+#' @return `r pkgsnip::return_lbl("dm")`
+#' @keywords internal
+#'
+#' @examples
+#' rdb::dm() |> rdb:::dm_excl_gen_always_cols()
+dm_excl_gen_always_cols <- function(dm) {
+  
+  assert_dm(dm)
+  
+  # exclude non-PK `GENERATED ALWAYS` cols
+  for (tbl_name in names(dm)) {
+    
+    col_names_to_excl <-
+      pg_col_metadata(tbl_name = tbl_name) |>
+      dplyr::filter(generated == "ALWAYS" & !is_pk) |>
+      dplyr::pull(column_name)
+    
+    if (length(col_names_to_excl) > 0L) {
+      dm %<>% dm::dm_select(table = !!tbl_name,
+                            -!!col_names_to_excl)
+    }
+  }
+  
+  dm
 }
 
 fct_flip <- function(x) {
@@ -770,6 +811,13 @@ pg_col_metadata <- function(tbl_name,
   checkmate::assert_string(tbl_name)
   checkmate::assert_string(schema)
   
+  if (!DBI::dbExistsTable(conn = connection,
+                          name = DBI::Id(schema = schema,
+                                         table = tbl_name))) {
+    
+    cli::cli_abort("No {.field {schema}.{tbl_name}} table found.")
+  }
+  
   glue::glue_sql(.con = connection,
                  "SELECT * FROM information_schema.columns",
                  "  WHERE table_schema = {schema} AND table_name = {tbl_name};") |>
@@ -786,7 +834,7 @@ pg_col_metadata <- function(tbl_name,
                                                               .default = NA,
                                                               .ptype = logical())),
                   has_default = !is.na(column_default),
-                  is_filled_pg = has_default | (is_identity & identity_generation == "ALWAYS") | generated != "NEVER",
+                  is_filled_pg = has_default | (is_identity & identity_generation %in% c("ALWAYS", "BY DEFAULT")) | generated != "NEVER",
                   is_filled_nocodb = column_name %in% col_names_nocodb_filled,
                   is_filled_auto = is_filled_pg | is_filled_nocodb,
                   is_pk = column_name %in% pg_pk(tbl_name = tbl_name,
@@ -1171,12 +1219,19 @@ pg_role_pw <- function(role,
     dplyr::pull("password")
 }
 
-#' Update PostgreSQL sequence
+#' Update PostgreSQL column sequence
+#'
+#' Updates the current value of the sequence associated with a PostgreSQL table column to the maximum `col_name` value if necessary, so that the sequence
+#' is valid to be used for inserting new rows again. Useful after manually overriding `col_name` values.
+#'
+#' This function obtains a [table-level lock](https://www.postgresql.org/docs/current/sql-lock.html) to avoid concurrency issues during the sequence update.
+#' The sequence is only ever *in*creased and never *de*creased to further defend against concurrency issues in certain edge cases. Finally, `pg_update_seq()`
+#' also works on empty tables where the sequence has never been called before.
 #'
 #' @inheritParams pg_pk
 #' @param col_name Name of the column whose sequence is to be updated.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return The updated sequence value as an integer.
 #' @family pg
 #' @keywords internal
 pg_update_seq <- function(tbl_name,
@@ -1190,11 +1245,35 @@ pg_update_seq <- function(tbl_name,
   checkmate::assert_string(col_name)
   checkmate::assert_string(schema)
   
-  glue::glue_sql(.con = connection,
-                 "SELECT setval({paste(tbl_name, col_name, 'seq', sep = '_')}, (SELECT MAX({`col_name`}) FROM {`schema`}.{`tbl_name`}));") |>
-    DBI::dbGetQuery(conn = connection) |>
-    dplyr::collect() |>
-    tibble::as_tibble()
+  connection |>
+    DBI::dbWithTransaction(code = {
+      
+      seq_id <-
+        connection |>
+        DBI::dbGetQuery(statement = glue::glue_sql(.con = connection,
+                                                   "SELECT pg_get_serial_sequence({paste(schema, tbl_name, sep = '.')}, {col_name});")) |>
+        unlist(use.names = FALSE)
+      
+      seq_id_split <- stringr::str_split_1(string = seq_id,
+                                           pattern = stringr::fixed("."))
+      max_col_val <-
+        connection |>
+        DBI::dbGetQuery(statement = glue::glue_sql(.con = connection,
+                                                   "SELECT MAX({`col_name`}) FROM {`schema`}.{`tbl_name`};")) |>
+        unlist(use.names = FALSE)
+      
+      DBI::dbExecute(conn = connection,
+                     statement = glue::glue_sql(.con = connection,
+                                                "LOCK TABLE {`schema`}.{`tbl_name`} IN SHARE MODE;"))
+      connection |>
+        DBI::dbGetQuery(statement = glue::glue_sql(.con = connection,
+                                                   "SELECT setval({seq_id}, COALESCE(MAX({`col_name`}) + 1, 1), false)",
+                                                   "  FROM {`schema`}.{`tbl_name`}",
+                                                   "  HAVING MAX({`col_name`}) > (SELECT last_value FROM {`seq_id_split[1L]`}.{`seq_id_split[2L]`});")) |>
+        unlist(use.names = FALSE) |>
+        pal::safe_max(max_col_val)
+    }) |>
+    invisible()
 }
 
 #' Get PostgreSQL table constraints
@@ -2351,8 +2430,10 @@ sub_var_names_fms <- purrr::map(sub_var_names,
 #' Get RDB data model
 #'
 #' @inheritParams rfrnds
+#' @param incl_admin_tbls Whether or not to include tables that are administered fully programmatically 
+#'   (`r tbl_metadata |> dplyr::filter(is_admin) |> dplyr::pull("name") |> pal::enum_str(wrap = "\x60")`).
 #' @param incl_aux_admin_tbls Whether or not to include the auxiliary administrative unit tables
-#'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name")`
+#'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name") |> pal::enum_str(wrap = "\x60")`.
 #'
 #' @return `r pkgsnip::return_lbl("dm")`
 #' @family admin
@@ -2366,12 +2447,15 @@ sub_var_names_fms <- purrr::map(sub_var_names,
 #' rdb_dm <- rdb::dm() |> dplyr::collect()
 dm <- function(connection = connect(user = "rdb_admin",
                                     password = pg_role_pw("rdb_admin")),
+               incl_admin_tbls = TRUE,
                incl_aux_admin_tbls = FALSE) {
   
+  checkmate::assert_flag(incl_admin_tbls)
   checkmate::assert_flag(incl_aux_admin_tbls)
   
   tbl_metadata_subset <-
     tbl_metadata |>
+    dplyr::filter(if (incl_admin_tbls) TRUE else !is_admin) |>
     dplyr::filter(if (incl_aux_admin_tbls) TRUE else !is_aux)
   
   tbl_metadata_subset |>
@@ -5059,7 +5143,7 @@ connect <- function(dbname = pg_db,
                  password = password,
                  sslmode = sslmode,
                  sslrootcert = fs::path_package(package = this_pkg,
-                                                "certs/ISRG_Root_X1.crt"))
+                                                "certs/ISRG_Root_X1.pem"))
 }
 
 #' Update RDB `referendums` table
@@ -5096,8 +5180,8 @@ update_rfrnds <- function(data,
                                                                        jsonlite::toJSON(x = x)
                                                                      })))
   dplyr::tbl(src = connection,
-             from = dbplyr::in_schema(schema = pg_schema,
-                                      table = "referendums")) |>
+             from = DBI::Id(schema = pg_schema,
+                            table = "referendums")) |>
     pg_tbl_update(data = data,
                   tbl_name = "referendums",
                   sweep = sweep,
@@ -5133,8 +5217,8 @@ delete_rfrnds <- function(data,
   
   result <-
     dplyr::tbl(src = connection,
-               from = dbplyr::in_schema(schema = pg_schema,
-                                        table = "referendums")) |>
+               from = DBI::Id(schema = pg_schema,
+                              table = "referendums")) |>
     pg_tbl_del(data = data,
                pk_col_names = pg_pk(tbl_name = "referendums",
                                     connection = connection))
