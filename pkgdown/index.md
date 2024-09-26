@@ -4,7 +4,7 @@
 
 rdb provides access to the Referendum Database (RDB) from R. This database aims to record all direct democratic votes worldwide and is operated by the [Centre for Democracy Studies Aarau (ZDA)](https://www.zdaarau.ch/en/) at the University of Zurich, Switzerland.
 
-# RDB data model
+## RDB data model
 
 <a href='reference/figures/rdb_dm.svg' title='RDB data model diagram'> <svg width="776px" height="100%"
  viewBox="0.00 0.00 1250.00 1976.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1972)">

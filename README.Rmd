@@ -28,7 +28,7 @@ pal::cat_lines(paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::
                                                                       "[\\1](https://www.zdaarau.ch/en/)"))
 ```
 
-# RDB data model
+## RDB data model
 
 ```{r}
 #| echo: false
