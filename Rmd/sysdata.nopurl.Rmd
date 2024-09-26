@@ -977,8 +977,9 @@ usethis::use_data(col_names_nocodb_filled,
 ```{r}
 if (pal::desc_dep_vrsn(pkg = "ISOcodes") < max(as.numeric_version(pal::ls_pkg(pkg = "ISOcodes")$Version))) {
   
-  cli::cli_alert_warning(paste0("New ISOcodes package version in use. Please run {.run {paste0('rdb::', c('update_countries()', 'update_langs()', ",
-                                "'update_subnational_entities()', 'use_pkg(\"ISOcodes\", type = \"s\")'))}} after rebuilding the {.pkg rdb} package."))
+  cli::cli_alert_warning(paste0("New ISOcodes package version in use. Please run {.run pal::use_pkg(\"ISOcodes\", type = \"Suggests\")'}, then rebuild the ",
+                                "package, and finally run {.run {paste0('rdb::', c('update_administrative_units()', 'update_langs()'))}} to update the ",
+                                "corresponding RDB PostgreSQL tables."))
 }
 ```
 
