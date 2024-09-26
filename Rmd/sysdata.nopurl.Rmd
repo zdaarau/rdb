@@ -1005,4 +1005,9 @@ rdb::dm() |>
   dm::dm_draw(view_type = "all") |>
   DiagrammeRsvg::export_svg() |>
   brio::write_file(path = "man/figures/rdb_dm.svg")
+
+# also write a PNG version for inclusion in image links
+rsvg::rsvg_png(svg = "man/figures/rdb_dm.svg",
+               file = "man/figures/rdb_dm.png",
+               width = 2500L)
 ```
