@@ -16,7 +16,7 @@ Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{co
 Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
-\code{\link[=nest_topics]{nest_topics(data_topics)}}, invisibly.
+\code{\link[=data_topics]{nest_topics(data_topics)}}, invisibly.
 }
 \description{
 Updates the RDB's \code{languages} table with the data from \code{\link[=nest_topics]{nest_topics(data_topics)}}.

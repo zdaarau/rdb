@@ -23,7 +23,7 @@ Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection whe
 The newly written \code{administrative_units} table data as a \link[tibble:tbl_df-class]{tibble}, invisibly.
 }
 \description{
-Updates the RDB's \code{administrative_units} table with data combined from the \code{subnational_entities}, \code{countries}, \code{subnational_entities} and \code{municipalities}
+Updates the RDB's \code{administrative_units} table with data combined from the \code{supranational_entities}, \code{countries}, \code{subnational_entities} and \code{municipalities}
 tables.
 }
 \seealso{
