@@ -7,6 +7,7 @@
 reset_nocodb(
   hostname = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg),
   ask = TRUE,
+  save_user_mapping = TRUE,
   quiet = TRUE
 )
 }
@@ -14,6 +15,8 @@ reset_nocodb(
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
 \item{ask}{Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run \link[=interactive]{interactively}.}
+
+\item{save_user_mapping}{Whether or not to add NocoDB's current user data to the \code{nocodb_users} table via \code{\link[=update_nocodb_users]{update_nocodb_users()}} before resetting it.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
@@ -51,6 +54,7 @@ Other administration functions:
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
+\code{\link{update_nocodb_users}()},
 \code{\link{update_rfrnds}()},
 \code{\link{update_subnational_entities}()},
 \code{\link{update_tbl}()},

@@ -52,6 +52,7 @@ NocoDB server. Beware that this results in <strong>loss of all existing NocoDB-s
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">reset_nocodb</span><span class="op">(</span></span>
 <span>  hostname <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"nocodb_host"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  save_user_mapping <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -66,6 +67,10 @@ NocoDB server. Beware that this results in <strong>loss of all existing NocoDB-s
 
 <dt id="arg-ask">ask<a class="anchor" aria-label="anchor" href="#arg-ask"></a></dt>
 <dd><p>Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run <a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactively</a>.</p></dd>
+
+
+<dt id="arg-save-user-mapping">save_user_mapping<a class="anchor" aria-label="anchor" href="#arg-save-user-mapping"></a></dt>
+<dd><p>Whether or not to add NocoDB's current user data to the <code>nocodb_users</code> table via <code><a href="update_nocodb_users.html">update_nocodb_users()</a></code> before resetting it.</p></dd>
 
 
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
@@ -103,6 +108,7 @@ NocoDB server. Beware that this results in <strong>loss of all existing NocoDB-s
 <code><a href="update_countries.html">update_countries</a>()</code>,
 <code><a href="update_langs.html">update_langs</a>()</code>,
 <code><a href="update_municipalities.html">update_municipalities</a>()</code>,
+<code><a href="update_nocodb_users.html">update_nocodb_users</a>()</code>,
 <code><a href="update_rfrnds.html">update_rfrnds</a>()</code>,
 <code><a href="update_subnational_entities.html">update_subnational_entities</a>()</code>,
 <code><a href="update_tbl.html">update_tbl</a>()</code>,

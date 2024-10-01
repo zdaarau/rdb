@@ -43,6 +43,7 @@ Table name. One of
 \item \code{"municipalities"}
 \item \code{"languages"}
 \item \code{"topics"}
+\item \code{"nocodb_users"}
 }}
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
@@ -83,6 +84,7 @@ Other administration functions:
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
+\code{\link{update_nocodb_users}()},
 \code{\link{update_rfrnds}()},
 \code{\link{update_subnational_entities}()},
 \code{\link{update_topics}()}

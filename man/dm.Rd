@@ -15,10 +15,10 @@ dm(
 Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{connect()}}.}
 
 \item{incl_admin_tbls}{Whether or not to include tables that are administered fully programmatically
-(\code{administrative_units}, \code{supranational_entities}, \code{countries}, \code{subnational_entities}, \code{municipalities}, \code{languages} and \code{topics}).}
+(\code{administrative_units}, \code{supranational_entities}, \code{countries}, \code{subnational_entities}, \code{municipalities}, \code{languages}, \code{topics} and \code{nocodb_users}).}
 
 \item{incl_aux_admin_tbls}{Whether or not to include the auxiliary administrative unit tables
-\code{supranational_entities}, \code{countries}, \code{subnational_entities} and \code{municipalities}.}
+\code{supranational_entities}, \code{countries}, \code{subnational_entities}, \code{municipalities} and \code{nocodb_users}.}
 }
 \value{
 A \link[dm:dm]{data model} object.
@@ -53,6 +53,7 @@ Other administration functions:
 \code{\link{update_countries}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
+\code{\link{update_nocodb_users}()},
 \code{\link{update_rfrnds}()},
 \code{\link{update_subnational_entities}()},
 \code{\link{update_tbl}()},

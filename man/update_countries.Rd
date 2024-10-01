@@ -41,6 +41,7 @@ Other administration functions:
 \code{\link{update_administrative_units}()},
 \code{\link{update_langs}()},
 \code{\link{update_municipalities}()},
+\code{\link{update_nocodb_users}()},
 \code{\link{update_rfrnds}()},
 \code{\link{update_subnational_entities}()},
 \code{\link{update_tbl}()},

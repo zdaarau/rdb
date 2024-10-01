@@ -98,6 +98,7 @@ reference:
   - update_administrative_units
   - update_langs
   - update_topics
+  - update_nocodb_users
   - backup_rdb
   - restore_rdb
   - reset_rdb

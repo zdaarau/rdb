@@ -37,6 +37,7 @@ Table name. One of
 \item \code{"municipalities"}
 \item \code{"languages"}
 \item \code{"topics"}
+\item \code{"nocodb_users"}
 }}
 
 \item{connection}{\code{\link[RPostgres:PqConnection-class]{PqConnection}}\cr

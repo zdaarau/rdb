@@ -46,6 +46,7 @@ Table name. One of
 \item \code{"municipalities"}
 \item \code{"languages"}
 \item \code{"topics"}
+\item \code{"nocodb_users"}
 }}
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
