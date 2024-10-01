@@ -1642,14 +1642,17 @@ pg_tbl_keep <- function(tbl,
 #'
 #' Updates the specified PostgreSQL `tbl` with values from `data`.
 #'
-#' If the `tbl`'s primary key column is `GENERATED ALWAYS`, rows to be newly added must have `NA` values in the corresponding `data` column. This is a safety
-#' restriction to avoid accidental insertions.
+#' If the `tbl`'s primary key column is `GENERATED ALWAYS`, rows to be newly added must have `NA` values in the corresponding `data` column unless
+#' `override_pk_sys_val = TRUE`. This is a safety measure to avoid accidental insertions.
 #'
 #' @inheritParams read_tbl
 #' @param tbl PostgreSQL database table to be updated. A [`dbplyr::tbl.src_dbi`] object.
 #' @param data New or updated table data. A data frame that must contain at least the table's primary key column plus any additional columns with new values to
 #'   update the corresponding database fields with.
 #' @param sweep Whether or not to also sweep the table, i.e. delete rows that are not contained in `data`.
+#' @param override_pk_sys_val Whether or not to add new rows that have primary key values set (i.e. which are not `NA`) to a `tbl` whose primary key is
+#'   `GENERATED ALWAYS`. Setting `override_pk_sys_val = TRUE` is roughly equivalent to [specifying `OVERRIDING SYSTEM VALUE` in an SQL `INSERT`
+#'   statement](https://www.postgresql.org/docs/current/sql-insert.html#id-1.9.3.152.6.2).
 #'
 #' @return The updated table data as a [tibble][tibble::tbl_df], invisibly. Note that newly inserted rows aren't included if the table's primary key column is
 #'   `GENERATED ALWAYS`.
@@ -1660,11 +1663,13 @@ pg_tbl_update <- function(tbl,
                           tbl_name,
                           schema = pg_schema,
                           sweep = FALSE,
+                          override_pk_sys_val = FALSE,
                           connection = connect()) {
   
   checkmate::assert_class(tbl,
                           classes = "tbl_PqConnection")
   checkmate::assert_flag(sweep)
+  checkmate::assert_flag(override_pk_sys_val)
   
   col_metadata <- pg_col_metadata(tbl_name = tbl_name,
                                   schema = schema,
@@ -1672,6 +1677,11 @@ pg_tbl_update <- function(tbl,
   pk_col_names <-
     col_metadata |>
     dplyr::filter(is_pk) |>
+    dplyr::pull("column_name")
+  
+  pk_col_names_gen_always <-
+    col_metadata |>
+    dplyr::filter(is_pk & (identity_generation == "ALWAYS" | generated == "ALWAYS")) |>
     dplyr::pull("column_name")
   
   # delete obsolete data if requested
@@ -1691,18 +1701,8 @@ pg_tbl_update <- function(tbl,
   }
   
   # update existing and add new data
-  # NOTE: we can't use `dplyr::rows_in/upsert()` on tables with always-generated pk col
-  are_pks_writable <-
-    col_metadata |>
-    dplyr::filter(is_pk) |>
-    dplyr::select("identity_generation", "generated") |>
-    unlist() |>
-    magrittr::equals("ALWAYS") |>
-    any() |>
-    isTRUE() |>
-    magrittr::not()
-  
-  if (are_pks_writable) {
+  # NOTE: we can't use `dplyr::rows_in/upsert()` on tables with always-generated pk
+  if (length(pk_col_names_gen_always) == 0L) {
     
     result <- dplyr::rows_upsert(x = tbl,
                                  y = data,
@@ -1711,21 +1711,23 @@ pg_tbl_update <- function(tbl,
                                  in_place = TRUE)
   } else {
     
-    nrow_unknown_pks <-
+    rows_overridden_gen_always_pk <-
       data |>
-      dplyr::select(!!pk_col_names) |>
+      dplyr::select(!!pk_col_names_gen_always) |>
       dplyr::setdiff(y =
                        tbl |>
-                       dplyr::select(!!pk_col_names) |>
+                       dplyr::select(!!pk_col_names_gen_always) |>
                        dplyr::collect() |>
-                       # add an empty row to account for all-NA PK vals
-                       tibble::add_row()) |>
-      nrow()
+                       # add an empty row to account for all-NA vals
+                       tibble::add_row())
+    nrow_overridden_gen_always_pk <- nrow(rows_overridden_gen_always_pk)
     
-    if (nrow_unknown_pks > 0L) {
-      cli::cli_abort(paste0("{.val {nrow_unknown_pks}} row{?s} detected in {.arg data} with unknown primary key values. Rows to be newly inserted into the ",
-                            "{.field {tbl_name}} table must have `NA` values in the primary key {cli::qty(pk_col_names)} column{?s} ({.var {pk_col_names}}) ",
-                            "since {?it is/at least one of them is} {.code GENERATED ALWAYS}."))
+    if (nrow_overridden_gen_always_pk > 0L && !override_pk_sys_val) {
+      cli::cli_abort(paste0("{.val {nrow_overridden_gen_always_pk}} row{?s} detected in {.arg data} with explicit primary key values that are supposed to be ",
+                            "{.code GENERATED ALWAYS}. Rows to be newly inserted ",
+                            "into the {.field {tbl_name}} table must have `NA` values in the primary key {cli::qty(pk_col_names)} column{?s} ",
+                            "({.var {pk_col_names}}) since {?it is/at least one of them is} {.code GENERATED ALWAYS} but {.arg override_pk_sys_val} is set to ",
+                            "{.val FALSE}."))
     }
     
     # update existing rows
@@ -1735,20 +1737,42 @@ pg_tbl_update <- function(tbl,
                                  copy = TRUE,
                                  in_place = TRUE,
                                  unmatched = "ignore")
-    # add new rows
-    if (anyNA(data[, pk_col_names])) {
+    
+    # add new rows with regular always-generated pk
+    rows_new_gen_pk <- data |> dplyr::filter(dplyr::if_all(.cols = !!pk_col_names_gen_always,
+                                                           .fns = is.na))
+    if (nrow(rows_new_gen_pk) > 0L) {
       
       # NOTE: we can't append the result of `DBI::dbAppendTable()` to `result` since the former just returns an integer scalar
-      data |>
-        dplyr::filter(dplyr::if_any(.cols = !!pk_col_names,
-                                    .fns = is.na)) |>
-        dplyr::select(-!!pk_col_names) |>
+      rows_new_gen_pk |>
+        dplyr::select(-!!pk_col_names_gen_always) |>
         DBI::dbAppendTable(conn = connection,
                            name = DBI::Id(schema = schema,
                                           table = tbl_name),
                            value = _,
                            # disable `COPY FROM` for tbls with RLS enabled, cf. https://github.com/r-dbi/RPostgres/issues/470
                            copy = !pg_has_rls(tbl_name = tbl_name))
+    }
+    
+    # add new rows with overridden always-generated pk
+    rows_new_overridden_pk <- dplyr::semi_join(x = data,
+                                               y = rows_overridden_gen_always_pk,
+                                               by = colnames(rows_overridden_gen_always_pk))
+    if (nrow(rows_new_overridden_pk) > 0L) {
+      
+      DBI::dbAppendTable(conn = connection,
+                         name = DBI::Id(schema = schema,
+                                        table = tbl_name),
+                         value = rows_new_overridden_pk,
+                         # disable `COPY FROM` for tbls with RLS enabled, cf. https://github.com/r-dbi/RPostgres/issues/470
+                         copy = !pg_has_rls(tbl_name = tbl_name))
+      
+      # update tbl's pk seqs
+      pk_col_names_gen_always |>
+        purrr::walk(\(x) pg_update_seq(tbl_name = tbl_name,
+                                       col_name = x,
+                                       schema = schema,
+                                       connection = connection))
     }
   }
   
