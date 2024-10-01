@@ -30,6 +30,7 @@ utils::globalVariables(names = c(".",
                                  "applicability_constraint",
                                  "archive",
                                  "attachments",
+                                 "child_table",
                                  "children_tier_1",
                                  "children_tier_2",
                                  "children_tier_3",
@@ -48,10 +49,10 @@ utils::globalVariables(names = c(".",
                                  "data_type",
                                  "date_last_edited",
                                  "date_time_last_active",
-                                 "updated_at",
                                  "date_withdrawn",
                                  "day",
                                  "display_col",
+                                 "display_name",
                                  "electorate_abroad",
                                  "electorate_total",
                                  "files",
@@ -85,6 +86,7 @@ utils::globalVariables(names = c(".",
                                  "inst_trigger_threshold",
                                  "inst_trigger_time_limit",
                                  "inst_trigger_type",
+                                 "is_admin",
                                  "is_aux",
                                  "is_draft",
                                  "is_filled_auto",
@@ -112,9 +114,12 @@ utils::globalVariables(names = c(".",
                                  "name",
                                  "name_long",
                                  "name_short",
+                                 "nocodb_id",
                                  "number",
                                  "ordinal_position",
                                  "parent_code",
+                                 "parent_table",
+                                 "parent_tbls",
                                  "parent_topic",
                                  "password",
                                  "position_government",
@@ -154,6 +159,7 @@ utils::globalVariables(names = c(".",
                                  "un_region_tier_1_code",
                                  "un_region_tier_2_name",
                                  "un_region_tier_3_name",
+                                 "updated_at",
                                  "upper_house_abstentions",
                                  "upper_house_no",
                                  "upper_house_yes",
@@ -3185,6 +3191,54 @@ read_tbl <- function(tbl_name = tbl_metadata$name,
   pg_tbl_read(tbl_name = tbl_name,
               connection = connection,
               disconnect = disconnect)
+}
+```
+
+### `update_tbl`
+
+NOTES:
+
+-   It doesn't make much sense to return the return value of `pg_tbl_update()` since evaluating it will throw an `Invalid connection` error if
+    `disconnect = TRUE` (the default). Hence, we just return `data`.
+
+```{r}
+#' Update RDB table
+#'
+#' Updates the specified RDB table with the provided data.
+#'
+#' @inheritParams pg_tbl_update
+#' @inheritParams rfrnds
+#'
+#' @return `data`, invisibly.
+#' @family admin
+#' @export
+update_tbl <- function(data,
+                       tbl_name = tbl_metadata$name,
+                       sweep = FALSE,
+                       override_pk_sys_val = FALSE,
+                       connection = connect(),
+                       disconnect = TRUE) {
+  
+  tbl_name <- rlang::arg_match(tbl_name)
+  checkmate::assert_flag(disconnect)
+  
+  # necessary to avoid error on first run of `connect()`
+  force(connection)
+  
+  dplyr::tbl(src = connection,
+             from = DBI::Id(schema = pg_schema,
+                            table = tbl_name)) |>
+    pg_tbl_update(data = data,
+                  tbl_name = tbl_name,
+                  sweep = sweep,
+                  override_pk_sys_val = override_pk_sys_val,
+                  connection = connection)
+  
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(data)
 }
 ```
 
@@ -6270,109 +6324,155 @@ update_topics <- function(sweep = TRUE,
 }
 ```
 
-### `update_tbl`
-
-NOTES:
-
--   It doesn't make much sense to return the return value of `pg_tbl_update()` since evaluating it will throw an `Invalid connection` error if
-    `disconnect = TRUE` (the default). Hence, we just return `data`.
+### `update_nocodb_users`
 
 ```{r}
-#' Update RDB table
+#' Update RDB `nocodb_users` table
 #'
-#' Updates the specified RDB table with the provided data.
+#' Updates the RDB's `nocodb_users` table with the current [user data][nocodb::users] from the specified NocoDB server.
 #'
-#' @inheritParams pg_tbl_update
-#' @inheritParams rfrnds
+#' @inheritParams nocodb::users
+#' @inheritParams update_rfrnds
 #'
-#' @return `data`, invisibly.
+#' @return The newly written `nocodb_users` table data as a [tibble][tibble::tbl_df], invisibly.
 #' @family admin
 #' @export
-update_tbl <- function(data,
-                       tbl_name = tbl_metadata$name,
-                       sweep = FALSE,
-                       connection = connect(),
+update_nocodb_users <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
+                                                               pkg = this_pkg),
+                                sweep = FALSE,
+                                connection = connect(),
+                                disconnect = TRUE) {
+  
+  email <- pal::pkg_config_val(key = "nocodb_email",
+                               pkg = this_pkg)
+  password <- pal::pkg_config_val(key = "nocodb_password",
+                                  pkg = this_pkg)
+  
+  data_nocodb_users <- nocodb::users(hostname = hostname,
+                                     email = email,
+                                     password = password)
+  ids_present <-
+    read_tbl(tbl_name = "nocodb_users",
+             connection = connection,
+             disconnect = FALSE) |>
+    dplyr::pull(nocodb_id)
+  
+  data_nocodb_users |>
+    dplyr::filter(!(id %in% ids_present)) |>
+    dplyr::select(nocodb_id = id,
+                  name = display_name) |>
+    update_tbl(tbl_name = "nocodb_users",
+               sweep = sweep,
+               connection = connection,
+               disconnect = disconnect)
+}
+```
+
+### `backup_rdb`
+
+```{r}
+#' Back up RDB
+#'
+#' Fetches the complete RDB data – excluding fully programmatically administered tables – as a [`dm::dm`] object that also includes relationship information
+#' (primary and foreign keys) and writes it to an [`.rds`][saveRDS] file.
+#'
+#' @inheritParams pg_tbl_read
+#' @param path Path to write the RDB backup `.rds` file to.
+#' @param overwrite Whether or not to overwrite an existing file under `path`.
+#'
+#' @return An object of type [`dm::dm`], invisibly.
+#' @family admin
+#' @export
+backup_rdb <- function(path = "rdb_dm.rds",
+                       overwrite = TRUE,
+                       connection = connect(user = "rdb_admin",
+                                            password = pg_role_pw("rdb_admin")),
                        disconnect = TRUE) {
   
-  tbl_name <- rlang::arg_match(tbl_name)
+  checkmate::assert_path_for_output(path,
+                                    overwrite = overwrite,
+                                    extension = "rds")
   checkmate::assert_flag(disconnect)
   
-  # necessary to avoid error on first run of `connect()`
-  force(connection)
-  
-  dplyr::tbl(src = connection,
-             from = dbplyr::in_schema(schema = pg_schema,
-                                      table = tbl_name)) |>
-    pg_tbl_update(data = data,
-                  tbl_name = tbl_name,
-                  sweep = sweep,
-                  connection = connection)
+  dm_bkp <-
+    dm(connection = connection,
+               incl_admin_tbls = FALSE) |>
+    dm_excl_gen_always_cols() |>
+    dplyr::collect() %T>%
+    saveRDS(file = path)
   
   if (disconnect) {
     DBI::dbDisconnect(conn = connection)
   }
   
-  invisible(data)
+  invisible(dm_bkp)
+}
+```
+
+### `restore_rdb`
+
+```{r}
+#' Restore RDB
+#'
+#' Restores RDB data – excluding fully programmatically administered tables – from a [`dm::dm`] object that is expected to include relationship information
+#' (primary and foreign keys).
+#'
+#' @inheritParams pg_tbl_read
+#' @param dm RDB data and relationships (primary and foreign keys) as a [`dm::dm`] object.
+#' @param sweep Whether or not to also sweep existing RDB data, i.e. delete rows that are not contained in `dm`'s tables.
+#'
+#' @return `dm`, invisibly.
+#' @family admin
+#' @export
+restore_rdb <- function(dm = readRDS(file = "rdb_dm.rds"),
+                        sweep = FALSE,
+                        connection = connect(),
+                        disconnect = TRUE) {
+  assert_dm(dm)
+  
+  tbl_names_todo <-
+    tbl_metadata |>
+    dplyr::filter(!is_admin) |>
+    dplyr::pull(name)
+  
+  tbl_names_done <- character()
+  
+  tbl_deps_left <-
+    dm |>
+    dm::dm_select_tbl(!!tbl_names_todo) |>
+    dm_excl_gen_always_cols() |>
+    dm::dm_get_all_fks() |>
+    dplyr::group_by(child_table) |>
+    dplyr::summarise(parent_tbls = list(unique(parent_table)))
+  
+  while (length(tbl_names_todo) > 0L) {
+    
+    tbl_names_next <- setdiff(tbl_names_todo,
+                              tbl_deps_left$child_table)
+    # restore next tbls
+    tbl_names_next |>
+      purrr::walk(\(tbl_name) update_tbl(data = dm[[tbl_name]],
+                                         tbl_name = tbl_name,
+                                         sweep = sweep,
+                                         override_pk_sys_val = TRUE,
+                                         connection = connection,
+                                         disconnect = FALSE))
+    tbl_names_done %<>% c(tbl_names_next)
+    tbl_names_todo %<>% setdiff(y = tbl_names_next)
+    tbl_deps_left %<>% dplyr::filter(purrr::map_lgl(parent_tbls, \(x) any(x %in% tbl_names_todo)))
+  }
+  
+  if (disconnect) {
+    DBI::dbDisconnect(conn = connection)
+  }
+  
+  invisible(dm)
 }
 ```
 
 ### `reset_rdb`
 
 TODO
-
--   implement PGSQL data backup -\> restoral
-
-    -   backup:
-
-        ``` r
-        connection <- connect()
-        file_name_bkp <- "tmp_rdb_dm_bkp.rds"
-
-        tbl_names_to_bkp <-
-          tbl_metadata |>
-          dplyr::filter(!is_admin) |>
-          dplyr::pull(name)
-
-        dm_bkp <-
-          dm(connection = connection) |>
-          dm::dm_select_tbl(!!tbl_names_to_bkp) |>
-          # TODO: exclude non-PK `GENERATED ALWAYS` cols
-          dplyr::collect() |>
-          # we write `dm_bkp` to disk and read it back in before restoral in order to be prepared for any failures in between
-          saveRDS(file = file_name_bkp)
-        ```
-
-    -   restore:
-
-        NOTE: we need to populate the tbls in the right order to not violate FK constraints. we can derive this order from `dm::dm_get_all_fks()`.
-
-        ``` r
-        dm_bkp <- readRDS(file = file_name_bkp)
-
-        tbl_deps_left <-
-          dm_bkp |>
-          dm::dm_get_all_fks() |>
-          dplyr::group_by(child_table) |>
-          dplyr::summarise(parent_tbls = list(unique(parent_table)))
-
-        tbl_names_todo <- tbl_names_to_bkp
-        tbl_names_done <- character()
-
-        while (length(tbl_names_todo) > 0L) {
-
-          tbl_names_next <- setdiff(tbl_names_todo,
-                                    tbl_deps_left$child_table)
-          # restore next tbls
-          tbl_names_next |>
-            purrr::walk(\(tbl_name) rdb::update_tbl(data = dm_bkp[[tbl_name]],
-                                                    tbl_name = tbl_name,
-                                                    connection = connection,
-                                                    disconnect = FALSE))
-          tbl_names_done %<>% c(tbl_names_next)
-          tbl_names_todo %<>% setdiff(y = tbl_names_next)
-          tbl_deps_left %<>% dplyr::filter(purrr::map_lgl(parent_tbls, \(x) any(x %in% tbl_names_todo)))
-        }
-        ```
 
 -   Sometimes, `reset_rdb()` fails with
 
@@ -6472,6 +6572,19 @@ reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
                                pkg = this_pkg)
   password <- pal::pkg_config_val(key = "nocodb_password",
                                   pkg = this_pkg)
+  
+  # back up RDB data if necessary ----
+  if (reset_tbls) {
+    # we write `dm_bkp` to disk in order to be prepared for any failures in between
+    path_rdb_backup <- "tmp_rdb_dm_bkp.rds"
+    rdb_dm <- backup_rdb(path = path_rdb_backup,
+                         overwrite = TRUE,
+                         connection = connect(host = hostname_pg,
+                                              user = "rdb_admin",
+                                              password = pg_role_pw("rdb_admin")),
+                         disconnect = TRUE)
+  }
+  
   # reset PGSQL DB ----
   if (reset_db) {
     
@@ -6568,6 +6681,12 @@ reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
                   disconnect = FALSE)
     pg_add_default_data(connection = connection,
                         disconnect = FALSE)
+    ## restore RDB data ----
+    restore_rdb(dm = rdb_dm,
+                sweep = FALSE,
+                connection = connection,
+                disconnect = FALSE)
+    unlink(path_rdb_backup)
   }
   
   # sync NocoDB data src ----
@@ -6937,6 +7056,7 @@ NOTES:
 #'
 #' @inheritParams nocodb::update_app_settings
 #' @param ask Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run [interactively][interactive].
+#' @param save_user_mapping Whether or not to add NocoDB's current user data to the `nocodb_users` table via [update_nocodb_users()] before resetting it.
 #'
 #' @return `hostname`, invisibly.
 #' @family nocodb
@@ -6946,9 +7066,11 @@ NOTES:
 reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
                                                         pkg = this_pkg),
                          ask = TRUE,
+                         save_user_mapping = TRUE,
                          quiet = TRUE) {
   
   checkmate::assert_flag(ask)
+  checkmate::assert_flag(save_user_mapping)
   checkmate::assert_flag(quiet)
   rlang::check_installed("yesno",
                          reason = pal::reason_pkg_required())
@@ -6972,6 +7094,13 @@ reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
       if (!yesno::yesno2("Are you sure you want to continue?")) {
         return(invisible(hostname))
       }
+    }
+    
+    # update `nocodb_users` PGSQL tbl with latest data if requested
+    if (save_user_mapping) {
+      update_nocodb_users(hostname = hostname,
+                          sweep = FALSE,
+                          disconnect = TRUE)
     }
     
     bases |>
