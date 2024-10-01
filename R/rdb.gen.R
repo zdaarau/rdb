@@ -2326,7 +2326,8 @@ tbl_metadata <-
     "subnational_entities",         "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
     "municipalities",               "#ffecb3",      "name",              "\U0001F512",      TRUE,    TRUE,
     "languages",                    "#ffcf3d",      "name",              "\U0001F512",      FALSE,   TRUE,
-    "topics",                       "#ffcf3d",      "name",              "\U0001F512",      FALSE,   TRUE
+    "topics",                       "#ffcf3d",      "name",              "\U0001F512",      FALSE,   TRUE,
+    "nocodb_users",                 "#000000",      "nocodb_id",         "\U0001F512",      TRUE,    TRUE
   ) |>
   # add `desc` col separately (otherwise col vals exceed screen width too easily)
   dplyr::left_join(
@@ -2358,7 +2359,8 @@ tbl_metadata <-
                                              "[ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) standard)"),
       "municipalities",               "administrative units on the municipal level",
       "languages",                    "languages (conforming to the [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1) standard)",
-      "topics",                       "political topics to classify referendums"
+      "topics",                       "political topics to classify referendums",
+      "nocodb_users",                 "NocoDB *user identifer* \u2194 *name* mapping"
     )) |>
   assertr::assert(predicate = assertr::not_na,
                   name, desc) |>

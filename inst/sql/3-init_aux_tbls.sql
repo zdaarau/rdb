@@ -49,7 +49,8 @@ DO LANGUAGE plpgsql
                              'subnational_entities',
                              'municipalities',
                              'languages',
-                             'topics']
+                             'topics',
+                             'nocodb_users']
     LOOP
       EXECUTE format('DROP TABLE IF EXISTS %I CASCADE', t);
     END LOOP;
@@ -113,6 +114,11 @@ CREATE TABLE public.languages (
 CREATE TABLE public.topics (
   name        text PRIMARY KEY,
   parent_name text REFERENCES public.topics
+);
+
+CREATE TABLE public.nocodb_users (
+  nocodb_id text PRIMARY KEY,
+  name      text NOT NULL
 );
 
 /* Set all 'public' schema tables to be owned by 'nocodb' to avoid bug
