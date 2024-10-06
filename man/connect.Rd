@@ -6,9 +6,9 @@
 \usage{
 connect(
   dbname = pg_db,
-  host = pal::pkg_config_val(key = "pg_host", pkg = this_pkg),
-  user = pal::pkg_config_val(key = "pg_user", pkg = this_pkg),
-  password = pal::pkg_config_val(key = "pg_password", pkg = this_pkg),
+  host = pal::pkg_config_val("pg_host"),
+  user = pal::pkg_config_val("pg_user"),
+  password = pal::pkg_config_val("pg_password"),
   sslmode = "verify-full"
 )
 }

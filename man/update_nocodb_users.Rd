@@ -5,7 +5,7 @@
 \title{Update RDB \code{nocodb_users} table}
 \usage{
 update_nocodb_users(
-  hostname = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg),
+  hostname = pal::pkg_config_val("nocodb_host"),
   sweep = FALSE,
   connection = connect(),
   disconnect = TRUE

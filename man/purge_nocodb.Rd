@@ -8,8 +8,8 @@ purge_nocodb(
   fly_app = "rdb-nocodb",
   s3_bucket = fly_app,
   s3_endpoint = s3_endpoint_url,
-  s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key", pkg = this_pkg),
-  s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret", pkg = this_pkg),
+  s3_access_key = pal::pkg_config_val("nocodb_s3_access_key"),
+  s3_access_secret = pal::pkg_config_val("nocodb_s3_access_secret"),
   ask = TRUE,
   quiet = FALSE
 )

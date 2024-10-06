@@ -6,8 +6,8 @@
 \usage{
 restart_neon_ep(
   project_id = neon_project_id,
-  endpoint_id = hostname_to_ep(pal::pkg_config_val(key = "pg_host", pkg = this_pkg)),
-  api_key = pal::pkg_config_val(key = "neon_api_key", pkg = this_pkg),
+  endpoint_id = hostname_to_ep(pal::pkg_config_val("pg_host")),
+  api_key = pal::pkg_config_val("neon_api_key"),
   max_tries = 3L
 )
 }

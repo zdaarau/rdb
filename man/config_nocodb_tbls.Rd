@@ -5,7 +5,7 @@
 \title{Configure NocoDB tables}
 \usage{
 config_nocodb_tbls(
-  hostname = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg),
+  hostname = pal::pkg_config_val("nocodb_host"),
   quiet = FALSE
 )
 }

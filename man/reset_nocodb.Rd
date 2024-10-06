@@ -5,7 +5,7 @@
 \title{Reset NocoDB}
 \usage{
 reset_nocodb(
-  hostname = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg),
+  hostname = pal::pkg_config_val("nocodb_host"),
   ask = TRUE,
   save_user_mapping = TRUE,
   quiet = TRUE

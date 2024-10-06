@@ -7,8 +7,8 @@
 clean_attachment_bucket(
   s3_bucket = s3_bucket_attachments,
   s3_endpoint = s3_endpoint_url,
-  s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key", pkg = this_pkg),
-  s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret", pkg = this_pkg),
+  s3_access_key = pal::pkg_config_val("nocodb_s3_access_key"),
+  s3_access_secret = pal::pkg_config_val("nocodb_s3_access_secret"),
   run_dry = TRUE
 )
 }

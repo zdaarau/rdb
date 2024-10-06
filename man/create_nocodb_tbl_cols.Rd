@@ -4,9 +4,7 @@
 \alias{create_nocodb_tbl_cols}
 \title{Create NocoDB table meta columns}
 \usage{
-create_nocodb_tbl_cols(
-  hostname = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg)
-)
+create_nocodb_tbl_cols(hostname = pal::pkg_config_val("nocodb_host"))
 }
 \arguments{
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}

@@ -5,7 +5,7 @@
 \title{Restart RDB PostgREST server}
 \usage{
 restart_postgrest(
-  api_token = pal::pkg_config_val(key = "fly_io_api_token", pkg = this_pkg),
+  api_token = pal::pkg_config_val("fly_io_api_token"),
   quiet = FALSE
 )
 }

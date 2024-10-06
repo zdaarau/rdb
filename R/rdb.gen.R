@@ -1039,8 +1039,7 @@ pg_init_db <- function(connection = connect(user = "rdb_admin",
                                             password = pg_role_pw("rdb_admin")),
                        disconnect = TRUE) {
   vars <-
-    pal::pkg_config_val(key = "pg_roles_csv_file",
-                        pkg = this_pkg) |>
+    pal::pkg_config_val("pg_roles_csv_file") |>
     readr::read_csv(col_types = "c") %$%
     magrittr::set_names(x = password,
                         value = paste0("pw_", role))
@@ -1211,8 +1210,7 @@ pg_pk <- function(tbl_name,
 #' @family pg
 #' @keywords internal
 pg_role_pw <- function(role,
-                       path = pal::pkg_config_val(key = "pg_roles_csv_file",
-                                                  pkg = this_pkg)) {
+                       path = pal::pkg_config_val("pg_roles_csv_file")) {
   roles <- readr::read_csv(file = path,
                            col_types = "c")
   pal::assert_cols(data = roles,
@@ -1716,10 +1714,8 @@ split_sql_str <- function(.text,
 #' @family s3
 #' @keywords internal
 s3_auth <- function(s3_endpoint = s3_endpoint_url,
-                    s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
-                                                        pkg = this_pkg),
-                    s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
-                                                           pkg = this_pkg)) {
+                    s3_access_key = pal::pkg_config_val("nocodb_s3_access_key"),
+                    s3_access_secret = pal::pkg_config_val("nocodb_s3_access_secret")) {
   checkmate::assert_string(s3_endpoint)
   checkmate::assert_string(s3_access_key)
   checkmate::assert_string(s3_access_secret)
@@ -3010,10 +3006,8 @@ download_attachments <- function(data,
 #' @export
 clean_attachment_bucket <- function(s3_bucket = s3_bucket_attachments,
                                     s3_endpoint = s3_endpoint_url,
-                                    s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
-                                                                        pkg = this_pkg),
-                                    s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
-                                                                           pkg = this_pkg),
+                                    s3_access_key = pal::pkg_config_val("nocodb_s3_access_key"),
+                                    s3_access_secret = pal::pkg_config_val("nocodb_s3_access_secret"),
                                     run_dry = TRUE) {
   
   checkmate::assert_string(s3_bucket)
@@ -5198,12 +5192,9 @@ tbl_n_rfrnds_per_period <- function(data,
 #' 
 #' con |> DBI::dbListTables()
 connect <- function(dbname = pg_db,
-                    host = pal::pkg_config_val(key = "pg_host",
-                                               pkg = this_pkg),
-                    user = pal::pkg_config_val(key = "pg_user",
-                                               pkg = this_pkg),
-                    password = pal::pkg_config_val(key = "pg_password",
-                                                   pkg = this_pkg),
+                    host = pal::pkg_config_val("pg_host"),
+                    user = pal::pkg_config_val("pg_user"),
+                    password = pal::pkg_config_val("pg_password"),
                     sslmode = "verify-full") {
   
   DBI::dbConnect(drv = RPostgres::Postgres(),
@@ -5474,16 +5465,13 @@ update_topics <- function(sweep = TRUE,
 #' @return The newly written `nocodb_users` table data as a [tibble][tibble::tbl_df], invisibly.
 #' @family admin
 #' @export
-update_nocodb_users <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
-                                                               pkg = this_pkg),
+update_nocodb_users <- function(hostname = pal::pkg_config_val("nocodb_host"),
                                 sweep = FALSE,
                                 connection = connect(),
                                 disconnect = TRUE) {
   
-  email <- pal::pkg_config_val(key = "nocodb_email",
-                               pkg = this_pkg)
-  password <- pal::pkg_config_val(key = "nocodb_password",
-                                  pkg = this_pkg)
+  email <- pal::pkg_config_val("nocodb_email")
+  password <- pal::pkg_config_val("nocodb_password")
   
   data_nocodb_users <- nocodb::users(hostname = hostname,
                                      email = email,
@@ -5627,10 +5615,8 @@ restore_rdb <- function(dm = readRDS(file = "rdb_dm.rds"),
 #'                hostname_pg = Sys.getenv("R_RDB_PG_HOST_TESTING"),
 #'                reset_db = TRUE)}
 # nolint start: cyclocomp_linter
-reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
-                                                            pkg = this_pkg),
-                      hostname_pg = pal::pkg_config_val(key = "pg_host",
-                                                        pkg = this_pkg),
+reset_rdb <- function(hostname_nocodb = pal::pkg_config_val("nocodb_host"),
+                      hostname_pg = pal::pkg_config_val("pg_host"),
                       reset_db = FALSE,
                       reset_tbls = reset_db,
                       ask = TRUE,
@@ -5668,10 +5654,8 @@ reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
     }
   }
   
-  email <- pal::pkg_config_val(key = "nocodb_email",
-                               pkg = this_pkg)
-  password <- pal::pkg_config_val(key = "nocodb_password",
-                                  pkg = this_pkg)
+  email <- pal::pkg_config_val("nocodb_email")
+  password <- pal::pkg_config_val("nocodb_password")
   
   # back up RDB data if necessary ----
   if (reset_tbls) {
@@ -5699,8 +5683,7 @@ reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
     
     # restart Neon compute endpoints (otherwise the read-only one becomes inaccessible sometimes)
     endpoint_id <- hostname_to_ep(hostname_pg)
-    endpoint_id_ro <- hostname_to_ep(pal::pkg_config_val_default(key = "pg_host",
-                                                                 pkg = this_pkg))
+    endpoint_id_ro <- hostname_to_ep(pal::pkg_config_val_default(key = "pg_host"))
     ## restart RW endpoint before RO one
     if (endpoint_id != endpoint_id_ro) {
       restart_neon_ep(project_id = neon_project_id,
@@ -5858,10 +5841,8 @@ reset_rdb <- function(hostname_nocodb = pal::pkg_config_val(key = "nocodb_host",
 #' @family admin
 #' @keywords internal
 restart_neon_ep <- function(project_id = neon_project_id,
-                            endpoint_id = hostname_to_ep(pal::pkg_config_val(key = "pg_host",
-                                                                             pkg = this_pkg)),
-                            api_key = pal::pkg_config_val(key = "neon_api_key",
-                                                          pkg = this_pkg),
+                            endpoint_id = hostname_to_ep(pal::pkg_config_val("pg_host")),
+                            api_key = pal::pkg_config_val("neon_api_key"),
                             max_tries = 3L) {
   
   checkmate::assert_string(project_id)
@@ -5908,12 +5889,10 @@ restart_neon_ep <- function(project_id = neon_project_id,
 #' @family nocodb
 #' @family admin
 #' @keywords internal
-create_nocodb_tbls <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
-                                                              pkg = this_pkg)) {
-  email <- pal::pkg_config_val(key = "nocodb_email",
-                               pkg = this_pkg)
-  password <- pal::pkg_config_val(key = "nocodb_password",
-                                  pkg = this_pkg)
+create_nocodb_tbls <- function(hostname = pal::pkg_config_val("nocodb_host")) {
+  
+  email <- pal::pkg_config_val("nocodb_email")
+  password <- pal::pkg_config_val("nocodb_password")
   id_base <- nocodb::base_id(title = nocodb_base_title,
                              hostname = hostname,
                              email = email,
@@ -5969,12 +5948,10 @@ create_nocodb_tbls <- function(hostname = pal::pkg_config_val(key = "nocodb_host
 #' @family nocodb
 #' @family admin
 #' @keywords internal
-create_nocodb_tbl_cols <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
-                                                                  pkg = this_pkg)) {
-  email <- pal::pkg_config_val(key = "nocodb_email",
-                               pkg = this_pkg)
-  password <- pal::pkg_config_val(key = "nocodb_password",
-                                  pkg = this_pkg)
+create_nocodb_tbl_cols <- function(hostname = pal::pkg_config_val("nocodb_host")) {
+  
+  email <- pal::pkg_config_val("nocodb_email")
+  password <- pal::pkg_config_val("nocodb_password")
   id_base <- nocodb::base_id(title = nocodb_base_title,
                              hostname = hostname,
                              email = email,
@@ -6039,14 +6016,11 @@ create_nocodb_tbl_cols <- function(hostname = pal::pkg_config_val(key = "nocodb_
 #' @family nocodb
 #' @family admin
 #' @keywords internal
-config_nocodb_tbls <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
-                                                              pkg = this_pkg),
+config_nocodb_tbls <- function(hostname = pal::pkg_config_val("nocodb_host"),
                                quiet = FALSE) {
   
-  email <- pal::pkg_config_val(key = "nocodb_email",
-                               pkg = this_pkg)
-  password <- pal::pkg_config_val(key = "nocodb_password",
-                                  pkg = this_pkg)
+  email <- pal::pkg_config_val("nocodb_email")
+  password <- pal::pkg_config_val("nocodb_password")
   id_base <- nocodb::base_id(title = nocodb_base_title,
                              hostname = hostname,
                              email = email,
@@ -6111,8 +6085,7 @@ config_nocodb_tbls <- function(hostname = pal::pkg_config_val(key = "nocodb_host
 #' @family admin
 #' @keywords internal
 # nolint start: cyclocomp_linter
-reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
-                                                        pkg = this_pkg),
+reset_nocodb <- function(hostname = pal::pkg_config_val("nocodb_host"),
                          ask = TRUE,
                          save_user_mapping = TRUE,
                          quiet = TRUE) {
@@ -6123,10 +6096,8 @@ reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
   rlang::check_installed("yesno",
                          reason = pal::reason_pkg_required())
   
-  email <- pal::pkg_config_val(key = "nocodb_email",
-                               pkg = this_pkg)
-  password <- pal::pkg_config_val(key = "nocodb_password",
-                                  pkg = this_pkg)
+  email <- pal::pkg_config_val("nocodb_email")
+  password <- pal::pkg_config_val("nocodb_password")
   
   # delete possibly existing base
   bases <- nocodb::bases(hostname = hostname,
@@ -6184,8 +6155,7 @@ reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
                                             user = "nocodb",
                                             password = pg_role_pw("nocodb"),
                                             database = pg_db,
-                                            host = pal::pkg_config_val(key = "pg_host",
-                                                                       pkg = this_pkg),
+                                            host = pal::pkg_config_val("pg_host"),
                                             port = 5432L,
                                             ssl = list(ca = "",
                                                        cert = "",
@@ -6259,8 +6229,7 @@ reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
                         password = password)
   
   # add user accounts if necessary
-  path_users_ref <- pal::pkg_config_val(key = "nocodb_user_account_csv_file",
-                                        pkg = this_pkg)
+  path_users_ref <- pal::pkg_config_val("nocodb_user_account_csv_file")
   
   if (!is.null(path_users_ref) && fs::file_exists(path_users_ref)) {
     
@@ -6370,10 +6339,8 @@ reset_nocodb <- function(hostname = pal::pkg_config_val(key = "nocodb_host",
 purge_nocodb <- function(fly_app = "rdb-nocodb",
                          s3_bucket = fly_app,
                          s3_endpoint = s3_endpoint_url,
-                         s3_access_key = pal::pkg_config_val(key = "nocodb_s3_access_key",
-                                                             pkg = this_pkg),
-                         s3_access_secret = pal::pkg_config_val(key = "nocodb_s3_access_secret",
-                                                                pkg = this_pkg),
+                         s3_access_key = pal::pkg_config_val("nocodb_s3_access_key"),
+                         s3_access_secret = pal::pkg_config_val("nocodb_s3_access_secret"),
                          ask = TRUE,
                          quiet = FALSE) {
   
@@ -6528,8 +6495,7 @@ notify_postgrest <- function(connection = connect(),
 #' @family postgrest
 #' @family admin
 #' @keywords internal
-restart_postgrest <- function(api_token = pal::pkg_config_val(key = "fly_io_api_token",
-                                                              pkg = this_pkg),
+restart_postgrest <- function(api_token = pal::pkg_config_val("fly_io_api_token"),
                               quiet = FALSE) {
   
   checkmate::assert_flag(quiet)

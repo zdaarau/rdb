@@ -5,8 +5,8 @@
 \title{Reset RDB}
 \usage{
 reset_rdb(
-  hostname_nocodb = pal::pkg_config_val(key = "nocodb_host", pkg = this_pkg),
-  hostname_pg = pal::pkg_config_val(key = "pg_host", pkg = this_pkg),
+  hostname_nocodb = pal::pkg_config_val("nocodb_host"),
+  hostname_pg = pal::pkg_config_val("pg_host"),
   reset_db = FALSE,
   reset_tbls = reset_db,
   ask = TRUE,

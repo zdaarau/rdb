@@ -4,10 +4,7 @@
 \alias{pg_role_pw}
 \title{Get PostgreSQL role password}
 \usage{
-pg_role_pw(
-  role,
-  path = pal::pkg_config_val(key = "pg_roles_csv_file", pkg = this_pkg)
-)
+pg_role_pw(role, path = pal::pkg_config_val("pg_roles_csv_file"))
 }
 \arguments{
 \item{role}{Role name to return the password for.}
