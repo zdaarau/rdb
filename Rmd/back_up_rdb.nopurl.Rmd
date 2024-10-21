@@ -23,7 +23,7 @@ path_backup_rdb <- "data-raw/backups/rdb.rds"
 
 # Back up RDB data
 
-NOTE: Unreliable since CCM Design changed something under the hood of the API (rate limiting?). See below for our current workaround.
+NOTE: Full backup might be unreliable since CCM Design changed something under the hood of the API (rate limiting?). See below for a workaround.
 
 ```{r}
 #| eval: TRUE
