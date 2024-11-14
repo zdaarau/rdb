@@ -64,14 +64,7 @@ pkgsnip::md_snip(id = "usage_notice") %>%
 
 ```{r}
 #| label: pkg-config
-#| echo: false
-#| results: "asis"
-
-pkgsnip::md_snip(id = "pkg_config",
-                 pkg = "rdb")
-cat("\n\n::: {.table-wide}\n ")
-pal::print_pkg_config("rdb")
-cat("\n :::")
+#| child: !expr pkgsnip::snip_path("pkg-config-notice.Rmd")
 ```
 
 ## Development

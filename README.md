@@ -35,7 +35,6 @@ Some of rdb’s functionality is controlled via package-specific global configur
 | Maximal timespan to preserve the package’s [pkgpins](https://pkgpins.rpkg.dev/) cache. Cache entries older than this will be deleted upon package loading. | `rdb.global_max_cache_age` | `R_RDB_GLOBAL_MAX_CACHE_AGE` | `"30 days"`       |
 | Whether or not to use the testing servers instead of the production servers for RDB Services API calls etc.                                                | `rdb.use_testing_server`   | `R_RDB_USE_TESTING_SERVER`   | `FALSE`           |
 | Whether or not to run the tests that use the testing servers for RDB Services API calls etc. during `devtools::test()`.                                    | `rdb.test_testing_server`  | `R_RDB_TEST_TESTING_SERVER`  | `FALSE`           |
-
 :::
 
 ## Development
@@ -77,7 +76,6 @@ This package borrows a lot of the [Tidyverse](https://www.tidyverse.org/) design
 -   R source code is *not* split over several files as [suggested by the TSG](https://style.tidyverse.org/package-files.html) but instead is (as far as possible) kept in the single file [`Rmd/rdb.Rmd`](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/master/Rmd/rdb.Rmd) which is well-structured thanks to its [Markdown support](#r-markdown-format).
 
 As far as possible, these deviations from the TSG plus some additional restrictions are formally specified in [`pkgpurl::default_linters`](https://pkgpurl.rpkg.dev/reference/default_linters), which is (by default) used in [`pkgpurl::lint_rmd()`](https://pkgpurl.rpkg.dev/reference/lint_rmd), which in turn is the recommended way to lint this package.
-:::
 
 ---
 
