@@ -110,6 +110,9 @@ var_sections <- function(data,
       value_label_suffix %<>% pal::strip_md_footnotes()
     }
     
+    is_derived <- length(unlist(derived_from)) > 0L
+    has_gen_fn <- !is.na(gen_fn)
+    
     list(
       if (variable_name == "topics_tier_1") {
         c("### Topics",
@@ -168,13 +171,23 @@ var_sections <- function(data,
       "",
       variable_label %>% pal::sentenceify(),
       "",
-      if (is_opt) {
+      if (is_opt && (is_derived || has_gen_fn)) {
         c("#### Origin",
           "",
-          glue::glue("This variable is derived from ", pal::enum_str(rdb:::md_link_codebook(unlist(derived_from))), " and can be generated on demand via ",
-                     ifelse(strip_extended_pandoc,
-                            "[{gen_fn}()]",
-                            "[`{gen_fn}()`](https://rdb.rpkg.dev/reference/{gen_fn}.html)"),
+          glue::glue("This variable",
+                     ifelse(is_derived,
+                            paste0(" is derived from ",
+                                   pal::enum_str(rdb:::md_link_codebook(unlist(derived_from))),
+                                   ifelse(has_gen_fn,
+                                          " and",
+                                          "")),
+                            ""),
+                     ifelse(has_gen_fn,
+                            paste0(" can be generated on demand via ",
+                                   ifelse(strip_extended_pandoc,
+                                          "[{gen_fn}()]",
+                                          "[`{gen_fn}()`](https://rdb.rpkg.dev/reference/{gen_fn}.html)")),
+                            ""),
                      "."),
           "")
       },
