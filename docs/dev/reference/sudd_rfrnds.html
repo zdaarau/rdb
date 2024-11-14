@@ -106,7 +106,7 @@ licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" clas
 <span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="rfrnds.html">rfrnds</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">country_code</span> <span class="op">==</span> <span class="st">"AT"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">rdb</span><span class="fu">::</span><span class="fu">sudd_rfrnds</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 29</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 30</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   id_sudd  country_code country_name is_former_country subnational_entity_code territory_name_de territory_type_de         date        year month   day title_de</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> at012013 AT           Austria      FALSE             <span style="color: #BB0000;">NA</span>                      Österreich        unabhängiger Staat        2013-01-20  <span style="text-decoration: underline;">2</span>013     1    20 Berufsh…</span>
@@ -114,9 +114,9 @@ licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" clas
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> at011994 AT           Austria      FALSE             <span style="color: #BB0000;">NA</span>                      Österreich        unabhängiger Staat        1994-06-12  <span style="text-decoration: underline;">1</span>994     6    12 Beitrit…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> at011978 AT           Austria      FALSE             <span style="color: #BB0000;">NA</span>                      Österreich        unabhängiger Staat        1978-11-05  <span style="text-decoration: underline;">1</span>978    11     5 Bau des…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> at011938 AT           Austria      FALSE             <span style="color: #BB0000;">NA</span>                      Österreich        unabhängiger Staat wird … 1938-04-10  <span style="text-decoration: underline;">1</span>938     4    10 Anschlu…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 17 more variables: question_type_de &lt;chr&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 18 more variables: question_type_de &lt;chr&gt;, result_de &lt;chr&gt;, result_status_de &lt;chr&gt;, adoption_requirements_de &lt;list&gt;, electorate_total &lt;int&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   votes_total &lt;int&gt;, votes_invalid &lt;int&gt;, votes_valid &lt;int&gt;, votes_yes &lt;int&gt;, votes_no &lt;int&gt;, votes_option_1 &lt;int&gt;, votes_option_2 &lt;int&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   votes_option_3 &lt;int&gt;, files &lt;list&gt;, remarks &lt;list&gt;, sources &lt;list&gt;, date_last_edited &lt;date&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   votes_option_3 &lt;int&gt;, files &lt;list&gt;, remarks &lt;list&gt;, sources &lt;list&gt;, ids_sudd_simultaneous &lt;list&gt;, date_last_edited &lt;date&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -128,7 +128,7 @@ licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" clas
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

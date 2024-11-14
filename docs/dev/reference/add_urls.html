@@ -62,7 +62,7 @@ types = "sudd" will add the column url_sudd etc.'><meta name="twitter:card" cont
 
 
 <dt id="arg-types">types<a class="anchor" aria-label="anchor" href="#arg-types"></a></dt>
-<dd><p>Type(s) of URLs to add. One of
+<dd><p>Type(s) of URLs to add. One or more of
 <code>"sudd"</code> or <code>"swissvotes"</code>.</p></dd>
 
 </dl></div>
@@ -93,20 +93,20 @@ types = "sudd" will add the column url_sudd etc.'><meta name="twitter:card" cont
 <span class="r-in"><span>                <span class="va">level</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"id_"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                <span class="fu">starts_with</span><span class="op">(</span><span class="st">"url_"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 685 × 7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 689 × 7</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id                       country_code level    id_official id_sudd  url_sudd                              url_swissvotes                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 65bcbc1974e3a61b5661da12 CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 65bca88174e3a61b5661da08 CH           national <span style="color: #BB0000;">NA</span>          ch012024 https://sudd.ch/event.php?id=ch012024 <span style="color: #BB0000;">NA</span>                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 6442587e0b8bae0c78c7e9de CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 644257630b8bae0c78c7e9da CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 644255f50b8bae0c78c7e9d6 CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 63403d2da52c3995043a9208 CH           national 661         ch112022 https://sudd.ch/event.php?id=ch112022 https://swissvotes.ch/vote/661</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 63403a96a52c3995043a91f9 CH           national 658         ch082022 https://sudd.ch/event.php?id=ch082022 https://swissvotes.ch/vote/658</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 634035bba52c3995043a91e2 CH           national 659         ch092022 https://sudd.ch/event.php?id=ch092022 https://swissvotes.ch/vote/659</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 634029b9a52c3995043a91d1 CH           national 660         ch102022 https://sudd.ch/event.php?id=ch102022 https://swissvotes.ch/vote/660</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 62c68fd613bed420d6ffbdf8 CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 675 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 66505b3fc3cd67046057fe07 CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 6650452ac3cd67046057fe03 CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 665044a8c3cd67046057fe01 CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 665043f1c3cd67046057fdfe CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 65bcbc1974e3a61b5661da12 CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 65bca88174e3a61b5661da08 CH           national <span style="color: #BB0000;">NA</span>          ch012024 https://sudd.ch/event.php?id=ch012024 <span style="color: #BB0000;">NA</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 6442587e0b8bae0c78c7e9de CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 644257630b8bae0c78c7e9da CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 644255f50b8bae0c78c7e9d6 CH           national <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span>                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 63403d2da52c3995043a9208 CH           national 661         ch112022 https://sudd.ch/event.php?id=ch112022 https://swissvotes.ch/vote/661</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 679 more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -118,7 +118,7 @@ types = "sudd" will add the column url_sudd etc.'><meta name="twitter:card" cont
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
