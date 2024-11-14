@@ -3975,7 +3975,7 @@ add_world_regions <- function(data,
 #'
 #' @param data RDB referendum data as returned by [rfrnds()]. A data frame that at minimum contains the column `id_sudd` for `types = "sudd"` and the columns
 #'   `country_code`, `level` and `id_official` for `types = "swissvotes"`.
-#' @param types Type(s) of URLs to add. One of
+#' @param types Type(s) of URLs to add. One or more of
 #'   `r pal::fn_param_defaults(fn = add_urls, param = "types") |> pal::wrap_chr("\x60") |> cli::ansi_collapse(sep2 = " or ", last = " or ")`.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
@@ -6068,8 +6068,6 @@ config_nocodb_tbls <- function(hostname = pal::pkg_config_val("nocodb_host"),
                                                        quiet = quiet))
   invisible(hostname)
 }
-
-
 
 #' Reset NocoDB
 #'

@@ -10,7 +10,7 @@ add_urls(data, types = c("sudd", "swissvotes"))
 \item{data}{RDB referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}. A data frame that at minimum contains the column \code{id_sudd} for \code{types = "sudd"} and the columns
 \code{country_code}, \code{level} and \code{id_official} for \code{types = "swissvotes"}.}
 
-\item{types}{Type(s) of URLs to add. One of
+\item{types}{Type(s) of URLs to add. One or more of
 \code{"sudd"} or \code{"swissvotes"}.}
 }
 \value{
