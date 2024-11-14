@@ -625,7 +625,6 @@ variable_name_print = "Archived data"
 variable_label = "the referendum's data from an earlier, obsolete RDB state"
 value_scale = "undefined"
 is_nested = true
-is_opt = true
 [[01_main.item]]
 variable_name = "type"
 variable_name_print = "Type"
