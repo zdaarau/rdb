@@ -19,7 +19,8 @@ htmlwidgets::setWidgetIdSeed(seed = 42L)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  error = TRUE
 )
 
 # disable cache expiry
@@ -61,7 +62,7 @@ which should output a [tibble](https://tibble.tidyverse.org/) like this one:
 ```{r}
 #| echo: false
 
-rdb::rfrnds(quiet = TRUE)
+rdb::rfrnds()
 ```
 
 The RDB referendum data's individual variables (columns) are documented in the [codebook](https://rdb.rpkg.dev/articles/codebook.html). It is also available as
@@ -158,7 +159,7 @@ and you'd get the following nicely formatted [gt](https://gt.rstudio.com/) table
 ```{r}
 #| echo: false
 
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::as_ballot_dates() |>
   rdb::tbl_n_rfrnds(by = c(country_name, level),
                     n_rows = 10L,
@@ -178,7 +179,7 @@ rdb::rfrnds() |>
 ```{r}
 #| echo: false
 
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::add_world_regions() |>
   dplyr::filter(un_subregion == "Polynesia" & date > "2009-12-31") |>
   rdb::tbl_n_rfrnds_per_period(period = "year")
@@ -197,7 +198,7 @@ rdb::rfrnds() |>
 ```{r}
 #| echo: false
 
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   dplyr::filter(date >= "1950-01-01") |>
   rdb::plot_rfrnd_share_per_period(period = "year",
                                    by = "level") |>
@@ -214,7 +215,7 @@ rdb::rfrnds() |> rdb::plot_topic_segmentation(method = "per_topic_lineage")
 ```{r}
 #| echo: false
 
-rdb::rfrnds(quiet = TRUE) |>
+rdb::rfrnds() |>
   rdb::plot_topic_segmentation(method = "per_topic_lineage") |>
   plotlee::simplify_trace_ids()
 ```
