@@ -545,12 +545,15 @@ data_un_locode <-
   dplyr::filter(!is.na(un_locode)) |>
   # remove duplicates, see NOTES above
   ## CH Schönenbuch: we keep `CH SOH` which was created first
-  dplyr::filter(un_locode != "CH SBC")
+  dplyr::filter(un_locode != "CH SBC") |>
+  ## duplicated rows (since 2024-11-07 the source data contains duplicates)
+  unique()
 
 data_municipalities <-
   data_un_locode |>
   dplyr::filter(country_code == "CH") |>
   dplyr::select(subnational_entity_code, un_locode, name) |>
+  unique() |>
   dplyr::left_join(x = data_municipalities,
                    by = c("name", "subnational_entity_code"),
                    relationship = "many-to-one") |>
