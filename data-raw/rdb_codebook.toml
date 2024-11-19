@@ -296,9 +296,9 @@ value_scale = "ratio"
 variable_name = "votes_per_subterritory"
 variable_name_print = "Subterritorial votes"
 variable_label = "the number of [`votes_yes`](#votes_yes), [`votes_no`](#votes_no), [`votes_empty`](#votes_empty) and [`votes_invalid`](#votes_invalid) per [administrative division](https://en.wikipedia.org/wiki/Administrative_division) one level below [`level`](#level); currently only filled for Swiss referendums on the national level"
-is_nested = true
 applicability_constraint = "level != 'local'"
 value_scale = "ratio"
+is_nested = true
 [[01_main.item]]
 variable_name = "turnout"
 variable_name_print = "Turnout"
@@ -576,18 +576,24 @@ metadata about files attached to the referendum, including
 - `file_name`: the filename as it appears when the file is downloaded
 - `file_size`: the file's size in bytes
 - `s3_object_key`: the key uniquely identifying the file in the RDB [Amazon S3 bucket](https://en.wikipedia.org/wiki/Amazon_S3#Design); the file can be downloaded by feeding this key to [`rdb::download_file_attachment()`](https://rdb.rpkg.dev/reference/download_file_attachment.html)"""
-is_nested = true
 value_scale = "undefined"
+is_nested = true
 [[01_main.item]]
 variable_name = "url_sudd"
 variable_name_print = "sudd.ch URL"
 variable_label = "the URL of the corresponding entry on [sudd.ch](https://sudd.ch/)"
 value_scale = "nominal"
+derived_from = [ "id_sudd" ]
+gen_fn = "add_urls"
+is_opt = true
 [[01_main.item]]
 variable_name = "url_swissvotes"
 variable_name_print = "Swissvotes URL"
 variable_label = "the URL of the corresponding entry on [swissvotes.ch](https://swissvotes.ch/)"
 value_scale = "nominal"
+derived_from = [ "id_official" ]
+gen_fn = "add_urls"
+is_opt = true
 [[01_main.item]]
 variable_name = "sources"
 variable_name_print = "Sources"
@@ -617,8 +623,8 @@ ptype = "vctrs::new_datetime()"
 variable_name = "archive"
 variable_name_print = "Archived data"
 variable_label = "the referendum's data from an earlier, obsolete RDB state"
-is_nested = true
 value_scale = "undefined"
+is_nested = true
 [[01_main.item]]
 variable_name = "type"
 variable_name_print = "Type"

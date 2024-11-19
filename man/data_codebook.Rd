@@ -1223,6 +1223,11 @@ Metadata about files attached to the referendum, including
 \subsection{\code{url_sudd}}{
 
 The URL of the corresponding entry on \href{https://sudd.ch/}{sudd.ch}.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rdb.rpkg.dev/articles/codebook.html#id-sudd}{\code{id_sudd}} and can be generated on demand via \code{\link[=add_urls]{add_urls()}}.
+}
+
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
@@ -1233,6 +1238,11 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 \subsection{\code{url_swissvotes}}{
 
 The URL of the corresponding entry on \href{https://swissvotes.ch/}{swissvotes.ch}.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rdb.rpkg.dev/articles/codebook.html#id-official}{\code{id_official}} and can be generated on demand via \code{\link[=add_urls]{add_urls()}}.
+}
+
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
