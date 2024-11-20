@@ -4,25 +4,25 @@
 \alias{assert_vars}
 \title{Assert referendum variables are present}
 \usage{
-assert_vars(data, vars)
+assert_vars(data, var_names)
 }
 \arguments{
 \item{data}{RDB referendum data as returned by \code{\link[=rfrnds]{rfrnds()}}.}
 
-\item{vars}{Names of the variables to check. A character vector.}
+\item{var_names}{Names of the variables to check. A character vector.}
 }
 \value{
 \code{data}, invisibly.
 }
 \description{
-Asserts that the supplied \code{data} \link[checkmate:checkDataFrame]{is a data frame} and that the specified \code{vars} are present. Depending on \code{vars}, further
+Asserts that the input \link[checkmate:checkDataFrame]{is a data frame} and that the specified variables are present. Depending on \code{var_names}, further
 integrity checks are performed.
 }
 \examples{
-rdb::rfrnds() |> rdb::assert_vars(vars = "country_code")
+rdb::rfrnds() |> rdb::assert_vars(var_names = "country_code")
 
 try(
-  tibble::tibble(country_code = "AN") |> rdb::assert_vars(vars = "country_code")
+  tibble::tibble(country_code = "AN") |> rdb::assert_vars(var_names = "country_code")
 )
 }
 \seealso{

@@ -2862,39 +2862,39 @@ validate_rfrnds <- function(data,
 
 #' Assert referendum variables are present
 #'
-#' Asserts that the supplied `data` [is a data frame][checkmate::assert_data_frame] and that the specified `vars` are present. Depending on `vars`, further
+#' Asserts that the input [is a data frame][checkmate::assert_data_frame] and that the specified variables are present. Depending on `var_names`, further
 #' integrity checks are performed.
 #'
 #' @param data RDB referendum data as returned by [rfrnds()].
-#' @param vars Names of the variables to check. A character vector.
+#' @param var_names Names of the variables to check. A character vector.
 #'
 #' @return `data`, invisibly.
 #' @family data
 #' @export
 #'
 #' @examples
-#' rdb::rfrnds() |> rdb::assert_vars(vars = "country_code")
+#' rdb::rfrnds() |> rdb::assert_vars(var_names = "country_code")
 #' 
 #' try(
-#'   tibble::tibble(country_code = "AN") |> rdb::assert_vars(vars = "country_code")
+#'   tibble::tibble(country_code = "AN") |> rdb::assert_vars(var_names = "country_code")
 #' )
 assert_vars <- function(data,
-                        vars) {
+                        var_names) {
   
   checkmate::assert_data_frame(data)
   
-  vars %>% purrr::walk(\(var) {
+  var_names %>% purrr::walk(\(var_name) {
     
-    msg_suffix <- switch(EXPR         = var,
+    msg_suffix <- switch(EXPR         = var_name,
                          country_code = " with ISO 3166-1 alpha-2 or ISO 3166-3 alpha-4 codes.",
                          "")
     
-    if (!(var %in% colnames(data))) {
-      cli::cli_abort(paste0("{.arg data} must contain a column {.var {var}}", msg_suffix))
+    if (!(var_name %in% colnames(data))) {
+      cli::cli_abort(paste0("{.arg data} must contain a column {.var {var_name}}", msg_suffix))
     }
     
     # run additional content check
-    assert_content <- switch(EXPR         = var,
+    assert_content <- switch(EXPR         = var_name,
                              country_code = \(x) {
                                
                                checkmate::assert_vector(x = x,
@@ -2918,7 +2918,7 @@ assert_vars <- function(data,
                              },
                              \(x) TRUE)
     
-    assert_content(data[[var]])
+    assert_content(data[[var_name]])
   })
   
   invisible(data)
@@ -2959,7 +2959,7 @@ download_attachments <- function(data,
                                  filename_from_title = FALSE,
                                  fileext_from_mimetype = !filename_from_title) {
   assert_vars(data = data,
-              vars = c("id", "attachments"))
+              var_names = c("id", "attachments"))
   checkmate::assert_directory_exists(path,
                                      access = "rw")
   checkmate::assert_flag(filename_from_title)
@@ -2970,7 +2970,7 @@ download_attachments <- function(data,
     purrr::pwalk(\(id, attachments) {
       
       assert_vars(data = attachments,
-                  vars = c("url", "title", "mimetype")) |>
+                  var_names = c("url", "title", "mimetype")) |>
         tibble::rowid_to_column() |>
         dplyr::select("url", "rowid", "title", "mimetype") |>
         purrr::pwalk(\(url, rowid, title, mimetype) utils::download.file(url = url,
@@ -3550,7 +3550,7 @@ infer_topics <- function(topics,
 nest_topics <- function(data) {
   
   assert_vars(data = data,
-              vars = paste0("topic_tier_", 1:3))
+              var_names = paste0("topic_tier_", 1:3))
   
   # add tier-3 topics
   data |>
@@ -3592,7 +3592,7 @@ add_former_country_flag <- function(data) {
   
   # ensure minimal validity
   assert_vars(data = data,
-              vars = "country_code")
+              var_names = "country_code")
   data %>%
     dplyr::mutate(is_former_country = nchar(as.character(country_code)) > 2L) %>%
     # add var lbl
@@ -3621,7 +3621,7 @@ add_country_code_continual <- function(data) {
   
   # ensure minimal validity
   assert_vars(data = data,
-              vars = "country_code")
+              var_names = "country_code")
   
   data %>%
     dplyr::mutate(country_code_continual = factor(x = purrr::map2_chr(.x = as.character(country_code),
@@ -3659,7 +3659,7 @@ add_country_code_long <- function(data) {
   
   # ensure minimal validity
   assert_vars(data = data,
-              vars = "country_code")
+              var_names = "country_code")
   data %>%
     # remove possibly existing long country code
     dplyr::select(-any_of("country_code_long")) %>%
@@ -3702,7 +3702,7 @@ add_country_name <- function(data) {
   
   # ensure minimal validity
   assert_vars(data = data,
-              vars = "country_code")
+              var_names = "country_code")
   data %>%
     # remove possibly existing country name
     dplyr::select(-any_of("country_name")) %>%
@@ -3745,7 +3745,7 @@ add_country_name_long <- function(data) {
   
   # ensure minimal validity
   assert_vars(data = data,
-              vars = "country_code")
+              var_names = "country_code")
   data %>%
     # remove possibly existing long country name
     dplyr::select(-any_of("country_name_long")) %>%
@@ -3797,7 +3797,7 @@ add_period <- function(data,
                        period = c("week", "month", "quarter", "year", "decade", "century")) {
   
   assert_vars(data = data,
-              vars = "date")
+              var_names = "date")
   period <- rlang::arg_match(period)
   
   # define necessary date transformations
@@ -3867,11 +3867,11 @@ add_turnout <- function(data,
                         excl_dubious = TRUE) {
   
   assert_vars(data = data,
-              vars = c("electorate_total",
-                       "votes_yes",
-                       "votes_no",
-                       "votes_empty",
-                       "votes_invalid"))
+              var_names = c("electorate_total",
+                            "votes_yes",
+                            "votes_no",
+                            "votes_empty",
+                            "votes_invalid"))
   checkmate::assert_flag(rough)
   checkmate::assert_flag(excl_dubious)
   
@@ -3934,7 +3934,7 @@ add_world_regions <- function(data,
                               add_un_country_code = TRUE) {
   # ensure minimal validity
   assert_vars(data = data,
-              vars = "country_code")
+              var_names = "country_code")
   checkmate::assert_flag(add_un_country_code)
   
   has_country_code_continual <- "country_code_continual" %in% colnames(data)
@@ -4000,7 +4000,7 @@ add_urls <- function(data,
   if ("sudd" %in% types) {
     
     assert_vars(data = data,
-              vars = "id_sudd")
+                var_names = "id_sudd")
     
     data %<>% dplyr::mutate(url_sudd = dplyr::if_else(is.na(id_sudd),
                                                       NA_character_,
@@ -4010,9 +4010,9 @@ add_urls <- function(data,
   if ("swissvotes" %in% types) {
     
     assert_vars(data = data,
-                vars = c("country_code",
-                         "level",
-                         "id_official"))
+                var_names = c("country_code",
+                              "level",
+                              "id_official"))
     
     data %<>% dplyr::mutate(url_swissvotes = dplyr::if_else(country_code == "CH" & level == "national" & !is.na(id_official),
                                                             paste0("https://swissvotes.ch/vote/", id_official), # nolint: paste_linter
