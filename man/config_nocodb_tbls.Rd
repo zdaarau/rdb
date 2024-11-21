@@ -5,17 +5,17 @@
 \title{Configure NocoDB tables}
 \usage{
 config_nocodb_tbls(
-  hostname = pal::pkg_config_val("nocodb_host"),
+  origin = pal::pkg_config_val("nocodb_origin"),
   quiet = FALSE
 )
 }
 \arguments{
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-\code{hostname}, invisibly.
+\code{origin}, invisibly.
 }
 \description{
 Configures the RDB tables on the specified NocoDB server. Currently, this includes:

@@ -5,14 +5,14 @@
 \title{Update RDB \code{nocodb_users} table}
 \usage{
 update_nocodb_users(
-  hostname = pal::pkg_config_val("nocodb_host"),
+  origin = pal::pkg_config_val("nocodb_origin"),
   sweep = FALSE,
   connection = connect(),
   disconnect = TRUE
 )
 }
 \arguments{
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{sweep}{Whether or not to also sweep the table, i.e. delete rows that are not contained in \code{data}.}
 

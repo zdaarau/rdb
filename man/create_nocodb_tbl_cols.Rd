@@ -4,13 +4,13 @@
 \alias{create_nocodb_tbl_cols}
 \title{Create NocoDB table meta columns}
 \usage{
-create_nocodb_tbl_cols(hostname = pal::pkg_config_val("nocodb_host"))
+create_nocodb_tbl_cols(origin = pal::pkg_config_val("nocodb_origin"))
 }
 \arguments{
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 }
 \value{
-\code{hostname}, invisibly.
+\code{origin}, invisibly.
 }
 \description{
 Adds the PostgreSQL meta columns \code{created_by}, \code{updated_by}, \code{created_at} and \code{updated_at} to all RDB tables via NocoDB's API.

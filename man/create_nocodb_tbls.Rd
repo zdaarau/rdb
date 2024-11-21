@@ -4,10 +4,10 @@
 \alias{create_nocodb_tbls}
 \title{Create NocoDB tables}
 \usage{
-create_nocodb_tbls(hostname = pal::pkg_config_val("nocodb_host"))
+create_nocodb_tbls(origin = pal::pkg_config_val("nocodb_origin"))
 }
 \arguments{
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created tables.

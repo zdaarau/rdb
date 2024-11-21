@@ -671,9 +671,9 @@ pkg_config <-
                                        pal::wrap_chr(rdb:::neon_project, "\x60"),
                                        ". Required for [rdb::restart_neon_ep()]."),
                   require = TRUE) |>
-  tibble::add_row(key = "nocodb_host",
-                  default_value = list("admin.rdb.vote"),
-                  description = "RDB NocoDB server host address. Required for [rdb::reset_nocodb()].",
+  tibble::add_row(key = "nocodb_origin",
+                  default_value = list("https://admin.rdb.vote"),
+                  description = "RDB NocoDB server [origin](https://developer.mozilla.org/docs/Glossary/Origin). Required for [rdb::reset_nocodb()].",
                   require = TRUE) |>
   tibble::add_row(key = "nocodb_email",
                   description = "E-mail address of the RDB NocoDB server's super admin user. Required for [rdb::reset_nocodb()].",

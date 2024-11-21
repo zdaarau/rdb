@@ -5,14 +5,14 @@
 \title{Reset NocoDB}
 \usage{
 reset_nocodb(
-  hostname = pal::pkg_config_val("nocodb_host"),
+  origin = pal::pkg_config_val("nocodb_origin"),
   ask = TRUE,
   save_user_mapping = TRUE,
   quiet = TRUE
 )
 }
 \arguments{
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{ask}{Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run \link[=interactive]{interactively}.}
 
@@ -21,7 +21,7 @@ reset_nocodb(
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-\code{hostname}, invisibly.
+\code{origin}, invisibly.
 }
 \description{
 Completely re-creates the connection settings and \code{Main} base and adds the RDB team's user accounts on the specified

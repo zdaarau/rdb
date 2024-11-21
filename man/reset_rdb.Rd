@@ -5,7 +5,7 @@
 \title{Reset RDB}
 \usage{
 reset_rdb(
-  hostname_nocodb = pal::pkg_config_val("nocodb_host"),
+  origin_nocodb = pal::pkg_config_val("nocodb_origin"),
   hostname_pg = pal::pkg_config_val("pg_host"),
   reset_db = FALSE,
   reset_tbls = reset_db,
@@ -15,7 +15,7 @@ reset_rdb(
 )
 }
 \arguments{
-\item{hostname_nocodb}{NocoDB server hostname. A character scalar.}
+\item{origin_nocodb}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{hostname_pg}{PostgreSQL server hostname. A character scalar.}
 
@@ -32,7 +32,7 @@ Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection whe
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-\code{hostname_nocodb}, invisibly.
+\code{origin_nocodb}, invisibly.
 }
 \description{
 Resets the RDB NocoDB server, optionally including the whole RDB PostgreSQL database and/or tables.
@@ -43,7 +43,7 @@ Resets the RDB NocoDB server, optionally including the whole RDB PostgreSQL data
 rdb::reset_rdb(reset_db = TRUE)
 
 # reset testing PGSQL DB branch and NocoDB instance
-rdb::reset_rdb(hostname_nocodb = Sys.getenv("R_RDB_NOCODB_HOST_TESTING"),
+rdb::reset_rdb(origin_nocodb = Sys.getenv("R_RDB_NOCODB_ORIGIN_TESTING"),
                hostname_pg = Sys.getenv("R_RDB_PG_HOST_TESTING"),
                reset_db = TRUE)}
 }
