@@ -7,15 +7,15 @@ test_testing <-
 # define fn to test both production and testing servers
 test_rfrnd_data <- function(use_testing_server = FALSE) {
 
-  # rfrnds_old ----
-  test_that(paste0("`rfrnds_old()` works", " (on testing server)"[use_testing_server]), {
+  # rfrnds ----
+  test_that(paste0("`rfrnds()` works", " (on testing server)"[use_testing_server]), {
 
     skip_if(use_testing_server && !test_testing)
 
-    expect_gte(nrow(rfrnds_old(country_code = "AT",
-                               use_testing_server = use_testing_server,
-                               use_cache = FALSE,
-                               quiet = TRUE)),
+    expect_gte(nrow(rfrnds(country_code = "AT",
+                           use_testing_server = use_testing_server,
+                           use_cache = FALSE,
+                           quiet = TRUE)),
                1L)
   })
 

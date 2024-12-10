@@ -21,6 +21,7 @@ reference:
 - title: Referendum data
 - contents:
   - rfrnds
+  - rfrnds_bkp
   - rfrnd
   - download_file_attachment
   - add_rfrnds

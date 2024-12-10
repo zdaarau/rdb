@@ -3107,66 +3107,6 @@ rm(sudd_years)
 ### `rfrnds`
 
 ```{r}
-#' Get referendum data
-#'
-#' Downloads the referendum data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
-#'
-#' @inheritParams rfrnds_old
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family rfrnd
-#' @export
-#'
-#' @examples
-#' # get all referendums (excl. drafts)
-#' rdb::rfrnds()
-rfrnds <- function(is_draft = FALSE,
-                   incl_archive = FALSE,
-                   use_cache = TRUE,
-                   max_cache_age = "1 week",
-                   quiet = FALSE) {
-  
-  checkmate::assert_flag(is_draft,
-                         null.ok = TRUE)
-  checkmate::assert_flag(incl_archive)
-  checkmate::assert_flag(quiet)
-  
-  result <- pkgpins::with_cache(
-    expr = {
-      
-      if (!quiet) {
-        pal::cli_progress_step_quick(msg = "Fetching latest RDB backup")
-      }
-      
-      path_temp <- fs::file_temp(pattern = "rdb-", ext = "rds")
-      utils::download.file(url = "https://gitlab.com/zdaarau/rpkgs/rdb/-/raw/master/data-raw/backups/rdb.rds?ref_type=heads&inline=false",
-                           destfile = path_temp,
-                           quiet = TRUE,
-                           mode = "wb")
-      
-      readRDS(file = path_temp)
-    },
-    pkg = this_pkg,
-    from_fn = "rfrnds",
-    use_cache = use_cache,
-    max_cache_age = max_cache_age
-  )
-  
-  # exclude `archive` if requested
-  if (!incl_archive) result %<>% dplyr::select(-any_of("archive"))
-  
-  # respect `is_draft`
-  if (!is.null(is_draft)) {
-    result %<>% dplyr::filter(is_draft == !!is_draft)
-  }
-  
-  result
-}
-```
-
-### !`rfrnds_old`
-
-```{r}
 #' Get referendum data (old version)
 #'
 #' Downloads the referendum data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
@@ -3181,52 +3121,51 @@ rfrnds <- function(is_draft = FALSE,
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family rfrnd
-#' @keywords internal
+#' @export
 #'
 #' @examples
-#' \dontrun{
 #' # get all referendums (excl. drafts)
-#' rdb::rfrnds_old()
+#' rdb::rfrnds()
 #' 
 #' # get only referendums in Austria and Australia on subnational level
-#' rdb::rfrnds_old(country_code = c("AT", "AU"),
-#'                 level = "subnational",
-#'                 quiet = TRUE)
+#' rdb::rfrnds(country_code = c("AT", "AU"),
+#'             level = "subnational",
+#'             quiet = TRUE)
 #'
 #' # get referendums in 2020
-#' rdb::rfrnds_old(date_min = "2020-01-01",
-#'                 date_max = "2020-12-31",
-#'                 quiet = TRUE)
+#' rdb::rfrnds(date_min = "2020-01-01",
+#'             date_max = "2020-12-31",
+#'             quiet = TRUE)
 #'
 #' # get referendums added to the database during the last 30 days
-#' rdb::rfrnds_old(date_time_created_min = clock::date_today(zone = "UTC") |> clock::add_days(-30L),
-#'                 date_time_created_max = clock::date_today(zone = "UTC"),
-#'                 quiet = TRUE)
+#' rdb::rfrnds(date_time_created_min = clock::date_today(zone = "UTC") |> clock::add_days(-30L),
+#'             date_time_created_max = clock::date_today(zone = "UTC"),
+#'             quiet = TRUE)
 #' 
 #' # provide custom `query_filter` for more complex queries like regex matches
 #' # cf. https://docs.mongodb.com/manual/reference/operator/query/regex/
-#' rdb::rfrnds_old(query_filter = '{"country_code":{"$regex":"A."}}',
-#'                 quiet = TRUE)}
-rfrnds_old <- function(country_code = NULL,
-                       subnational_entity_name = NULL,
-                       municipality = NULL,
-                       level = NULL,
-                       type = NULL,
-                       date_min = NULL,
-                       date_max = NULL,
-                       is_draft = FALSE,
-                       date_time_created_min = NULL,
-                       date_time_created_max = NULL,
-                       date_time_last_edited_min = NULL,
-                       date_time_last_edited_max = NULL,
-                       query_filter = NULL,
-                       incl_archive = FALSE,
-                       tidy = TRUE,
-                       use_cache = TRUE,
-                       max_cache_age = "1 week",
-                       use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                pkg = this_pkg),
-                       quiet = FALSE) {
+#' rdb::rfrnds(query_filter = '{"country_code":{"$regex":"A."}}',
+#'             quiet = TRUE)
+rfrnds <- function(country_code = NULL,
+                   subnational_entity_name = NULL,
+                   municipality = NULL,
+                   level = NULL,
+                   type = NULL,
+                   date_min = NULL,
+                   date_max = NULL,
+                   is_draft = FALSE,
+                   date_time_created_min = NULL,
+                   date_time_created_max = NULL,
+                   date_time_last_edited_min = NULL,
+                   date_time_last_edited_max = NULL,
+                   query_filter = NULL,
+                   incl_archive = FALSE,
+                   tidy = TRUE,
+                   use_cache = TRUE,
+                   max_cache_age = "1 week",
+                   use_testing_server = pal::pkg_config_val(key = "use_testing_server",
+                                                            pkg = this_pkg),
+                   quiet = FALSE) {
   
   checkmate::assert_flag(incl_archive)
   checkmate::assert_flag(quiet)
@@ -3323,6 +3262,68 @@ rfrnds_old <- function(country_code = NULL,
 }
 ```
 
+### `rfrnds_bkp`
+
+```{r}
+#' Get referendum data from backup
+#'
+#' Downloads the referendum data from the Referendum Database (RDB) backup [in the `zdaarau/rpkgs/rdb`
+#' repository](https://gitlab.com/zdaarau/rpkgs/rdb/-/blob/master/data-raw/backups/rdb.rds?ref_type=heads). See the [`codebook`][codebook] for a detailed
+#' description of all variables.
+#'
+#' @inheritParams rfrnds
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family rfrnd
+#' @export
+#'
+#' @examples
+#' # get all referendums (excl. drafts)
+#' rdb::rfrnds_bkp()
+rfrnds_bkp <- function(is_draft = FALSE,
+                       incl_archive = FALSE,
+                       use_cache = TRUE,
+                       max_cache_age = "1 week",
+                       quiet = FALSE) {
+  
+  checkmate::assert_flag(is_draft,
+                         null.ok = TRUE)
+  checkmate::assert_flag(incl_archive)
+  checkmate::assert_flag(quiet)
+  
+  result <- pkgpins::with_cache(
+    expr = {
+      
+      if (!quiet) {
+        pal::cli_progress_step_quick(msg = "Fetching latest RDB backup")
+      }
+      
+      path_temp <- fs::file_temp(pattern = "rdb-", ext = "rds")
+      utils::download.file(url = "https://gitlab.com/zdaarau/rpkgs/rdb/-/raw/master/data-raw/backups/rdb.rds?ref_type=heads&inline=false",
+                           destfile = path_temp,
+                           quiet = TRUE,
+                           mode = "wb")
+      
+      readRDS(file = path_temp)
+    },
+    pkg = this_pkg,
+    from_fn = "rfrnds",
+    use_cache = use_cache,
+    max_cache_age = max_cache_age
+  )
+  
+  # exclude `archive` if requested
+  if (!incl_archive) result %<>% dplyr::select(-any_of("archive"))
+  
+  # respect `is_draft`
+  if (!is.null(is_draft)) {
+    result %<>% dplyr::filter(is_draft == !!is_draft)
+  }
+  
+  result
+}
+```
+
 ### `rfrnd`
 
 NOTES:
@@ -3339,7 +3340,7 @@ NOTES:
 #'
 #' Downloads a single referendum's data from the Referendum Database (RDB). See the [`codebook`][codebook] for a detailed description of all variables.
 #'
-#' @inheritParams rfrnds_old
+#' @inheritParams rfrnds
 #' @param id Referendum's unique [identifier](`r url_codebook("id")`).
 #'
 #' @inherit rfrnds return

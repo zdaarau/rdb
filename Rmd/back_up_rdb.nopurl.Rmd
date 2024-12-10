@@ -23,14 +23,15 @@ path_backup_rdb <- "data-raw/backups/rdb.rds"
 
 # Back up RDB data
 
-NOTE: Full backup might be unreliable since CCM Design changed something under the hood of the API (rate limiting?). See below for a workaround.
+NOTE: Full backup used to be unreliable at times due to behind-the-scenes changes (rate limiting?) by CCM Design. Since we're hosting the infra ourselves now
+(with support from PIT Solutions), this shouldn't be an issue anymore. If such issues should still occur, see the chunk below for a workaround.
 
 ```{r}
 #| eval: TRUE
 
-rdb:::rfrnds_old(is_draft = NULL,
-                 incl_archive = TRUE,
-                 use_cache = FALSE) |>
+rdb:::rfrnds(is_draft = NULL,
+             incl_archive = TRUE,
+             use_cache = FALSE) |>
   readr::write_rds(file = path_backup_rdb,
                    compress = "xz",
                    version = 3L)
@@ -43,10 +44,10 @@ NOTE: Alternative to creating a full backup (chunk above).
 ```{r}
 #| eval: FALSE
 
-data_latest <- rdb:::rfrnds_old(date_time_last_edited_min = clock::as_date(pal::path_mod_time(path_backup_rdb)),
-                                is_draft = NULL,
-                                incl_archive = TRUE,
-                                use_cache = FALSE)
+data_latest <- rdb:::rfrnds(date_time_last_edited_min = clock::as_date(pal::path_mod_time(path_backup_rdb)),
+                            is_draft = NULL,
+                            incl_archive = TRUE,
+                            use_cache = FALSE)
 
 readr::read_rds(path_backup_rdb) |>
   dplyr::filter(!(id %in% data_latest$id)) |>
