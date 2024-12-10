@@ -7,7 +7,8 @@
 create_nocodb_tbl_cols(origin = pal::pkg_config_val("nocodb_origin"))
 }
 \arguments{
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 }
 \value{
 \code{origin}, invisibly.

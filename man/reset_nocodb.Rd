@@ -12,13 +12,15 @@ reset_nocodb(
 )
 }
 \arguments{
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
 \item{ask}{Whether or not to ask for confirmation before deleting the existing RDB NocoDB base. Only relevant if run \link[=interactive]{interactively}.}
 
 \item{save_user_mapping}{Whether or not to add NocoDB's current user data to the \code{nocodb_users} table via \code{\link[=update_nocodb_users]{update_nocodb_users()}} before resetting it.}
 
-\item{quiet}{Whether or not to suppress printing status output from internal processing.}
+\item{quiet}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 \code{origin}, invisibly.

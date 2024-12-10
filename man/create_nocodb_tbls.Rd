@@ -7,7 +7,8 @@
 create_nocodb_tbls(origin = pal::pkg_config_val("nocodb_origin"))
 }
 \arguments{
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created tables.
