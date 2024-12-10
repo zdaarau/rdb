@@ -5685,12 +5685,15 @@ reset_rdb <- function(origin_nocodb = pal::pkg_config_val("nocodb_origin"),
     endpoint_id <- hostname_to_ep(hostname_pg)
     endpoint_id_ro <- hostname_to_ep(pal::pkg_config_val_default(key = "pg_host"))
     ## restart RW endpoint before RO one
-    if (endpoint_id != endpoint_id_ro) {
-      restart_neon_ep(project_id = neon_project_id,
-                      endpoint_id = endpoint_id)
-    }
     restart_neon_ep(project_id = neon_project_id,
-                    endpoint_id = endpoint_id_ro)
+                    endpoint_id = endpoint_id)
+    ## only restart the RO endpoint for *production* (testing branch has no RO endpoint)
+    ## NOTE: 2nd condition is kinda hacky, i.e. not really correct, but works for our case (strict correctness would mean comparing against `pg_host` which we
+    ##       cannot do here since we don't make the RW endpoints public)
+    if (endpoint_id_ro != endpoint_id && origin_nocodb == pal::pkg_config_val_default(key = "nocodb_origin")) {
+      restart_neon_ep(project_id = neon_project_id,
+                      endpoint_id = endpoint_id_ro)
+    }
     
     # NOTE: we can only establish a reusable `connection` *after* possible DB deletion just above
     connection <- connect(host = hostname_pg,
