@@ -1156,9 +1156,9 @@ pg_has_rls <- function(tbl_name,
 #' Returns the primary key column name(s) from RDB's DBMS, a PostgreSQL server.
 #'
 #' @inheritParams pg_tbl_read
-#' @param tbl_name `r pkgsnip::type("chr")`
+#' @param tbl_name `r pkgsnip::type("chr", 1)`
 #'   Table name.
-#' @param schema `r pkgsnip::type("chr")`
+#' @param schema `r pkgsnip::type("chr", 1)`
 #'   Schema name.
 #'
 #' @return A character vector.
@@ -1319,7 +1319,7 @@ pg_tbl_constraints <- function(tbl_name,
 #'   - A call to [DBI::SQL()] with the quoted and fully qualified table name given verbatim, e.g. `DBI::SQL('"my_schema"."table_name"')`.
 #' @param connection `r pkgsnip::type("pg_conn")`
 #'   Database connection to a PostgreSQL DBMS as returned by [connect()].
-#' @param disconnect `r pkgsnip::type("lgl")`
+#' @param disconnect `r pkgsnip::type("lgl", 1)`
 #'   Whether or not to [terminate][DBI::dbDisconnect] the database connection when finished.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
@@ -2651,7 +2651,7 @@ rfrnd_types <- function(connection = connect(),
 #' Fetches a table from the [RDB DBMS][connect]'s `r pal::wrap_chr(pg_schema, "\x60")` schema and returns it as a [tibble][tibble::tbl_df].
 #'
 #' @inheritParams pg_tbl_read
-#' @param tbl_name `r pkgsnip::type("chr")`
+#' @param tbl_name `r pkgsnip::type("chr", 1)`
 #'   Table name. One of
 #'   `r pal::as_md_val_list(tbl_metadata$name)`
 #'
