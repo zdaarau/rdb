@@ -28,7 +28,6 @@ reference:
   - delete_rfrnds
   - validate_rfrnds
   - count_rfrnds
-  - search_rfrnds
   - rfrnd_exists
   - assert_vars
 - title: Referendum metadata

@@ -12,8 +12,8 @@ The Referendum Database (RDB) currently offers a [privately documented](https://
 
     It supports the following URL parameters:
 
-    -   `mode`: the operation mode; one of `stream`, `count` or `search`; if not provided, paginated (instead of streamed) data is returned
-    -   `term` the search term used for `mode=search`; note that only the `title$en` field will be searched
+    -   `mode`: the operation mode; one of `stream`, `count` or ~~`search`~~; if not provided, paginated (instead of streamed) data is returned
+    -   ~~`term` the search term used for `mode=search`; note that only the `title$en` field will be searched~~ *support for `mode=search` was removed*
     -   `format`: the data format to be returned when `mode=stream`; one of `json` or `csv`
     -   `filter`: a valid [JSON query filter document](https://docs.mongodb.com/manual/core/document/#query-filter-documents) to customize queries in the
         underlying MongoDB collection; needs to be Base64-encoded; there are various [query
@@ -4089,51 +4089,6 @@ count_rfrnds <- function(is_draft = FALSE,
     httr::content(as = "parsed") %$%
     votes %>%
     magrittr::set_names(names(.) %>% dplyr::case_match(.x = ., "sub_national" ~ "subnational", .default = .))
-}
-```
-
-### `search_rfrnds`
-
-Currently, the RDB API [only supports searching in the English referendum
-title](https://github.com/zdaarau/c2d-app/blob/master/docs/services.md#3-referendum-routes).
-
-```{r}
-#' Search in English referendum titles
-#'
-#' Allows to use the RDB API's primitive search functionality. Note that
-#' - the search is not case-sensitive and no [fuzzy search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are
-#'   returned).
-#' - only up to the first **5** matching results will be returned.
-#'
-#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
-#' titles.
-#'
-#' @inheritParams url_api
-#' @param term Search term. A character scalar.
-#'
-#' @return A character vector of English referendum titles matching the search `term`.
-#' @family rfrnd
-#' @export
-#'
-#' @examples
-#' rdb::search_rfrnds("freedom")
-search_rfrnds <- function(term,
-                          use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                   pkg = this_pkg)) {
-  httr::RETRY(verb = "GET",
-              url = url_api("referendums",
-                            .use_testing_server = use_testing_server),
-              query = list(mode = "search",
-                           term = checkmate::assert_string(term)),
-              config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
-              times = 3L) %>%
-    # ensure we actually got a JSON response
-    pal::assert_mime_type(mime_type = "application/json",
-                          msg_suffix = mime_error_suffix) %>%
-    # parse response
-    httr::content(as = "parsed") %$%
-    items %>%
-    purrr::list_c(ptype = character()) 
 }
 ```
 

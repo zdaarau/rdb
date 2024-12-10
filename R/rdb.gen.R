@@ -3401,44 +3401,6 @@ count_rfrnds <- function(is_draft = FALSE,
     magrittr::set_names(names(.) %>% dplyr::case_match(.x = ., "sub_national" ~ "subnational", .default = .))
 }
 
-#' Search in English referendum titles
-#'
-#' Allows to use the RDB API's primitive search functionality. Note that
-#' - the search is not case-sensitive and no [fuzzy search](https://en.wikipedia.org/wiki/Approximate_string_matching) is performed (i.e. only exact matches are
-#'   returned).
-#' - only up to the first **5** matching results will be returned.
-#'
-#' Note that this function is probably not of much use since it doesn't return any additional information about the matched referendums but only the English
-#' titles.
-#'
-#' @inheritParams url_api
-#' @param term Search term. A character scalar.
-#'
-#' @return A character vector of English referendum titles matching the search `term`.
-#' @family rfrnd
-#' @export
-#'
-#' @examples
-#' rdb::search_rfrnds("freedom")
-search_rfrnds <- function(term,
-                          use_testing_server = pal::pkg_config_val(key = "use_testing_server",
-                                                                   pkg = this_pkg)) {
-  httr::RETRY(verb = "GET",
-              url = url_api("referendums",
-                            .use_testing_server = use_testing_server),
-              query = list(mode = "search",
-                           term = checkmate::assert_string(term)),
-              config = httr::add_headers(Origin = url_admin_portal(.use_testing_server = use_testing_server)),
-              times = 3L) %>%
-    # ensure we actually got a JSON response
-    pal::assert_mime_type(mime_type = "application/json",
-                          msg_suffix = mime_error_suffix) %>%
-    # parse response
-    httr::content(as = "parsed") %$%
-    items %>%
-    purrr::list_c(ptype = character()) 
-}
-
 #' Test if referendum ID exists
 #'
 #' Tests whether the referendum with the supplied `id` exists or not.

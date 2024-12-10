@@ -62,20 +62,6 @@ test_rfrnd_data <- function(use_testing_server = FALSE) {
       expect_true()
   })
 
-  # search_rfrnds ----
-  test_that(paste0("`search_rfrnds()` returns sensible results", " (on testing server)"[use_testing_server]), {
-
-    skip_if(use_testing_server && !test_testing)
-
-    result <- search_rfrnds(term = "initiative",
-                            use_testing_server = use_testing_server)
-
-    expect_vector(object = result,
-                  ptype = character())
-    expect_gte(object = length(result),
-               expected = 3L)
-  })
-
   # rfrnd_exists ----
   test_that(paste0("`rfrnd_exists()` works", " (on testing server)"[use_testing_server]), {
 
