@@ -1535,7 +1535,7 @@ pg_tbl_constraints <- function(tbl_name,
 #'   - A character string with the unquoted DBMS table name, e.g. `"table_name"`.
 #'   - A call to [DBI::Id()] with components to the fully qualified table name, e.g. `DBI::Id(schema = "my_schema", table = "table_name")`.
 #'   - A call to [DBI::SQL()] with the quoted and fully qualified table name given verbatim, e.g. `DBI::SQL('"my_schema"."table_name"')`.
-#' @param connection `r pkgsnip::type("pg_connection")`
+#' @param connection `r pkgsnip::type("pg_conn")`
 #'   Database connection to a PostgreSQL DBMS as returned by [connect()].
 #' @param disconnect `r pkgsnip::type("lgl")`
 #'   Whether or not to [terminate][DBI::dbDisconnect] the database connection when finished.
