@@ -35,8 +35,8 @@ rdb is not on CRAN yet[^1], but you can install the package directly from the de
 branch](https://gitlab.com/zdaarau/rpkgs/rdb/-/tree/master), which we try to keep in a working state at all times.
 
 ```{r}
-#| label: install-snippet-dev
-#| child: !expr pkgsnip::snip_path("installation-notice_dev-version_gitlab.Rmd")
+#| label: pkg-instl-dev
+#| child: !expr pkgsnip::snip_path("pkg-instl-dev-gitlab.Rmd")
 ```
 
 [^1]: We will probably release the package on CRAN once the current database and backend overhaul is complete and the rdb R package is properly adapted to use

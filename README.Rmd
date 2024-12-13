@@ -17,7 +17,7 @@ library(magrittr,
 # `r pal::desc_value("Package")`
 
 ```{r}
-#| label: description
+#| label: pkg-desc
 #| results: asis
 #| echo: false
 
@@ -34,7 +34,7 @@ pal::cat_lines(paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::
 #| results: asis
 #| echo: false
 
-pkgsnip::md_snip(id = "pkgdown_notice") %>%
+pkgsnip::md_snip(id = "pkgdown_site") %>%
   paste0("## Documentation\n\n",
          "[![Netlify Status](https://api.netlify.com/api/v1/badges/a8c23b19-d831-4621-81a8-0a5a346c3df9/deploy-status)]",
          "(https://app.netlify.com/sites/rdb-rpkg-dev/deploys)\n\n",
@@ -45,17 +45,17 @@ pkgsnip::md_snip(id = "pkgdown_notice") %>%
 ## Installation
 
 ```{r}
-#| label: install-snippet-dev
-#| child: !expr pkgsnip::snip_path("installation-notice_dev-version_gitlab.Rmd")
+#| label: pkg-instl-dev
+#| child: !expr pkgsnip::snip_path("pkg-instl-dev-gitlab.Rmd")
 ```
 
 ```{r}
-#| label: usage
+#| label: pkg-usage
 #| eval: !expr isTRUE(getOption("pal.build_readme.is_pkgdown"))
 #| results: asis
 #| echo: false
 
-pkgsnip::md_snip(id = "usage_notice") %>%
+pkgsnip::md_snip(id = "pkg_usage") %>%
   paste0("## Usage\n\n", .) |>
   pal::cat_lines()
 ```
@@ -64,7 +64,7 @@ pkgsnip::md_snip(id = "usage_notice") %>%
 
 ```{r}
 #| label: pkg-config
-#| child: !expr pkgsnip::snip_path("pkg-config-notice.Rmd")
+#| child: !expr pkgsnip::snip_path("pkg-config.Rmd")
 ```
 
 ## Development
@@ -72,13 +72,13 @@ pkgsnip::md_snip(id = "usage_notice") %>%
 ### R Markdown format
 
 ```{r}
-#| label: rmd-pkg-snippet
-#| child: !expr pkgsnip::snip_path("rmd-package-notice.Rmd")
+#| label: pkgpurl
+#| child: !expr pkgsnip::snip_path("pkgpurl.Rmd")
 ```
 
 ### Coding style
 
 ```{r}
-#| label: coding-style-snippet
-#| child: !expr pkgsnip::snip_path("coding-style-notice.Rmd")
+#| label: pkg-code-style
+#| child: !expr pkgsnip::snip_path("pkg-code-style.Rmd")
 ```
