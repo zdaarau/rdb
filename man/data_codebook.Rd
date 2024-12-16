@@ -91,6 +91,11 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 \subsection{\code{country_name}}{
 
 The English name of the country in which the referendum took place.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rdb.rpkg.dev/articles/codebook.html#country-code}{\code{country_code}} and can be generated on demand via \code{\link[=add_country_name]{add_country_name()}}.
+}
+
 \subsection{Level of measurement}{
 
 This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale of measure} is the \strong{nominal} level.
@@ -391,6 +396,11 @@ This variable's \href{https://en.wikipedia.org/wiki/Level_of_measurement}{scale 
 \subsection{\code{is_former_country}}{
 
 Whether or not the country where the referendum took place ceased to exist and thus has an \href{https://en.wikipedia.org/wiki/ISO_3166-3}{ISO 3166-3 alpha-4} instead of an \href{https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}{ISO 3166-1 alpha-2} \code{country_code}.
+\subsection{Origin}{
+
+This variable is derived from \href{https://rdb.rpkg.dev/articles/codebook.html#country-code}{\code{country_code}} and can be generated on demand via \code{\link[=add_former_country_flag]{add_former_country_flag()}}.
+}
+
 \subsection{Possible values}{\tabular{l}{
    Value \cr
    \code{TRUE} \cr
