@@ -5,6 +5,7 @@
 ^pkgdown$
 ^Rmd$
 ^snippets$
+^stash$
 ^cran-comments\.md$
 ^netlify\.toml$
 ^TODO\.md$
@@ -16,6 +17,7 @@
 ^\.github$
 ^\.gitlab-ci\.yml$
 ^\.lintr\.R$
+^\.rds$
 ^\.rgignore$
 ^\.travis\.yml$
 ^.*\.Rproj$
