@@ -7077,11 +7077,60 @@ config_nocodb_tbls <- function(origin = pal::pkg_config_val("nocodb_origin"),
 }
 ```
 
+#### !`config_nocodb_tbl_cols`
+
+WORK IN PROGRESS
+
+``` r
+# the virtual columns NocoDB maintains for foreign keys not always have optimal default titles, so we have to tweak 'em
+# NOTE: columns of `uidt == "Links"` are automatically renamed if necessary
+# TODO: we don't really need this tbl but instead should be able to singularize col display titles purely programmatically (`ies` -> `y` otherwise del `s`)
+nocodb_col_renames <- tibble::tribble(
+  ~uidt,                 ~col_title_old,           ~col_title_new,
+  "LinkToAnotherRecord", "actors",                 "actor",
+  "LinkToAnotherRecord", "administrative_units",   "administrative_unit",
+  "LinkToAnotherRecord", "countries",              "country",
+  "LinkToAnotherRecord", "languages",              "language",
+  "LinkToAnotherRecord", "municipalities",         "municipality",
+  "LinkToAnotherRecord", "options",                "option",
+  "LinkToAnotherRecord", "referendums",            "referendum",
+  "LinkToAnotherRecord", "subnational_entities",   "subnational_entity",
+  "LinkToAnotherRecord", "supranational_entities", "supranational_entity"
+)
+```
+
+```{r, purl = FALSE}
+#' Configure NocoDB table columns
+#'
+#' @description
+#' Configures the RDB table columns on the specified NocoDB server. Currently, this includes:
+#' 
+#' - Setting ...
+#'
+#' @inheritParams nocodb::set_tbl_metadata
+#'
+#' @return `origin`, invisibly.
+#' @family nocodb
+#' @family admin
+#' @keywords internal
+config_nocodb_tbl_cols <- function(origin = pal::pkg_config_val("nocodb_origin"),
+                                   quiet = FALSE) {
+  
+  email <- pal::pkg_config_val("nocodb_email")
+  password <- pal::pkg_config_val("nocodb_password")
+  id_base <- nocodb::base_id(title = nocodb_base_title,
+                             origin = origin,
+                             email = email,
+                             password = password)
+  
+  
+  invisible(origin)
+}
+```
+
 #### !`reset_nocodb`
 
 TODO:
-
-
 
 -   Improve status msg output for `quiet = FALSE` and adapt `reset_rdb()` accordingly.
 

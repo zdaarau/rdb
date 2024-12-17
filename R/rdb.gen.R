@@ -6126,6 +6126,8 @@ config_nocodb_tbls <- function(origin = pal::pkg_config_val("nocodb_origin"),
   invisible(origin)
 }
 
+
+
 #' Reset NocoDB
 #'
 #' Completely re-creates the connection settings and `r pal::wrap_chr(nocodb_base_title, "\x60")` base and adds the RDB team's user accounts on the specified
