@@ -5787,6 +5787,7 @@ reset_rdb <- function(origin_nocodb = pal::pkg_config_val("nocodb_origin"),
     pal::cli_progress_step_quick("Resetting NocoDB base")
   }
   reset_nocodb(origin = origin_nocodb,
+               hostname_pg = hostname_pg,
                ask = FALSE,
                quiet = TRUE)
   
@@ -6143,6 +6144,7 @@ config_nocodb_tbls <- function(origin = pal::pkg_config_val("nocodb_origin"),
 #' @keywords internal
 # nolint start: cyclocomp_linter
 reset_nocodb <- function(origin = pal::pkg_config_val("nocodb_origin"),
+                         hostname_pg = pal::pkg_config_val("pg_host"),
                          ask = TRUE,
                          save_user_mapping = TRUE,
                          quiet = TRUE) {
@@ -6212,7 +6214,7 @@ reset_nocodb <- function(origin = pal::pkg_config_val("nocodb_origin"),
                                             user = "nocodb",
                                             password = pg_role_pw("nocodb"),
                                             database = pg_db,
-                                            host = pal::pkg_config_val("pg_host"),
+                                            host = hostname_pg,
                                             port = 5432L,
                                             ssl = list(ca = "",
                                                        cert = "",
