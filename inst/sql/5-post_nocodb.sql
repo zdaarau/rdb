@@ -56,7 +56,20 @@ DO LANGUAGE plpgsql
     BEGIN
       FOR r IN SELECT table_name FROM information_schema.columns WHERE table_schema = 'public' AND column_name = 'updated_at'
       LOOP
-        EXECUTE format('CREATE OR REPLACE TRIGGER %I BEFORE UPDATE ON public.%I FOR EACH ROW EXECUTE PROCEDURE moddatetime (%I)', 'set_updated_at', r.table_name, 'updated_at');
+        EXECUTE format('CREATE OR REPLACE TRIGGER set_updated_at BEFORE UPDATE ON public.%I FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at)', r.table_name);
+      END LOOP;
+    END;
+  $$;
+
+-- Create triggers for `updated_by` columns
+DO LANGUAGE plpgsql
+  $$
+    DECLARE
+      r record;
+    BEGIN
+      FOR r IN SELECT table_name FROM information_schema.columns WHERE table_schema = 'public' AND column_name = 'updated_by'
+      LOOP
+        EXECUTE format('CREATE OR REPLACE TRIGGER set_updated_by BEFORE UPDATE ON public.%I FOR EACH ROW EXECUTE PROCEDURE insert_username(updated_by)', r.table_name);
       END LOOP;
     END;
   $$;

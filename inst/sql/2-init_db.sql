@@ -42,6 +42,7 @@ SET ROLE rdb_admin;
 SET client_min_messages TO WARNING;
 
 -- Install necessary PostgreSQL extensions
+CREATE EXTENSION IF NOT EXISTS insert_username;
 CREATE EXTENSION IF NOT EXISTS moddatetime;
 CREATE EXTENSION IF NOT EXISTS pg_graphql;
 
