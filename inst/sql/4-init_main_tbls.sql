@@ -108,10 +108,10 @@ Legal level at which the instrument is implemented.
 
 -- Recreate custom domains
 DROP DOMAIN IF EXISTS url CASCADE;
-CREATE DOMAIN url AS text CHECK (VALUE ~ '^https?:\/\/[^/.\n]+\.[^/.\n]+[^\n]*');
 DROP DOMAIN IF EXISTS bigcount CASCADE;
-CREATE DOMAIN bigcount AS bigint CHECK (VALUE >= 0);
 DROP DOMAIN IF EXISTS roundedfraction CASCADE;
+CREATE DOMAIN url AS text CHECK (VALUE ~ '^https?:\/\/[^/.\n]+\.[^/.\n]+[^\n]*');
+CREATE DOMAIN bigcount AS bigint CHECK (VALUE >= 0);
 CREATE DOMAIN roundedfraction AS numeric(10,9) CHECK (VALUE BETWEEN 0 AND 1);
 
 -- Create prerequisite auxiliary tables intended to be updated via NocoDB
@@ -189,7 +189,7 @@ CREATE TABLE public.referendums (
   id_official            text,
   id_sudd                text,
   is_draft               boolean NOT NULL DEFAULT TRUE,
-  "date"                 date,
+  "date"                 date, --- this is allowed to be NULL for entries where the date is still uncertain (sometimes referendums get postponed to unspecified dates)
   administrative_unit_id text NOT NULL REFERENCES public.administrative_units ON UPDATE CASCADE,
   cluster_id             integer REFERENCES public.referendum_clusters ON UPDATE CASCADE ON DELETE SET NULL,
   attachments            text,
