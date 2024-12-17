@@ -37,6 +37,7 @@ Table name. One of
 \item \code{"referendum_questions"}
 \item \code{"referendum_urls"}
 \item \code{"referendum_positions"}
+\item \code{"electorate"}
 \item \code{"referendum_votes"}
 \item \code{"referendum_sub_votes"}
 \item \code{"administrative_units"}
@@ -88,6 +89,7 @@ Other PostgreSQL functions
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_keep}()},
 \code{\link{pg_tbl_read}()},
+\code{\link{pg_tbls}()},
 \code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}

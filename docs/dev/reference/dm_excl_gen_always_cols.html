@@ -65,13 +65,8 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">rdb</span><span class="fu">::</span><span class="fu"><a href="dm.html">dm</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">rdb</span><span class="fu">:::</span><span class="fu">dm_excl_gen_always_cols</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">──</span> <span style="color: #00BB00;">Table source</span> <span style="color: #00BB00;">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> src:  postgres  [rdb_admin@ep-fancy-butterfly-a2bajnlr.eu-central-1.aws.neon.tech:5432/rdb]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAFFF;">──</span> <span style="color: #FFAFFF;">Metadata</span> <span style="color: #FFAFFF;">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tables: `actors`, `administrative_units`, `languages`, `legal_instruments`, `legal_norms`, … (19 total)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 161</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Primary keys: 19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Foreign keys: 29</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval_select_indices(quo, table_names, unique = unique):</span> Can't select tables that don't exist.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Table `electorate` doesn't exist.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

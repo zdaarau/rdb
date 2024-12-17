@@ -28,6 +28,7 @@ Table name. One of
 \item \code{"referendum_questions"}
 \item \code{"referendum_urls"}
 \item \code{"referendum_positions"}
+\item \code{"electorate"}
 \item \code{"referendum_votes"}
 \item \code{"referendum_sub_votes"}
 \item \code{"administrative_units"}

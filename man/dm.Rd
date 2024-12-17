@@ -7,7 +7,9 @@
 dm(
   connection = connect(user = "rdb_admin", password = pg_role_pw("rdb_admin")),
   incl_admin_tbls = TRUE,
-  incl_aux_admin_tbls = FALSE
+  incl_aux_admin_tbls = FALSE,
+  add_dm_meta = TRUE,
+  learn_keys = TRUE
 )
 }
 \arguments{
@@ -19,6 +21,16 @@ Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{co
 
 \item{incl_aux_admin_tbls}{Whether or not to include the auxiliary administrative unit tables
 \code{supranational_entities}, \code{countries}, \code{subnational_entities}, \code{municipalities} and \code{nocodb_users}.}
+
+\item{add_dm_meta}{Whether or not to add \link[dm:dm_set_colors]{colors} and \link[dm:dm_set_table_description]{table descriptions} to the returned data model
+object.}
+
+\item{learn_keys}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+Set to \code{TRUE} to query the definition of primary and
+foreign keys from the database.
+Currently works only for Postgres/Redshift and SQL Server databases.
+The default attempts to query and issues an informative message.}
 }
 \value{
 A \link[dm:dm]{data model} object.

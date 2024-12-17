@@ -6,6 +6,7 @@
 \usage{
 reset_nocodb(
   origin = pal::pkg_config_val("nocodb_origin"),
+  hostname_pg = pal::pkg_config_val("pg_host"),
   ask = TRUE,
   save_user_mapping = TRUE,
   quiet = TRUE

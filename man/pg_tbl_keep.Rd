@@ -40,6 +40,7 @@ Other PostgreSQL functions
 \code{\link{pg_tbl_del}()},
 \code{\link{pg_tbl_read}()},
 \code{\link{pg_tbl_update}()},
+\code{\link{pg_tbls}()},
 \code{\link{pg_update_seq}()},
 \code{\link{read_sql_file}()},
 \code{\link{split_sql_str}()}

@@ -51,6 +51,7 @@
 <span>  hostname_pg <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span><span class="st">"pg_host"</span><span class="op">)</span>,</span>
 <span>  reset_db <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  reset_tbls <span class="op">=</span> <span class="va">reset_db</span>,</span>
+<span>  keep_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  disconnect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -76,6 +77,11 @@ PostgreSQL tables are recreated.</p></dd>
 
 <dt id="arg-reset-tbls">reset_tbls<a class="anchor" aria-label="anchor" href="#arg-reset-tbls"></a></dt>
 <dd><p>Whether or not to recreate the RDB PostgreSQL tables.</p></dd>
+
+
+<dt id="arg-keep-data">keep_data<a class="anchor" aria-label="anchor" href="#arg-keep-data"></a></dt>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a><br>
+Whether or not to back up the contents of existing tables and restore them after the reset. Only relevant if <code>reset_db = TRUE</code> or <code>reset_tbls = TRUE</code>.</p></dd>
 
 
 <dt id="arg-ask">ask<a class="anchor" aria-label="anchor" href="#arg-ask"></a></dt>

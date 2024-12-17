@@ -23,7 +23,7 @@ Database connection to a PostgreSQL DBMS as returned by \code{\link[=connect]{co
 Whether or not to \link[DBI:dbDisconnect]{terminate} the database connection when finished.}
 }
 \value{
-An object of type \code{\link[dm:dm]{dm::dm}}, invisibly.
+\code{NULL} if the specified database's \code{public} schema is empty, otherwise an object of type \code{\link[dm:dm]{dm::dm}}, invisibly.
 }
 \description{
 Fetches the complete RDB data – excluding fully programmatically administered tables – as a \code{\link[dm:dm]{dm::dm}} object that also includes relationship information
