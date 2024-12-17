@@ -145,6 +145,7 @@ CREATE TABLE public.legal_norms (
   clause                   text,
   "text"                   text NOT NULL,
   url                      url,
+  adopted_urgently         boolean NOT NULL DEFAULT FALSE,
   valid_from               date NOT NULL DEFAULT '0101-01-01',
   valid_to                 date,
   UNIQUE (legal_instrument_display, clause, valid_from),
@@ -152,23 +153,26 @@ CREATE TABLE public.legal_norms (
 );
 
 CREATE TABLE public.referendum_types (
-  "id"                    integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  display                 text GENERATED ALWAYS AS (concat_ws_immutable(
-                                                     ' ',
-                                                     administrative_unit_id || ': ',
-                                                     "title",
-                                                     NULLIF('(' || to_char_immutable(valid_from) || '–' || COALESCE(to_char_immutable(valid_to), 'ongoing') || ')', '(0101-01-01–ongoing)')
-                                                   )) STORED,
-  is_draft                boolean NOT NULL DEFAULT TRUE,
-  administrative_unit_id  text REFERENCES public.administrative_units ON UPDATE CASCADE,
-  title                   text NOT NULL,
-  valid_from              date NOT NULL DEFAULT '0101-01-01',
-  valid_to                date,
-  trigger_actor_label     text REFERENCES public.actors ON UPDATE CASCADE,
-  trigger_threshold_count bigcount,
-  are_empty_votes_counted boolean DEFAULT FALSE,
-  quorum_approval         roundedfraction DEFAULT 0.5,
-  quorum_turnout          roundedfraction DEFAULT 0,
+  "id"                          integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  display                       text GENERATED ALWAYS AS (concat_ws_immutable(
+                                                           ' ',
+                                                           administrative_unit_id || ': ',
+                                                           "title",
+                                                           NULLIF('(' || to_char_immutable(valid_from) || '–' || COALESCE(to_char_immutable(valid_to), 'ongoing') || ')', '(0101-01-01–ongoing)')
+                                                         )) STORED,
+  is_draft                      boolean NOT NULL DEFAULT TRUE,
+  administrative_unit_id        text REFERENCES public.administrative_units ON UPDATE CASCADE,
+  title                         text NOT NULL,
+  valid_from                    date NOT NULL DEFAULT '0101-01-01',
+  valid_to                      date,
+  trigger_actor_label           text REFERENCES public.actors ON UPDATE CASCADE,
+  trigger_threshold_absolute    bigcount,
+  trigger_threshold_relative    roundedfraction,
+  are_empty_votes_counted       boolean DEFAULT FALSE,
+  is_binding                    boolean DEFAULT TRUE,
+  is_electorate_abroad_eligible boolean DEFAULT FALSE,
+  quorum_approval               roundedfraction DEFAULT 0.5,
+  quorum_turnout                roundedfraction DEFAULT 0,
   UNIQUE (administrative_unit_id, title, valid_from),
   CONSTRAINT referendum_types_check_valid_to_gte_valid_from CHECK (valid_to >= valid_from)
 );
@@ -193,6 +197,7 @@ CREATE TABLE public.referendums (
   "date"                 date, --- this is allowed to be NULL for entries where the date is still uncertain (sometimes referendums get postponed to unspecified dates)
   administrative_unit_id text NOT NULL REFERENCES public.administrative_units ON UPDATE CASCADE,
   cluster_id             integer REFERENCES public.referendum_clusters ON UPDATE CASCADE ON DELETE SET NULL,
+  init_actor_label       text REFERENCES public.actors ON UPDATE CASCADE,
   attachments            text,
   "source"               text,
   remarks                text,
