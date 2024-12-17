@@ -4,7 +4,7 @@
 \alias{dm_excl_gen_always_cols}
 \title{Remove \verb{GENERATED ALWAYS} columns from \code{dm}}
 \usage{
-dm_excl_gen_always_cols(dm)
+dm_excl_gen_always_cols(dm, connection = dm::dm_get_con(dm))
 }
 \arguments{
 \item{dm}{A \link[dm:dm]{data model} object.}

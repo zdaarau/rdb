@@ -576,15 +576,16 @@ country_code_to_name <- function(country_code) {
 #'
 #' @examples
 #' rdb::dm() |> rdb:::dm_excl_gen_always_cols()
-dm_excl_gen_always_cols <- function(dm) {
-  
+dm_excl_gen_always_cols <- function(dm,
+                                    connection = dm::dm_get_con(dm)) {
   assert_dm(dm)
   
   # exclude non-PK `GENERATED ALWAYS` cols
   for (tbl_name in names(dm)) {
     
     col_names_to_excl <-
-      pg_col_metadata(tbl_name = tbl_name) |>
+      pg_col_metadata(tbl_name = tbl_name,
+                      connection = connection) |>
       dplyr::filter(generated == "ALWAYS" & !is_pk) |>
       dplyr::pull(column_name)
     
@@ -6485,7 +6486,7 @@ restore_rdb <- function(dm = readRDS(file = "rdb_dm.rds"),
   tbl_deps_left <-
     dm |>
     dm::dm_select_tbl(!!tbl_names_todo) |>
-    dm_excl_gen_always_cols() |>
+    dm_excl_gen_always_cols(connection = connection) |>
     dm::dm_get_all_fks() |>
     dplyr::group_by(child_table) |>
     dplyr::summarise(parent_tbls = list(unique(parent_table)))
