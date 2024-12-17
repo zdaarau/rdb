@@ -719,7 +719,7 @@ for (i in which(data_codebook$variable_name != data_codebook$variable_name_unnes
 
 ## `topics_tier_#_`
 
-Only for performance-reasons.
+Precomputed for performance-reasons.
 
 ```{r}
 topics_tier_1_ <- rdb::topics(tiers = 1L)
@@ -932,7 +932,7 @@ val_set$country_name_long      <- sort(unique(c(data_iso_3166_1$name_long,
 
 ## `var_lbls`
 
-Only for performance-reasons.
+Precomputed for performance-reasons.
 
 ```{r}
 var_lbls <-
