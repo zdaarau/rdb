@@ -5519,7 +5519,7 @@ update_nocodb_users <- function(origin = pal::pkg_config_val("nocodb_origin"),
 #' @param path Path to write the RDB backup `.rds` file to.
 #' @param overwrite Whether or not to overwrite an existing file under `path`.
 #'
-#' @return An object of type [`dm::dm`], invisibly.
+#' @return `NULL` if the specified database's `public` schema is empty, otherwise an object of type [`dm::dm`], invisibly.
 #' @family admin
 #' @export
 backup_rdb <- function(path = "rdb_dm.rds",
@@ -5532,6 +5532,12 @@ backup_rdb <- function(path = "rdb_dm.rds",
                                     overwrite = overwrite,
                                     extension = "rds")
   checkmate::assert_flag(disconnect)
+  
+  # skip if DB schema is empty
+  if (nrow(pg_tbls(connection = connection)) == 0L) {
+    cli::cli_alert_info("No data was backed up since the database is empty.")
+    return(NULL)
+  }
   
   dm_bkp <-
     dm(connection = connection,
