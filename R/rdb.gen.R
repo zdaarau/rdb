@@ -5541,7 +5541,8 @@ backup_rdb <- function(path = "rdb_dm.rds",
   
   dm_bkp <-
     dm(connection = connection,
-               incl_admin_tbls = FALSE) |>
+       incl_admin_tbls = FALSE,
+       add_dm_meta = FALSE) |>
     dm_excl_gen_always_cols() |>
     dplyr::collect() %T>%
     saveRDS(file = path)
