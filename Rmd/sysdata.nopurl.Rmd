@@ -51,10 +51,6 @@ col_names_un <- c("un_country_code",
 
 ## `data_codebook`
 
-TODO:
-
--   Consider migrating the codebook to the qstnr questionnaire schema and using qstnr to process it.
-
 NOTES:
 
 -   In the following cases, a variable's prototype (`ptype`) has to be explicitly set in the raw `codebook.Rmd`:
