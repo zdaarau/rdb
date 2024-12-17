@@ -1413,6 +1413,7 @@ pg_pk <- function(tbl_name,
 #' @keywords internal
 pg_role_pw <- function(role,
                        path = pal::pkg_config_val("pg_roles_csv_file")) {
+  
   roles <- readr::read_csv(file = path,
                            col_types = "c")
   pal::assert_cols(data = roles,
@@ -1979,6 +1980,7 @@ NOTES:
 s3_auth <- function(s3_endpoint = s3_endpoint_url,
                     s3_access_key = pal::pkg_config_val("nocodb_s3_access_key"),
                     s3_access_secret = pal::pkg_config_val("nocodb_s3_access_secret")) {
+  
   checkmate::assert_string(s3_endpoint)
   checkmate::assert_string(s3_access_key)
   checkmate::assert_string(s3_access_secret)
