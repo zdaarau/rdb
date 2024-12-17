@@ -1303,8 +1303,28 @@ pg_tbl_constraints <- function(tbl_name,
                    "    INNER JOIN pg_catalog.pg_namespace nsp",
                    "      ON nsp.oid = connamespace",
                    "    WHERE nsp.nspname = {schema}",
-                   "      AND rel.relname = {tbl_name};",
-                   "  ") |>
+                   "      AND rel.relname = {tbl_name};") |>
+    DBI::dbGetQuery(conn = connection) |>
+    dplyr::collect() |>
+    tibble::as_tibble()
+}
+
+#' Get PostgreSQL table constraints
+#'
+#' @inheritParams pg_pk
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family pg
+#' @keywords internal
+pg_tbls <- function(schema = pg_schema,
+                    connection = connect()) {
+  
+  checkmate::assert_string(schema)
+  
+  glue::glue_sql(.con = connection,
+                   "SELECT *",               
+                   "  FROM pg_catalog.pg_tables",
+                   "  WHERE schemaname = {schema};") |>
     DBI::dbGetQuery(conn = connection) |>
     dplyr::collect() |>
     tibble::as_tibble()
