@@ -6520,6 +6520,8 @@ restore_rdb <- function(dm = readRDS(file = "rdb_dm.rds"),
 
 TODO
 
+-   Finish backup&restore, i.e. debug `keep_data = TRUE`
+
 -   Sometimes, `reset_rdb()` fails with
 
     ```         
@@ -6579,7 +6581,7 @@ reset_rdb <- function(origin_nocodb = pal::pkg_config_val("nocodb_origin"),
                       hostname_pg = pal::pkg_config_val("pg_host"),
                       reset_db = FALSE,
                       reset_tbls = reset_db,
-                      keep_data = TRUE,
+                      keep_data = FALSE,
                       ask = TRUE,
                       disconnect = TRUE,
                       quiet = FALSE) {

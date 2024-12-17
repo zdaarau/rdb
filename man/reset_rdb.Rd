@@ -9,7 +9,7 @@ reset_rdb(
   hostname_pg = pal::pkg_config_val("pg_host"),
   reset_db = FALSE,
   reset_tbls = reset_db,
-  keep_data = TRUE,
+  keep_data = FALSE,
   ask = TRUE,
   disconnect = TRUE,
   quiet = FALSE
