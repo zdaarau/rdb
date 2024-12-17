@@ -5615,6 +5615,8 @@ restore_rdb <- function(dm = readRDS(file = "rdb_dm.rds"),
 #' @param reset_db Whether or not to first fully recreate the RDB PostgreSQL database using [pg_reset_db()] and [pg_init_db()]. If `FALSE`, only the RDB
 #'   PostgreSQL tables are recreated.
 #' @param reset_tbls Whether or not to recreate the RDB PostgreSQL tables.
+#' @param keep_data `r lifecycle::badge("experimental")`\cr
+#'   Whether or not to back up the contents of existing tables and restore them after the reset. Only relevant if `reset_db = TRUE` or `reset_tbls = TRUE`.
 #' @param ask Whether or not to ask for confirmation before proceeding. Only relevant if run [interactively][interactive].
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
@@ -5637,6 +5639,7 @@ reset_rdb <- function(origin_nocodb = pal::pkg_config_val("nocodb_origin"),
                       hostname_pg = pal::pkg_config_val("pg_host"),
                       reset_db = FALSE,
                       reset_tbls = reset_db,
+                      keep_data = TRUE,
                       ask = TRUE,
                       disconnect = TRUE,
                       quiet = FALSE) {
@@ -5644,6 +5647,7 @@ reset_rdb <- function(origin_nocodb = pal::pkg_config_val("nocodb_origin"),
   checkmate::assert_string(origin_nocodb)
   checkmate::assert_flag(reset_db)
   checkmate::assert_flag(reset_tbls)
+  checkmate::assert_flag(keep_data)
   checkmate::assert_flag(ask)
   checkmate::assert_flag(disconnect)
   checkmate::assert_flag(quiet)
@@ -5676,7 +5680,7 @@ reset_rdb <- function(origin_nocodb = pal::pkg_config_val("nocodb_origin"),
   password <- pal::pkg_config_val("nocodb_password")
   
   # back up RDB data if necessary ----
-  if (reset_tbls) {
+  if (reset_tbls && keep_data) {
     # we write `dm_bkp` to disk in order to be prepared for any failures in between
     path_rdb_backup <- "tmp_rdb_dm_bkp.rds"
     rdb_dm <- backup_rdb(path = path_rdb_backup,
@@ -5786,11 +5790,14 @@ reset_rdb <- function(origin_nocodb = pal::pkg_config_val("nocodb_origin"),
     pg_add_default_data(connection = connection,
                         disconnect = FALSE)
     ## restore RDB data ----
-    restore_rdb(dm = rdb_dm,
-                sweep = FALSE,
-                connection = connection,
-                disconnect = FALSE)
-    unlink(path_rdb_backup)
+    if (keep_data && !is.null(rdb_dm)) {
+      restore_rdb(dm = rdb_dm,
+                  sweep = FALSE,
+                  connection = connection,
+                  disconnect = FALSE)
+      on.exit(unlink(path_rdb_backup),
+              add = TRUE)
+    }
   }
   
   # sync NocoDB data src ----

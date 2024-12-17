@@ -9,6 +9,7 @@ reset_rdb(
   hostname_pg = pal::pkg_config_val("pg_host"),
   reset_db = FALSE,
   reset_tbls = reset_db,
+  keep_data = TRUE,
   ask = TRUE,
   disconnect = TRUE,
   quiet = FALSE
@@ -23,6 +24,9 @@ reset_rdb(
 PostgreSQL tables are recreated.}
 
 \item{reset_tbls}{Whether or not to recreate the RDB PostgreSQL tables.}
+
+\item{keep_data}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}\cr
+Whether or not to back up the contents of existing tables and restore them after the reset. Only relevant if \code{reset_db = TRUE} or \code{reset_tbls = TRUE}.}
 
 \item{ask}{Whether or not to ask for confirmation before proceeding. Only relevant if run \link[=interactive]{interactively}.}
 
