@@ -2452,7 +2452,7 @@ sub_var_names <- list(files = list(date       = "date_time_attached",
                                    size       = "file_size",
                                    deleted    = "is_deleted"))
 
-# create additional formula-lists (mainly to be fed to `dplyr::case_match()`)
+# create additional formula-lists (mainly to be fed to `dplyr::case_match(!!!var_names_fms)`)
 var_names_fms <- as_fm_list(var_names)
 sub_var_names_fms <- purrr::map(sub_var_names,
                                 \(x) as_fm_list(x))
