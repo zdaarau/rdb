@@ -87,6 +87,7 @@ DO LANGUAGE plpgsql
                              'referendum_positions',
                              'referendum_votes',
                              'referendum_sub_votes',
+                             'electorate',
                              'referendum_types_legal_norms',
                              'referendum_types_referendums',
                              'topics_referendums']
@@ -260,6 +261,14 @@ CREATE TABLE public.referendum_sub_votes (
   "source"                text,
   remarks                 text,
   PRIMARY KEY (referendum_id, administrative_unit_id, option_display)
+);
+
+CREATE TABLE public.electorate (
+  display                text GENERATED ALWAYS AS (administrative_unit_id || ' ' || to_char_immutable("date")) STORED,
+  administrative_unit_id text NOT NULL REFERENCES public.administrative_units ON UPDATE CASCADE,
+  total                  bigcount NOT NULL,
+  abroad                 bigcount,
+  "date"                 date NOT NULL
 );
 
 -- Create junction tables intended to be updated via NocoDB
