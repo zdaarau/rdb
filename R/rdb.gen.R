@@ -2460,10 +2460,13 @@ sub_var_names_fms <- purrr::map(sub_var_names,
 #' Get RDB data model
 #'
 #' @inheritParams rfrnds
+#' @inheritParams dm::dm_from_con
 #' @param incl_admin_tbls Whether or not to include tables that are administered fully programmatically 
 #'   (`r tbl_metadata |> dplyr::filter(is_admin) |> dplyr::pull("name") |> pal::enum_str(wrap = "\x60")`).
 #' @param incl_aux_admin_tbls Whether or not to include the auxiliary administrative unit tables
 #'   `r tbl_metadata |> dplyr::filter(is_aux) |> dplyr::pull("name") |> pal::enum_str(wrap = "\x60")`.
+#' @param add_dm_meta Whether or not to add [colors][dm::dm_set_colors] and [table descriptions][dm::dm_set_table_description] to the returned data model
+#'   object.
 #'
 #' @return `r pkgsnip::return_lbl("dm")`
 #' @family admin
@@ -2478,27 +2481,40 @@ sub_var_names_fms <- purrr::map(sub_var_names,
 dm <- function(connection = connect(user = "rdb_admin",
                                     password = pg_role_pw("rdb_admin")),
                incl_admin_tbls = TRUE,
-               incl_aux_admin_tbls = FALSE) {
+               incl_aux_admin_tbls = FALSE,
+               add_dm_meta = TRUE,
+               learn_keys = TRUE) {
   
   checkmate::assert_flag(incl_admin_tbls)
   checkmate::assert_flag(incl_aux_admin_tbls)
+  checkmate::assert_flag(add_dm_meta)
   
   tbl_metadata_subset <-
     tbl_metadata |>
     dplyr::filter(if (incl_admin_tbls) TRUE else !is_admin) |>
     dplyr::filter(if (incl_aux_admin_tbls) TRUE else !is_aux)
   
-  tbl_metadata_subset |>
-    dplyr::pull("name") |> 
+  result <-
+    tbl_metadata_subset |>
+    dplyr::pull("name") |>
+    dplyr::intersect(pg_tbls(connection = connection,
+                             schema = pg_schema)$tablename) |>
     dm::dm_from_con(con = connection,
                     # NOTE: we have to explicitly set `table_names` in order to avoid a spurious "NA" table linked to everything else
                     table_names = _,
-                    learn_keys = TRUE,
-                    schema = pg_schema) |>
-    dm::dm_set_colors(!!!magrittr::set_names(x = tbl_metadata_subset$name,
-                                             value = tbl_metadata_subset$dm_color)) |>
-    dm::dm_set_table_description(!!!magrittr::set_names(x = tbl_metadata_subset$name,
-                                                        value = pal::strip_md(tbl_metadata_subset$desc)))
+                    learn_keys = learn_keys,
+                    schema = pg_schema)
+  
+  if (add_dm_meta) {
+    
+    result %<>%
+      dm::dm_set_colors(!!!magrittr::set_names(x = tbl_metadata_subset$name,
+                                               value = tbl_metadata_subset$dm_color)) |>
+      dm::dm_set_table_description(!!!magrittr::set_names(x = tbl_metadata_subset$name,
+                                                          value = pal::strip_md(tbl_metadata_subset$desc)))
+  }
+  
+  result
 }
 
 #' Get referendum data
