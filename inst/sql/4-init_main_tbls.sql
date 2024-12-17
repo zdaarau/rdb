@@ -273,7 +273,8 @@ CREATE TABLE public.electorate (
   administrative_unit_id text NOT NULL REFERENCES public.administrative_units ON UPDATE CASCADE,
   total                  bigcount NOT NULL,
   abroad                 bigcount,
-  "date"                 date NOT NULL
+  "date"                 date NOT NULL,
+  PRIMARY KEY (administrative_unit_id, date)
 );
 
 -- Create junction tables intended to be updated via NocoDB
