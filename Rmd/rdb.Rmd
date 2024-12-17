@@ -968,7 +968,7 @@ pg_col_metadata <- function(tbl_name,
                           name = DBI::Id(schema = schema,
                                          table = tbl_name))) {
     
-    cli::cli_abort("No {.field {schema}.{tbl_name}} table found.")
+    cli::cli_abort("No {.field {schema}.{tbl_name}} table found. Do you need to {.help rdb::reset_rdb} first?")
   }
   
   glue::glue_sql(.con = connection,
