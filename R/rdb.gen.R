@@ -5557,7 +5557,7 @@ backup_rdb <- function(path = "rdb_dm.rds",
   
   # skip if DB schema is empty
   if (nrow(pg_tbls(connection = connection)) == 0L) {
-    cli::cli_alert_info("No data was backed up since the database is empty.")
+    cli::cli_alert_info("No data was backed up (database is empty).")
     return(NULL)
   }
   
