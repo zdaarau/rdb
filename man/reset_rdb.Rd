@@ -47,8 +47,8 @@ Resets the RDB NocoDB server, optionally including the whole RDB PostgreSQL data
 rdb::reset_rdb(reset_db = TRUE)
 
 # reset testing PGSQL DB branch and NocoDB instance
-rdb::reset_rdb(origin_nocodb = Sys.getenv("R_RDB_NOCODB_ORIGIN_TESTING"),
-               hostname_pg = Sys.getenv("R_RDB_PG_HOST_TESTING"),
+rdb::reset_rdb(origin_nocodb = "https://admin-testing.rdb.vote",
+               hostname_pg = "ep-rough-bread-a2i616p5.eu-central-1.aws.neon.tech",
                reset_db = TRUE)}
 }
 \seealso{

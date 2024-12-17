@@ -5660,8 +5660,8 @@ restore_rdb <- function(dm = readRDS(file = "rdb_dm.rds"),
 #' rdb::reset_rdb(reset_db = TRUE)
 #'
 #' # reset testing PGSQL DB branch and NocoDB instance
-#' rdb::reset_rdb(origin_nocodb = Sys.getenv("R_RDB_NOCODB_ORIGIN_TESTING"),
-#'                hostname_pg = Sys.getenv("R_RDB_PG_HOST_TESTING"),
+#' rdb::reset_rdb(origin_nocodb = "https://admin-testing.rdb.vote",
+#'                hostname_pg = "ep-rough-bread-a2i616p5.eu-central-1.aws.neon.tech",
 #'                reset_db = TRUE)}
 # nolint start: cyclocomp_linter
 reset_rdb <- function(origin_nocodb = pal::pkg_config_val("nocodb_origin"),
