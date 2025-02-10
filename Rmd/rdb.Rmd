@@ -6857,7 +6857,7 @@ restart_neon_ep <- function(project_id = neon_project_id,
 
 #### DESCRIPTION
 
-Function to administrate the [RDB NocoDB server](https://admin.rdb.vote/).
+Functions to administrate the [RDB NocoDB server](https://admin.rdb.vote/).
 
 #### !`create_nocodb_tbls`
 
@@ -7542,7 +7542,7 @@ purge_nocodb <- function(fly_app = "rdb-nocodb",
 
 #### DESCRIPTION
 
-Function to administrate the [RDB PostgREST server](https://api.rdb.vote/).
+Functions to administrate the [RDB PostgREST server](https://api.rdb.vote/).
 
 #### !`notify_postgrest`
 
