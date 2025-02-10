@@ -125,11 +125,11 @@ CREATE OR REPLACE FUNCTION public.reassign_owned_by(text, text)
       END IF;
     END
   $$;
-  
+
 -- (Re-)create common read-only role
 SELECT drop_owned_by('readonly');
 DROP ROLE IF EXISTS readonly;
-CREATE ROLE readonly WITH PASSWORD ?pw_readonly ROLE rdb_admin;
+CREATE ROLE readonly WITH NOLOGIN ROLE rdb_admin;
 GRANT CONNECT ON DATABASE rdb TO readonly;
 GRANT USAGE ON SCHEMA public TO readonly;
 GRANT USAGE ON SCHEMA graphql TO readonly;
@@ -140,7 +140,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO readonly;
 SELECT reassign_owned_by('readwrite', 'rdb_admin');
 SELECT drop_owned_by('readwrite');
 DROP ROLE IF EXISTS readwrite;
-CREATE ROLE readwrite WITH PASSWORD ?pw_readwrite ROLE rdb_admin;
+CREATE ROLE readwrite WITH NOLOGIN ROLE rdb_admin;
 GRANT CONNECT, TEMPORARY ON DATABASE rdb TO readwrite;
 GRANT USAGE ON SCHEMA public TO readwrite;
 GRANT USAGE ON SCHEMA graphql TO readwrite;
@@ -155,7 +155,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE, 
 SELECT reassign_owned_by('readwritefull', 'rdb_admin');
 SELECT drop_owned_by('readwritefull');
 DROP ROLE IF EXISTS readwritefull;
-CREATE ROLE readwritefull WITH PASSWORD ?pw_readwritefull ROLE rdb_admin;
+CREATE ROLE readwritefull WITH NOLOGIN ROLE rdb_admin;
 GRANT ALL PRIVILEGES ON DATABASE rdb TO readwritefull;
 GRANT ALL PRIVILEGES ON SCHEMA public TO readwritefull;
 GRANT USAGE ON SCHEMA graphql TO readwritefull;
@@ -184,8 +184,8 @@ DROP ROLE IF EXISTS authenticator;
 DROP ROLE IF EXISTS web_anon;
 DROP ROLE IF EXISTS web_user;
 CREATE ROLE authenticator WITH NOINHERIT LOGIN PASSWORD ?pw_authenticator ROLE rdb_admin;
-CREATE ROLE web_anon WITH PASSWORD ?pw_web_anon ROLE rdb_admin;
-CREATE ROLE web_user WITH PASSWORD ?pw_web_user ROLE rdb_admin;
+CREATE ROLE web_anon WITH NOLOGIN ROLE rdb_admin;
+CREATE ROLE web_user WITH NOLOGIN ROLE rdb_admin;
 GRANT web_anon TO authenticator;
 GRANT web_user TO authenticator;
 GRANT readonly TO web_anon;
