@@ -2641,9 +2641,8 @@ url_sudd <- function(x = "") {
                    if (!is.na(x) && stringr::str_detect(x, "https?:")) {
                      x
                    } else {
-                     httr2::url_build(list(scheme = "https",
-                                           hostname = "sudd.ch",
-                                           path = x %|% ""))
+                     httr2::url_modify(url = "https://sudd.ch",
+                                       path = x %|% "")
                    }
                  })
 }
