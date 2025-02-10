@@ -12,9 +12,6 @@
   information (user names) only available to NocoDB is necessary to fill `created/updated_by`, we can't update them adequately via a PostgreSQL trigger function
   alone. Instead, tables for which we want these columns included in, just have to be initially created from NocoDB, e.g. via `rdb::create_nocodb_tbls()`.
 
-- In principle, there's no point in setting a password for PostgreSQL roles that can't login like `readonly` and `readwrite`. But since Neon doesn't support
-  creating roles without a password set, we nevertheless have to define one, altough it will never be used.
-
 ## Requirements
 
 1. The user `rdb_admin` has alread been created from the Neon console, CLI or API.
